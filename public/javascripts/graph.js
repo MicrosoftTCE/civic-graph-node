@@ -235,16 +235,8 @@ function textDisplay(d)
       }
       else
       {
-        // if((d.location).indexOf(", ") !== (d.location).lastIndexOf(", "))
-        // {
-        //   s += '<h5><ul>'
-        //   s += '<li style="display:inline-block;">' + '<h5> <a id="click-location" style="cursor:pointer; font-size:10px;">' + d.location + '</5> </a>' + '</li>';
-        // }
-        // else
-        // {
           s += '<h5><ul>'
           s += '<li style="display:inline-block;">' + '<h5><a class="click-location" style="cursor:pointer;">' + d.location + '</h5></a>' + '</li>';
-        // }
       }
       s += '</h5></ul><br/>'; 
  
@@ -714,13 +706,6 @@ function initialInfo()
  
 }
 
-//   d3.selectAll('.click-location').on('click', function(n) 
-// {
-//       var query = n[0].text;
-    
-//       handleQuery(query);
-//   });
-
 d3.selectAll('.for-profit-entity').on('click', function(n, i){
 
   sinclick(forProfitObjects[i]);
@@ -893,89 +878,38 @@ function handleQuery(query)
                       return "0.05";
                   });
 
-        //  Make all nodes opaque before filtering by 
-        d3.selectAll('.node').style('opacity', function(n, i){
+  d3.selectAll('.node').style('opacity', function(n, i){
 
-          if(posLocation.indexOf(i) === -1)
-                {  
-                  return 0.05;
-                }
-                else
-                  return 1;
-
-        }).on('mouseover', null);
-        // .on('mouseover', function(n, i){
-        //   if(posLocation.indexOf(i) > -1)
-        //         {  
-        //           return null;
-        //         }
-        //         else
-        //         {
-        //           handleClickNodeHover(n);
-        //         }
-        // }).on('mouseout', null
-        // ).on('click', function(n, i){
-        //   if(posLocation.indexOf(i) === -1)
-        //         {  
-        //           return null;
-        //         }
-        //         else
-        //         {
-        //           sinclick(n);
-        //         }
-        // });
-
-
-
-/*
-
-        var locationObjects = [];
-
-        node.filter(function(n, i){
-          if(posLocation.indexOf(i) > -1)
-          {
-            locationObjects.push(n);
-            return n;
+    if(posLocation.indexOf(i) === -1)
+          {  
+            return 0.05;
           }
-        }).on('mouseout', null)
-        .on('mouseover', null)
-              .on('click', sinclick);
+          else
+            return 1;
 
-        console.log(locationObjects);
+  }).on('mouseover', null);
 
+  node
+      .on('mouseout', null)
+      .on('mouseover', null)
+      .on('click', null);
 
-*/
+  node.filter(function(n, i){
+            if(nodeInit[0][i].style.opacity == 1)
+              return n;
 
-node
-    .on('mouseout', null)
-    .on('mouseover', null)
-    .on('click', null);
-
-node.filter(function(n, i){
-          if(nodeInit[0][i].style.opacity == 1)
-            return n;
-
-          })
+            })
     .on('mouseout', null)
     .on('mouseover', handleClickNodeHover)
     .on('click', null);
 
-
-          // fundLink.style("opacity", 0.05);
-          // investLink.style("opacity", 0.05);
-          // porucsLink.style("opacity", 0.05);
-          // affilLink.style("opacity", 0.05);
       }
 
 }
 
-
-
 function handleNodeHover(d) 
 {
- 
   var s = textDisplay(d);
-   
 
   //  Printing to side panel within web application.
   d3.select('#info')
@@ -1027,25 +961,21 @@ function handleNodeHover(d)
                 return "0.05";
             });
 
-            //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
             var neighborFund = graph.fundingR.filter(function(link){
               return link.source.index === d.index || link.target.index === d.index;}).map(function(link){
                 return link.source.index === d.index ? link.target.index : link.source.index;
             });
  
-              //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
             var neighborInvest = graph.investingR.filter(function(link){
               return link.source.index === d.index || link.target.index === d.index;}).map(function(link){
                 return link.source.index === d.index ? link.target.index : link.source.index;
             });
  
-              //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
             var neighborPorucs = graph.porucs.filter(function(link){
               return link.source.index === d.index || link.target.index === d.index;}).map(function(link){
                 return link.source.index === d.index ? link.target.index : link.source.index;
             });
  
-              //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
             var neighborAffil = graph.affiliations.filter(function(link){
               return link.source.index === d.index || link.target.index === d.index;}).map(function(link){
                 return link.source.index === d.index ? link.target.index : link.source.index;
@@ -1149,54 +1079,11 @@ function handleAdjNodeClick(d)
         .on('mouseover', null)
         .on('mouseout', null)
         .on('click', null);
-              
-              // //  Ensure mouseover for non-neighbors is null. .on('mouseover', null)
-              //   //  Applies to neighbors
-              // node.filter(function(l){
-              //     return neighborFund.indexOf(l.index) === -1;
-              // }).on('mouseover', null)
-              //   .on('click', null); 
-              
-              // node.filter(function(l){
-              //     return neighborInvest.indexOf(l.index) === -1;
-              // }).on('mouseover', null)
-              // .on('click', null); 
-
-              // node.filter(function(l){
-              //     return neighborPorucs.indexOf(l.index) === -1;
-              // }).on('mouseover', null)
-              // .on('click', null);
-
-              // node.filter(function(l){
-              //     return neighborAffil.indexOf(l.index) === -1;
-              // }).on('mouseover', null)
-              // .on('click', null);
-              //  Add actions for neighboring nodes
 
               node.filter(function(l){
                   return (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborAffil.indexOf(l.index) > -1 || l === d);
               }).on('mouseover', handleClickNodeHover)
               .on('click', sinclick); 
-
-              // node.filter(function(l){
-              //     return neighborFund.indexOf(l.index) > -1;
-              // }).on('mouseover', handleClickNodeHover)
-              // .on('click', sinclick); 
-              
-              // node.filter(function(l){
-              //     return neighborInvest.indexOf(l.index) > -1;
-              // }).on('mouseover', handleClickNodeHover)
-              // .on('click', sinclick); 
-
-              // node.filter(function(l){
-              //     return neighborPorucs.indexOf(l.index) > -1;
-              // }).on('mouseover', handleClickNodeHover)
-              // .on('click', sinclick);
-
-              // node.filter(function(l){
-              //     return neighborAffil.indexOf(l.index) > -1;
-              // }).on('mouseover', handleClickNodeHover)
-              // .on('click', sinclick);
 
 }
   
@@ -1310,14 +1197,6 @@ function sinclick(d) {
                 return "0.05";
             });
 
-    // d3.select(this).style("stroke", "black").on('mouseout', null);
-
-  // d3.select(this).on('mouseout', function(d){
-  //     d3.select('svg').on('click', function(){
-  //       offNode();
-  //     });
-  //   });
-
   node.style("stroke", function(singleNode){
     if(singleNode !== d)
     {
@@ -1335,25 +1214,21 @@ function sinclick(d) {
     }
   }).on('mouseover', null);
 
-    //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
             var neighborFund = graph.fundingR.filter(function(link){
               return link.source.index === d.index || link.target.index === d.index;}).map(function(link){
                 return link.source.index === d.index ? link.target.index : link.source.index;
             });
  
-              //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
             var neighborInvest = graph.investingR.filter(function(link){
               return link.source.index === d.index || link.target.index === d.index;}).map(function(link){
                 return link.source.index === d.index ? link.target.index : link.source.index;
             });
  
-              //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
             var neighborPorucs = graph.porucs.filter(function(link){
               return link.source.index === d.index || link.target.index === d.index;}).map(function(link){
                 return link.source.index === d.index ? link.target.index : link.source.index;
             });
  
-              //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
             var neighborAffil = graph.affiliations.filter(function(link){
               return link.source.index === d.index || link.target.index === d.index;}).map(function(link){
                 return link.source.index === d.index ? link.target.index : link.source.index;
@@ -1373,28 +1248,7 @@ function sinclick(d) {
                   return (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborAffil.indexOf(l.index) > -1 || l === d);
               }).on('mouseover', handleClickNodeHover)
               .on('click', function(l){});
-
-              // node.filter(function(l){
-              //     return neighborFund.indexOf(l.index) > -1;
-              // }).on('mouseover', handleClickNodeHover)
-              //   .on('click', handleAdjNodeClick); 
-              
-              // node.filter(function(l){
-              //     return neighborInvest.indexOf(l.index) > -1;
-              // }).on('mouseover', handleClickNodeHover)
-              // .on('click', handleAdjNodeClick); 
-
-              // node.filter(function(l){
-              //     return neighborPorucs.indexOf(l.index) > -1;
-              // }).on('mouseover', handleClickNodeHover)
-              // .on('click', handleAdjNodeClick);
-
-              // node.filter(function(l){
-              //     return neighborAffil.indexOf(l.index) > -1;
-              // }).on('mouseover', handleClickNodeHover)
-              // .on('click', handleAdjNodeClick);
                 
-
 }
 
 /*
@@ -1446,27 +1300,12 @@ node.on('mouseover', null)
 
 function dragend(d) {
 
-
-
   d3.select(this).classed("fixed", d.fixed = true);
 
   node.on('mouseover', handleNodeHover)
     .on('mouseout', offNode)
     .on('click', sinclick);
-
-  // d3.select(this).on("mouseout", offNode);
-  //  node.filter(function(singleNode){
-  //   if(singleNode !== d)
-  //   {
-  //     return singleNode;
-  //   }
-  // }).on('mouseover', handleNodeHover)
-  //   .on('mouseout', offNode)
-  //   .on('click', sinclick);
-
 }
-
-
 
   force.on("tick", function() {
 
@@ -1497,20 +1336,10 @@ function dragend(d) {
     nodeInit.attr("x", function(d) { return d.x = Math.max(50, Math.min(width - 50, d.x)); })
         .attr("y", function(d) { return d.y = Math.max(50, Math.min(height - 50, d.y)); });
 
-        // fundLinkNode.attr("cx", function(d){return d.x = (d.source.x + d.target.x) * 0.5;})
-        //         .attr("cy", function(d){return d.y = (d.source.y + d.target.y) * 0.5;});
-        // investLinkNode.attr("cx", function(d){return d.x = (d.source.x + d.target.x) * 0.5;})
-        //         .attr("cy", function(d){return d.y = (d.source.y + d.target.y) * 0.5;});
-        // porucsLinkNode.attr("cx", function(d){return d.x = (d.source.x + d.target.x) * 0.5;})
-        //         .attr("cy", function(d){return d.y = (d.source.y + d.target.y) * 0.5;});
-        // affilLinkNode.attr("cx", function(d){return d.x = (d.source.x + d.target.x) * 0.5;})
-        //         .attr("cy", function(d){return d.y = (d.source.y + d.target.y) * 0.5;});
           nodeInit
           .attr('transform', function(d) {return translateSVG(d.x, d.y);});
 
   });
-
-  // .on("end", function() {d3.selectAll(".input-control input").property('disabled', false);});
 
 function determineVisibleNodes()
 {
@@ -1535,7 +1364,6 @@ function determineVisibleNodes()
 d3.selectAll('#cb_fund').on('click', function()
 {
   var visibleNodes = determineVisibleNodes();
-  console.log(visibleNodes.length);
     //  Form links for funds.
 
   if(document.getElementById("cb_fund").checked)
@@ -1698,20 +1526,6 @@ d3.selectAll('#cb_affil').on('click', function()
 
 });
 
-  // if(!document.getElementById("cb_individ").checked && !document.getElementById("cb_nonpro").checked && !document.getElementById("cb_forpro").checked && !document.getElementById("cb_gov").checked)
-  // {
-  //   d3.selectAll(".affil, .porucs, .invest, .fund").style("visibility", "hidden");
-  // }
-
-
-
-
-// d3.selectAll(".node").filter(function(d) { if (d.type === "For-Profit"){ forprofitNodes.push(this);}});
-// d3.selectAll(".node").filter(function(d) { if (d.type === "Non-Profit"){ nonprofitNodes.push(this);}});
-// d3.selectAll(".node").filter(function(d) { if (d.type === "Government"){ governmentNodes.push(this);}});
-// d3.selectAll(".node").filter(function(d) { if (d.type === "Individual"){ individNodes.push(this);}});
-
-
 d3.selectAll('#cb_individ, #cb_nonpro, #cb_forpro, #cb_gov').on('click', function() 
 {
 
@@ -1772,11 +1586,7 @@ d3.selectAll('#cb_individ, #cb_nonpro, #cb_forpro, #cb_gov').on('click', functio
     {
 
       d3.selectAll(".node").filter(function(d) { if (d.type === "Individual") return this;}).style("visibility", "visible");
-               // d3.selectAll(".fund").filter(function(d) {if (currentNode === d.source || currentNode === d.target) return this; }).style("visibility", "visible");
-               // d3.selectAll(".invest").filter(function(d){if (currentNode === d.source || currentNode === d.target) return this; }).style("visibility", "visible");
-               // d3.selectAll(".porucs").filter(function(d) {if (currentNode === d.source || currentNode === d.target) return this; }).style("visibility", "visible");
-               // d3.selectAll(".affil").filter(function(d) {if (currentNode === d.source || currentNode === d.target) return this; }).style("visibility", "visible"); 
-                  //  For funding connections
+           //  For funding connections
 
                   countIndex0v = 0;
 
@@ -2784,19 +2594,6 @@ if(document.getElementById("cb_gov").checked)
  // Right-click solution to returning to original state
  d3.select('svg').on('contextmenu', function(){
   d3.event.preventDefault();
-  // document.getElementById("cb_forpro").setAttribute("checked", "checked");
-  // document.getElementById("cb_nonpro").setAttribute("checked", "checked");
-  // document.getElementById("cb_gov").setAttribute("checked", "checked");
-  // document.getElementById("cb_individ").setAttribute("checked", "checked");
-
-  // document.getElementById("cb_fund").setAttribute("checked", "checked");
-  // document.getElementById("cb_invest").setAttribute("checked", "checked");
-  // document.getElementById("cb_porucs").setAttribute("checked", "checked");
-  // document.getElementById("cb_affil").setAttribute("checked", "checked");
-  // document.getElementById("cb_fund").disabled = false;
-  // document.getElementById("cb_invest").disabled = false;
-  // document.getElementById("cb_porucs").disabled = false;
-  // document.getElementById("cb_affil").disabled = false;
     offNode();
  });
 
