@@ -7,6 +7,7 @@ Installation
 ------------
 
     npm install
+    node app
 
 Running on localhost
 --------------------
