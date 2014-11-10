@@ -13,5 +13,5 @@ Running on localhost
 
 |Machine | URL
 |------- | ---
-|'Windows'| 'localhost:3000'
-|'Mac'| 'localhost:port_number/athena-civic'
+|`Windows`| `localhost:3000`
+|`Mac`| `localhost:port_number/athena-civic`
