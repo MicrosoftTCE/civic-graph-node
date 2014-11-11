@@ -38,6 +38,9 @@ Running Application
 	Option a is for Macs. My port number for MAMP is 8889.
 	Option b is for Windows.
 
+		npm install
+		node app
+	
 Running on localhost
 --------------------
 
