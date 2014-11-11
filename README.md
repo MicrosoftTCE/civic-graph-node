@@ -32,6 +32,7 @@ Running Application
 3.       Clone the Github repo to htdocs under the "MAMP" folder if on a Mac machine, or clone the Github repo to www under the "wamp" folder if on a Windows machine.
 4.       Execute the MAMP or WAMP application and turn on the localhost server.
 5.       Inside a terminal or command prompt, navigate to the cloned repo and enter the following command:
+
 			node app.js
 
 			Make sure to npm install all the modules associated with Athena.
