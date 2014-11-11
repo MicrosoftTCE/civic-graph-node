@@ -19,11 +19,32 @@ Filtering options provide a unique method for visualizing certain aspects of the
 |`Collaboration`|`Yellow`
 |`Affiliation`|`Pink`
 
-Installation
-------------
+Cloning the Repository
+----------------------
 
-    npm install
-    node app
+   git clone https://github.com/microsoftny/athena-civic.git
+
+Running Application
+--------------------
+
+1.       Install MAMP (for MACOSX), WAMP (for Windows) or XAMPP (multi-platform).
+2.       For Macs, the ÎéÎíMAMPÎéÎí folder can be found under Applications. For Windows, the ÎéÎíwampÎéÎí folder can be found under C:
+3.       Clone the Github repo to htdocs under the ÎéÎíMAMPÎéÎí folder if on a Mac machine, or clone the Github repo to www under the ÎéÎíwampÎéÎí folder if on a Windows machine.
+4.       Execute the MAMP or WAMP application and turn on the localhost server.
+5.       Inside a terminal or command prompt, navigate to the cloned repo and enter the following command:
+a.       node app.js
+Make sure to npm install all the modules associated with Athena.
+
+         Execute the following commands:
+
+         npm install
+	 node app
+
+6.       Depending on the port, you should be able to access Athena on your local machine using the following links:
+a.       localhost:port_number/athena-civic 
+b.      localhost:3000
+Option a is for Macs. My port number for MAMP is 8889 (I think).
+Option b is for Windows.
 
 Running on localhost
 --------------------
