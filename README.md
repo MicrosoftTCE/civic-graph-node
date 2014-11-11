@@ -32,11 +32,7 @@ Running Application
 3.       Clone the Github repo to htdocs under the "MAMP" folder if on a Mac machine, or clone the Github repo to www under the "wamp" folder if on a Windows machine.
 4.       Execute the MAMP or WAMP application and turn on the localhost server.
 5.       Inside a terminal or command prompt, navigate to the cloned repo and enter the following command:
-6.       Depending on the port, you should be able to access Athena on your local machine using the following links:
-	a.       localhost:port_number/athena-civic 
-	b.      localhost:3000
-	Option a is for Macs. My port number for MAMP is 8889.
-	Option b is for Windows.
+6.       Depending on the port, you should be able to access Athena on your local machine using the following links.
 	
 Running on localhost
 --------------------
