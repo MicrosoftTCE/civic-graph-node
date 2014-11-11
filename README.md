@@ -27,16 +27,16 @@ Cloning the Repository
 Running Application
 --------------------
 
-1.       Install MAMP (for MACOSX), WAMP (for Windows) or XAMPP (multi-platform).
-2.       For Macs, the "MAMP" folder can be found under Applications. For Windows, the "wamp" folder can be found under C:
-3.       Clone the Github repo to htdocs under the "MAMP" folder if on a Mac machine, or clone the Github repo to www under the "wamp" folder if on a Windows machine.
-4.       Execute the MAMP or WAMP application and turn on the localhost server.
-5.       Inside a terminal or command prompt, navigate to the cloned repo and enter the following commands:
+1. Install MAMP (for MACOSX), WAMP (for Windows) or XAMPP (multi-platform).
+2. For Macs, the "MAMP" folder can be found under Applications. For Windows, the "wamp" folder can be found under C:
+3. Clone the Github repo to htdocs under the "MAMP" folder if on a Mac machine, or clone the Github repo to www under the "wamp" folder if on a Windows machine.
+4. Execute the MAMP or WAMP application and turn on the localhost server.
+5. Inside a terminal or command prompt, navigate to the cloned repo and enter the following commands:
 
 			npm install
 			node app
 
-6.       Depending on the port, you should be able to access Athena on your local machine using the following links.
+6. Depending on the port, you should be able to access Athena on your local machine using the following links.
 	
 Running on localhost
 --------------------
