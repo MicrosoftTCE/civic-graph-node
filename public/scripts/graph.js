@@ -1251,38 +1251,6 @@ function sinclick(d) {
                 
 }
 
-/*
-function dblclick(d) {       
-  console.log(this);
-    console.log(this.parentNode);
-    d3.select(this).classed("fixed", d.fixed = false);
-
-    // var dblFund = fundLink.filter(function(f){
-    //   if(f.attr("x1") === d.attr("x") && f.attr("y1") === d.attr("y"))
-    //     f.attr("x1", function(d) { return d.source.x = Math.max(50, Math.min(width - 50, d.source.x)); })
-    //       .attr("y1", function(d) { return d.source.y = Math.max(50, Math.min(height - 50, d.source.y)); });
-    //   if(f.attr("x2") === d.attr("x") && f.attr("y2") === d.attr("y"))
-    //     f.attr("x2", function(d) { return d.x = svg.style("width").substring(0,(svg.style("width")).length - 2) / 2 - d.x -50; })
-    //       .attr("y2", function(d) { return d.y = svg.style("height").substring(0,(svg.style("height")).length - 2) / 2 - d.y -50; });
-    // });
-
-    d3.select(this).attr("x", function(d) { return d.x = svg.style("width").substring(0,(svg.style("width")).length - 2) / 2 - d.x -50; })
-        .attr("y", function(d) { return d.y = svg.style("height").substring(0,(svg.style("height")).length - 2) / 2 - d.y -50; });
-
-// fundLinkNode.attr("cx", function(d){return d.x = (d.source.x + d.target.x) * 0.5;})
-        //         .attr("cy", function(d){return d.y = (d.source.y + d.target.y) * 0.5;});
-        // investLinkNode.attr("cx", function(d){return d.x = (d.source.x + d.target.x) * 0.5;})
-        //         .attr("cy", function(d){return d.y = (d.source.y + d.target.y) * 0.5;});
-        // porucsLinkNode.attr("cx", function(d){return d.x = (d.source.x + d.target.x) * 0.5;})
-        //         .attr("cy", function(d){return d.y = (d.source.y + d.target.y) * 0.5;});
-        // affilLinkNode.attr("cx", function(d){return d.x = (d.source.x + d.target.x) * 0.5;})
-        //         .attr("cy", function(d){return d.y = (d.source.y + d.target.y) * 0.5;});
-          d3.select(this).attr('transform', function(d) {return translateSVG(d.x, d.y);});
-            d3.select(this).classed("fixed", d.fixed = true);
-
-
-}
-*/
 function dragstart(d) {
   d3.select(this).classed("fixed", d.fixed = false);
 
