@@ -175,7 +175,7 @@
   }
   .navigation-bar,
   .navbar {
-    position: relative !important;
+    /*position: relative !important;*/
   }
   .navigation-bar .pull-menu,
   .navbar .pull-menu {
@@ -183,7 +183,8 @@
   }
   .navigation-bar .element,
   .navbar .element {
-    float: none !important;
+    /*float: none !important;*/
+    float: none;
   }
   .navigation-bar .element-divider,
   .navbar .element-divider {

@@ -31,7 +31,7 @@
 {
   display:inline-block;
   float:right;
-  width:30%;
+  width:33%;
   background-color: #f9fafa !important;
 }
  
@@ -68,9 +68,9 @@ g.node
  
 .navstyle
 {
-  margin-top: 15px;
-  margin-bottom: 20px;
-  display: inline-block;
+/*  margin-top: 15px;
+  margin-bottom: 20px;*/
+  display: inline-block !important;
 }
  
 .navstyle .desc 

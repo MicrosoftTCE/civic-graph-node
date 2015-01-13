@@ -1,0 +1,9 @@
+extends layout
+
+block content
+	script(type='text/javascript', src='/javascripts/database.js')
+	h3 Enter a username to enter into the database:
+	input#user-name(type='text')
+	input#user-submit(type='submit', value='Insert')
+	input#user-delete(type='submit', value='Delete')
+	p#output

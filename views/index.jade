@@ -2,13 +2,13 @@ extends layout
 
 block content
 	nav.navigation-bar.dark.fixed-top.shadow
-		nav.navigation-bar-content
-			.navstyle
+		nav.navigation-bar-content.container.navigation-items
+			.navstyle.element.athena-logo
 				div
 					a#website-name(href='JavaScript: location.reload(true);')
 						span.large ATHENA
 						span.small Civic Insights
-			a(href='http://www.microsoft.com/en-us/default.aspx', target='_blank')				
+			a.element.msft-logo(href='http://www.microsoft.com/en-us/default.aspx', target='_blank')				
 				img#logo(src='images/ms_logo.png', align='right', height='200', width='120')
 	#wrapper
 		nav#main-nav.main-nav
@@ -66,28 +66,34 @@ block content
 								h4 Collaboration
 						.input-control.checkbox(data-role='input-control')
 							label
-								input#cb_affil(type='checkbox', name='affil', data-show='affil', value='Affiliations', checked='checked')
+								input#cb_data(type='checkbox', name='data', data-show='data', value='Data', checked='checked')
 								span.check
-								h4 Affiliation
+								h4 Data
 				.group-items.relevance
 					div
 						label
 							.sized_bytext
 								strong
 									h3 Sized By
-						.input-control.radio.default-style(data-role='input-control')
+						.input-control.radio.default-style.sizeby(data-role='input-control')
 							label
 								input#cb_emp(type='radio', name='relevance', value='Employees', checked='checked')
 								span.check
 								h4 Employees
-						.input-control.radio.default-style(data-role='input-control')
+						.input-control.radio.default-style.sizeby(data-role='input-control')
 							label
 								input#cb_numtwit(type='radio', name='relevance', value='Followers')
 								span.check
-								h4 Twitter
+								h4 Twitter Followers
+						.input-control.radio.default-style.sizeby(data-role='input-control')
+							label
+								input#cb_revenue(type='radio', name='relevance', value='Revenue')
+								span.check
+								h4 Revenue
 		.page-wrap
 			.content
+			#edit
 			.example
 				#info
 	script(type='text/javascript', src='/javascripts/underscore-min.js')
-	script(type='text/javascript', src='/javascripts/graphmin.js')
+	script(type='text/javascript', src='/javascripts/newgraph.js')

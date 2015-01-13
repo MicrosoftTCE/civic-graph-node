@@ -2501,7 +2501,7 @@ a {
 .metro .input-control.textarea {
   /*display: inline-block;*/
   display:block;
-  cursor: pointer;
+  /*cursor: pointer;*/
   position: relative;
   margin-bottom: 7pt;
 }
@@ -2673,9 +2673,9 @@ a {
 .metro .input-control.tel,
 .metro .input-control.number {
   display: inline-block;
-  cursor: pointer;
+  /*cursor: pointer;*/
   position: relative;
-  background-color: #fff;
+  /*background-color: #fff;*/
   outline: 0;
   height: 34px;
   width: 100%;
@@ -4075,7 +4075,7 @@ a {
 .metro .navbar .navigation-bar-content .element:hover,
 .metro .navigation-bar .navbar-content .element:hover,
 .metro .navbar .navbar-content .element:hover {
-  background-color: #00aafd;
+  /*background-color: #00aafd;*/
 }
 .metro .navigation-bar .navigation-bar-content .element > a.dropdown-toggle,
 .metro .navbar .navigation-bar-content .element > a.dropdown-toggle,
@@ -4333,7 +4333,7 @@ a {
 }
 .metro .navigation-bar.dark .element:hover,
 .metro .navigation-bar.dark .element-menu > li:hover {
-  background-color: #201a1a;
+  /*background-color: #201a1a;*/
 }
 .metro .navigation-bar.light {
   background-color: #eeeeee;

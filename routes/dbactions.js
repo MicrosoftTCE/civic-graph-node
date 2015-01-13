@@ -6,4 +6,10 @@ router.get('/', function(req, res) {
   res.render('dbview');
 });
 
+router.post('/', function(req, res){
+	console.log('Good');
+	  res.render('dbview');
+
+})
+
 module.exports = router;
