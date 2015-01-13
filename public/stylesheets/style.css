@@ -405,7 +405,7 @@ font-family: 'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sa
 
 #webform-head {
   font-weight: bold;
-color: rgba(0, 0, 0, 0.6);
+color: rgba(0, 0, 0, 1);
 }
 
 .webform-content {
@@ -476,10 +476,28 @@ button#submit-A, button#submit-B {
   background-color:rgb(207,208,208) !important;
 }
 
+.metro h3{
+	color:rgba(0,0,0,1);
+}
 
+@media (max-width:1271px) and (min-width:986px){
+	#info > div.webform-content > div.webform-categories > div:nth-child(4)
+	{
+		margin-top: -11px !important;
+	}
+	
+	#info > div.webform-content > div.webform-categories > div:nth-child(3) > label > span{
+		margin-bottom:16px;
+	}
 
- 
- 
+	#info > div.webform-content > div.webform-categories > div:nth-child(3) > label > h4
+	{
+		display: inline-block !important;
+		width:70%;
+		margin-bottom:0px;
+	}
+}
+
 /*Optimized for the Surface*/
 @media (max-height: 600px) and (max-width:1300px){
  
@@ -620,64 +638,9 @@ font-family: 'Segoe UI_', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
 }
  
 }
- 
-
-
-
 
 @media (max-width:800px){
   .page-wrap{
     top:0px;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*Alert for the webform*/
-
-/*.alert-danger {
-  color: #A94442;
-  background-color:#F2DEDE;
-  border-color: #EBCCD1;
-}
-
-.alert {
-  padding:15px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-
-}*/

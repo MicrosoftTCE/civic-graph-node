@@ -2301,26 +2301,18 @@ d3.json("data/final_data.json", function(error, graph) {
     filteredNodes.forEach(function(o, i) {
       if (o.type !== null) {
         if (o.type === "Individual") {
-					//o.x += k;
-					//o.y += k;
           o.x += (k + k);
           o.y += (k + k);
         }
         if (o.type === "Non-Profit") {
-					//o.x += -k;
-					//o.y += k;
           o.x += (-k - k);
           o.y += (k + k);
         }
         if (o.type === "For-Profit") {
-					//o.x += k;
-					//o.y += -k;
           o.x += (k + k);
           o.y += (-k - k);
         }
         if (o.type === "Government") {
-					//o.x += -k;
-					//o.y += -k;
           o.x += (-k - k);
           o.y += (-k - k);
         }
