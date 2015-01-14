@@ -39,12 +39,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="individual"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
-top: -2%;
 margin: 0px;
-padding-bottom: 2px;
+top: -1px;
+right: -1px;
 }
 
 /*nonprofit checkbox  before */
@@ -61,11 +61,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="non-profit"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
-top: -2%;
 margin: 0px;
+top: -1px;
+right: -1px;
 }
 
 
@@ -83,11 +84,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="for-profit"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
-top: -2%;
 margin: 0px;
+top: -1px;
+right: -1px;
 }
 
 
@@ -105,12 +107,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="government"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
 margin: 0px;
-top: -2%;
-padding-bottom: 1px;
+top: -1px;
+right: -1px;
 }
 
 /*funding before*/
@@ -128,12 +130,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="funding"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
 margin: 0px;
-top: -2%;
-padding-bottom: 1px;
+top: -1px;
+right: -1px;
 }
 
 /*investing before */
@@ -150,11 +152,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="investing"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
-top: -2%;
-padding: 2px;
+margin: 0px;
+top: -1px;
+right: -1px;
 }
 
 /*collaborations before*/
@@ -171,12 +174,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="poruc"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
-top: -2%;
 margin: 0px;
-padding-bottom: 1px;
+top: -1px;
+right: -1px;
 }
 
 
@@ -194,12 +197,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="data"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
-top: -2%;
 margin: 0px;
-padding-bottom:1px;
+top: -1px;
+right: -1px;
 }
 
 /*makes the round radio buttons*/
@@ -258,13 +261,16 @@ we need one for each checkbox of these */
 .metro .input-control.checkbox.webform .check, .metro .input-control.radio.webform .check {
 width: 28px;
 height: 28px;
-background-color: #A9A9A9;
-border: 6px #A9A9A9 solid;
+	background-color: #FFFFFF;
+border: 6px #FFFFFF solid;
 padding: 0;
 margin: 0 5px 0 0;
 position: relative;
 display: inline-block;
 vertical-align: middle;
+
+
+box-shadow: 0px 0px 0px 1px #D9D9D9;
 }
 
 /*makes the after box appear over the before*/
@@ -281,7 +287,7 @@ border-radius: 50%;
 }
 
 /*is the after for the radio buttons*/
-.metro .input-control.radio.default-style.webform input[type="radio"]:checked ~ .check:after {
+/*.metro .input-control.radio.default-style.webform input[type="radio"]:checked ~ .check:after {
 display: block;
 content: "" !important;
 width: 16px;
@@ -290,27 +296,75 @@ border-radius: 50%;
 background-color: #FFFFFF;
 margin: 0px;
 margin-left: 0px;
+}*/
+
+.metro .input-control.radio.default-style.webform input[value="For-Profit"]:checked ~ .check:after {
+display: block;
+content: "" !important;
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background-color: #7CBD42;
+margin: 0px;
+margin-left: 0px;
+}
+
+.metro .input-control.radio.default-style.webform input[value="Non-Profit"]:checked ~ .check:after {
+display: block;
+content: "" !important;
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background-color: #269FD9;
+margin: 0px;
+margin-left: 0px;
+}
+
+.metro .input-control.radio.default-style.webform input[value="Government"]:checked ~ .check:after {
+display: block;
+content: "" !important;
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background-color: #F05026;
+margin: 0px;
+margin-left: 0px;
+}
+
+.metro .input-control.radio.default-style.webform input[value="Individual"]:checked ~ .check:after {
+display: block;
+content: "" !important;
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background-color: #FBB717;
+margin: 0px;
+margin-left: 0px;
 }
 
 .metro .input-control.radio.webform input[value="Non-Profit"] + .check {
 
-background-color: #269FD9;
-border: 6px #269FD9 solid;
+background-color: #FFFFFF;
+border: 6px #FFFFFF solid;
+box-shadow: 0px 0px 0px 1px #D9D9D9;
 }
 
 .metro .input-control.radio.webform input[value="For-Profit"] + .check {
-	background-color: #7CBD42;
-border: 6px #7CBD42 solid;
+	background-color: #FFFFFF;
+border: 6px #FFFFFF solid;
+box-shadow: 0px 0px 0px 1px #D9D9D9;
 }
 
 .metro .input-control.radio.webform input[value="Government"] + .check {
-background-color: #F05026;
-border: 6px #F05026 solid;
+	background-color: #FFFFFF;
+border: 6px #FFFFFF solid;
+box-shadow: 0px 0px 0px 1px #D9D9D9;
 }
 
 .metro .input-control.radio.webform input[value="Individual"] + .check {
-background-color: #FBB717;
-border: 6px #FBB717 solid;
+	background-color: #FFFFFF;
+border: 6px #FFFFFF solid;
+box-shadow: 0px 0px 0px 1px #D9D9D9;
 }
 
 /*individual checkbox before*/
@@ -327,12 +381,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="general"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
-top: -2%;
 margin: 0px;
-padding-bottom: 2px;
+top: -1px;
+right: -1px;
 }
 
 /*nonprofit checkbox  before */
@@ -349,11 +403,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="datatrans"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
-top: -2%;
 margin: 0px;
+top: -1px;
+right: -1px;
 }
 
 
@@ -371,11 +426,12 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="cjobsopp"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
-top: -2%;
 margin: 0px;
+top: -1px;
+right: -1px;
 }
 
 
@@ -393,11 +449,11 @@ margin: 0px;
 .metro .input-control.checkbox input[data-show="srcities"] ~ .check:after{
 display: block;
 content: "" !important;
-width: 16px;
-height: 16px;
+width: 18px;
+height: 18px;
 background-color: white;
 margin: 0px;
-top: -2%;
-padding-bottom: 1px;
+top: -1px;
+right: -1px;
 }
 
