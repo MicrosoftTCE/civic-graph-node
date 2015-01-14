@@ -212,7 +212,7 @@ border-radius: 50%;
 
 
 /*is the after for the radio buttons*/
-.metro .input-control.radio.default-style.sizeby input[type="radio"]:checked ~ .check:after {
+.metro .input-control.radio.default-style.sizeby input[type="radio"]:checked ~ .check:after{
 display: block;
 content: "" !important;
 width: 16px;
@@ -287,16 +287,16 @@ border-radius: 50%;
 }
 
 /*is the after for the radio buttons*/
-/*.metro .input-control.radio.default-style.webform input[type="radio"]:checked ~ .check:after {
+.metro .input-control.radio.default-style.webform input[type="radio"]:checked ~ .check:after {
 display: block;
 content: "" !important;
 width: 16px;
 height: 16px;
 border-radius: 50%;
-background-color: #FFFFFF;
+background-color: #1d1d1d;
 margin: 0px;
 margin-left: 0px;
-}*/
+}
 
 .metro .input-control.radio.default-style.webform input[value="For-Profit"]:checked ~ .check:after {
 display: block;
