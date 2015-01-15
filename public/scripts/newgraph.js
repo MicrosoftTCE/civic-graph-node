@@ -1465,17 +1465,11 @@ d3.json("data/final_data.json", function(error, graph) {
 
     $.ajax({
       type: 'POST',
-      data: {
-        "nodes": 1
-      },
-      dataType: 'json',
-      async: false,
-      contentType: 'text/plain',
-      url: '/testing',
-      success: function(data) {
-        console.log('success');
-        console.log(JSON.stringify(data));
-      }
+      data: $.param(data),
+      url: '/handleData',
+          crossDomain: true
+    }).done(function(returnData){
+      alert('cool');
     });
 
     // Still trying to resolve AJAX / ExpressJS routing issue.
@@ -1496,17 +1490,6 @@ d3.json("data/final_data.json", function(error, graph) {
     //         console.log( data ); // server response
     //     }
      	// });
-
-    // Send this data to the server!
-    // $.ajax
-    // ({
-    //   type: "POST",
-    //   url: "http://localhost:3000/testing",
-    //   dataType: "json",
-    //   data:JSON.stringify(formObj)
-    // }).done(function ( data ) {
-    //     alert("ajax callback response:"+JSON.stringify(data));
-    //  });
 
     //   $.ajax
     // ({
