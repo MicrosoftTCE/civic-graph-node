@@ -1,5 +1,5 @@
-function transform(d) {
-  return "translate(" + d.x + "," + d.y + ")";
+function transformText(d) {
+  return "translate(" + (d.x + 6) + "," + (d.y + 4) + ")";
 }
 
 function translateSVG(x, y) {
@@ -235,15 +235,29 @@ d3.json("data/final_data.json", function(error, graph) {
   // combine collaboration and data
 
   var textElement = svg.selectAll('.node')
-    .append('text')
-    .text(function(d) {
-      return d.nickname;
-    })
-    .attr("x", -8)
-    .attr("y", ".31em")
-    .style('font', '14px sans-serif')
-    .style('pointer-events', 'none')
-    .style('text-shadow', '0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff');
+                       .append('text')
+                       .text(function(d){return d.nickname;})
+                       .attr("x", -8)
+                         .attr("y", ".31em")
+                         .style('color', 'black')
+                         .style('font-size', '14px')
+                         .style('font-weight', 900)
+                       .style('font-family', "'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif")
+                       .style('pointer-events', 'none');
+                       // .style('text-shadow', '0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff');
+
+  // var textElement = svg.selectAll('.node')
+  //   .append('text')
+  //   .text(function(d) {
+  //     return d.nickname;
+  //   })
+  //   // .attr("x", -8)
+  //   // .attr("y", ".31em")
+  //   .style('font-family', '"Segoe UI Semibold", verdana, sans-serif')
+  //   .style('font-size', "14px")
+  //   .style('color', '#B8B0A8')
+  //   .style('pointer-events', 'none');
+    // .style('text-shadow', '0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff');
 
   //d3.selectAll('g').on("dblclick", dblclick);
   while (force.alpha() > 0.025) { // You'll want to try out different, "small" values for this
@@ -620,358 +634,266 @@ d3.json("data/final_data.json", function(error, graph) {
 
   function processFormA() {
 
-    var formObj = {
+    var formObject = {
       type: null,
       categories: null,
       name: null,
       nickname: null,
       location: null,
-      weblink: null,
-      numemp: null,
-      people: null,
-      twitterH: null,
+      url: null,
+      employees: null,
+      key_people: null,
+      twitter_handle: null,
       followers: null,
       data: null,
-      relatedto: null,
-      poruc: null,
-      fundingR: null,
-      yearFR: null,
-      investmentR: null,
-      yearIR: null,
-      rande: null,
-      randeY: null,
-      grantsG: null,
-      yearG: null,
-      golr: null
+      relations: null,
+      collaborations: null,
+      funding_received: null,
+      investments_received: null,
+      revenue: null,
+      expenses: null,
+      grants: null,
+      influence: null
     };
 
     // Scrape the web form for pertinent information and store into the object data structure.
     if ($('input[name="name"]').val() === "" && $('input[name="location"]').val() === "") {
       console.log("The entity name and location have not been filled out.");
       return {
-        name: "empty",
-        location: "empty",
+        name: null,
+        location: null,
         errorMessage: "The entity name and location have not been filled out."
       };
     } else if ($('input[name="name"]').val() === "") {
       console.log("The entity name has not been filled out.");
       return {
-        name: "empty",
+        name: null,
         errorMessage: "The entity name has not been filled out."
       };
     } else if ($('input[name="location"]').val() === "") {
       console.log("The location has not been filled out.");
       return {
-        location: "empty",
+        location: null,
         errorMessage: "The location has not been filled out."
       };
     } else {
       // Set the entity type.
       if ($('input#rb_forpro').is(":checked"))
-        formObj.type = "For-Profit";
+        formObject.type = "For-Profit";
       else if ($('input#rb_nonpro').is(":checked"))
-        formObj.type = "Non-Profit";
+        formObject.type = "Non-Profit";
       else if ($('input#rb_gov').is(":checked"))
-        formObj.type = "Government";
+        formObject.type = "Government";
       else
-        formObj.type = "Individual";
+        formObject.type = "Individual";
 
       // Set the entity name.
-      formObj.name = d3.select(".webform-content input[name='name']")[0][0].value;
+      formObject.name = d3.select(".webform-content input[name='name']")[0][0].value;
 
       // Grab the categories.
-      formObj.categories = "";
+      formObject.categories = [];
       d3.selectAll('.webform-categories input').filter(function(d) {
         if (this.checked === true) {
-          if (formObj.categories !== "") {
-            formObj.categories += ", ";
-          }
           switch (this.value) {
             case 'General':
-              formObj.categories += "General";
+              formObject.categories.push("General");
               break;
             case 'DataTrans':
-              formObj.categories += "Data Transparency";
+              formObject.categories.push("Data Transparency");
               break;
             case 'CJobsOpp':
-              formObj.categories += "21st Century Jobs and Opportunities";
+              formObject.categories.push("21st Century Jobs and Opportunities");
               break;
             case 'SRCities':
-              formObj.categories += "Smart and Resilient Cities";
+              formObject.categories.push("Smart and Resilient Cities");
               break;
             default:
               break;
           }
         }
       });
-      if (formObj.categories === "") {
-        formObj.categories = null;
+      if (formObject.categories.length === 0) {
+        formObject.categories = null;
       }
 
       // Obtain the location
-      formObj.location = d3.select("input[name='location']")[0][0].value;
+      formObject.location = d3.select("input[name='location']")[0][0].value;
 
       // Obtain the URL
-      formObj.weblink = "";
-      if (formObj.weblink === "") {
-        formObj.weblink = null;
+      formObject.url = "";
+      if (formObject.url === "") {
+        formObject.url = null;
       } else {
-        formObj.weblink = d3.select("input[name='website']")[0][0].value;
+        formObject.url = d3.select("input[name='website']")[0][0].value;
       }
 
       // Obtain the number of employees.
-      formObj.numemp = "";
-      if (formObj.numemp === "") {
-        formObj.numemp = null;
+      formObject.employees = "";
+      if (formObject.employees === "") {
+        formObject.employees = null;
       } else {
-        formObj.numemp = d3.select("input[name='employees']")[0][0].value;
+        formObject.employees = d3.select("input[name='employees']")[0][0].value;
       }
 
       // Obtain the key people (.kpeople)
-      formObj.people = "";
+      formObject.key_people = [];
       d3.selectAll('.kpeople').filter(function(d) {
         if (this.value !== "") {
-          if (formObj.people !== "") {
-            formObj.people += ", ";
-          }
-          formObj.people += this.value;
+          formObject.key_people.push(this.value);
         }
       });
-      if (formObj.people === "") {
-        formObj.people = null;
+      if (formObject.key_people.length === 0) {
+        formObject.key_people = null;
       }
 
       // Obtain funding information (Don't forget to add total feature later on...)
-      formObj.fundingR = "";
-      formObj.yearFR = "";
+      formObject.funding_received = [];
+      var fund_amount;
       d3.selectAll('.fund-input .funder').filter(function(d, i) {
-        if (this.value !== "") {
-          if (formObj.fundingR !== "") {
-            formObj.fundingR += "; ";
-          }
-
-          if (d3.selectAll('.fund_amt')[0][i].value === "") {
-            formObj.fundingR += this.value + ":null";
+        if (this.value) {
+          if (!d3.selectAll('.fund_amt')[0][i].value) {
+            fund_amount = null;
+            if(!d3.selectAll('.fund_year')[0][i].value) {
+              formObject.funding_received.push({name:this.value,amount:fund_amount, year:null});              
+            }
+            else
+              formObject.funding_received.push({name:this.value,amount:fund_amount, year:d3.selectAll('.fund_year')[0][i].value});              
           } else {
-            formObj.fundingR += this.value + ":" + d3.selectAll('.fund_amt')[0][i].value;
+            fund_amount = d3.selectAll('.fund_amt')[0][i].value;
+            if(!d3.selectAll('.fund_year')[0][i].value) {
+              formObject.funding_received.push({name:this.value,amount:fund_amount, year:null});              
+            }
+            else
+              formObject.funding_received.push({name:this.value,amount:fund_amount, year:d3.selectAll('.fund_year')[0][i].value});     
           }
         }
       });
-      d3.selectAll('.fund-input .fund_year').filter(function(d, i) {
-        if (formObj.yearFR !== "" && i !== d3.selectAll('.fund-input .fund_year')[0].length - 1) {
-          formObj.yearFR += ", ";
-        }
-
-        if (this.value === "" && i !== d3.selectAll('.fund-input .fund_year')[0].length - 1) {
-          formObj.yearFR += "null";
-        } else {
-          formObj.yearFR += this.value;
-        }
-      });
-      if (formObj.fundingR === "") {
-        formObj.fundingR = null;
-      }
-      if (formObj.yearFR === "") {
-        formObj.yearFR = null;
+      if(formObject.funding_received.length === 0){
+        formObject.funding_received = null;
       }
 
       // Obtain investment information (Don't forget to add total feature later on...)
-      formObj.investmentR = "";
-      formObj.yearIR = "";
+      formObject.investments_received = [];
+      var investment_amount;
       d3.selectAll('.invest-input .investor').filter(function(d, i) {
-        if (this.value !== "") {
-          if (formObj.investmentR !== "") {
-            formObj.investmentR += "; ";
-          }
-
-          if (d3.selectAll('.invest_amt')[0][i].value === "") {
-            formObj.investmentR += this.value + ":null";
+        if (this.value) {
+          if (!d3.selectAll('.invest_amt')[0][i].value) {
+            investment_amount = null;
+            if(!d3.selectAll('.invest_year')[0][i].value) {
+              formObject.investments_received.push({name:this.value,amount:investment_amount, year:null});              
+            }
+            else
+              formObject.investments_received.push({name:this.value,amount:investment_amount, year:d3.selectAll('.invest_year')[0][i].value});              
           } else {
-            formObj.investmentR += this.value + ":" + d3.selectAll('.invest_amt')[0][i].value;
+            investment_amount = d3.selectAll('.invest_amt')[0][i].value;
+            if(!d3.selectAll('.invest_year')[0][i].value) {
+              formObject.investments_received.push({name:this.value,amount:investment_amount, year:null});              
+            }
+            else
+              formObject.investments_received.push({name:this.value,amount:investment_amount, year:d3.selectAll('.invest_year')[0][i].value});     
           }
         }
       });
-      d3.selectAll('.invest-input .invest_year').filter(function(d, i) {
-        if (formObj.yearIR !== "" && i !== d3.selectAll('.invest-input .invest_year')[0].length - 1) {
-          formObj.yearIR += ", ";
-        }
+      if(formObject.investments_received.length === 0){
+        formObject.investments_received = null;
+      }
 
-        if (this.value === "" && i !== d3.selectAll('.invest-input .invest_year')[0].length - 1) {
-          formObj.yearIR += "null";
-        } else {
-          formObj.yearIR += this.value;
-        }
-      });
-      if (formObj.investmentR === "") {
-        formObj.investmentR = null;
-      }
-      if (formObj.yearIR === "") {
-        formObj.yearIR = null;
-      }
+      
 
       // Obtain data
-      formObj.data = "";
+      formObject.data = [];
       d3.selectAll('.data-entity').filter(function(d, i) {
-        if (formObj.data !== "") {
-          formObj.data += ', ';
-        }
-        formObj.data += this.value;
+        if (this.value)
+        formObject.data.push(this.value);
       });
-      if (formObj.data === "") {
-        formObj.data = null;
+      if (formObject.data === "") {
+        formObject.data = null;
       }
     }
 
-    return formObj;
+    return formObject;
   }
 
-  function processFormB(obj) {
+  function processFormB(formObject) {
     //var formObj = {type:null,categories:null,name:null,nickname:null,location:null,weblink:null,numemp:null,people:null,twitterH:null,followers:null,data:null,relatedto:null,poruc:null,fundingR:null,yearFR:null,investmentR:null,yearIR:null,rande:null,randeY:null,grantsG:null,yearG:null,golr:null};
 
     // Set the entity name.
-    obj.nickname = d3.select(".webform-content input[name='nickname']")[0][0].value;
-    if (obj.nickname === "") {
-      obj.nickname = obj.name;
+    formObject.nickname = d3.select(".webform-content input[name='nickname']")[0][0].value;
+    if (!formObject.nickname) {
+      formObject.nickname = formObject.name;
     }
 
-    obj.twitterH = d3.select(".webform-content input[name='twitterhandle']")[0][0].value;
-    if (obj.twitterH === "") {
-      obj.twitterH = null;
+    formObject.twitter_handle = d3.select(".webform-content input[name='twitterhandle']")[0][0].value;
+    if (!formObject.twitter_handle) {
+      formObject.twitter_handle = null;
     }
 
     // Set the entity type.
     if ($('.webform-influence input#rb_local').is(":checked"))
-      obj.golr = "0";
+      formObject.influence = "local";
     else
-      obj.golr = "1";
+      formObject.influence = "global";
 
-    // Obtain the key people (.kpeople)
-    obj.poruc = "";
+    // Obtain collaborations
+    formObject.collaborations = [];
     d3.selectAll('.collaborator').filter(function(d) {
-      if (this.value !== "") {
-        if (obj.poruc !== "") {
-          obj.poruc += "; ";
-        }
-        obj.poruc += this.value;
+      if (this.value) {
+        formObject.collaborations.push(this.value);
       }
     });
-    if (obj.poruc === "") {
-      obj.poruc = null;
+    if (formObject.collaborations.length === 0) {
+      formObject.collaborations = null;
     }
 
     // Obtain funding information (Don't forget to add total feature later on...)
-    obj.rande = "";
-    obj.randeY = "";
+    formObject.revenue = [];
+    var revenue_year;
     d3.selectAll('.revenue-input .revenue_amt').filter(function(d, i) {
-      if (this.value !== "") {
-        if (obj.rande !== "") {
-          obj.rande += "; ";
-        }
-
-        if (d3.selectAll('.revenue_amt')[0][i].value === "") {
-          obj.rande += "Revenue" + ":null";
-        } else {
-          obj.rande += "Revenue" + ":" + this.value;
-        }
+      if (this.value) {
+        revenue_year = d3.selectAll('.revenue-input .revenue_year')[0][i].value;
+        if(revenue_year)
+          formObject.revenue.push({amount:this.value, year:revenue_year});
+        else
+          formObject.revenue.push({amount:this.value, year:null});
       }
     });
-    d3.selectAll('.revenue-input .revenue_year').filter(function(d, i) {
-      if (obj.randeY !== "" && i !== d3.selectAll('.revenue-input .revenue_year')[0].length - 1) {
-        obj.randeY += ", ";
-      }
-
-      if (this.value === "" && i !== d3.selectAll('.revenue-input .revenue_year')[0].length - 1) {
-        obj.randeY += "null";
-      } else {
-        obj.randeY += this.value;
-      }
-    });
-    if (obj.rande === "" || obj.rande === "null") {
-      obj.rande = null;
-    }
-    if (obj.randeY === "" || obj.randeY === "null") {
-      obj.randeY = null;
+    if(formObject.revenue.length === 0) {
+      formObject.revenue = null;
     }
 
-
-    // Fix this - expenses...
-    var expense_rande = "; ";
-    var expense_randeY = ", ";
+    formObject.expenses = [];
+    var expense_year;
     d3.selectAll('.expense-input .expense_amt').filter(function(d, i) {
-      if (this.value !== "") {
-        if (expense_rande !== "; ") {
-          expense_rande += "; ";
-        }
-
-        if (d3.selectAll('.expense_amt')[0][i].value === "") {
-          expense_rande += "Expense" + ":null";
-        } else {
-          expense_rande += "Expense" + ":" + this.value;
-        }
+      if (this.value) {
+        expense_year = d3.selectAll('.expense-input .expense_year')[0][i].value;
+        if(expense_year)
+          formObject.expenses.push({amount:this.value, year:expense_year});
+        else
+          formObject.expenses.push({amount:this.value, year:null});
       }
     });
-    d3.selectAll('.expense-input .expense_year').filter(function(d, i) {
-      if (expense_randeY !== ", " && i !== d3.selectAll('.expense-input .expense_year')[0].length - 1) {
-        expense_randeY += ", ";
-      }
-
-      if (this.value === "" && i !== d3.selectAll('.expense-input .expense_year')[0].length - 1) {
-        expense_randeY += "null";
-      } else {
-        expense_randeY += this.value;
-      }
-    });
-    if (expense_rande === "; ") {
-      expense_rande = "";
+    if(formObject.expenses.length === 0) {
+      formObject.expenses = null;
     }
-    if (expense_randeY === ", ") {
-      expense_randeY = "";
-    }
-    obj.rande += expense_rande;
-    obj.randeY += expense_randeY;
 
-    if (obj.rande === "null")
-      obj.rande = null;
-    if (obj.randeY === "null")
-      obj.randeY = null;
-
-    // Obtain funding information (Don't forget to add total feature later on...)
-    obj.grantsG = "";
-    obj.yearG = "";
+    formObject.grants = [];
+    var grant_year;
     d3.selectAll('.grant-input .grant_amt').filter(function(d, i) {
-      if (this.value !== "") {
-        if (obj.grantsG !== "") {
-          obj.grantsG += ", ";
-        }
-
-        if (d3.selectAll('.grant_amt')[0][i].value === "") {
-          obj.grantsG += "null";
-        } else {
-          obj.grantsG += this.value;
-        }
+      if (this.value) {
+        grant_year = d3.selectAll('.grant-input .grant_year')[0][i].value;
+        if(grant_year)
+          formObject.grants.push({amount:this.value, year:grant_year});
+        else
+          formObject.grants.push({amount:this.value, year:null});
       }
     });
-    d3.selectAll('.grant-input .grant_year').filter(function(d, i) {
-      if (obj.yearG !== "" && i !== d3.selectAll('.grant-input .grant_year')[0].length - 1) {
-        obj.yearG += ", ";
-      }
-
-      if (this.value === "" && i !== d3.selectAll('.grant-input .grant_year')[0].length - 1) {
-        obj.yearG += "null";
-      } else {
-        obj.yearG += this.value;
-      }
-    });
-    if (obj.grantsG === "") {
-      obj.grantsG = null;
+    if (formObject.grants.length === 0) {
+      formObject.grants = null;
     }
-    if (obj.yearG === "") {
-      obj.yearG = null;
-    }
+  
+    console.log(formObject);
 
-    console.log(obj);
-
-    return obj;
+    return formObject;
 
   }
 
@@ -981,9 +903,9 @@ d3.json("data/final_data.json", function(error, graph) {
     // Now we have a perfectly structured JSON object that contains the information given by the user and inputted into the webform.
     // Send this object as a parameter to form B, and render form B accordingly.
 
-    var formObj = processFormA();
+    var formObject = processFormA();
 
-    if (formObj.location !== "empty" && formObj.name !== "empty") {
+    if (formObject.location && formObject.name) {
       // Reinitialize Form A items.
 
       counterKey = 0;
@@ -1089,14 +1011,14 @@ d3.json("data/final_data.json", function(error, graph) {
 
       // Time to prefill the form...
       d3.selectAll('#name').text(function(d) {
-        console.log(formObj.name);
-        this.value = formObj.name;
+        console.log(formObject.name);
+        this.value = formObject.name;
       }).attr("disabled", true);
       d3.selectAll('#location').text(function(d) {
-        this.value = formObj.location;
+        this.value = formObject.location;
       }).attr("disabled", true).style("margin-top", "10px");
       d3.selectAll('input[name="entitytype"]').filter(function(d, i) {
-        if (this.value === formObj.type)
+        if (this.value === formObject.type)
           this.checked = true;
         else
           this.checked = false;
@@ -1118,15 +1040,15 @@ d3.json("data/final_data.json", function(error, graph) {
       });
 
       d3.selectAll('#submit-B').on('click', function() {
-        displayFormCSendJSON(formObj);
+        displayFormCSendJSON(formObject);
         // if(!_.isEmpty(sb))
       });
     } else {
-      if (formObj.name === "empty" && formObj.location === "empty") {
+      if (!formObject.name && !formObject.location) {
         d3.select('#name').style("border-color", "#e51400");
         d3.select('#location').style("border-color", "#e51400");
       } else {
-        if (formObj.name === "empty")
+        if (!formObject.name)
           d3.select('#name').style("border-color", "#e51400");
         else
           d3.select('#location').style("border-color", "#e51400");
@@ -1465,11 +1387,11 @@ d3.json("data/final_data.json", function(error, graph) {
 
     $.ajax({
       type: 'POST',
-      data: $.param(data),
+      data: $.param(formObj),
       url: '/handleData',
           crossDomain: true
     }).done(function(returnData){
-      alert('cool');
+      
     });
 
     // Still trying to resolve AJAX / ExpressJS routing issue.
@@ -2001,7 +1923,7 @@ d3.json("data/final_data.json", function(error, graph) {
       return link.source.index === d.index ? link.target.index : link.source.index;
     });
 
-    d3.select(this).style("stroke", "black");
+    d3.select(this).style("stroke", "rgba(0,0,0,0.6)");
 
     svg.selectAll('.node')
       .transition()
@@ -2363,6 +2285,41 @@ d3.json("data/final_data.json", function(error, graph) {
           return d.target.y;
         });
 
+      // textElement.attr("x", function(d) { 
+      //       return d.x; })
+      //    .attr("y", function(d) {
+      //       if(d.numemp !== null)
+      //       {
+      //         if(d.nickname.length > 0 && d.nickname.length < 6)  
+      //         {
+      //           return d.y + 7 + empScale(parseInt(d.numemp));
+      //         }
+      //         else if(d.nickname.length >= 6 && d.nickname.length <= 16)
+      //         {
+      //           return d.y;
+      //         }
+      //         else
+      //         {
+      //           return d.y - 7 - empScale(parseInt(d.numemp));
+      //         }
+      //       }
+      //       else
+      //       {
+      //         if(d.nickname.length > 0 && d.nickname.length < 6)  
+      //         {
+      //           return d.y + 7 + 7;
+      //         }
+      //         else if(d.nickname.length >= 6 && d.nickname.length <= 16)
+      //         {
+      //           return d.y;
+      //         }
+      //         else
+      //         {
+      //           return d.y - 7 - 7;
+      //         }
+      //       }
+      //     });
+
       node.attr("cx", function(d) {
           return d.x = d.x;
         })
@@ -2370,7 +2327,8 @@ d3.json("data/final_data.json", function(error, graph) {
           return d.y = d.y;
         });
 
-      textElement.attr("transform", transform);
+         textElement.attr("transform", transformText);
+          
 
     } else {
       fundLink.attr("x1", function(d) {
@@ -2496,6 +2454,41 @@ d3.json("data/final_data.json", function(error, graph) {
       // .attr("y2", function(d) { return d.target.y;  });
       // } 
 
+        // textElement.attr("x", function(d) { 
+        //     return d.x; })
+        //  .attr("y", function(d) {
+        //     if(d.numemp !== null)
+        //     {
+        //       if(d.nickname.length > 0 && d.nickname.length < 6)  
+        //       {
+        //         return d.y + 7 + empScale(parseInt(d.numemp));
+        //       }
+        //       else if(d.nickname.length >= 6 && d.nickname.length <= 16)
+        //       {
+        //         return d.y;
+        //       }
+        //       else
+        //       {
+        //         return d.y - 7 - empScale(parseInt(d.numemp));
+        //       }
+        //     }
+        //     else
+        //     {
+        //       if(d.nickname.length > 0 && d.nickname.length < 6)  
+        //       {
+        //         return d.y + 7 + 7;
+        //       }
+        //       else if(d.nickname.length >= 6 && d.nickname.length <= 16)
+        //       {
+        //         return d.y;
+        //       }
+        //       else
+        //       {
+        //         return d.y - 7 - 7;
+        //       }
+        //     }
+        //   });
+
       node.attr("cx", function(d, i) {
           if ((d3.select(node)[0][0].data())[i].name === centeredNode.name) {
             d.x = centeredNode.x;
@@ -2508,8 +2501,8 @@ d3.json("data/final_data.json", function(error, graph) {
             return d.y;
           } else return d.y = d.y;
         });
-
-      textElement.attr("transform", transform);
+            
+ textElement.attr("transform", transformText);
 
     }
 

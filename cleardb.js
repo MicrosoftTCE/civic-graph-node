@@ -130,6 +130,17 @@ connection.query('CREATE DATABASE IF NOT EXISTS athena', function (err) {
                 if(err) throw err;
             });
 
+        connection.query('CREATE TABLE IF NOT EXISTS Monetary('
+            + 'ID INT NOT NULL UNIQUE,'
+            + 'ObjectID INT NOT NULL,'
+            + 'MonetaryCategory CHAR(7) NOT NULL,'
+            + 'Amount INT,'
+            + 'Year CHAR(4),'
+            + 'FOREIGN KEY (ObjectID) REFERENCES Entities(ID),'
+            + '', function (err) {
+                if(err) throw err;
+            });
+
         // TAke JSON file and fill in the database...
         var fs = require('fs');
         var file = __dirname + '/final_data.json';

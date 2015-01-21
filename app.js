@@ -52,13 +52,135 @@ app.use('/dbview', dbactions);
 app.use('/static', staticaction);
 app.use('/ajax', ajaxaction);
 
+//  Database credentials - Azure via ClearDB
+// var connection = mysql.createConnection(
+//     {
+//       port: 3306,
+//       host: 'us-cdbr-azure-east-b.cloudapp.net',
+//       user: 'b5a370a8f6d91a',
+//       password: 'e928dad7',
+//       database: 'athena'
+//     }
+// );
 
+// connection.connect();
+ 
+// console.log("Successful connection!");
+
+//  For debugging purposes
 var logger = require('./logger');
 app.use(logger);
 
 var handleData = require('./routes/handleData'); 
 app.post('/handleData', parseUrlencoded, function(request, response){
-    console.log(request.body);
+    // console.log(request.body);
+
+    var entity = request.body;
+    
+    //  Convert ALL empty strings to null...
+    for(var property in entity)
+    {
+        if(entity[property] === "")
+        {
+            entity[property] = null;
+        }
+    }
+
+    if(entity.funding_received !== null)
+    {
+        for(var i = 0; i < entity.funding_received.length; i++)
+        {
+            var funding = entity.funding_received[i];
+            if(funding.amount === "")
+                funding.amount = null;
+            if(funding.year === "")
+                funding.year = null;
+        }
+    }
+
+    if(entity.investments_received !== null)
+    {
+        for(var i = 0; i < entity.investments_received.length; i++)
+        {
+            var investment = entity.investments_received[i];
+            if(investment.amount === "")
+                investment.amount = null;
+            if(investment.year === "")
+                investment.year = null;
+        }
+    }
+
+    if(entity.revenue !== null)
+    {
+        for(var i = 0; i < entity.revenue.length; i++)
+        {
+            var revenue_item = entity.revenue[i];
+            if(revenue_item.amount === "")
+                revenue_item.amount = null;
+            if(revenue_item.year === "")
+                revenue_item.year = null;
+        }
+    }
+
+    if(entity.expenses !== null)
+    {
+        for(var i = 0; i < entity.expenses.length; i++)
+        {
+            var expense = entity.expenses[i];
+            if(expense.amount === "")
+                expense.amount = null;
+            if(expense.year === "")
+                expense.year = null;
+        }
+    }
+
+    if(entity.grants !== null)
+    {
+        for(var i = 0; i < entity.grants.length; i++)
+        {
+            var grant = entity.grants[i];
+            if(grant.amount === "")
+                grant.amount = null;
+            if(grant.year === "")
+                grant.year = null;
+        }
+    }
+
+    // SELECT LAST(column_name) FROM table_name;
+
+    console.log(entity);
+
+    // connection.query('USE athena', function (err) {
+    //     if (err) throw err;
+    //     connection.query('INSERT INTO Entities ('
+    //                 + 'ID, Name, Nickname, Type, Category, Location, Website, TwitterHandle, TwitterFollowers, '
+    //                 + 'Employees, GlobalLocal, RelatedOrganizations, KeyPeople) VALUES (' 
+    //                 + '"' + 150 + '","' 
+    //                 + entity.name + '","' 
+    //                 + entity.nickname + '","'
+    //                 + entity.type + '","'
+    //                 + entity.categories + '","'
+    //                 + entity.location + '","'
+    //                 + entity.weblink + '","'
+    //                 + entity.twitterH + '","'
+    //                 + entity.followers + '","'
+    //                 + entity.numemp + '","'
+    //                 + entity.golr + '","' 
+    //                 + entity.relatedto + '","'
+    //                 + entity.people + '");', function (err) {
+    //                      if (err) throw err;
+    //                 });
+    // });
+
+    //DELETE FROM `athena`.`entities` WHERE `ID`='150';
+    // connection.query('SELECT LAST(Name) FROM Entities;', function(err, rows, fields){
+    //     if(err) throw err;
+    //     for(var i in rows){
+    //         console.log(i);
+    //     }
+    // });
+
+    // console.log("New object" + JSON.stringify(entity));
 });
 
 app.get('/', function(req, res) {
