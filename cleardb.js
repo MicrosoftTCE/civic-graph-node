@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
-
+var fs = require('fs');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -102,19 +102,17 @@ console.log("Successful connection!");
 //         connection.query('CREATE TABLE IF NOT EXISTS Entities('
 //             + 'ID INT NOT NULL AUTO_INCREMENT UNIQUE,'
 //             + 'Name VARCHAR(100) NOT NULL UNIQUE,'                  // Entity Name
-//             + 'Nickname VARCHAR(100) NOT NULL UNIQUE,'                              // Nickname        
-//             + 'Type VARCHAR(30) NOT NULL,'                             // Type of Entity
-//             + 'Category VARCHAR(100),'                              // Category
-//             + 'Location VARCHAR(100) NOT NULL,'                              // Location
+//             + 'Nickname VARCHAR(100) NOT NULL UNIQUE,'              // Nickname        
+//             + 'Type VARCHAR(30) NOT NULL,'                          // Type of Entity
+//             + 'Categories VARCHAR(100),'                            // Category
+//             + 'Location VARCHAR(100) NOT NULL,'                     // Location
 //             + 'Website VARCHAR(100),'                               // Website
-//             + 'TwitterHandle VARCHAR(50),'                         // Twitter Handle
-//             + 'Followers INT,'                               // Number of Twitter Followers
+//             + 'TwitterHandle VARCHAR(50),'                          // Twitter Handle
+//             + 'Followers INT,'                                      // Number of Twitter Followers
 //             + 'Employees INT,'                                      // Number of Employees
-//             + 'TotalFunding INT,'                                   // In JSON
-//             + 'TotalInvestment INT,'                                // In JSON
 //             + 'Influence VARCHAR(8),'    
-//             + 'Relations VARCHAR(1000),'                  // Related To
-//             + 'KeyPeople VARCHAR(1000),'                             // Key People                
+//             + 'Relations VARCHAR(1000),'                            // Related To
+//             + 'KeyPeople VARCHAR(1000),'                            // Key People                
 //             + 'PRIMARY KEY(ID)'
 //             +  ')', function (err) {
 //                 if (err) throw err;
@@ -154,7 +152,6 @@ console.log("Successful connection!");
 //         });
 
 //         // TAke JSON file and fill in the database...
-//         var fs = require('fs');
 //         var file = __dirname + '/public/data/final_data_neat.json';
 
 //         fs.readFile(file, 'utf8', function(err, data){
@@ -180,28 +177,11 @@ console.log("Successful connection!");
 //                 ((testdata.nodes)[i].relatedto !== null) ? relations = '"' + (testdata.nodes)[i].relatedto + '"' : relations = null;
 //                 ((testdata.nodes)[i].people !== null) ? keypeople = '"' + (testdata.nodes)[i].people + '"' : keypeople = null;
 
-//                 // console.log('INSERT INTO Entities ('
-//                 //     + 'Name, Nickname, Type, Category, Location, Website, TwitterHandle, Followers, '
-//                 //     + 'Employees, Influence, Relations, KeyPeople) VALUES (' 
-//                 //     + '"'
-//                 //     + (testdata.nodes)[i].name + '","' 
-//                 //     + (testdata.nodes)[i].nickname + '","'
-//                 //     + (testdata.nodes)[i].type + '",'
-//                 //     + categories + ',"'
-//                 //     + (testdata.nodes)[i].location + '",'
-//                 //     + url + ','
-//                 //     + handle + ','
-//                 //     + followers + ','
-//                 //     + employees + ','
-//                 //     + influence + ',' 
-//                 //     + relations + ','
-//                 //     + keypeople + ');');
-
 //                 //   Must manually insert the first row with the ID of zero to avoid foreign key constraint errors with bridges table.
 //                 if(i == 0)
 //                 {
 //                     connection.query('INSERT INTO Entities ('
-//                     + 'ID, Name, Nickname, Type, Category, Location, Website, TwitterHandle, Followers, '
+//                     + 'ID, Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, '
 //                     + 'Employees, Influence, Relations, KeyPeople) VALUES (' 
 //                     + i + ',"'
 //                     + (testdata.nodes)[i].name + '","' 
@@ -222,7 +202,7 @@ console.log("Successful connection!");
 //                 else
 //                 {
 //                     connection.query('INSERT INTO Entities ('
-//                     + 'Name, Nickname, Type, Category, Location, Website, TwitterHandle, Followers, '
+//                     + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, '
 //                     + 'Employees, Influence, Relations, KeyPeople) VALUES (' 
 //                     + '"'
 //                     + (testdata.nodes)[i].name + '","' 
@@ -324,7 +304,7 @@ console.log("Successful connection!");
 //                     + 'Entity1ID, Entity2ID, Connection, Amount) VALUES ('
 //                     + (testdata.investingR)[l].source + ',' 
 //                     + (testdata.investingR)[l].target + ',"'
-//                     +  'Investment' + '",'
+//                     +  'Investment Received' + '",'
 //                     +  (testdata.investingR)[l].amount
 //                     + ');', function (err) {
 //                          if (err) throw err;
@@ -337,7 +317,7 @@ console.log("Successful connection!");
 //                     + 'Entity1ID, Entity2ID, Connection, Amount) VALUES (' 
 //                     + (testdata.fundingR)[m].source + ',' 
 //                     + (testdata.fundingR)[m].target + ',"'
-//                     +  'Funding' + '",'
+//                     +  'Funding Received' + '",'
 //                     +  (testdata.fundingR)[m].amount
 //                     + ');', function (err) {
 //                          if (err) throw err;
@@ -350,7 +330,7 @@ console.log("Successful connection!");
 //                     + 'Entity1ID, Entity2ID, Connection) VALUES ('  
 //                     + (testdata.porucs)[n].source + ',' 
 //                     + (testdata.porucs)[n].target + ',"'
-//                     +  'Collaborations' + '");', function (err) {
+//                     +  'Collaboration' + '");', function (err) {
 //                          if (err) throw err;
 //                     });
 //             }
@@ -359,35 +339,171 @@ console.log("Successful connection!");
 //     });
 // });
 
-var entities, connections, operations;
-//  Grab the data from the MYSQL database and export into a JSON file.
-connection.query('SELECT * FROM Entities', function(err, result){
-    entities = result;
-});
-connection.query('SELECT * FROM Connections', function(err, result){
-    connections = result;
-});
-connection.query('SELECT * FROM Operations', function(err, result){
-    operations = result;
-});
+var getObjectFromRawData = function(data, name)
+{
+    for(var i = 0; i < (data.nodes).length; i++)
+    {
+        if((data.nodes)[i].name === name)
+        {
+            return (data.nodes)[i];
+        }
+    }
+}
 
+var exportData = function()
+{
+    var file = __dirname + '/public/data/final_data_neat.json';
+    fs.readFile(file, 'utf8', function(err, data){
 
+        if(err)
+        {
+            console.log('Error: ' + err)
+        }
+        
+        var rawData = JSON.parse(data);
 
+        console.log(JSON.stringify(rawData));
 
-//  Creating the Users table...
-// connection.query('CREATE DATABASE IF NOT EXISTS athena', function (err) {
-//     if (err) throw err;
-//     connection.query('USE athena', function (err) {
-//         if (err) throw err;
-//         connection.query('CREATE TABLE IF NOT EXISTS users('
-//             + 'id INT NOT NULL AUTO_INCREMENT,'
-//             + 'PRIMARY KEY(id),'
-//             + 'name VARCHAR(30)'
-//             +  ')', function (err) {
-//                 if (err) throw err;
-//             });
-//     });
-// });
+        var entities, connections, operations;
+
+        //  Grab the data from the MYSQL database and export into a JSON file.
+        connection.query('SELECT * FROM Entities', function(err, result){
+            entities = result;
+            // console.log(entities);
+
+            connection.query('SELECT * FROM Bridges', function(err, result){
+                connections = result;
+                // console.log(connections);
+
+                connection.query('SELECT * FROM Operations', function(err, result){
+                    operations = result;
+                    // console.log(operations);
+
+                    //  Let's add the data to the necessary JSON
+                    var content = {nodes:[], data_connections:[], funding_connections:[], investment_connections:[], collaboration_connections:[]};
+
+                    content.nodes = entities.map(function(d){
+                        var object = {};
+
+                        object['ID'] = d.ID;
+                        object['type'] = d.Type;
+                        (d.Categories !== null) ? object['categories'] = (d.Categories).split(", ") : object['categories'] = null;
+                        object['name'] = d.Name;
+                        object['nickname'] = d.Nickname;
+                        object['location'] = d.Location;
+                        (d.Website !== null) ? object['url']  = d.Website : object['url'] = null;
+                        (d.Employees !== null) ? object['employees']  = d.Employees : object['employees'] = null;
+                        (d.KeyPeople !== null) ? object['key_people'] = d.KeyPeople.split(", ") : object['key_people'] = null;
+                        (d.TwitterHandle !== null) ? object['twitter_handle'] = d.TwitterHandle : object['twitter_handle'] = null;
+                        (d.Followers !== null) ? object['followers'] = d.Followers : object['followers'] = null;
+                        (d.Relations !== null) ? object['relations'] = (d.Relations).split(", ") : object['relations'] = null;
+
+                        var objectForConnectionData = getObjectFromRawData(rawData, d.Name);
+
+                        if(objectForConnectionData.fundingR !== null)
+                        {
+                            object['funding_received'] = [];
+                            var fundingInfo = (objectForConnectionData.fundingR).split("; ");
+                            fundingInfo.forEach(function(d){
+                                var entityAndAmount = d.split(':');
+                                object['funding_received'].push({entity: entityAndAmount[0], amount: entityAndAmount[1], year: null});
+                            });
+                        }
+                        else
+                            object['funding_received'] = null;
+                        
+                        if(objectForConnectionData.investmentR !== null)
+                        {
+                            object['investments_received'] = [];
+                            var investmentInfo = (objectForConnectionData.investmentR).split("; ");
+                            investmentInfo.forEach(function(d){
+                                var entityAndAmount = d.split(':');
+                                object['investments_received'].push({entity: entityAndAmount[0], amount: entityAndAmount[1], year: null});
+                            });
+                        }
+                        else
+                            object['investments_received'] = null;
+
+                        object['funding_given'] = null;
+                        object['investments_made'] = null;
+
+                        if(objectForConnectionData.poruc !== null)
+                        {
+                            object['collaborations'] = [];
+                            var collaborationInfo = (objectForConnectionData.poruc).split("; ");
+                            collaborationInfo.forEach(function(d){
+                                object['collaborations'].push({entity: d});
+                            });
+                        }
+                        else
+                            object['collaborations'] = null;
+
+                        if(objectForConnectionData.data !== null)
+                        {
+                            object['data'] = [];
+                            var dataInfo = (objectForConnectionData.data).split("; ");
+                            dataInfo.forEach(function(d){
+                                object['data'].push({entity: d});
+                            });
+                        }
+                        else
+                            object['data'] = null;
+
+                        object['revenue'] = null;
+                        object['expenses'] = null;
+
+                        (d.Influence !== null) ? object['influence'] = d.Influence : object['influence'] = null;
+
+                        return object;
+                    });
+
+                    connections.filter(function(d){
+                        return d.Connection === "Funding Received"
+                    }).forEach(function(d){
+                        (content.funding_connections).push({source: d.Entity1ID, target: d.Entity2ID, year: d.ConnectionYear, amount: d.Amount});
+                    });
+
+                    connections.filter(function(d){
+                        return d.Connection === "Investment Received"
+                    }).forEach(function(d){
+                        (content.investment_connections).push({source: d.Entity1ID, target: d.Entity2ID, year: d.ConnectionYear, amount: d.Amount});
+                    });
+
+                    connections.filter(function(d){
+                        return d.Connection === "Collaboration"
+                    }).forEach(function(d){
+                        (content.collaboration_connections).push({source: d.Entity1ID, target: d.Entity2ID});
+                    });
+
+                    connections.filter(function(d){
+                        return d.Connection === "Data"
+                    }).forEach(function(d){
+                        (content.data_connections).push({source: d.Entity1ID, target: d.Entity2ID});
+                    });
+
+                    console.log(JSON.stringify(content.nodes, null, "\t"));
+
+                    //  Let's add this data to an external file.
+                    var file = __dirname + '/public/data/data.json';
+                    fs.writeFile(file, JSON.stringify(content), function(err)
+                    {
+                        if(err) 
+                        {
+                            console.log(err);
+                        } 
+                        else 
+                        {
+                            console.log("The file was saved!");
+                        }
+                    });
+                });
+            });
+        }); 
+    });
+};
+
+exportData();
+
 
 // connection.end();
 module.exports = app;
