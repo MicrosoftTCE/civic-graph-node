@@ -21,7 +21,7 @@
         "randeY": "2011, 2011",
         "grantsG": "334000",
         "yearG": "2012",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -44,7 +44,7 @@
         "randeY": "2012, 2012",
         "grantsG": "The Governance Lab at NYU:null; Berkman Center for Internet and Society:null; New America Foundation:null; Brookings Institution:null; Sunlight Foundation:null; Personal Democracy Media:null; GovLab:null; W3C:null; Open Data Institute:null; Open Knowledge Foundation:null; OpenPlans:620000; Total:92493104",
         "yearG": "2012",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Government",
         "categories": "General",
@@ -67,7 +67,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -90,7 +90,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -113,7 +113,7 @@
         "randeY": "2012, 2012",
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -136,7 +136,7 @@
         "randeY": "2012, 2012",
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -159,7 +159,7 @@
         "randeY": "2012, 2012",
         "grantsG": "538403",
         "yearG": "2012",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "General",
@@ -182,7 +182,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -205,7 +205,7 @@
         "randeY": "2012, 2012",
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -228,7 +228,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -251,7 +251,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -274,7 +274,7 @@
         "randeY": "2012, 2012",
         "grantsG": "The Governance Lab at NYU:null; Berkman Center for Internet and Society:400000; New America Foundation:200000; Ushahidi:100000; Electronic Frontier Foundation:600000; Total:236557004",
         "yearG": "2012",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "Data and Transparency",
@@ -297,7 +297,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "General",
@@ -320,7 +320,7 @@
         "randeY": "2013",
         "grantsG": "New York Tech Meetup; Personal Democracy Media; The White House",
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "General",
@@ -343,7 +343,7 @@
         "randeY": null,
         "grantsG": "The Governance Lab at NYU; Personal Democracy Forum; ",
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "Smart and Resilient Cities",
@@ -366,7 +366,7 @@
         "randeY": "2011, 2011",
         "grantsG": "468975",
         "yearG": "2011",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities, Smart and Resilient Cities",
@@ -389,7 +389,7 @@
         "randeY": "2011, 2011",
         "grantsG": "69401",
         "yearG": "2011",
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "Data and Transparency",
@@ -412,7 +412,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -435,7 +435,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -456,9 +456,9 @@
         "yearIR": null,
         "rande": "Revenue:453789109; Expenses:616826363",
         "randeY": "2011, 2011",
-        "grantsG": "Brookings Institution:800000; Electronic Frontier Foundation:100000; Ushahidi:500000; Total:985986563",
+        "grantsG": "985986563",
         "yearG": "2011",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -481,7 +481,7 @@
         "randeY": "2012, 2012",
         "grantsG": "Harvard Kennedy School Ash Center for Democratic Governance and Innovation:684500; New York University:null; Code for America:200000; Total:51359984",
         "yearG": "2012",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -504,7 +504,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -527,7 +527,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -550,7 +550,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -573,7 +573,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -596,7 +596,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Government",
         "categories": "General",
@@ -619,7 +619,7 @@
         "randeY": "2014, 2014",
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -642,7 +642,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "Smart and Resilient Cities",
@@ -665,7 +665,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "Smart and Resilient Cities",
@@ -688,7 +688,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "Smart and Resilient Cities",
@@ -711,30 +711,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
-    }, {
-        "type": "Individual",
-        "categories": "21st Century Jobs and Opportunities",
-        "name": "Eric Ries",
-        "nickname": "Eric Ries",
-        "location": "San Francisco, CA",
-        "weblink": "http:\/\/www.startuplessonslearned.com",
-        "numemp": null,
-        "people": null,
-        "twitterH": "@ericries",
-        "followers": "178630",
-        "data": null,
-        "relatedto": null,
-        "poruc": "The White House; O'Reilly Media; Code for America",
-        "fundingR": null,
-        "yearFR": null,
-        "investmentR": null,
-        "yearIR": null,
-        "rande": null,
-        "randeY": null,
-        "grantsG": null,
-        "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "General",
@@ -757,7 +734,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Government",
         "categories": "General",
@@ -780,7 +757,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -803,7 +780,7 @@
         "randeY": null,
         "grantsG": "Alliance for Affordable Internet:null; Amicus:null; Change.org:null; couchsurfing:null; dosomething.org:1500000; GMSA:3650000; healthkart.com:null; Linden Lab:4941593; meetup:5876450; mimoni:null;NationBuilder:null; Neoteny Labs:null; Quikr:null; Range Networks:null; Sovern:null; African Leadership Academy:1500000; Akshara Foundation:950000; Anudip Foundation:650000; Aspiring Minds:null; Bridge International Academies:null; EnglishHelper:null; Kalibrr:null; RLabs:465000; Teach for India:2500000; Tree House:null; BRAC:8275000; Center for Financial Services Innovation:null; Cignifi:null; Consultative Group to Assist the Poor:1500000; Core Innovation Capital:null; Elevar Equity:null25000000; IntelleGrow:null; Kiva:5000000; LeapFrog Investments:null; Lenddo:null; MFX Solutions:9300000; MicroEnsure:null; MicroSave:2000000; Off Grid Electric:null; Prosper:null; Rev:null; SOLIDUS Investment Fund:3700000; Zoona:3700000; Africa Check:250000; African Media Initiative:1700000; Association for Democratic Reforms:3310000; Center for Global Development:1500000; Center for Research and Teaching in Economics:215000; Center on Democracy, Development and the Rule of Law:1035000; Code for America:250000; ePanstwo Foundation:200000; Fundacion Ciudadano Inteligente:500000; Fundar:211000; Global Integrity:2400000; Global Voices:1200000; IMCO:202500; Instituto Cidade Democratic:202500; International Budget Partnerships:null; Janaagraha:3000000; Livity Africa:186000; Media Development Investment Fund:2000000; Meu Rio:475000; Mideast Youth:600000; mySociety:3475000; New Citizen (Centre UA):335000; ONE Campaign:750000; Open Data Institute:750000; Open Government Partnership:1480000; Open Knowledge Foundation:750000; Praekelt Foundation:825000; Project on Government Oversight:1000000; Publica:120000; Sahara Reporters:450000; SeeClickFix:null; Sunlight Foundation:8000000; The XYZ Show:500000; Transparency and Accountability Initiative:583500; Tumml:300000; Ushahidi:1400000; Versa:null; Foundation for Ecological Security:2100000; Institute for Liberty and Democracy:4960000; Landesa:16700000; MicroBuild:null; Red Tierras:685000; Artemisia:null; Endeavor:null; Global Impact Investing Network: 2440000; IGNIA:10000000; Nesta:null; The Bridgespan Group:3500000; d.light design:null; iMerit:null; Song:6000000; Bridges Ventures:null",
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -826,7 +803,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Government",
         "categories": "General",
@@ -849,7 +826,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -872,7 +849,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -895,7 +872,7 @@
         "randeY": "2012, 2012",
         "grantsG": "8091488",
         "yearG": "2012",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -918,7 +895,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Government",
         "categories": "Data and Transparency",
@@ -941,7 +918,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -964,7 +941,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -987,7 +964,7 @@
         "randeY": "2012, 2012",
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "Smart and Resilient Cities",
@@ -1010,7 +987,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "Smart and Resilient Cities",
@@ -1033,7 +1010,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1056,7 +1033,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Smart and Resilient Cities",
@@ -1079,7 +1056,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1102,7 +1079,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1125,7 +1102,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1148,7 +1125,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1171,7 +1148,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1194,7 +1171,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1217,7 +1194,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1240,7 +1217,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1286,7 +1263,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Smart and Resilient Cities",
@@ -1309,7 +1286,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Data and Transparency",
@@ -1332,7 +1309,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1355,7 +1332,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Data and Transparency",
@@ -1378,7 +1355,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Data and Transparency",
@@ -1401,7 +1378,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Smart and Resilient Cities",
@@ -1424,7 +1401,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1447,7 +1424,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1470,7 +1447,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1493,7 +1470,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1516,7 +1493,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "Data and Transparency",
@@ -1539,7 +1516,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Smart and Resilient Cities",
@@ -1562,7 +1539,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Data and Transparency",
@@ -1585,7 +1562,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "Data and Transparency",
@@ -1608,7 +1585,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Data and Transparency",
@@ -1631,7 +1608,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Data and Transparency",
@@ -1654,7 +1631,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "21st Century Jobs and Opportunities",
@@ -1677,7 +1654,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "Smart and Resilient Cities",
@@ -1700,7 +1677,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Data and Transparency",
@@ -1723,7 +1700,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "21st Century Jobs and Opportunities",
@@ -1746,7 +1723,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Smart and Resilient Cities",
@@ -1769,7 +1746,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1792,7 +1769,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "21st Century Jobs and Opportunities",
@@ -1815,7 +1792,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1838,7 +1815,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1861,7 +1838,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1884,30 +1861,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
-    }, {
-        "type": "Individual",
-        "categories": "General",
-        "name": "Alex Howard",
-        "nickname": "Alex Howard",
-        "location": "Washington, DC",
-        "weblink": null,
-        "numemp": null,
-        "people": null,
-        "twitterH": "@digiphile",
-        "followers": "210608",
-        "data": null,
-        "relatedto": null,
-        "poruc": "Tech Republic; Tow Center; Harvard University; O'Reilly Media; Tim O'Reilly",
-        "fundingR": null,
-        "yearFR": null,
-        "investmentR": null,
-        "yearIR": null,
-        "rande": null,
-        "randeY": null,
-        "grantsG": null,
-        "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "21st Century Jobs and Opportunities",
@@ -1930,7 +1884,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "Smart and Resilient Cities",
@@ -1953,7 +1907,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -1976,7 +1930,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -1999,7 +1953,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2022,7 +1976,7 @@
         "randeY": null,
         "grantsG": "Yo, Quibb, Giphy, Electric Objects, Bloglovin, Medium, Mindie, Context app, estimote, makr, Urx, Socratic, Apportable, SocialFlow, Grand St., Koa.la, Namo Media, Svbtle, TOTEMS, Picturelife, Pickie, RebelMouse, Summly, Seesaw, CollabFinder, LayerVault, Bondsy, Bloglovin, CasaHop, Moped, Frontback, Couple, Branch, Highlight, IFTTT, Editorially, Fancy Hands, Clipboard, Piictu, Genius, ShowMe, ChallengePost, just.me, Lascaux Co., Memoir, Embedly, Livestar, OnSwipe, Punch!, Extension Entertainment, SocialFlow, Everlane, Bloom Studio, Kickstarter, Findery, OnSwipe, OMGPOP, GroupMe",
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "General",
@@ -2045,7 +1999,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2068,7 +2022,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -2091,7 +2045,7 @@
         "randeY": "2013, 2013",
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -2114,7 +2068,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2137,7 +2091,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2160,7 +2114,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2183,7 +2137,7 @@
         "randeY": "2012, 2012",
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2206,7 +2160,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2229,7 +2183,7 @@
         "randeY": null,
         "grantsG": "Urban Compass:null; Spring:null; Jibe:null; Whisper:null; OpenGov:null; Oscar Insurance:null; Artsy:null; Spree Commerce:null; Tictail:null; Harry's:null; Warby Parker:null; Instagram:null; Codecademy:null",
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Government",
         "categories": "General",
@@ -2252,7 +2206,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "Data and Transparency",
@@ -2275,7 +2229,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -2298,7 +2252,7 @@
         "randeY": null,
         "grantsG": "Total:452000000",
         "yearG": "2013",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -2321,7 +2275,7 @@
         "randeY": null,
         "grantsG": "Total:873344000",
         "yearG": "2013",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "Smart and Resilient Cities",
@@ -2344,7 +2298,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Government",
         "categories": "Data and Transparency",
@@ -2367,7 +2321,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "21st Century Jobs and Opportunities",
@@ -2390,7 +2344,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -2413,7 +2367,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2436,7 +2390,7 @@
         "randeY": "2012, 2012",
         "grantsG": "Chicago Career Tech Skills for Chicagoland's Future:1546231",
         "yearG": "2012",
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2457,9 +2411,9 @@
         "yearIR": null,
         "rande": null,
         "randeY": null,
-        "grantsG": "Reflexion Pharmaceuticals:75000; Ice Slurry Refrigerant:100000; Nano-Filter Desalination:65000; PhysIQ:75000; Text Filters:55000; AgileMD:50000; Interferon-Related DNA Damage Resistance Signature (IRDS):50000; TAT-MLL:50000; Anti-ADAM10 Monoclonal Antibody for Treating Skin and Lung Infections:50000; Anti-Protein A Monoclonal Antibody for the Prevention of Straphylococcal Bacteremia:50000; Compounds for the Potentiations of Antibiotic Sensitivity in MRSA:100000; IGF-1 for the Treatment of Recurrent Migraine:100000; Companion Diagnostic for Incretin-Based Therapies:100000; Senescent Cell Cancer Vaccine:60000; System for Clinical Trial Protocol Generation and Management:40000; Antibody-Targeted LIGHT for the Treatment of Primary Tumors and Metastatic Disease in Cancer:100000; Nanocyrstal ",
-        "yearG": "Glue",
-        "golr": " for High-Efficiency Thermoelectric Materials:100000; Small Molecule Inhibitors of Copper Chaperones for the Treatment of Cancer:80000; Testing New Venues for Pritzker Course Content Transformation, Distribution, and Commercialization:20000; Ci3's Game Changer Chicago (GCC) Design Lab:50000; ExplORer Surgical Information System:64300; Genomic Prescribing System (GPS):100000; Nanoscale Coordination Polymers (NCP) for Platinum-Resistant Ovarian Cancer:100000; Companion Diagnostic for Treatment of Estrogen Receptor Negative Breast Cancer:55000; Easy-to-Use High-Fidelity Hydrodynamic Simulation Software Package for Development of New Light-Source Technologies:50000; Quantitative Insights Inc:150000; Simplified Chromatin Conformation Capture:70000"
+        "grantsG": "Reflexion Pharmaceuticals:75000; Ice Slurry Refrigerant:100000; Nano-Filter Desalination:65000; PhysIQ:75000; Text Filters:55000; AgileMD:50000; Interferon-Related DNA Damage Resistance Signature (IRDS):50000; TAT-MLL:50000; Anti-ADAM10 Monoclonal Antibody for Treating Skin and Lung Infections:50000; Anti-Protein A Monoclonal Antibody for the Prevention of Straphylococcal Bacteremia:50000; Compounds for the Potentiations of Antibiotic Sensitivity in MRSA:100000; IGF-1 for the Treatment of Recurrent Migraine:100000; Companion Diagnostic for Incretin-Based Therapies:100000; Senescent Cell Cancer Vaccine:60000; System for Clinical Trial Protocol Generation and Management:40000; Antibody-Targeted LIGHT for the Treatment of Primary Tumors and Metastatic Disease in Cancer:100000; Nanocyrstal Glue for High-Efficiency Thermoelectric Materials:100000; Small Molecule Inhibitors of Copper Chaperones for the Treatment of Cancer:80000; Testing New Venues for Pritzker Course Content Transformation, Distribution, and Commercialization:20000; Ci3's Game Changer Chicago (GCC) Design Lab:50000; ExplORer Surgical Information System:64300; Genomic Prescribing System (GPS):100000; Nanoscale Coordination Polymers (NCP) for Platinum-Resistant Ovarian Cancer:100000; Companion Diagnostic for Treatment of Estrogen Receptor Negative Breast Cancer:55000; Easy-to-Use High-Fidelity Hydrodynamic Simulation Software Package for Development of New Light-Source Technologies:50000; Quantitative Insights Inc:150000; Simplified Chromatin Conformation Capture:70000",
+        "yearG": null,
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2482,7 +2436,7 @@
         "randeY": "null, null",
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2505,7 +2459,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -2528,7 +2482,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -2551,7 +2505,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Smart and Resilient Cities",
@@ -2574,7 +2528,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Smart and Resilient Cities",
@@ -2597,7 +2551,7 @@
         "randeY": null,
         "grantsG": "null:7230000",
         "yearG": "2013",
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2620,7 +2574,7 @@
         "randeY": "2012, 2012",
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -2643,7 +2597,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -2666,7 +2620,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Data and Transparency",
@@ -2689,7 +2643,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2712,7 +2666,7 @@
         "randeY": "2013, 2013",
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -2735,7 +2689,7 @@
         "randeY": "2013, 2013",
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Smart and Resilient Cities",
@@ -2758,7 +2712,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "General",
@@ -2781,7 +2735,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -2804,7 +2758,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "General",
@@ -2827,7 +2781,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -2850,7 +2804,7 @@
         "randeY": "2012, 2012",
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "General",
@@ -2873,7 +2827,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "Smart and Resilient Cities",
@@ -2896,7 +2850,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -2919,7 +2873,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -2942,7 +2896,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "General",
@@ -2965,7 +2919,7 @@
         "randeY": "2012, 2012",
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Government",
         "categories": "21st Century Jobs and Opportunities",
@@ -2988,7 +2942,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Government",
         "categories": "21st Century Jobs and Opportunities",
@@ -3011,7 +2965,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Government",
         "categories": "General",
@@ -3034,7 +2988,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Government",
         "categories": "General",
@@ -3057,7 +3011,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Smart and Resilient Cities",
@@ -3080,7 +3034,7 @@
         "randeY": "2012, 2012",
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "For-Profit",
         "categories": "General",
@@ -3103,7 +3057,7 @@
         "randeY": null,
         "grantsG": "Airbnb:unknown",
         "yearG": "2011",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -3126,7 +3080,7 @@
         "randeY": null,
         "grantsG": "Airbnb:unknown",
         "yearG": "2012",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -3149,7 +3103,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "Smart and Resilient Cities",
@@ -3195,7 +3149,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "Data and Transparency",
@@ -3218,7 +3172,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -3241,7 +3195,7 @@
         "randeY": null,
         "grantsG": "Change.org:15000000",
         "yearG": "2013",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "For-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -3264,7 +3218,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -3287,7 +3241,7 @@
         "randeY": "2011, 2011",
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -3310,7 +3264,7 @@
         "randeY": null,
         "grantsG": "Brigade Media:unknown; Rally.org:unknown; Votizen:unknown; FWD.us:unknown",
         "yearG": "2014",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Non-Profit",
         "categories": "Smart and Resilient Cities",
@@ -3333,7 +3287,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Individual",
         "categories": "General",
@@ -3356,7 +3310,7 @@
         "randeY": null,
         "grantsG": "Votizen:unknown; Brigade Media:9300000",
         "yearG": "2010, 2014",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Government",
         "categories": "Smart and Resilient Cities",
@@ -3379,7 +3333,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Government",
         "categories": "General",
@@ -3402,7 +3356,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "21st Century Jobs and Opportunities",
@@ -3425,7 +3379,7 @@
         "randeY": "2012, 2012",
         "grantsG": "1154357",
         "yearG": "2012",
-        "golr": "1"
+        "golr": "global"
     }, {
         "type": "Government",
         "categories": "General",
@@ -3448,7 +3402,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Smart and Resilient Cities",
@@ -3471,7 +3425,7 @@
         "randeY": "2013, 2013",
         "grantsG": "334500",
         "yearG": "2013",
-        "golr": "0"
+        "golr": "local"
     }, {
         "type": "Non-Profit",
         "categories": "Smart and Resilient Cities",
@@ -3494,7 +3448,7 @@
         "randeY": null,
         "grantsG": null,
         "yearG": null,
-        "golr": "0"
+        "golr": "local"
     }],
     "data": [],
     "investingR": [{

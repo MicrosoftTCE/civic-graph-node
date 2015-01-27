@@ -2154,10 +2154,7 @@ d3.json("data/final_data.json", function(error, graph) {
     svg.selectAll('.node').transition()
       .duration(350)
       .delay(0).style("opacity", function(l) {
-        if (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborData.indexOf(l.index) > -1 || l === d)
-          return "1";
-        else
-          return "0.05";
+        return (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborData.indexOf(l.index) > -1 || l === d) ? 1 : 0.05;
       });
 
 
