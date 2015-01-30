@@ -1,6 +1,6 @@
 
   function transformText(d) {
-    return "translate(" + (d.x + 6) + "," + (d.y + 4) + ")";
+    return "translate(" + d.x + "," + d.y + ")";
   }
 
   function translateSVG(x, y) {
@@ -30,6 +30,8 @@
    
 
   var dblclickobject;
+
+  var connection_links;
 
   var centerNodeFundLink = [];
   var centerNodeInvestLink = [];
@@ -125,23 +127,25 @@
   var empScale = d3.scale.sqrt().domain([10, 130000]).range([10, 50]);
   var twitScale = d3.scale.sqrt().domain([10, 1000000]).range([10, 50]);
 
-  d3.json("data/final_data.json", function(error, graph) {
+  d3.json("data/civic.json", function(error, graph) {
     filteredNodes = graph.nodes;
-    fundingCon = graph.fundingR;
-    investingCon = graph.investingR;
-    porucsCon = graph.porucs;
-    dataCon = graph.data;
+    fundingCon = graph.funding_connections;
+    investingCon = graph.investment_connections;
+    porucsCon = graph.collaboration_connections;
+    dataCon = graph.data_connections;
+
+    connection_links = fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon);
 
     var force = d3.layout.force()
       .nodes(filteredNodes)
       .size([width, height])
-      .links(fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon))
+      .links(connection_links)
       .linkStrength(0)
       .charge(function(d) {
-        if (d.numemp !== null)
-          return -5 * empScale(parseInt(d.numemp));
+        if (d.employees !== null)
+          return -6 * empScale(d.employees);
         else
-          return -50;
+          return -40;
 
       })
       .on("tick", tick)
@@ -207,8 +211,8 @@
 
     node = nodeInit.append("circle")
       .attr("r", function(d) {
-        if (d.numemp !== null)
-          return empScale(parseInt(d.numemp));
+        if (d.employees !== null)
+          return empScale(d.employees);
         else
           return "7";
       })
@@ -230,6 +234,7 @@
       .attr("cy", function(d) {
         return d.y;
       })
+      .style("z-index", "500")
       .style("stroke-width", '1.5px')
       .style("stroke", 'white')
       .on('mouseover', handleNodeHover)
@@ -268,28 +273,84 @@
 
 
     var textElement = svg.selectAll('.node')
-                         .append('text')
-                         .text(function(d){return d.nickname;})
-                         .attr("x", -8)
-                           .attr("y", ".31em")
-                           .style('color', 'black')
-                           .style('font-size', '18px')
-                           .style('font-weight', 900)
-                         .style('font-family', "'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif")
-                         .style('pointer-events', 'none')
-                         .style('opacity', function(d){
-                          var textOpacity;
-                          if(d.type === "For-Profit")
-                            textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
-                          if(d.type === "Non-Profit")
-                            textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
-                          if(d.type === "Individual")
-                            textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
-                          if(d.type === "Government")
-                            textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
-                          return textOpacity;
-                         });
+                          .append('text')
+                          .text(function(d){
+                            return d.nickname;
+                          })
+                          .attr("x", 0)
+                        .attr("dy", ".35em");
+
+        textElement.call(wrap, 25);
+                          
+                        //  .append('text')
+                        //  .text(function(d){
+                        //     if(d.nickname.split(" ").length >= 3)
+                        //       return d.nickname.split(" ").join("\n");
+                        //     else
+                        //       return d.nickname;
+                        //   })
+                        //  // .attr("x", function(d){
+                        //  //    if (d.employees !== null)
+                        //  //      return empScale(d.employees);
+                        //  //    else
+                        //  //      return 7;
+                        //  //   })
+                        //  // // .attr("x", -8)
+                        //  //   // .attr("y", ".31em")
+                        //  //   .attr("y", function(d){
+                        //  //    if (d.employees !== null)
+                        //  //      return empScale(d.employees);
+                        //  //    else
+                        //  //      return 7;
+                        //  //   })
+                        // .attr("x", 0)
+                        // .attr("dy", ".35em")
+                        // .attr("text-anchor", "middle")
+                        // .style('color', 'black')
+                        // .style('font-size', '18px')
+                        //  .style('font-weight', 900)
+                        //  .style('font-family', "'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif")
+                        //  .style('pointer-events', 'none')
+                        //  .style('z-index', '999')
+                        //  .style('opacity', function(d){
+                        //   var textOpacity;
+                        //   if(d.type === "For-Profit")
+                        //     textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                        //   if(d.type === "Non-Profit")
+                        //     textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                        //   if(d.type === "Individual")
+                        //     textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
+                        //   if(d.type === "Government")
+                        //     textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
+                        //   return textOpacity;
+                        //  });
+
+
                          // .style('text-shadow', '0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff');
+
+    function wrap(text, width) {
+  text.each(function() {
+    var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 0.4, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  });
+}
 
     // var textElement = svg.selectAll('.node')
     //   .append('text')
@@ -352,8 +413,8 @@
         .links(fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon))
         .linkStrength(0)
         .charge(function(d) {
-          if (d.numemp !== null)
-            return -5 * empScale(parseInt(d.numemp));
+          if (d.employees !== null)
+            return -5 * empScale(parseInt(d.employees));
           else
             return -50;
 
@@ -393,7 +454,7 @@
       var s = "";
 
       //  General Information
-      s += '<h1>' + "<a href=" + '"' + d.weblink + '" target="_blank">' + d.name + '</a></h1>';
+      s += '<h1>' + "<a href=" + '"' + d.url + '" target="_blank">' + d.name + '</a></h1>';
       s += '<h6>' + 'Type of Entity: ' + '</h6>' + ' <h5>' + d.type + '</h5>';
 
       if (d.location !== null) {
@@ -418,217 +479,215 @@
       }
 
       if (d.type !== 'Individual') {
-        if (d.numemp !== null) {
-          s += '<h6>' + 'Employees: ' + '</h6> <h5>' + numCommas(d.numemp) + '</h5><br/>';
+        if (d.employees !== null) {
+          s += '<h6>' + 'Employees: ' + '</h6> <h5>' + numCommas(d.employees) + '</h5><br/>';
         } else {
           s += '<h6>' + 'Employees: ' + '</h6> <h5>' + 'N/A' + '</h5><br/>';
         }
       }
 
-      if (d.twitterH === null) {
+      if (d.twitter_handle === null) {
         s += '<h6>' + 'Twitter:  ' + '</h6> <h5>' + 'N/A' + '</h5><br/>';
         s += '<h6>' + 'Twitter Followers: ' + '</h6> <h5>' + 'N/A' + '</h5><br/>';
       } else {
-        var twitterLink = (d.twitterH).replace('@', '');
+        var twitterLink = (d.twitter_handle).replace('@', '');
 
 
         twitterLink = 'https://twitter.com/' + twitterLink;
-        s += '<h6>' + 'Twitter:  ' + '</h6> <h5>' + "<a href=" + '"' + twitterLink + '">' + d.twitterH + '</h5></a><br/>';
+        s += '<h6>' + 'Twitter:  ' + '</h6> <h5>' + "<a href=" + '"' + twitterLink + '" target="_blank">' + d.twitter_handle + '</h5></a><br/>';
         s += '<h6>' + 'Twitter Followers:  ' + '</h6> <h5>' + numCommas(d.followers) + '</h5><br/>';
       }
 
       //  KEY PEOPLE
-      var keyPeopleArr = [];
 
-      if (d.people !== null) {
+      if (d.key_people !== null) {
         s += '<br/><h6>' + 'Key People:' + '</h6>' + '<ul><h5>';
-        keyPeopleArr = (d.people).split(", ");
-        for (var count = 0; count < keyPeopleArr.length; count++) {
-          s += '<li>' + '<a href="http://www.bing.com/search?q=' + (keyPeopleArr[count]).replace(" ", "%20") + '%20' + (d.nickname).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + keyPeopleArr[count] + '</a>' + '</li>';
+        for (var count = 0; count < d.key_people.length; count++) {
+          s += '<li>' + '<a href="http://www.bing.com/search?q=' + (d.key_people[count]).replace(" ", "%20") + '%20' + (d.nickname).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.key_people[count] + '</a>' + '</li>';
         }
         s += '</h5></ul>';
       }
 
-      //  FUNDING
-      var fundOrgArr = [];
-      var fundAmtArr = [];
+      // //  FUNDING
+      // var fundOrgArr = [];
+      // var fundAmtArr = [];
 
-      if (d.fundingR === null) {
-        s += '<br/> <h6>' + 'No known funding.' + '</h6><br/>';
-      } else {
-        var counter = 0;
-        var fundArr = [];
-        var fundtemp = [];
-        var holdTotalF;
-        var holdIndividsF;
+      // if (d.funding_received === null) {
+      //   s += '<br/> <h6>' + 'No known funding.' + '</h6><br/>';
+      // } else {
+      //   var counter = 0;
+      //   var fundArr = [];
+      //   var fundtemp = [];
+      //   var holdTotalF;
+      //   var holdIndividsF;
 
-        //  If there's more than one funding contributor...
-        if ((d.fundingR).indexOf("; ") !== -1) {
-          fundArr = (d.fundingR).split("; ");
-          for (var count = 0; count < fundArr.length; count++) {
-            fundtemp = fundArr[count].split(":");
-            fundOrgArr.push(fundtemp[0]);
-            fundAmtArr.push(fundtemp[1]);
+      //   //  If there's more than one funding contributor...
+      //   if ((d.funding_received).indexOf("; ") !== -1) {
+      //     fundArr = (d.funding).split("; ");
+      //     for (var count = 0; count < fundArr.length; count++) {
+      //       fundtemp = fundArr[count].split(":");
+      //       fundOrgArr.push(fundtemp[0]);
+      //       fundAmtArr.push(fundtemp[1]);
 
-            if (fundOrgArr[count] === "Total") {
-              holdTotalF = fundAmtArr[count];
-              continue;
-            }
+      //       if (fundOrgArr[count] === "Total") {
+      //         holdTotalF = fundAmtArr[count];
+      //         continue;
+      //       }
 
-            if (fundOrgArr[count] === "Individuals") {
-              holdIndividsF = fundAmtArr[count];
-              continue;
-            }
+      //       if (fundOrgArr[count] === "Individuals") {
+      //         holdIndividsF = fundAmtArr[count];
+      //         continue;
+      //       }
 
-            if (fundAmtArr[count] === 'null') {
-              if (counter === 0) {
-                s += '<br/>' + '<h6>' + ' Received funding from:' + '</h6><ul>';
-                counter++;
-              }
+      //       if (fundAmtArr[count] === 'null') {
+      //         if (counter === 0) {
+      //           s += '<br/>' + '<h6>' + ' Received funding from:' + '</h6><ul>';
+      //           counter++;
+      //         }
 
-              s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (fundOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + fundOrgArr[count] + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-            } else {
-              if (counter === 0) {
-                s += '<br/>' + '<h6>' + ' Received funding from:' + '</h6><ul>';
-                counter++;
-              }
+      //         s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (fundOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + fundOrgArr[count] + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+      //       } else {
+      //         if (counter === 0) {
+      //           s += '<br/>' + '<h6>' + ' Received funding from:' + '</h6><ul>';
+      //           counter++;
+      //         }
 
-              s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (fundOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + fundOrgArr[count] + '</a></h5>' + ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(fundAmtArr[count]) + '</strong>' + '</li>';
-            }
-          }
-        } else {
-          fundArr = (d.fundingR).split(":");
+      //         s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (fundOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + fundOrgArr[count] + '</a></h5>' + ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(fundAmtArr[count]) + '</strong>' + '</li>';
+      //       }
+      //     }
+      //   } else {
+      //     fundArr = (d.funding_connections).split(":");
 
-          if (fundArr[0] === "Total") {
-            s += '<br/>';
-            holdTotalF = fundArr[1];
-          } else if (fundArr[0] === "Individuals") {
-            s += '<br/>';
-            holdIndividsF = fundArr[1];
-          } else {
-            s += '<br/>' + '<h6>' + ' Received funding from:' + '</h6><ul>';
+      //     if (fundArr[0] === "Total") {
+      //       s += '<br/>';
+      //       holdTotalF = fundArr[1];
+      //     } else if (fundArr[0] === "Individuals") {
+      //       s += '<br/>';
+      //       holdIndividsF = fundArr[1];
+      //     } else {
+      //       s += '<br/>' + '<h6>' + ' Received funding from:' + '</h6><ul>';
 
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (fundArr[0]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + fundArr[0] + '</a></h5>';
+      //       s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (fundArr[0]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + fundArr[0] + '</a></h5>';
 
-            if (fundArr[1] === 'null') {
-              s += ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-            } else {
-              s += ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(fundArr[1]) + '</strong>' + '</li>';
-            }
-          }
-        }
+      //       if (fundArr[1] === 'null') {
+      //         s += ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+      //       } else {
+      //         s += ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(fundArr[1]) + '</strong>' + '</li>';
+      //       }
+      //     }
+      //   }
 
-        s += '</ul>';
+      //   s += '</ul>';
 
-        if (!isNaN(holdIndividsF)) {
-          s += '<h6>' + 'Individuals provided ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdIndividsF) + '</strong></h5><h6> in fundings.</h6><br/>';
-        }
+      //   if (!isNaN(holdIndividsF)) {
+      //     s += '<h6>' + 'Individuals provided ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdIndividsF) + '</strong></h5><h6> in fundings.</h6><br/>';
+      //   }
 
-        if (!isNaN(holdTotalF)) {
-          s += '<h6>' + 'Total funding received: ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdTotalF) + '</strong></h5><br/>';
-        }
-      }
+      //   if (!isNaN(holdTotalF)) {
+      //     s += '<h6>' + 'Total funding received: ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdTotalF) + '</strong></h5><br/>';
+      //   }
+      // }
 
-      //  INVESTING
-      var investOrgArr = [];
-      var investAmtArr = [];
-      var holdTotalI;
-      var holdIndividsI
+      // //  INVESTING
+      // var investOrgArr = [];
+      // var investAmtArr = [];
+      // var holdTotalI;
+      // var holdIndividsI
 
-      if (d.investmentR === null) {
-        s += '<br/> <h6>' + 'No known investments.' + '</h6> <br/>';
-      } else {
-        var counter = 0;
-        var investArr = [];
-        var investtemp = [];
+      // if (d.investmentR === null) {
+      //   s += '<br/> <h6>' + 'No known investments.' + '</h6> <br/>';
+      // } else {
+      //   var counter = 0;
+      //   var investArr = [];
+      //   var investtemp = [];
 
-        //  If there's more than one funding contributor...
-        if ((d.investmentR).indexOf("; ") !== -1) {
-          investArr = (d.investmentR).split("; ");
+      //   //  If there's more than one funding contributor...
+      //   if ((d.investmentR).indexOf("; ") !== -1) {
+      //     investArr = (d.investmentR).split("; ");
 
-          for (var count = 0; count < investArr.length; count++) {
-            investtemp = investArr[count].split(":");
-            investOrgArr.push(investtemp[0]);
-            investAmtArr.push(investtemp[1]);
+      //     for (var count = 0; count < investArr.length; count++) {
+      //       investtemp = investArr[count].split(":");
+      //       investOrgArr.push(investtemp[0]);
+      //       investAmtArr.push(investtemp[1]);
 
-            if (investOrgArr[count] === "Total") {
-              holdTotalI = investAmtArr[count];
-              continue;
-            }
+      //       if (investOrgArr[count] === "Total") {
+      //         holdTotalI = investAmtArr[count];
+      //         continue;
+      //       }
 
-            if (investOrgArr[count] === "Individuals") {
-              holdIndividsI = investAmtArr[count];
-              continue;
-            }
+      //       if (investOrgArr[count] === "Individuals") {
+      //         holdIndividsI = investAmtArr[count];
+      //         continue;
+      //       }
 
-            if (investAmtArr[count] === 'null') {
-              if (counter === 0) {
-                s += '<br/>' + '<h6>' + ' Received investments from:' + '</h6>' + '<ul>';
-                counter++;
-              }
+      //       if (investAmtArr[count] === 'null') {
+      //         if (counter === 0) {
+      //           s += '<br/>' + '<h6>' + ' Received investments from:' + '</h6>' + '<ul>';
+      //           counter++;
+      //         }
 
-              s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (investOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + investOrgArr[count] + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-            } else {
-              if (counter === 0) {
-                s += '<br/>' + '<h6>' + ' Received investments from:' + '</h6>' + '<ul>';
-                counter++;
-              }
+      //         s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (investOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + investOrgArr[count] + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+      //       } else {
+      //         if (counter === 0) {
+      //           s += '<br/>' + '<h6>' + ' Received investments from:' + '</h6>' + '<ul>';
+      //           counter++;
+      //         }
 
-              s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (investOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + investOrgArr[count] + '</a></h5>' + ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(investAmtArr[count]) + '</strong>' + '</li>';
-            }
-          }
-        } else {
-          investArr = (d.investmentR).split(":");
+      //         s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (investOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + investOrgArr[count] + '</a></h5>' + ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(investAmtArr[count]) + '</strong>' + '</li>';
+      //       }
+      //     }
+      //   } else {
+      //     investArr = (d.investmentR).split(":");
 
-          if (investArr[0] === "Total") {
-            s += '<br/>';
-            holdTotalI = investAmtArr[1];
-          } else if (investArr[0] === "Individuals") {
-            s += '<br/>';
-            holdIndividsI = investAmtArr[1];
-          } else {
-            s += '<br/>' + '<h6>' + ' Received investments from:' + '</h6><ul>';
+      //     if (investArr[0] === "Total") {
+      //       s += '<br/>';
+      //       holdTotalI = investAmtArr[1];
+      //     } else if (investArr[0] === "Individuals") {
+      //       s += '<br/>';
+      //       holdIndividsI = investAmtArr[1];
+      //     } else {
+      //       s += '<br/>' + '<h6>' + ' Received investments from:' + '</h6><ul>';
 
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (investArr[0]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + investArr[0] + '</a></h5>';
+      //       s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (investArr[0]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + investArr[0] + '</a></h5>';
 
-            if (investArr[1] === 'null') {
-              s += ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-            } else {
-              s += ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(investArr[1]) + '</strong>' + '</li>';
-            }
-          }
-        }
+      //       if (investArr[1] === 'null') {
+      //         s += ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+      //       } else {
+      //         s += ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(investArr[1]) + '</strong>' + '</li>';
+      //       }
+      //     }
+      //   }
 
-        s += '</ul>';
+      //   s += '</ul>';
 
-        if (!isNaN(holdIndividsI)) {
-          s += '<h6>' + 'Individuals provided ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdIndividsI) + '</strong> in investments.<br/>';
-        }
+      //   if (!isNaN(holdIndividsI)) {
+      //     s += '<h6>' + 'Individuals provided ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdIndividsI) + '</strong> in investments.<br/>';
+      //   }
 
-        if (!isNaN(holdTotalI)) {
-          s += '<h6>' + 'Total investments received: ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdTotalI) + '</strong>.<br/>';
-        }
-      }
+      //   if (!isNaN(holdTotalI)) {
+      //     s += '<h6>' + 'Total investments received: ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdTotalI) + '</strong>.<br/>';
+      //   }
+      // }
 
-      //RELATED TO
-      if (d.relatedto === null) {
-        s += '<br/><h6>' + 'No known relations.' + '</h6><br/>';
-      } else {
-        s += '<br/>' + '<h6>' + 'Related To:  ' + '</h6> <ul>';
-        var relatedtoArr = [];
-        var relatedtotemp = [];
+      // //RELATED TO
+      // if (d.relatedto === null) {
+      //   s += '<br/><h6>' + 'No known relations.' + '</h6><br/>';
+      // } else {
+      //   s += '<br/>' + '<h6>' + 'Related To:  ' + '</h6> <ul>';
+      //   var relatedtoArr = [];
+      //   var relatedtotemp = [];
 
-        //  If there's more than one data...
-        if ((d.relatedto).indexOf(", ") !== -1) {
-          relatedtoArr = (d.relatedto).split(", ");
-          for (var count = 0; count < relatedtoArr.length; count++) {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (relatedtoArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + relatedtoArr[count] + '</a>' + '</h5></li>';
-          }
-        } else {
-          s += '<li><h5> ' + '<a href="http://www.bing.com/search?q=' + (d.relatedto).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.relatedto + '</a>' + '</h5></li>';
-        }
-        s += '</ul>';
-      }
+      //   //  If there's more than one data...
+      //   if ((d.relatedto).indexOf(", ") !== -1) {
+      //     relatedtoArr = (d.relatedto).split(", ");
+      //     for (var count = 0; count < relatedtoArr.length; count++) {
+      //       s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (relatedtoArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + relatedtoArr[count] + '</a>' + '</h5></li>';
+      //     }
+      //   } else {
+      //     s += '<li><h5> ' + '<a href="http://www.bing.com/search?q=' + (d.relatedto).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.relatedto + '</a>' + '</h5></li>';
+      //   }
+      //   s += '</ul>';
+      // }
 
       displayFormA(d);
 
@@ -861,7 +920,7 @@
     }
 
     function processFormB(formObject) {
-      //var formObj = {type:null,categories:null,name:null,nickname:null,location:null,weblink:null,numemp:null,people:null,twitterH:null,followers:null,data:null,relatedto:null,poruc:null,fundingR:null,yearFR:null,investmentR:null,yearIR:null,rande:null,randeY:null,grantsG:null,yearG:null,golr:null};
+      //var formObj = {type:null,categories:null,name:null,nickname:null,location:null,url:null,employees:null,people:null,twitterH:null,followers:null,data:null,relatedto:null,poruc:null,funding_connections:null,yearFR:null,investmentR:null,yearIR:null,rande:null,randeY:null,grantsG:null,yearG:null,golr:null};
 
       // Set the entity name.
       formObject.nickname = d3.select(".webform-content input[name='nickname']")[0][0].value;
@@ -1352,7 +1411,7 @@
             nullFieldCount++;
           return [key, value];
         }));
-        // Individuals do not have numemp, people, rande, randeY 
+        // Individuals do not have employees, people, rande, randeY 
         // Not a fair comparison of null fields.
         if (d.type === 'Individual')
           nullFieldCount -= 4;
@@ -1495,9 +1554,8 @@
       });
 
       if (obj.categories !== null) {
-        var categories = (obj.categories).split(', ');
         d3.selectAll('.webform-categories input').filter(function(d, i) {
-          if (categories.indexOf(d3.selectAll('.webform-categories h4')[0][i].textContent) > -1)
+          if ((obj.categories).indexOf(d3.selectAll('.webform-categories h4')[0][i].textContent) > -1)
             this.checked = true;
           else
             this.checked = false;
@@ -1505,10 +1563,10 @@
       }
 
       d3.selectAll('#website').text(function(d) {
-        this.value = obj.weblink;
+        this.value = obj.url;
       });
       d3.selectAll('#employee').text(function(d) {
-        this.value = obj.numemp;
+        this.value = obj.employees;
       });
 
       if (obj.people !== null) {
@@ -1540,13 +1598,13 @@
         this.value = obj.nickname;
       });
       d3.selectAll('#twitterhandle').text(function(d) {
-        this.value = obj.twitterH;
+        this.value = obj.twitter_handle;
       });
 
       d3.selectAll('input[name="influence-type"]').filter(function(d, i) {
-        if (obj.golr === "0" && this.value === "Local Influence")
+        if (obj.influence === "local" && this.value === "Local Influence")
           this.checked = true;
-        else if (obj.golr === "1" && this.value === "Global Influence")
+        else if (obj.influence === "global" && this.value === "Global Influence")
           this.checked = true;
         else
           this.checked = false;
@@ -1945,25 +2003,25 @@
             return "0.05";
         });
 
-      var neighborFund = graph.fundingR.filter(function(link) {
+      var neighborFund = graph.funding_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
       });
 
-      var neighborInvest = graph.investingR.filter(function(link) {
+      var neighborInvest = graph.investment_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
       });
 
-      var neighborPorucs = graph.porucs.filter(function(link) {
+      var neighborPorucs = graph.collaboration_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
       });
 
-      var neighborData = graph.data.filter(function(link) {
+      var neighborData = graph.data_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
@@ -2017,28 +2075,28 @@
       });
 
       //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      var neighborFund = graph.fundingR.filter(function(link) {
+      var neighborFund = graph.funding_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
       });
 
       //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      var neighborInvest = graph.investingR.filter(function(link) {
+      var neighborInvest = graph.investment_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
       });
 
       //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      var neighborPorucs = graph.porucs.filter(function(link) {
+      var neighborPorucs = graph.collaboration_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
       });
 
       //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      var neighborData = graph.data.filter(function(link) {
+      var neighborData = graph.data_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
@@ -2179,25 +2237,25 @@
         }
       }).on('mouseover', null);
 
-      var neighborFund = graph.fundingR.filter(function(link) {
+      var neighborFund = graph.funding_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
       });
 
-      var neighborInvest = graph.investingR.filter(function(link) {
+      var neighborInvest = graph.investment_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
       });
 
-      var neighborPorucs = graph.porucs.filter(function(link) {
+      var neighborPorucs = graph.collaboration_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
       });
 
-      var neighborData = graph.data.filter(function(link) {
+      var neighborData = graph.data_connections.filter(function(link) {
         return link.source.index === d.index || link.target.index === d.index;
       }).map(function(link) {
         return link.source.index === d.index ? link.target.index : link.source.index;
@@ -3598,11 +3656,11 @@
         node.transition()
           .duration(350)
           .delay(0).attr("r", function(d) {
-            if (d.numemp !== null) return empScale(parseInt(d.numemp));
+            if (d.employees !== null) return empScale(parseInt(d.employees));
             else return "7";
           });
         textElement.attr('transform', function(d) {
-          if (d.numemp !== null) return translateSVG(0, -(empScale(parseInt(d.numemp)) + 2));
+          if (d.employees !== null) return translateSVG(0, -(empScale(parseInt(d.employees)) + 2));
           else return translateSVG(0, -(empScale(parseInt(7)) + 2));
         });
       }
@@ -3651,8 +3709,8 @@
         .links(fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon))
         .linkStrength(0)
         .charge(function(d) {
-          if (d.numemp !== null)
-            return -5 * empScale(parseInt(d.numemp));
+          if (d.employees !== null)
+            return -5 * empScale(parseInt(d.employees));
           else
             return -50;
         })
@@ -3669,3 +3727,5 @@
 
 
   });
+
+//  Set flag to false inside the node click as opposed to the single click...
