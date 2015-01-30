@@ -1,4 +1,4 @@
-(function(){
+
   function transformText(d) {
     return "translate(" + (d.x + 6) + "," + (d.y + 4) + ")";
   }
@@ -24,6 +24,10 @@
   function getSVG(svg) {
     return svg;
   }
+
+    var forProfitNodes, nonProfitNodes, individualNodes, governmentNodes;
+    var fiveMostConnectedForProfit = {}, fiveMostConnectedNonProfit = {}, fiveMostConnectedIndividuals = {}, fiveMostConnectedGovernment = {};
+   
 
   var dblclickobject;
 
@@ -217,7 +221,7 @@
           if (d.type === "For-Profit")
             return "rgb(127,186,0)";
           if (d.type === "Government")
-            return "rgb(242,80,34)";
+            return "rgb(242,80,34)";          
         }
       })
       .attr("cx", function(d) {
@@ -235,16 +239,56 @@
     // data section
     // combine collaboration and data
 
+    forProfitNodes = svg.selectAll('.node').filter(function(d) {
+      return d.type === "For-Profit";
+    }).sort(function(a, b) { return a.weight - b.weight;});
+    nonProfitNodes = svg.selectAll('.node').filter(function(d) {
+      return d.type === "Non-Profit";
+    }).sort(function(a, b) { return a.weight - b.weight;});
+    individualNodes = svg.selectAll('.node').filter(function(d) {
+      return d.type === "Individual";
+    }).sort(function(a, b) { return a.weight - b.weight;});
+    governmentNodes = svg.selectAll('.node').filter(function(d) {
+      return d.type === "Government";
+    }).sort(function(a, b) { return a.weight - b.weight;});
+
+    //  Select the nodes to choose for highlighting nickname on visualization (TOP 5) 
+    forProfitNodes.each(function(d, i) {
+      if(i >= forProfitNodes[0].length - 5) fiveMostConnectedForProfit[d.name] = d.weight;
+    });
+    nonProfitNodes.each(function(d, i) {
+      if(i >= nonProfitNodes[0].length - 5) fiveMostConnectedNonProfit[d.name] = d.weight;
+    });
+    individualNodes.each(function(d, i) {
+      if(i >= individualNodes[0].length - 5) fiveMostConnectedIndividuals[d.name] = d.weight;
+    });
+    governmentNodes.each(function(d, i) {
+      if(i >= governmentNodes[0].length - 5) fiveMostConnectedGovernment[d.name] = d.weight;
+    });
+
+
     var textElement = svg.selectAll('.node')
                          .append('text')
                          .text(function(d){return d.nickname;})
                          .attr("x", -8)
                            .attr("y", ".31em")
                            .style('color', 'black')
-                           .style('font-size', '14px')
+                           .style('font-size', '18px')
                            .style('font-weight', 900)
                          .style('font-family', "'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif")
-                         .style('pointer-events', 'none');
+                         .style('pointer-events', 'none')
+                         .style('opacity', function(d){
+                          var textOpacity;
+                          if(d.type === "For-Profit")
+                            textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Non-Profit")
+                            textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Individual")
+                            textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Government")
+                            textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
+                          return textOpacity;
+                         });
                          // .style('text-shadow', '0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff');
 
     // var textElement = svg.selectAll('.node')
@@ -271,6 +315,7 @@
     // Must adjust the force parameters...
 
     function dblclick(d) {
+
       d3.select(this).classed("fixed", function(d) {
         d.fixed = false;
       });
@@ -1936,6 +1981,9 @@
           else
             return "0.05";
         });
+
+        d3.select(this.parentNode).select("text").style("opacity", 1);
+
     }
 
     function handleAdjNodeClick(d) {
@@ -2074,6 +2122,9 @@
     }
 
     function sinclick(d) {
+
+      console.log(d);
+      console.log(d.weight);
 
       handleClickNodeHover(d);
 
@@ -2283,41 +2334,6 @@
             return d.target.y;
           });
 
-        // textElement.attr("x", function(d) { 
-        //       return d.x; })
-        //    .attr("y", function(d) {
-        //       if(d.numemp !== null)
-        //       {
-        //         if(d.nickname.length > 0 && d.nickname.length < 6)  
-        //         {
-        //           return d.y + 7 + empScale(parseInt(d.numemp));
-        //         }
-        //         else if(d.nickname.length >= 6 && d.nickname.length <= 16)
-        //         {
-        //           return d.y;
-        //         }
-        //         else
-        //         {
-        //           return d.y - 7 - empScale(parseInt(d.numemp));
-        //         }
-        //       }
-        //       else
-        //       {
-        //         if(d.nickname.length > 0 && d.nickname.length < 6)  
-        //         {
-        //           return d.y + 7 + 7;
-        //         }
-        //         else if(d.nickname.length >= 6 && d.nickname.length <= 16)
-        //         {
-        //           return d.y;
-        //         }
-        //         else
-        //         {
-        //           return d.y - 7 - 7;
-        //         }
-        //       }
-        //     });
-
         node.attr("cx", function(d) {
             return d.x = d.x;
           })
@@ -2444,48 +2460,6 @@
               return d.target.y;
             } else return d.target.y;
           });
-
-
-        // fundLink.attr("x1", function(d) { return d.source.x;  })
-        // .attr("y1", function(d) { return d.source.y;  })
-        // .attr("x2", function(d) { return d.target.x;  })
-        // .attr("y2", function(d) { return d.target.y;  });
-        // } 
-
-          // textElement.attr("x", function(d) { 
-          //     return d.x; })
-          //  .attr("y", function(d) {
-          //     if(d.numemp !== null)
-          //     {
-          //       if(d.nickname.length > 0 && d.nickname.length < 6)  
-          //       {
-          //         return d.y + 7 + empScale(parseInt(d.numemp));
-          //       }
-          //       else if(d.nickname.length >= 6 && d.nickname.length <= 16)
-          //       {
-          //         return d.y;
-          //       }
-          //       else
-          //       {
-          //         return d.y - 7 - empScale(parseInt(d.numemp));
-          //       }
-          //     }
-          //     else
-          //     {
-          //       if(d.nickname.length > 0 && d.nickname.length < 6)  
-          //       {
-          //         return d.y + 7 + 7;
-          //       }
-          //       else if(d.nickname.length >= 6 && d.nickname.length <= 16)
-          //       {
-          //         return d.y;
-          //       }
-          //       else
-          //       {
-          //         return d.y - 7 - 7;
-          //       }
-          //     }
-          //   });
 
         node.attr("cx", function(d, i) {
             if ((d3.select(node)[0][0].data())[i].name === centeredNode.name) {
@@ -3695,4 +3669,3 @@
 
 
   });
-})();
