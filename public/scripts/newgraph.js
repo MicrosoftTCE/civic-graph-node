@@ -279,7 +279,20 @@
                             return d.nickname;
                           })
                           .attr("x", 0)
-                        .attr("dy", ".35em");
+                        .attr("dy", ".25em")
+                        .style("font-size", "14px")
+                          .style('opacity', function(d){
+                          var textOpacity;
+                          if(d.type === "For-Profit")
+                            textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Non-Profit")
+                            textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Individual")
+                            textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Government")
+                            textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
+                          return textOpacity;
+                         });
 
         textElement.call(wrap, 25);
                           
@@ -336,7 +349,7 @@
         word,
         line = [],
         lineNumber = 0,
-        lineHeight = 0.4, // ems
+        lineHeight = 0.25, // ems
         y = text.attr("y"),
         dy = parseFloat(text.attr("dy")),
         tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
@@ -2004,7 +2017,9 @@
             return "0.05";
         });
 
-        d3.select(this.parentNode).select("text").style("opacity", 1);
+        d3.select(this.parentNode).select("text").transition()
+        .duration(350)
+        .delay(0).style("opacity", 1).style("font-size", "20px");
 
     }
 
@@ -2139,8 +2154,11 @@
       d3.selectAll('.node').transition()
         .duration(350)
         .delay(0)
-
       .style("opacity", "1");
+
+      d3.selectAll('.node').select("text").transition()
+        .duration(350)
+        .delay(0).style("opacity", 1).style("font-size", "14px");
     }
 
     function sinclick(d) {
