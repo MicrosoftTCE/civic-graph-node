@@ -110,6 +110,30 @@ app.post('/handleData', parseUrlencoded, function(request, response){
         }
     }
 
+    if(entity.funding_given !== null)
+    {
+        for(var i = 0; i < entity.funding_given.length; i++)
+        {
+            var funding = entity.funding_given[i];
+            if(funding.amount === "")
+                funding.amount = null;
+            if(funding.year === "")
+                funding.year = null;
+        }
+    }
+
+    if(entity.investments_made !== null)
+    {
+        for(var i = 0; i < entity.investments_made.length; i++)
+        {
+            var investment = entity.investments_made[i];
+            if(investment.amount === "")
+                investment.amount = null;
+            if(investment.year === "")
+                investment.year = null;
+        }
+    }
+
     if(entity.revenue !== null)
     {
         for(var i = 0; i < entity.revenue.length; i++)
@@ -134,21 +158,86 @@ app.post('/handleData', parseUrlencoded, function(request, response){
         }
     }
 
-    if(entity.grants !== null)
-    {
-        for(var i = 0; i < entity.grants.length; i++)
-        {
-            var grant = entity.grants[i];
-            if(grant.amount === "")
-                grant.amount = null;
-            if(grant.year === "")
-                grant.year = null;
-        }
-    }
+
+    // if(entity.grants !== null)
+    // {
+    //     for(var i = 0; i < entity.grants.length; i++)
+    //     {
+    //         var grant = entity.grants[i];
+    //         if(grant.amount === "")
+    //             grant.amount = null;
+    //         if(grant.year === "")
+    //             grant.year = null;
+    //     }
+    // }
 
     // SELECT LAST(column_name) FROM table_name;
 
     console.log(entity);
+
+    var connection = mysql.createConnection(
+    {
+      port: 3306,
+      host: 'us-cdbr-azure-east-b.cloudapp.net',
+      user: 'b5a370a8f6d91a',
+      password: 'e928dad7',
+      database: 'athena'
+    });
+
+    connection.connect();
+
+    
+ 
+    connection.query('USE athena', function(err){
+         if(err) throw err;
+
+         console.log("Successful connection!");
+
+    var followers, employees, categories, url,
+        twitter_handle, influence,
+        relations, key_people;
+
+    (entity.categories !== null) ? categories = '"' + entity.categories.join(", ") + '"' : categories = null;
+    (entity.url !== null) ? url = '"' + entity.url + '"' : url = null;
+    (entity.twitter_handle !== null) ? twitter_handle = '"' + entity.twitter_handle + '"' : twitter_handle = null;
+    (entity.followers !== null) ? followers = entity.followers : followers = null;
+    (entity.employees !== null) ? employees = entity.employees : employees = null;
+    (entity.influence !== null) ? influence = '"' + entity.influence + '"' : influence = null;
+    (entity.relations !== null) ? relations = '"' + entity.relations.join(", ") + '"' : relations = null;
+    (entity.key_people !== null) ? key_people = '"' + entity.key_people.join(", ") + '"' : key_people = null;
+
+            connection.query('SET @@auto_increment_increment=1;', function(err){
+            if(err) throw err;
+        });
+
+        connection.query('SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";', function(err){
+            if(err) throw err;
+        });
+
+        connection.query('INSERT INTO Entities ('
+                    + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, '
+                    + 'Employees, Influence, Relations, KeyPeople, TimeStamp) VALUES ("' 
+                    + entity.name + '","' 
+                    + entity.nickname + '","'
+                    + entity.type + '",'
+                    + categories + ',"'
+                    + entity.location + '",'
+                    + url + ','
+                    + twitter_handle + ','
+                    + followers + ','
+                    + employees + ','
+                    + influence + ',' 
+                    + relations + ','
+                    + key_people + ','
+                    + 'NOW());', function (err) {
+                         if (err) throw err;
+
+                         connection.end();
+                    });
+    });
+
+
+    
 
     // connection.query('USE athena', function (err) {
     //     if (err) throw err;

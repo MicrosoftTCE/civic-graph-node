@@ -28,6 +28,7 @@
     var forProfitNodes, nonProfitNodes, individualNodes, governmentNodes;
     var fiveMostConnectedForProfit = {}, fiveMostConnectedNonProfit = {}, fiveMostConnectedIndividuals = {}, fiveMostConnectedGovernment = {};
    
+    var resetFlag = 1;
 
   var dblclickobject;
 
@@ -750,14 +751,16 @@
         key_people: null,
         twitter_handle: null,
         followers: null,
-        data: null,
         relations: null,
-        collaborations: null,
         funding_received: null,
         investments_received: null,
+        funding_given: null,
+        investments_made: null,
+        collaborations: null,
+        data: null,
         revenue: null,
         expenses: null,
-        grants: null,
+        // grants: null, Not needed, taken care of via the funding_given section.
         influence: null
       };
 
@@ -981,20 +984,20 @@
         formObject.expenses = null;
       }
 
-      formObject.grants = [];
-      var grant_year;
-      d3.selectAll('.grant-input .grant_amt').filter(function(d, i) {
-        if (this.value) {
-          grant_year = d3.selectAll('.grant-input .grant_year')[0][i].value;
-          if(grant_year)
-            formObject.grants.push({amount:this.value, year:grant_year});
-          else
-            formObject.grants.push({amount:this.value, year:null});
-        }
-      });
-      if (formObject.grants.length === 0) {
-        formObject.grants = null;
-      }
+      // formObject.grants = [];
+      // var grant_year;
+      // d3.selectAll('.grant-input .grant_amt').filter(function(d, i) {
+      //   if (this.value) {
+      //     grant_year = d3.selectAll('.grant-input .grant_year')[0][i].value;
+      //     if(grant_year)
+      //       formObject.grants.push({amount:this.value, year:grant_year});
+      //     else
+      //       formObject.grants.push({amount:this.value, year:null});
+      //   }
+      // });
+      // if (formObject.grants.length === 0) {
+      //   formObject.grants = null;
+      // }
     
       console.log(formObject);
 
@@ -1101,15 +1104,16 @@
             <input type="text" name="expense_year" class="expense_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
             </div>\
             </div>\
-            <h3 class="form-header">Grants</h3>\
-            <div id="grant-0">\
-            <div class="grant-input input-control text" data-role="input-control">\
-            <input type="text" name="grant_amt" class="grant_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/>\
-            <input type="text" name="grant_year" class="grant_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
-            </div>\
-            </div>\
             <button type="button" id="submit-B" href="javascript: check_empty()">Submit</button>\
             </div>';
+
+            // <h3 class="form-header">Grants</h3>\
+            // <div id="grant-0">\
+            // <div class="grant-input input-control text" data-role="input-control">\
+            // <input type="text" name="grant_amt" class="grant_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/>\
+            // <input type="text" name="grant_year" class="grant_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
+            // </div>\
+            // </div>\
 
         d3.select('#info')
           .html(s);
@@ -1140,9 +1144,9 @@
         d3.selectAll('input[name="expense_amt"]').on('keyup', function() {
           add_input_exp(0);
         });
-        d3.selectAll('input[name="grant_amt"]').on('keyup', function() {
-          add_input_grant(0);
-        });
+        // d3.selectAll('input[name="grant_amt"]').on('keyup', function() {
+        //   add_input_grant(0);
+        // });
 
         d3.selectAll('#submit-B').on('click', function() {
           displayFormCSendJSON(formObject);
@@ -1267,21 +1271,21 @@
       }
     }
 
-    function add_input_grant(counterG) {
-      if ($('#grant-' + counterG + ' input[name="grant_amt"]').val() !== "") {
-        d3.select('#grant-' + counterG + ' input[name="grant_amt"]').on('keyup', null);
-        counterG++; // counter -> 2
+    // function add_input_grant(counterG) {
+    //   if ($('#grant-' + counterG + ' input[name="grant_amt"]').val() !== "") {
+    //     d3.select('#grant-' + counterG + ' input[name="grant_amt"]').on('keyup', null);
+    //     counterG++; // counter -> 2
 
-        console.log(counterG);
-        $("#grant-" + (counterG - 1)).after('<div id="grant-' + counterG + '"><div class="grant-input input-control text" data-role="input-control">\
-           <input type="text" name="grant_amt" class="grant_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/>\
-          <input type="text" name="grant_year" class="grant_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
-        </div></div>');
-        d3.select("#grant-" + counterG + " input[name=grant_amt]").on("keyup", function() {
-          add_input_grant(counterG);
-        });
-      }
-    }
+    //     console.log(counterG);
+    //     $("#grant-" + (counterG - 1)).after('<div id="grant-' + counterG + '"><div class="grant-input input-control text" data-role="input-control">\
+    //        <input type="text" name="grant_amt" class="grant_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/>\
+    //       <input type="text" name="grant_year" class="grant_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
+    //     </div></div>');
+    //     d3.select("#grant-" + counterG + " input[name=grant_amt]").on("keyup", function() {
+    //       add_input_grant(counterG);
+    //     });
+    //   }
+    // }
 
     function displayFormA() {
       // Test if jQuery works within d3...
@@ -1485,11 +1489,6 @@
         preFillFormA(suggestions[i]);
       });
 
-
-      var data = {};
-      data.title = "title";
-      data.message = "message";
-
       $.ajax({
         type: 'POST',
         data: $.param(formObj),
@@ -1498,41 +1497,6 @@
       }).done(function(returnData){
         
       });
-
-      // Still trying to resolve AJAX / ExpressJS routing issue.
-      //   $.ajax({
-      //     url: "http://localhost:3000/endpoint",
-
-      //     // The name of the callback parameter, as specified by the YQL service
-      //     jsonp: "callback",
-
-      //     // Tell jQuery we're expecting JSONP
-      //     dataType: "jsonp",
-
-      //     // Tell YQL what we want and that we want JSON
-      //     data: JSON.stringify(data),
-
-      //     // Work with the response
-      //     success: function( data ) {
-      //         console.log( data ); // server response
-      //     }
-       	// });
-
-      //   $.ajax
-      // ({
-      //   type: "POST",
-      //   url: "/ajax",
-      //   cache: false, 
-      //   dataType: "json",
-      //   data:{name: "Dennis", address: {city: "Dub", country: "IE"}},
-      //   success: function(data){
-      //     alert('Success!')
-      //   },
-      //   error: function(jqXHR, textStatus, err){
-      //     alert('text status' + textStatus + ', err ' + err)
-      //   }
-
-      //  });
 
     }
 
@@ -2180,9 +2144,8 @@
     }
 
     function sinclick(d) {
-
-      console.log(d);
-      console.log(d.weight);
+      resetFlag = 0;
+      console.log("Clicked on node first");
 
       handleClickNodeHover(d);
 
@@ -3694,35 +3657,62 @@
 
 
     // Right-click solution to returning to original state
-    d3.select('svg').on('contextmenu', function() {
-      d3.event.preventDefault();
-      offNode();
-      d3.selectAll('g').classed("fixed", function(d) {
-        d.fixed = false;
-      });
-      d3.selectAll('g').call(drag);
-      centeredNode = jQuery.extend(true, {}, {});
+    // d3.select('svg').on('contextmenu', function() {
+    //   d3.event.preventDefault();
+    //   offNode();
+    //   d3.selectAll('g').classed("fixed", function(d) {
+    //     d.fixed = false;
+    //   });
+    //   d3.selectAll('g').call(drag);
+    //   centeredNode = jQuery.extend(true, {}, {});
 
-      var force = d3.layout.force()
-        .nodes(filteredNodes)
-        .size([width, height])
-        .links(fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon))
-        .linkStrength(0)
-        .charge(function(d) {
-          if (d.employees !== null)
-            return -5 * empScale(parseInt(d.employees));
-          else
-            return -50;
-        })
-        .on("tick", tick)
-        .start();
+    //   var force = d3.layout.force()
+    //     .nodes(filteredNodes)
+    //     .size([width, height])
+    //     .links(fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon))
+    //     .linkStrength(0)
+    //     .charge(function(d) {
+    //       if (d.employees !== null)
+    //         return -5 * empScale(parseInt(d.employees));
+    //       else
+    //         return -50;
+    //     })
+    //     .on("tick", tick)
+    //     .start();
 
-    });
+    // });
 
 
     d3.select('svg').on('click', function() {
+      console.log("Clicked on SVG");
       var m = d3.mouse(this);
       console.log(m);
+
+      if(resetFlag === 1)
+      {
+        d3.event.preventDefault();
+        offNode();
+        d3.selectAll('g').classed("fixed", function(d) {
+          d.fixed = false;
+        });
+        d3.selectAll('g').call(drag);
+        centeredNode = jQuery.extend(true, {}, {});
+
+        var force = d3.layout.force()
+          .nodes(filteredNodes)
+          .size([width, height])
+          .links(fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon))
+          .linkStrength(0)
+          .charge(function(d) {
+            if (d.employees !== null)
+              return -5 * empScale(parseInt(d.employees));
+            else
+              return -50;
+          })
+          .on("tick", tick)
+          .start();
+      }
+      resetFlag = 1;
     });
 
 

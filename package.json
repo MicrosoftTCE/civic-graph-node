@@ -16,6 +16,7 @@
     "bcrypt": "latest",
     "passport": "latest",
     "stylus": "latest",
-    "mysql": "latest"
+    "mysql": "latest",
+    "geoip-lite": "latest"
   }
 }
