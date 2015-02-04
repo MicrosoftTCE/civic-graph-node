@@ -3,7 +3,7 @@
     return "translate(" + d.x + "," + d.y + ")";
   }
 
-  function translateSVG(x, y) {
+  function translation(x, y) {
     return 'translate(' + x + ',' + y + ')';
   }
 
@@ -279,20 +279,26 @@
                             return d.nickname;
                           })
                           .attr("x", 0)
-                        .attr("dy", ".25em")
-                        .style("font-size", "14px")
-                          .style('opacity', function(d){
-                          var textOpacity;
-                          if(d.type === "For-Profit")
-                            textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
-                          if(d.type === "Non-Profit")
-                            textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
-                          if(d.type === "Individual")
-                            textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
-                          if(d.type === "Government")
-                            textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
-                          return textOpacity;
-                         });
+                        .attr("dy", "0.35em")
+                            .attr("y", function(d){
+                            if (d.employees !== null)
+                              return empScale(d.employees);
+                            else
+                              return 7;
+                           });
+                        // .style("font-size", "14px")
+                        //   .style('opacity', function(d){
+                        //   var textOpacity;
+                        //   if(d.type === "For-Profit")
+                        //     textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                        //   if(d.type === "Non-Profit")
+                        //     textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                        //   if(d.type === "Individual")
+                        //     textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
+                        //   if(d.type === "Government")
+                        //     textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
+                        //   return textOpacity;
+                        //  });
 
         textElement.call(wrap, 25);
                           
@@ -350,9 +356,8 @@
         line = [],
         lineNumber = 0,
         lineHeight = 0.25, // ems
-        y = text.attr("y"),
         dy = parseFloat(text.attr("dy")),
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("dy", 0 + "em");
     while (word = words.pop()) {
       line.push(word);
       tspan.text(line.join(" "));
@@ -360,7 +365,8 @@
         line.pop();
         tspan.text(line.join(" "));
         line = [word];
-        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+        lineNumber++;
+        tspan = text.append("tspan").attr("x", 0).attr("dy", lineNumber * lineHeight + "em").text(word);
       }
     }
   });
@@ -3637,12 +3643,12 @@
         node.transition()
           .duration(350)
           .delay(0).attr("r", function(d) {
-            if (d.employees !== null) return empScale(parseInt(d.employees));
+            if (d.employees !== null) return empScale(d.employees);
             else return "7";
           });
         textElement.attr('transform', function(d) {
-          if (d.employees !== null) return translateSVG(0, -(empScale(parseInt(d.employees)) + 2));
-          else return translateSVG(0, -(empScale(parseInt(7)) + 2));
+          if (d.employees !== null) return translation(0, -(empScale(d.employees)));
+          else return translation(0, -7);
         });
       }
 
@@ -3651,23 +3657,19 @@
           .duration(350)
           .delay(0).attr("r", function(d) {
             if (d.followers !== null) {
-              if (parseInt(d.followers) > 1000000) {
+              if (d.followers > 1000000) {
                 return "50";
               } else {
-                return twitScale(parseInt(d.followers));
+                return twitScale(d.followers);
               }
             } else
               return "7";
           });
         textElement.attr('transform', function(d) {
           if (d.followers !== null) {
-            if (parseInt(d.followers) > 1000000) {
-              return translateSVG(0, -52);
-            } else {
-              return translateSVG(0, -(twitScale(parseInt(d.followers)) + 2));
-            }
+              return translation(0, -(twitScale(d.followers)));
           } else
-            return translateSVG(0, -(twitScale(parseInt(7)) + 2));
+            return translation(0, -7);
         });
       }
     });
