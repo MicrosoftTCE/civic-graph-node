@@ -40,8 +40,8 @@
   var centerNodeDataLink = [];
 
   var color = d3.scale.category20();
-  var width = 960;
-  var height = 960;
+  var width = 1000;
+  var height = 1000;
 
   var testNode;
 
@@ -129,7 +129,7 @@
   var twitScale = d3.scale.sqrt().domain([10, 1000000]).range([10, 50]);
 
   d3.json("data/civic.json", function(error, graph) {
-    filteredNodes = graph.nodes;
+    filteredNodes = (graph.nodes);
     fundingCon = graph.funding_connections;
     investingCon = graph.investment_connections;
     porucsCon = graph.collaboration_connections;
@@ -151,6 +151,8 @@
       })
       .on("tick", tick)
       .start();
+
+    var renderedNodes = (graph.nodes).filter(function(d){return d.render === 1;});
 
     var drag = force.drag()
       .on("dragstart", drag)
@@ -202,7 +204,7 @@
       .style("visibility", "visible");
 
     nodeInit = svg.selectAll(".node")
-      .data(filteredNodes)
+      .data(renderedNodes)
       .enter()
       .append("g")
       .attr("class", "node")
@@ -459,7 +461,19 @@
       //  Printing to side panel within web application.
       d3.select('#info')
         .html(s)
-        .style('list-style', 'square');
+        .style('list-style', 'square')
+
+        d3.selectAll('#editCurrentInfo').on('click', function(){
+          prefillCurrent(d);
+        });
+
+    }
+
+    function prefillCurrent(d)
+    {
+      console.log(d);
+      editForm();
+      preFillFormA(d);
     }
 
     function editDisplay(d) {
@@ -474,6 +488,7 @@
       var s = "";
 
       //  General Information
+      s += '<div><a style="float:right;"><i id="editCurrentInfo" class="icon-pencil on-left"></i></a></div>';
       s += '<h1>' + "<a href=" + '"' + d.url + '" target="_blank">' + d.name + '</a></h1>';
       s += '<h6>' + 'Type of Entity: ' + '</h6>' + ' <h5>' + d.type + '</h5>';
 
@@ -930,10 +945,10 @@
         // Obtain data
         formObject.data = [];
         d3.selectAll('.data-entity').filter(function(d, i) {
-          if (this.value)
+          if (this.value !== "")
           formObject.data.push(this.value);
         });
-        if (formObject.data === "") {
+        if (formObject.data.length === 0) {
           formObject.data = null;
         }
       }
@@ -1238,7 +1253,7 @@
         counterD++; // counter -> 2
 
         console.log(counterD);
-        $("#data-" + (counterD - 1)).after('<div id="data-' + counterD + '" class="input-control text" data-role="input-control"><input type="text" name="data" class="data" placeholder="Data Resource"/></div>');
+        $("#data-" + (counterD - 1)).after('<div id="data-' + counterD + '" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource"/></div>');
         d3.select("#data-" + counterD + " input[name='data']").on("keyup", function() {
           add_input_data(counterD);
         });
@@ -1375,9 +1390,9 @@
             <div class="input-control text" data-role="input-control">\
             <input type="text" name="website" id="website" placeholder="Website"/>\
             </div>\
-            <h3 class="form-header">Number of Employees?</h3>\
-            <div class="input-control text" data-role="input-control">\
-              <input type="text" name="employees" id="employee" maxlength="6" style="width:30% !important;"/>\
+            <h3 class="form-header" style="display:inline-block;">Number of Employees</h3>\
+            <div class="input-control text" data-role="input-control" style="width:27% !important; display:inline-block; float:right; margin-top: 2%;">\
+              <input type="text" name="employees" id="employee" maxlength="6" style="width:100% !important;"/>\
             </div>\
             <h3 class="form-header">Key People?</h3>\
             <div id="key-people-0" class="input-control text" data-role="input-control">\
@@ -1399,11 +1414,27 @@
             <input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
             </div>\
             </div>\
+            <h3 class="form-header">Who do they fund via grants?</h3>\
+            <div id="fundinggiven-0">\
+            <div class="fundgiven-input input-control text" data-role="input-control">\
+            <input type="text" name="fundgiven" class="fundee" placeholder="Funder" style="display:inline-block; width:50%;"/>\
+            <input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/>\
+            <input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
+            </div>\
+            </div>\
+            <h3 class="form-header">Who do they invest in via equity stakes (stock)?</h3>\
+            <div id="investmentmade-0">\
+            <div class="investmade-input input-control text" data-role="input-control">\
+            <input type="text" name="investmade" class="investormade" placeholder="Investor" style="display:inline-block; width:50%;"/>\
+            <input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/>\
+            <input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
+            </div>\
+            </div>\
             <h3 class="form-header">Who provides them with data?</h3>\
             <div id="data-0" class="input-control text" data-role="input-control">\
             <input type="text" name="data" class="data-entity" placeholder="Data Resource"/>\
             </div>\
-            <button type="button" id="submit-A" href="javascript: check_empty()">Submit</button>\
+            <div id="nextPhase"><span>Almost done...</span><button type="button" id="submit-A" href="javascript: check_empty()">Next</button></div>\
             </div>\
             <hr/>\
             <div class="webform-footer">\
@@ -1552,20 +1583,91 @@
         this.value = obj.employees;
       });
 
-      if (obj.people !== null) {
-        var keypeople = (obj.people).split(", ");
-        keypeople.forEach(function(d, i) {
-          // typeIntoFields(d, 0, d3.selectAll('#keypeople input')[0][i]);
+      if (obj.key_people !== null) {
+        var keypeople = obj.key_people;
+        for(var i = 0; i < keypeople.length; i++)
+        {
           $("#key-people-" + i).after('<div id="key-people-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="kpeople" class="kpeople" placeholder="Key Person\'s Name""/></div>');
           d3.select('#key-people-' + i + ' input[name="kpeople"]').on('keyup', null);
           d3.select('#key-people-' + i + ' input[name="kpeople"]').text(function(e) {
-            this.value = d;
+            this.value = keypeople[i];
           });
-          // d3.select('#key-people-' + i + " input[name='kpeople']").text(function(e){console.log(d.value); d.value = e});
-        });
+        }
+        // keypeople.forEach(function(d, i) {
+        //   // typeIntoFields(d, 0, d3.selectAll('#keypeople input')[0][i]);
+          
+        //   // d3.select('#key-people-' + i + " input[name='kpeople']").text(function(e){console.log(d.value); d.value = e});
+        // });
         d3.select('#key-people-' + keypeople.length + ' input[name="kpeople"]').on('keyup', function() {
           add_input_kp(keypeople.length);
         });
+      }
+
+      if(obj.funding_received !== null) {
+        var fundingreceived = obj.funding_received;
+
+        fundingreceived.forEach(function(d, i){
+          $("#funding-" + i).after('<div id="funding-' + (i + 1) + '"><div class="fund-input input-control text" data-role="input-control">\
+            <input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;"/>\
+            <input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/>\
+            <input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
+            </div></div>');
+          d3.select('#funding-' + i + ' input[name="fund"]').on('keyup', null);
+          d3.select('#funding-' + i + ' input[name="fund"]').text(function(e) {
+            this.value = d.entity;
+          });
+          d3.select('#funding-' + i + ' input[name="fund_amt"]').text(function(e) {
+            this.value = d.amount;
+          });
+          d3.select('#funding-' + i + ' input[name="fund_year"]').text(function(e) {
+            this.value = d.year;
+          });
+        });
+        d3.select("#funding-" + fundingreceived.length + " input[name='fund']").on("keyup", function() {
+            add_input_fund(fundingreceived.length);
+          });
+      }
+
+      if(obj.investments_received !== null) {
+        var investmentreceived = obj.investments_received;
+
+        investmentreceived.forEach(function(d, i){
+          $("#investing-" + i).after('<div id="investing-' + (i + 1) + '"><div class="invest-input input-control text" data-role="input-control">\
+            <input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;"/>\
+            <input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/>\
+            <input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
+            </div></div>');
+          d3.select('#investing-' + i + ' input[name="invest"]').on('keyup', null);
+          d3.select('#investing-' + i + ' input[name="invest"]').text(function(e){
+            this.value = d.entity;
+          });
+          d3.select('#investing-' + i + ' input[name="invest_amt"]').text(function(e){
+            this.value = d.amount;
+          });
+          d3.select('#investing-' + i + ' input[name="invest_year"]').text(function(e){
+            this.value = d.year;
+          });
+
+        });
+        d3.select("#investing-" + investmentreceived.length + " input[name='invest']").on("keyup", function() {
+            add_input_invest(investmentreceived.length);
+          });
+      }
+
+
+      if(obj.data !== null) {
+        var dataProviders = obj.data;
+
+        dataProviders.forEach(function(d, i){
+          $("#data-" + i).after('<div id="data-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource"/></div>');
+          d3.select('#data-' + i + ' input[name="data"]').on('keyup', null);
+          d3.select('#data-' + i + ' input[name="data"]').text(function(e){
+            this.value = d.entity;
+          });
+        }); 
+        d3.select("#data-" + dataProviders.length + " input[name='data']").on("keyup", function() {
+            add_input_data(dataProviders.length);
+          });
       }
 
       d3.selectAll('#submit-A').on('click', function() {
@@ -1593,23 +1695,65 @@
           this.checked = false;
       });
 
-      if (obj.poruc !== null) {
-        var collaboration = (obj.poruc).split("; ");
+      if (obj.collaborations !== null) {
+        var collaboration = obj.collaborations;
+        
         collaboration.forEach(function(d, i) {
           // typeIntoFields(d, 0, d3.selectAll('#keypeople input')[0][i]);
           $("#collaboration-" + i).after('<div id="collaboration-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="collaboration" class="collaborator" placeholder="Collaborator"/></div>');
           d3.select('#collaboration-' + i + ' input[name="collaboration"]').on('keyup', null);
           d3.select('#collaboration-' + i + ' input[name="collaboration"]').text(function(e) {
-            this.value = d;
+            this.value = d.entity;
           });
           // d3.select('#key-people-' + i + " input[name='kpeople']").text(function(e){console.log(d.value); d.value = e});
         });
+        console.log(collaboration.length);
         d3.select('#collaboration-' + collaboration.length + ' input[name="collaboration"]').on('keyup', function() {
           add_input_collab(collaboration.length);
         });
       }
 
+      if(obj.expenses !== null) {
+        var expenseValues = obj.expenses;
 
+        expenseValues.forEach(function(d, i){
+          $("#expense-" + i).after('<div id="expense-' + (i + 1) + '"><div class="expense-input input-control text" data-role="input-control">\
+           <input type="text" name="expense_amt" class="expense_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/>\
+          <input type="text" name="expense_year" class="expense_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
+        </div></div>');
+          d3.select('#expense-' + i + ' input[name="expense_amt"]').on('keyup', null);
+          d3.select('#expense-' + i + ' input[name="expense_amt"]').text(function(e) {
+            this.value = d.amount;
+          });
+          d3.select('#expense-' + i + ' input[name="expense_year"]').text(function(e) {
+            this.value = d.year;
+          });
+        });
+        d3.select('#expense-' + expenseValues.length + ' input[name="expense_amt"]').on('keyup', function() {
+          add_input_exp(expenseValues.length);
+        });
+      }
+
+      if(obj.revenue !== null) {
+        var revenueValues = obj.revenue;
+
+        revenueValues.forEach(function(d, i){
+          $("#revenue-" + i).after('<div id="revenue-' + (i + 1) + '"><div class="revenue-input input-control text" data-role="input-control">\
+            <input type="text" name="revenue_amt" class="revenue_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/>\
+          <input type="text" name="revenue_year" class="revenue_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
+        </div></div>');
+           d3.select('#revenue-' + i + ' input[name="revenue_amt"]').on('keyup', null);
+          d3.select('#revenue-' + i + ' input[name="revenue_amt"]').text(function(e) {
+            this.value = d.amount;
+          });
+          d3.select('#revenue-' + i + ' input[name="revenue_year"]').text(function(e) {
+            this.value = d.year;
+          });
+        });
+        d3.select('#revenue-' + revenueValues.length + ' input[name="revenue_amt"]').on('keyup', function() {
+          add_input_rev(revenueValues.length);
+        });
+      }
     }
 
     var forProfitObjects = [];
@@ -1804,9 +1948,9 @@
     function searchAutoComplete() {
       var s = "";
 
-      filteredNodes.forEach(function(d) {
-        nameOfEntities.push(d.name);
-        nameOfLocations.push(d.location);
+      renderedNodes.forEach(function(d) {
+        nameOfEntities.push((d.name).toLowerCase());
+        nameOfLocations.push((d.location).toLowerCase());
 
         if (uniqueNames.indexOf(d.name) === -1 && d.name !== null) {
           uniqueNames.push(d.name);
@@ -1820,7 +1964,7 @@
           });
         }
       });
-
+      console.log(nameOfEntities);
       masterList = masterList.concat(uniqueLocations);
       masterList = masterList.concat(uniqueNames);
       masterList = masterList.sort();
@@ -1832,6 +1976,7 @@
       d3.select('.filter-name-location datalist')
         .html(s);
 
+
     }
 
     d3.selectAll('#search-text').on('keydown', function() {
@@ -1841,15 +1986,18 @@
       }
     });
 
-    d3.selectAll('option').on('click', function(n, i) {
+    d3.selectAll('option').on('keydown', function(n, i) {
+      console.log("Hello");
+      if (d3.event.keyCode === 13) {
       var query = (d3.selectAll('option'))[0][i].value;
       handleQuery(query);
+      }
     });
 
     function handleQuery(query) {
       var posLocation = [];
       var count = 0;
-
+      query = query.toLowerCase();
       if (nameOfEntities.indexOf(query) !== -1) {
         nameOfEntities.forEach(function(name) {
           if (name === query && name.length === query.length) {
@@ -2026,6 +2174,7 @@
         d3.select(this.parentNode).select("text").transition()
         .duration(350)
         .delay(0).style("opacity", 1).style("font-size", "20px");
+
 
     }
 

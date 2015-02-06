@@ -181,7 +181,7 @@ label h3:hover
 .page-wrap 
 {
   float: right;
-  width: 80%;
+  width: 88%;
   height: 100%;
   transition: width 0.3s ease;
 }
@@ -193,7 +193,7 @@ label h3:hover
  
 #info
 {
-  padding-top: 20px;
+  /*padding-top: 20px;*/
   padding-bottom: 20px;
   padding-right: 10px;
   padding-left: 10px;
@@ -204,7 +204,7 @@ label h3:hover
   position: fixed;
   /*top: 6%;*/
   top:60px;
-  width: 20%;
+  width: 13%;
   height: 100%;
   background: rgb(207,208,208);
   z-index: 999;
@@ -373,7 +373,7 @@ li{
   z-index:999;
   display: inline-block;
 float: right;
-width: 33%;
+width: 25%;
 /*background-color: #f9fafa !important;*/
 text-align: center;
 margin-top: 2%;
@@ -602,7 +602,7 @@ font-family: 'Segoe UI_', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
     /*top:11%; */
     top:65px;
     position: fixed;
-    width: 20%;
+    width: 18%;
     height: 100%;
     background: rgb(207,208,208);
     z-index: 999;
@@ -631,10 +631,23 @@ font-family: 'Segoe UI_', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
     }
   }
 
-  button#submit-A, button#submit-B {
+  button#submit-A {
+    text-align: center;
+    margin-top:0 !important;
+
+    margin-left: 5% !important;
+
+  }
+
+  button#submit-B {
   text-align: center;
   margin-left:40%;
   margin-top:10%;
+}
+
+#nextPhase {
+  margin-top: 10% !important;
+  margin-left: 40% !important;
 }
  
 }

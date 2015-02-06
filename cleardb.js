@@ -135,8 +135,8 @@ console.log("Successful connection!");
 
 //         connection.query('CREATE TABLE IF NOT EXISTS Entities('
 //             + 'ID INT NOT NULL AUTO_INCREMENT UNIQUE,'
-//             + 'Name VARCHAR(100) NOT NULL UNIQUE,'                  // Entity Name
-//             + 'Nickname VARCHAR(100) NOT NULL UNIQUE,'              // Nickname        
+//             + 'Name VARCHAR(100) NOT NULL,'                  // Entity Name
+//             + 'Nickname VARCHAR(100) NOT NULL,'              // Nickname        
 //             + 'Type VARCHAR(30) NOT NULL,'                          // Type of Entity
 //             + 'Categories VARCHAR(100),'                            // Category
 //             + 'Location VARCHAR(100) NOT NULL,'                     // Location
@@ -149,8 +149,9 @@ console.log("Successful connection!");
 //             + 'KeyPeople VARCHAR(1000),'                            // Key People   
 //             + 'IPAddress VARCHAR(100),' 
 //             + 'IPGeolocation VARCHAR(100),'
-//             + 'TimeStamp DATETIME,'           
-//             + 'PRIMARY KEY(ID)'
+//             + 'CreatedAt DATETIME,'
+//             + 'Render INT,'           
+//             + 'PRIMARY KEY(ID, CreatedAt)'
 //             +  ')', function (err) {
 //                 if (err) throw err;
 //             });
@@ -219,14 +220,13 @@ console.log("Successful connection!");
 //                 ((testdata.nodes)[i].golr !== null) ? influence = '"' + (testdata.nodes)[i].golr + '"' : influence = null;
 //                 ((testdata.nodes)[i].relatedto !== null) ? relations = '"' + (testdata.nodes)[i].relatedto + '"' : relations = null;
 //                 ((testdata.nodes)[i].people !== null) ? keypeople = '"' + (testdata.nodes)[i].people + '"' : keypeople = null;
-                
 
 //                 //   Must manually insert the first row with the ID of zero to avoid foreign key constraint errors with bridges table.
 //                 if(i == 0)
 //                 {
 //                     connection.query('INSERT INTO Entities ('
 //                     + 'ID, Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, '
-//                     + 'Employees, Influence, Relations, KeyPeople, IPAddress, IPGeolocation, TimeStamp) VALUES (' 
+//                     + 'Employees, Influence, Relations, KeyPeople, IPAddress, IPGeolocation, CreatedAt, Render) VALUES (' 
 //                     + i + ',"'
 //                     + (testdata.nodes)[i].name + '","' 
 //                     + (testdata.nodes)[i].nickname + '","'
@@ -242,7 +242,8 @@ console.log("Successful connection!");
 //                     + keypeople + ','
 //                     + ipAddr + ','
 //                     + geo + ','
-//                     + 'NOW());', function (err) {
+//                     + 'NOW(),'
+//                     + '1);', function (err) {
 //                          if (err) throw err;
 //                     });
 //                 }
@@ -250,7 +251,7 @@ console.log("Successful connection!");
 //                 {
 //                     connection.query('INSERT INTO Entities ('
 //                     + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, '
-//                     + 'Employees, Influence, Relations, KeyPeople, IPAddress, IPGeolocation, TimeStamp) VALUES (' 
+//                     + 'Employees, Influence, Relations, KeyPeople, IPAddress, IPGeolocation, CreatedAt, Render) VALUES (' 
 //                     + '"'
 //                     + (testdata.nodes)[i].name + '","' 
 //                     + (testdata.nodes)[i].nickname + '","'
@@ -266,7 +267,8 @@ console.log("Successful connection!");
 //                     + keypeople + ','
 //                     + ipAddr + ','
 //                     + geo + ','
-//                     + 'NOW());', function (err) {
+//                     + 'NOW(),'
+//                     + '1);', function (err) {
 //                          if (err) throw err;
 //                     });
 //                 }
@@ -531,6 +533,8 @@ var exportData = function()
                         object['expenses'] = null;
 
                         (d.Influence !== null) ? object['influence'] = d.Influence : object['influence'] = null;
+
+                        object['render'] = 1;
 
                         return object;
                     });

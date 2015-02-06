@@ -23,7 +23,7 @@
 {
   display:inline-block;
   float:left;
-  width:65%;
+  width:73%;
   height:100%;
 }
  
@@ -31,7 +31,7 @@
 {
   display:inline-block;
   float:right;
-  width:33%;
+  width:25%;
   background-color: #f9fafa !important;
 }
  
@@ -79,7 +79,7 @@ g.node
 }
  
 /* IE Compatibility*/
-.fund
+/*.fund
 {
   stroke:rgb(120,129,0);
 }
@@ -97,7 +97,7 @@ g.node
 .affil
 {
   stroke:rgb(135,126,255);
-}
+}*/
  
 /*.node:hover + .fund
 {

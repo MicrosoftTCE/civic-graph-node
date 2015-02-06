@@ -17,6 +17,7 @@
     "passport": "latest",
     "stylus": "latest",
     "mysql": "latest",
-    "geoip-lite": "latest"
+    "geoip-lite": "latest",
+    "async": "latest"
   }
 }
