@@ -306,7 +306,7 @@
                           if(d.type === "Government")
                             textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
                           return textOpacity;
-                         });
+                         }).style('font-size', '14px');
                         // .style("font-size", "14px")
                         //   .style('opacity', function(d){
                         //   var textOpacity;
@@ -2229,7 +2229,7 @@
 
         d3.select(this.parentNode).select("text").transition()
         .duration(350)
-        .delay(0).style("opacity", 1).style("font-size", "20px");
+        .delay(0).style("opacity", 1).style("font-size", "28px");
 
 
     }
@@ -2367,9 +2367,22 @@
         .delay(0)
       .style("opacity", "1");
 
-      d3.selectAll('.node').select("text").transition()
+      d3.selectAll('.node').selectAll('text').transition()
         .duration(350)
-        .delay(0).style("opacity", 1).style("font-size", "14px");
+        .delay(0).style('opacity', function(d){
+
+                          var textOpacity;
+                          if(d.type === "For-Profit")
+                            textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Non-Profit")
+                            textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Individual")
+                            textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Government")
+                            textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
+                        
+                          return textOpacity;
+                         }).style('font-size', '14px');
     }
 
     function sinclick(d) {
@@ -3923,6 +3936,10 @@
         d3.selectAll('g').call(drag);
         centeredNode = jQuery.extend(true, {}, {});
 
+        console.log(fiveMostConnectedForProfit);
+
+
+
         var force = d3.layout.force()
           .nodes(rawNodes)
           .size([width, height])
@@ -3936,6 +3953,8 @@
           })
           .on("tick", tick)
           .start();
+
+
       }
       resetFlag = 1;
     });
