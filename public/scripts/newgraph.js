@@ -32,7 +32,7 @@
 
   var dblclickobject;
 
-  var connection_links;
+  var connectionLinks;
 
   var centerNodeFundLink = [];
   var centerNodeInvestLink = [];
@@ -47,10 +47,10 @@
 
   var organizations = {};
   var filteredNodes = {};
-  var porucsCon = {};
-  var dataCon = {};
-  var fundingCon = {};
-  var investingCon = {};
+  var collaborationConnections = {};
+  var dataConnections = {};
+  var fundingConnections = {};
+  var investmentConnections = {};
   var fundLink = {};
   var investLink = {};
   var porucsLink = {};
@@ -106,7 +106,7 @@
   //.attr("viewBox", '0 0 800 800')
   var svg = d3.select('.content').append('svg').attr("xmlns", 'http://www.w3.org/2000/svg').attr("id", 'network').attr("height", height).attr("width", width).style("position", "fixed");
   // d3.select("svg").on("dblclick.zoom", null);
-
+  d3.select('body > nav > nav > div').append('div').attr('id', 'editBox').append('p').text('Edit').style('color', '#2e92cf');
 
   //  document.createElement('svg')
 
@@ -129,18 +129,28 @@
   var twitScale = d3.scale.sqrt().domain([10, 1000000]).range([10, 50]);
 
   d3.json("data/civic.json", function(error, graph) {
-    filteredNodes = (graph.nodes);
-    fundingCon = graph.funding_connections;
-    investingCon = graph.investment_connections;
-    porucsCon = graph.collaboration_connections;
-    dataCon = graph.data_connections;
+    var rawNodes = graph.nodes;
+    var rawFundingConnections = graph.funding_connections;
+    var rawInvestmentConnections = graph.investment_connections; 
+    var rawCollaborationConnections = graph.collaboration_connections; 
+    var rawDataConnections = graph.data_connections;
+    var rawConnections = rawFundingConnections
+                          .concat(rawInvestmentConnections)
+                          .concat(rawCollaborationConnections)
+                          .concat(rawDataConnections);
 
-    connection_links = fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon);
+    filteredNodes = (rawNodes).filter(function(d){return d.render === 1;});
+    fundingConnections = (rawFundingConnections).filter(function(d){return d.render === 1;});
+    investmentConnections = (rawInvestmentConnections).filter(function(d){return d.render === 1;});
+    collaborationConnections = (rawCollaborationConnections).filter(function(d){return d.render === 1;});
+    dataConnections = (rawDataConnections).filter(function(d){return d.render === 1;});
+
+    connectionLinks = fundingConnections.concat(investmentConnections).concat(collaborationConnections).concat(dataConnections);
 
     var force = d3.layout.force()
-      .nodes(filteredNodes)
+      .nodes(rawNodes)
       .size([width, height])
-      .links(connection_links)
+      .links(rawConnections)
       .linkStrength(0)
       .charge(function(d) {
         if (d.employees !== null)
@@ -152,8 +162,6 @@
       .on("tick", tick)
       .start();
 
-    var renderedNodes = (graph.nodes).filter(function(d){return d.render === 1;});
-
     var drag = force.drag()
       .on("dragstart", drag)
       .on("drag", drag)
@@ -161,7 +169,7 @@
 
     //  FUNDINGS
     fundLink = svg.selectAll(".fund")
-      .data(fundingCon)
+      .data(fundingConnections)
       .enter().append("line")
       .attr("class", "fund")
       // .classed("visfund", true)
@@ -172,7 +180,7 @@
 
     //  INVESTMENTS
     investLink = svg.selectAll(".invest")
-      .data(investingCon)
+      .data(investmentConnections)
       .enter().append("line")
       .attr("class", "invest")
       // .classed("visinvest", true)
@@ -183,7 +191,7 @@
 
     //  COLLABORATIONS
     porucsLink = svg.selectAll(".porucs")
-      .data(porucsCon)
+      .data(collaborationConnections)
       .enter().append("line")
       .attr("class", "porucs")
       // .classed("visporucs", true)
@@ -194,7 +202,7 @@
 
     //  data
     dataLink = svg.selectAll(".data")
-      .data(dataCon)
+      .data(dataConnections)
       .enter().append("line")
       .attr("class", "data")
       // .classed("visdata", true)
@@ -204,7 +212,7 @@
       .style("visibility", "visible");
 
     nodeInit = svg.selectAll(".node")
-      .data(renderedNodes)
+      .data(filteredNodes)
       .enter()
       .append("g")
       .attr("class", "node")
@@ -287,7 +295,18 @@
                               return empScale(d.employees);
                             else
                               return 7;
-                           });
+                           }).style('opacity', function(d){
+                          var textOpacity;
+                          if(d.type === "For-Profit")
+                            textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Non-Profit")
+                            textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Individual")
+                            textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
+                          if(d.type === "Government")
+                            textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
+                          return textOpacity;
+                         });
                         // .style("font-size", "14px")
                         //   .style('opacity', function(d){
                         //   var textOpacity;
@@ -334,18 +353,18 @@
                         //  .style('font-family', "'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif")
                         //  .style('pointer-events', 'none')
                         //  .style('z-index', '999')
-                        //  .style('opacity', function(d){
-                        //   var textOpacity;
-                        //   if(d.type === "For-Profit")
-                        //     textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
-                        //   if(d.type === "Non-Profit")
-                        //     textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
-                        //   if(d.type === "Individual")
-                        //     textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
-                        //   if(d.type === "Government")
-                        //     textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
-                        //   return textOpacity;
-                        //  });
+                         // .style('opacity', function(d){
+                         //  var textOpacity;
+                         //  if(d.type === "For-Profit")
+                         //    textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                         //  if(d.type === "Non-Profit")
+                         //    textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
+                         //  if(d.type === "Individual")
+                         //    textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
+                         //  if(d.type === "Government")
+                         //    textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
+                         //  return textOpacity;
+                         // });
 
 
                          // .style('text-shadow', '0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff');
@@ -430,9 +449,9 @@
       // console.log(centeredNode);
 
       var force = d3.layout.force()
-        .nodes(filteredNodes)
+        .nodes(rawNodes)
         .size([width, height])
-        .links(fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon))
+        .links(rawConnections)
         .linkStrength(0)
         .charge(function(d) {
           if (d.employees !== null)
@@ -461,10 +480,23 @@
       //  Printing to side panel within web application.
       d3.select('#info')
         .html(s)
-        .style('list-style', 'square')
+        .style('list-style', 'square');
+
 
         d3.selectAll('#editCurrentInfo').on('click', function(){
           prefillCurrent(d);
+        })
+        .on('mouseover', function(){  
+        d3.select(this).style('cursor', 'pointer');    
+          return d3.select('#editBox').style("visibility", "visible");
+        })
+        .on('mousemove', function(){
+          console.log(d3.event.pageY);
+          console.log(d3.event.pageX);
+          return d3.select('#editBox').style("top", (d3.event.pageY + 4) + "px").style("left", (d3.event.pageX+ 16) + "px");
+        })
+        .on('mouseout', function(){
+          return d3.select('#editBox').style("visibility", "hidden");
         });
 
     }
@@ -479,7 +511,7 @@
     function editDisplay(d) {
       var webform = "";
 
-      webform += '<h1 id="edit-add-info">' + '<i class="icon-pencil on-left"></i>' + 'Edit or Add Information' + '</h1>';
+      webform += '<h1 id="edit-add-info">' + '<i class="icon-plus on-left"></i>' + 'Add Information' + '</h1>';
 
       return webform;
     }
@@ -1511,7 +1543,7 @@
 
     function displayFormCSendJSON(obj) {
       var formObj = processFormB(obj);
-
+      console.log(obj);
       var s = "";
       s += '<h2 id="webform-head">Information</h2><hr/>\
               <div style="text-align:center;" class="webform-content">\
@@ -1519,12 +1551,12 @@
               <p>Might you be interested in helping with other entities?</p>';
       s += '<ul id="suggestions">';
 
-      var suggestions = determineNullFields();
-      console.log(suggestions);
+      // var suggestions = determineNullFields();
+      // console.log(suggestions);
 
-      suggestions.forEach(function(d) {
-        s += '<li><a style="cursor:pointer;">' + d.name + '</a></li>';
-      });
+      // suggestions.forEach(function(d) {
+      //   s += '<li><a style="cursor:pointer;">' + d.name + '</a></li>';
+      // });
 
       s += '</ul>\
           </div>';
@@ -1939,7 +1971,9 @@
 
     var nameOfEntities = [];
     var nameOfLocations = [];
+    var nicknameOfEntities = [];
     var uniqueNames = [];
+    var uniqueNicknames = [];
     var uniqueLocations = [];
     var masterList = [];
 
@@ -1948,12 +1982,16 @@
     function searchAutoComplete() {
       var s = "";
 
-      renderedNodes.forEach(function(d) {
+      filteredNodes.forEach(function(d) {
         nameOfEntities.push((d.name).toLowerCase());
         nameOfLocations.push((d.location).toLowerCase());
+        nicknameOfEntities.push((d.nickname).toLowerCase());
 
         if (uniqueNames.indexOf(d.name) === -1 && d.name !== null) {
           uniqueNames.push(d.name);
+        }
+        if (uniqueNames.indexOf(d.nickname) === -1 && d.nickname !== null) {
+          uniqueNicknames.push(d.nickname);
         }
         if (uniqueLocations.indexOf(d.location) === -1 && d.location !== null) {
           var splitLocations = (d.location).split("; ");
@@ -1966,6 +2004,7 @@
       });
       console.log(nameOfEntities);
       masterList = masterList.concat(uniqueLocations);
+      masterList = masterList.concat(uniqueNicknames)
       masterList = masterList.concat(uniqueNames);
       masterList = masterList.sort();
 
@@ -2012,7 +2051,23 @@
             });
           }
         });
-      } else {
+      } 
+      else if (nicknameOfEntities.indexOf(query) !== -1) {
+        nicknameOfEntities.forEach(function(name) {
+          if (name === query && name.length === query.length) {
+            var posName = nicknameOfEntities.indexOf(query);
+            //console.log(query);
+            nodeInit.filter(function(l, i) {
+              if (i === posName) {
+                //console.log(l);
+                // handleNodeHover(l);
+                sinclick(l);
+              }
+            });
+          }
+        });
+      }
+      else {
         nameOfLocations.forEach(function(location) {
 
           if (location !== null) {
@@ -2084,6 +2139,7 @@
     }
 
     function handleNodeHover(d) {
+      console.log("Inside node hover");
       var s = textDisplay(d);
 
       //  Printing to side panel within web application.
@@ -2449,26 +2505,26 @@
       filteredNodes.forEach(function(o, i) {
         if (o.type !== null) {
           if (o.type === "Individual") {
-  					//o.x += k;
-  					//o.y += k;
+            //o.x += k;
+            //o.y += k;
             o.x += (k + k);
             o.y += (k + k);
           }
           if (o.type === "Non-Profit") {
-  					//o.x += -k;
-  					//o.y += k;
+            //o.x += -k;
+            //o.y += k;
             o.x += (-k - k);
             o.y += (k + k);
           }
           if (o.type === "For-Profit") {
-  					//o.x += k;
-  					//o.y += -k;
+            //o.x += k;
+            //o.y += -k;
             o.x += (k + k);
             o.y += (-k - k);
           }
           if (o.type === "Government") {
-  					//o.x += -k;
-  					//o.y += -k;
+            //o.x += -k;
+            //o.y += -k;
             o.x += (-k - k);
             o.y += (-k - k);
           }
@@ -2902,7 +2958,7 @@
 
         filteredNodes.forEach(function(node0v) {
           if (node0v.type === 'Individual') {
-            fundingCon.forEach(function(fundNodeCon0v) {
+            fundingConnections.forEach(function(fundNodeCon0v) {
               if (node0v === fundNodeCon0v.source || node0v === fundNodeCon0v.target) {
                 fNCArray0v.push(countIndex0v); //  store positions inside of array...
               }
@@ -2918,7 +2974,7 @@
 
         filteredNodes.forEach(function(node0v) {
           if (node0v.type === 'Individual') {
-            investingCon.forEach(function(investNodeCon0v) {
+            investmentConnections.forEach(function(investNodeCon0v) {
               if (node0v === investNodeCon0v.source || node0v === investNodeCon0v.target) {
                 iNCArray0v.push(countIndex0v); //  store positions inside of array...
               }
@@ -2934,7 +2990,7 @@
 
         filteredNodes.forEach(function(node0v) {
           if (node0v.type === 'Individual') {
-            porucsCon.forEach(function(porucsNodeCon0v) {
+            collaborationConnections.forEach(function(porucsNodeCon0v) {
               if (node0v === porucsNodeCon0v.source || node0v === porucsNodeCon0v.target) {
                 pcNCArray0v.push(countIndex0v); //  store positions inside of array...
               }
@@ -2950,7 +3006,7 @@
 
         filteredNodes.forEach(function(node0) {
           if (node0.type === 'Individual') {
-            dataCon.forEach(function(dataNodeCon0) {
+            dataConnections.forEach(function(dataNodeCon0) {
               if (node0 === dataNodeCon0.source || node0 === dataNodeCon0.target) {
                 aNCArray0v.push(countIndex0); //  store positions inside of array...
               }
@@ -2975,7 +3031,7 @@
 
         filteredNodes.forEach(function(node0h) {
           if (node0h.type === 'Individual') {
-            fundingCon.forEach(function(fundNodeCon0h) {
+            fundingConnections.forEach(function(fundNodeCon0h) {
               if (node0h === fundNodeCon0h.source || node0h === fundNodeCon0h.target) {
                 fNCArray0h.push(countIndex0h); //  store positions inside of array...
               }
@@ -2991,7 +3047,7 @@
 
         filteredNodes.forEach(function(node0h) {
           if (node0h.type === 'Individual') {
-            investingCon.forEach(function(investNodeCon0h) {
+            investmentConnections.forEach(function(investNodeCon0h) {
               if (node0h === investNodeCon0h.source || node0h === investNodeCon0h.target) {
                 iNCArray0h.push(countIndex0h); //  store positions inside of array...
               }
@@ -3007,7 +3063,7 @@
 
         filteredNodes.forEach(function(node0h) {
           if (node0h.type === 'Individual') {
-            porucsCon.forEach(function(porucsNodeCon0h) {
+            collaborationConnections.forEach(function(porucsNodeCon0h) {
               if (node0h === porucsNodeCon0h.source || node0h === porucsNodeCon0h.target) {
                 pcNCArray0h.push(countIndex0h); //  store positions inside of array...
               }
@@ -3023,7 +3079,7 @@
 
         filteredNodes.forEach(function(node0h) {
           if (node0h.type === 'Individual') {
-            dataCon.forEach(function(dataNodeCon0h) {
+            dataConnections.forEach(function(dataNodeCon0h) {
               if (node0h === dataNodeCon0h.source || node0h === dataNodeCon0h.target) {
                 aNCArray0h.push(countIndex0h); //  store positions inside of array...
               }
@@ -3045,7 +3101,7 @@
 
         filteredNodes.forEach(function(node1v) {
           if (node1v.type === 'Non-Profit') {
-            fundingCon.forEach(function(fundNodeCon1v) {
+            fundingConnections.forEach(function(fundNodeCon1v) {
               if ((node1v === fundNodeCon1v.source || node1v === fundNodeCon1v.target) && fNCArray1v.indexOf(countIndex1v) === -1) {
                 fNCArray1v.push(countIndex1v); //  store positions inside of array...
               }
@@ -3061,7 +3117,7 @@
 
         filteredNodes.forEach(function(node1v) {
           if (node1v.type === 'Non-Profit') {
-            investingCon.forEach(function(investNodeCon1v) {
+            investmentConnections.forEach(function(investNodeCon1v) {
               if ((node1v === investNodeCon1v.source || node1v === investNodeCon1v.target) && iNCArray1v.indexOf(countIndex1v) === -1) {
                 iNCArray1v.push(countIndex1v); //  store positions inside of array...
               }
@@ -3077,7 +3133,7 @@
 
         filteredNodes.forEach(function(node1v) {
           if (node1v.type === 'Non-Profit') {
-            porucsCon.forEach(function(porucsNodeCon1v) {
+            collaborationConnections.forEach(function(porucsNodeCon1v) {
               if ((node1v === porucsNodeCon1v.source || node1v === porucsNodeCon1v.target) && pcNCArray1v.indexOf(countIndex1v) === -1) {
                 pcNCArray1v.push(countIndex1v); //  store positions inside of array...
               }
@@ -3093,7 +3149,7 @@
 
         filteredNodes.forEach(function(node1v) {
           if (node1v.type === 'Non-Profit') {
-            dataCon.forEach(function(dataNodeCon1v) {
+            dataConnections.forEach(function(dataNodeCon1v) {
               if ((node1v === dataNodeCon1v.source || node1v === dataNodeCon1v.target) && aNCArray1v.indexOf(countIndex1v) === -1) {
                 aNCArray1v.push(countIndex1v); //  store positions inside of array...
               }
@@ -3117,7 +3173,7 @@
 
         filteredNodes.forEach(function(node1h) {
           if (node1h.type === 'Non-Profit') {
-            fundingCon.forEach(function(fundNodeCon1h) {
+            fundingConnections.forEach(function(fundNodeCon1h) {
               if ((node1h === fundNodeCon1h.source || node1h === fundNodeCon1h.target) && fNCArray1h.indexOf(countIndex1h) === -1) {
                 fNCArray1h.push(countIndex1h); //  store positions inside of array...
               }
@@ -3133,7 +3189,7 @@
 
         filteredNodes.forEach(function(node1h) {
           if (node1h.type === 'Non-Profit') {
-            investingCon.forEach(function(investNodeCon1h) {
+            investmentConnections.forEach(function(investNodeCon1h) {
               if ((node1h === investNodeCon1h.source || node1h === investNodeCon1h.target) && iNCArray1h.indexOf(countIndex1h) === -1) {
                 iNCArray1h.push(countIndex1h); //  store positions inside of array...
               }
@@ -3149,7 +3205,7 @@
 
         filteredNodes.forEach(function(node1h) {
           if (node1h.type === 'Non-Profit') {
-            porucsCon.forEach(function(porucsNodeCon1h) {
+            collaborationConnections.forEach(function(porucsNodeCon1h) {
               if ((node1h === porucsNodeCon1h.source || node1h === porucsNodeCon1h.target) && pcNCArray1h.indexOf(countIndex1h) === -1) {
                 pcNCArray1h.push(countIndex1h); //  store positions inside of array...
               }
@@ -3165,7 +3221,7 @@
 
         filteredNodes.forEach(function(node1h) {
           if (node1h.type === 'Non-Profit') {
-            dataCon.forEach(function(dataNodeCon1h) {
+            dataConnections.forEach(function(dataNodeCon1h) {
               if ((node1h === dataNodeCon1h.source || node1h === dataNodeCon1h.target) && aNCArray1h.indexOf(countIndex1h) === -1) {
                 aNCArray1h.push(countIndex1h); //  store positions inside of array...
               }
@@ -3192,7 +3248,7 @@
 
         filteredNodes.forEach(function(node2v) {
           if (node2v.type === 'For-Profit') {
-            fundingCon.forEach(function(fundNodeCon2v) {
+            fundingConnections.forEach(function(fundNodeCon2v) {
               if ((node2v === fundNodeCon2v.source || node2v === fundNodeCon2v.target) && fNCArray2v.indexOf(countIndex2v) === -1) {
                 fNCArray2v.push(countIndex2v); //  store positions inside of array...
               }
@@ -3208,7 +3264,7 @@
 
         filteredNodes.forEach(function(node2v) {
           if (node2v.type === 'For-Profit') {
-            investingCon.forEach(function(investNodeCon2v) {
+            investmentConnections.forEach(function(investNodeCon2v) {
               if ((node2v === investNodeCon2v.source || node2v === investNodeCon2v.target) && iNCArray2v.indexOf(countIndex2v) === -1) {
                 iNCArray2v.push(countIndex2v); //  store positions inside of array...
               }
@@ -3224,7 +3280,7 @@
 
         filteredNodes.forEach(function(node2v) {
           if (node2v.type === 'For-Profit') {
-            porucsCon.forEach(function(porucsNodeCon2v) {
+            collaborationConnections.forEach(function(porucsNodeCon2v) {
               if ((node2v === porucsNodeCon2v.source || node2v === porucsNodeCon2v.target) && pcNCArray2v.indexOf(countIndex2v) === -1) {
                 pcNCArray2v.push(countIndex2v); //  store positions inside of array...
               }
@@ -3240,7 +3296,7 @@
 
         filteredNodes.forEach(function(node2v) {
           if (node2v.type === 'For-Profit') {
-            dataCon.forEach(function(dataNodeCon2v) {
+            dataConnections.forEach(function(dataNodeCon2v) {
               if ((node2v === dataNodeCon2v.source || node2v === dataNodeCon2v.target) && aNCArray2v.indexOf(countIndex2v) === -1) {
                 aNCArray2v.push(countIndex2v); //  store positions inside of array...
               }
@@ -3264,7 +3320,7 @@
 
         filteredNodes.forEach(function(node2h) {
           if (node2h.type === 'For-Profit') {
-            fundingCon.forEach(function(fundNodeCon2h) {
+            fundingConnections.forEach(function(fundNodeCon2h) {
               if ((node2h === fundNodeCon2h.source || node2h === fundNodeCon2h.target) && fNCArray2h.indexOf(countIndex2h) === -1) {
                 fNCArray2h.push(countIndex2h); //  store positions inside of array...
               }
@@ -3280,7 +3336,7 @@
 
         filteredNodes.forEach(function(node2h) {
           if (node2h.type === 'For-Profit') {
-            investingCon.forEach(function(investNodeCon2h) {
+            investmentConnections.forEach(function(investNodeCon2h) {
               if ((node2h === investNodeCon2h.source || node2h === investNodeCon2h.target) && iNCArray2h.indexOf(countIndex2h) === -1) {
                 iNCArray2h.push(countIndex2h); //  store positions inside of array...
               }
@@ -3298,7 +3354,7 @@
 
         filteredNodes.forEach(function(node2h) {
           if (node2h.type === 'For-Profit') {
-            porucsCon.forEach(function(porucsNodeCon2h) {
+            collaborationConnections.forEach(function(porucsNodeCon2h) {
               if ((node2h === porucsNodeCon2h.source || node2h === porucsNodeCon2h.target) && pcNCArray2h.indexOf(countIndex2h) === -1) {
                 pcNCArray2h.push(countIndex2h); //  store positions inside of array...
               }
@@ -3314,7 +3370,7 @@
 
         filteredNodes.forEach(function(node2h) {
           if (node2h.type === 'For-Profit') {
-            dataCon.forEach(function(dataNodeCon2h) {
+            dataConnections.forEach(function(dataNodeCon2h) {
               if ((node2h === dataNodeCon2h.source || node2h === dataNodeCon2h.target) && aNCArray2h.indexOf(countIndex2h) === -1) {
                 aNCArray2h.push(countIndex2h); //  store positions inside of array...
               }
@@ -3338,7 +3394,7 @@
 
         filteredNodes.forEach(function(node3v) {
           if (node3v.type === 'Government') {
-            fundingCon.forEach(function(fundNodeCon3v) {
+            fundingConnections.forEach(function(fundNodeCon3v) {
               if ((node3v === fundNodeCon3v.source || node3v === fundNodeCon3v.target) && fNCArray3v.indexOf(countIndex3v) === -1) {
                 fNCArray3v.push(countIndex3v); //  store positions inside of array...
               }
@@ -3357,7 +3413,7 @@
 
         filteredNodes.forEach(function(node3v) {
           if (node3v.type === 'Government') {
-            investingCon.forEach(function(investNodeCon3v) {
+            investmentConnections.forEach(function(investNodeCon3v) {
               if ((node3v === investNodeCon3v.source || node3v === investNodeCon3v.target) && iNCArray3v.indexOf(countIndex3v) === -1) {
                 iNCArray3v.push(countIndex3v); //  store positions inside of array...
               }
@@ -3375,7 +3431,7 @@
 
         filteredNodes.forEach(function(node3v) {
           if (node3v.type === 'Government') {
-            porucsCon.forEach(function(porucsNodeCon3v) {
+            collaborationConnections.forEach(function(porucsNodeCon3v) {
               if ((node3v === porucsNodeCon3v.source || node3v === porucsNodeCon3v.target) && pcNCArray3v.indexOf(countIndex3v) === -1) {
                 pcNCArray3v.push(countIndex3v); //  store positions inside of array...
               }
@@ -3393,7 +3449,7 @@
 
         filteredNodes.forEach(function(node3v) {
           if (node3v.type === 'Government') {
-            dataCon.forEach(function(dataNodeCon3v) {
+            dataConnections.forEach(function(dataNodeCon3v) {
               if ((node3v === dataNodeCon3v.source || node3v === dataNodeCon3v.target) && aNCArray3v.indexOf(countIndex3v) === -1) {
                 aNCArray3v.push(countIndex3v); //  store positions inside of array...
               }
@@ -3414,7 +3470,7 @@
 
         filteredNodes.forEach(function(node3h) {
           if (node3h.type === 'Government') {
-            fundingCon.forEach(function(fundNodeCon3h) {
+            fundingConnections.forEach(function(fundNodeCon3h) {
               if ((node3h === fundNodeCon3h.source || node3h === fundNodeCon3h.target) && fNCArray3h.indexOf(countIndex3h) === -1) {
                 fNCArray3h.push(countIndex3h); //  store positions inside of array...
               }
@@ -3430,7 +3486,7 @@
 
         filteredNodes.forEach(function(node3h) {
           if (node3h.type === 'Government') {
-            investingCon.forEach(function(investNodeCon3h) {
+            investmentConnections.forEach(function(investNodeCon3h) {
               if ((node3h === investNodeCon3h.source || node3h === investNodeCon3h.target) && iNCArray3h.indexOf(countIndex3h) === -1) {
                 iNCArray3h.push(countIndex3h); //  store positions inside of array...
               }
@@ -3446,7 +3502,7 @@
 
         filteredNodes.forEach(function(node3h) {
           if (node3h.type === 'Government') {
-            porucsCon.forEach(function(porucsNodeCon3h) {
+            collaborationConnections.forEach(function(porucsNodeCon3h) {
               if ((node3h === porucsNodeCon3h.source || node3h === porucsNodeCon3h.target) && pcNCArray3h.indexOf(countIndex3h) === -1) {
                 pcNCArray3h.push(countIndex3h); //  store positions inside of array...
               }
@@ -3462,7 +3518,7 @@
 
         filteredNodes.forEach(function(node3h) {
           if (node3h.type === 'Government') {
-            dataCon.forEach(function(dataNodeCon3h) {
+            dataConnections.forEach(function(dataNodeCon3h) {
               if ((node3h === dataNodeCon3h.source || node3h === dataNodeCon3h.target) && aNCArray3h.indexOf(countIndex3h) === -1) {
                 aNCArray3h.push(countIndex3h); //  store positions inside of array...
               }
@@ -3838,7 +3894,7 @@
     //   var force = d3.layout.force()
     //     .nodes(filteredNodes)
     //     .size([width, height])
-    //     .links(fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon))
+    //     .links(fundingConnections.concat(investmentConnections).concat(collaborationConnections).concat(dataConnections))
     //     .linkStrength(0)
     //     .charge(function(d) {
     //       if (d.employees !== null)
@@ -3868,9 +3924,9 @@
         centeredNode = jQuery.extend(true, {}, {});
 
         var force = d3.layout.force()
-          .nodes(filteredNodes)
+          .nodes(rawNodes)
           .size([width, height])
-          .links(fundingCon.concat(investingCon).concat(porucsCon).concat(dataCon))
+          .links(rawConnections)
           .linkStrength(0)
           .charge(function(d) {
             if (d.employees !== null)

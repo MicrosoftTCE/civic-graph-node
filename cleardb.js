@@ -163,6 +163,7 @@ console.log("Successful connection!");
 //             + 'Connection VARCHAR(30),'
 //             + 'ConnectionYear INT,'
 //             + 'Amount INT,'
+//             + 'Render INT,'  
 //             + 'PRIMARY KEY (ID),'
 //             + 'FOREIGN KEY (Entity1ID) REFERENCES Entities(ID) ON UPDATE CASCADE,'
 //             + 'FOREIGN KEY (Entity2ID) REFERENCES Entities(ID) ON UPDATE CASCADE'
@@ -332,21 +333,25 @@ console.log("Successful connection!");
 //                 if(k = 0)
 //                 {
 //                     connection.query('INSERT INTO Bridges ('
-//                     + 'ID, Entity1ID, Entity2ID, Connection) VALUES (' 
+//                     + 'ID, Entity1ID, Entity2ID, Connection, Render) VALUES (' 
 //                     + k + ','
 //                     + (testdata.data)[k].source + ',' 
-//                     + (testdata.data)[k].target + ',"'
-//                     +  'Data' + '");', function (err) {
+//                     + (testdata.data)[k].target + ','
+//                     + '"Data"' + ',' 
+//                     + '1'
+//                     + ');', function (err) {
 //                          if (err) throw err;
 //                     });
 //                 }
 //                 else
 //                 {
 //                     connection.query('INSERT INTO Bridges ('
-//                     + 'Entity1ID, Entity2ID, Connection) VALUES (' 
+//                     + 'Entity1ID, Entity2ID, Connection, Render) VALUES (' 
 //                     + (testdata.data)[k].source + ',' 
-//                     + (testdata.data)[k].target + ',"'
-//                     +  'Data' + '");', function (err) {
+//                     + (testdata.data)[k].target + ','
+//                     + '"Data"' + ','
+//                     + '1' 
+//                     + ');', function (err) {
 //                          if (err) throw err;
 //                     });
 //                 }  
@@ -355,11 +360,12 @@ console.log("Successful connection!");
 //             for(var l = 0; l < (testdata.investingR).length; l++)
 //             {
 //                 connection.query('INSERT INTO Bridges ('
-//                     + 'Entity1ID, Entity2ID, Connection, Amount) VALUES ('
+//                     + 'Entity1ID, Entity2ID, Connection, Amount, Render) VALUES ('
 //                     + (testdata.investingR)[l].source + ',' 
 //                     + (testdata.investingR)[l].target + ',"'
-//                     +  'Investment Received' + '",'
-//                     +  (testdata.investingR)[l].amount
+//                     + 'Investment Received' + '",'
+//                     + (testdata.investingR)[l].amount + ','
+//                     + '1'
 //                     + ');', function (err) {
 //                          if (err) throw err;
 //                     });
@@ -368,11 +374,12 @@ console.log("Successful connection!");
 //             for(var m = 0; m < (testdata.fundingR).length; m++)
 //             {
 //                 connection.query('INSERT INTO Bridges ('
-//                     + 'Entity1ID, Entity2ID, Connection, Amount) VALUES (' 
+//                     + 'Entity1ID, Entity2ID, Connection, Amount, Render) VALUES (' 
 //                     + (testdata.fundingR)[m].source + ',' 
 //                     + (testdata.fundingR)[m].target + ',"'
-//                     +  'Funding Received' + '",'
-//                     +  (testdata.fundingR)[m].amount
+//                     + 'Funding Received' + '",'
+//                     + (testdata.fundingR)[m].amount + ','
+//                     + '1'
 //                     + ');', function (err) {
 //                          if (err) throw err;
 //                     });
@@ -381,10 +388,12 @@ console.log("Successful connection!");
 //             for(var n = 0; n < (testdata.porucs).length; n++)
 //             {
 //                  connection.query('INSERT INTO Bridges ('
-//                     + 'Entity1ID, Entity2ID, Connection) VALUES ('  
+//                     + 'Entity1ID, Entity2ID, Connection, Render) VALUES ('  
 //                     + (testdata.porucs)[n].source + ',' 
-//                     + (testdata.porucs)[n].target + ',"'
-//                     +  'Collaboration' + '");', function (err) {
+//                     + (testdata.porucs)[n].target + ','
+//                     + '"Collaboration"' + ','
+//                     + '1'
+//                     + ');', function (err) {
 //                          if (err) throw err;
 //                     });
 //             }

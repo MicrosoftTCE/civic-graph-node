@@ -657,3 +657,10 @@ font-family: 'Segoe UI_', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
     top:0px;
   }
 }
+
+#editBox {
+  visibility: hidden;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+}
