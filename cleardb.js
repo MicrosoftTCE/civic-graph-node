@@ -197,7 +197,7 @@ console.log("Successful connection!");
 
 //         console.log("Good");
 //         // TAke JSON file and fill in the database...
-//         var file = __dirname + '/public/data/final_data_neat.json';
+//         var file = __dirname + '/public/data/clean_data.json';
 
 //         fs.readFile(file, 'utf8', function(err, data){
 //             if(err){
@@ -293,6 +293,7 @@ console.log("Successful connection!");
 //                     for(var k = 0; k < rev_exp.length; k++)
 //                     {
 //                         name_and_amt = rev_exp[k].split(':');
+//                         console.log(name_and_amt);
 //                         //  Insert into the operations table.
 //                         if(first_op_insertion === 0)
 //                         {
@@ -304,6 +305,7 @@ console.log("Successful connection!");
 //                                 + rev_exp_years[k]
 //                                 + ');', function(err) {
 //                                     if(err) throw err;
+//                                     console.log("First insertion complete");
 //                                 });
 //                             //  Set this flag...
 //                             first_op_insertion = 1;
@@ -318,6 +320,7 @@ console.log("Successful connection!");
 //                                 + rev_exp_years[k]
 //                                 + ');', function(err) {
 //                                     if(err) throw err;
+//                                     console.log("Subsequent insertions");
 //                                 });
 //                         }
 //                     }
@@ -441,7 +444,7 @@ var getObjectFromRawData = function(data, name)
 
 var exportData = function()
 {
-    var file = __dirname + '/public/data/final_data_neat.json';
+    var file = __dirname + '/public/data/clean_data.json';
     fs.readFile(file, 'utf8', function(err, data){
 
         if(err)
@@ -551,25 +554,25 @@ var exportData = function()
                     connections.filter(function(d){
                         return d.Connection === "Funding Received"
                     }).forEach(function(d){
-                        (content.funding_connections).push({source: d.Entity1ID, target: d.Entity2ID, year: d.ConnectionYear, amount: d.Amount});
+                        (content.funding_connections).push({source: d.Entity1ID, target: d.Entity2ID, year: d.ConnectionYear, amount: d.Amount, render: 1});
                     });
 
                     connections.filter(function(d){
                         return d.Connection === "Investment Received"
                     }).forEach(function(d){
-                        (content.investment_connections).push({source: d.Entity1ID, target: d.Entity2ID, year: d.ConnectionYear, amount: d.Amount});
+                        (content.investment_connections).push({source: d.Entity1ID, target: d.Entity2ID, year: d.ConnectionYear, amount: d.Amount, render: 1});
                     });
 
                     connections.filter(function(d){
                         return d.Connection === "Collaboration"
                     }).forEach(function(d){
-                        (content.collaboration_connections).push({source: d.Entity1ID, target: d.Entity2ID});
+                        (content.collaboration_connections).push({source: d.Entity1ID, target: d.Entity2ID, render: 1});
                     });
 
                     connections.filter(function(d){
                         return d.Connection === "Data"
                     }).forEach(function(d){
-                        (content.data_connections).push({source: d.Entity1ID, target: d.Entity2ID});
+                        (content.data_connections).push({source: d.Entity1ID, target: d.Entity2ID, render: 1});
                     });
 
                     console.log(JSON.stringify(content.nodes, null, "\t"));
