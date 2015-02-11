@@ -289,12 +289,12 @@
                             return d.nickname;
                           })
                           .attr("x", 0)
-                        .attr("dy", "0.35em")
+                        .attr("dy", "0.1em")
                             .attr("y", function(d){
                             if (d.employees !== null)
-                              return empScale(d.employees);
+                              return empScale(d.employees) + 5;
                             else
-                              return 7;
+                              return 7 + 5;
                            }).style('opacity', function(d){
                           var textOpacity;
                           if(d.type === "For-Profit")
@@ -376,9 +376,9 @@
         word,
         line = [],
         lineNumber = 0,
-        lineHeight = 0.25, // ems
+        lineHeight = 1.1, // ems
         dy = parseFloat(text.attr("dy")),
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("dy", 0 + "em");
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("dy", dy + "em");
     while (word = words.pop()) {
       line.push(word);
       tspan.text(line.join(" "));
@@ -387,7 +387,7 @@
         tspan.text(line.join(" "));
         line = [word];
         lineNumber++;
-        tspan = text.append("tspan").attr("x", 0).attr("dy", lineNumber * lineHeight + "em").text(word);
+        tspan = text.append("tspan").attr("x", 0).attr("dy", lineNumber * lineHeight + dy + "em").text(word);
       }
     }
   });
@@ -2140,7 +2140,6 @@
           });
         }
       });
-      console.log(nameOfEntities);
       masterList = masterList.concat(uniqueLocations);
       masterList = masterList.concat(uniqueNicknames)
       masterList = masterList.concat(uniqueNames);
@@ -2328,28 +2327,67 @@
             return "0.05";
         });
 
-      var neighborFund = graph.funding_connections.filter(function(link) {
-        return link.source.index === d.index || link.target.index === d.index;
-      }).map(function(link) {
-        return link.source.index === d.index ? link.target.index : link.source.index;
+      // var neighborFund = graph.funding_connections.filter(function(link) {
+      //   return link.source.index === d.index || link.target.index === d.index;
+      // }).map(function(link) {
+      //   return link.source.index === d.index ? link.target.index : link.source.index;
+      // });
+
+      // console.log(neighborFund);
+
+      // var neighborInvest = graph.investment_connections.filter(function(link) {
+      //   return link.source.index === d.index || link.target.index === d.index;
+      // }).map(function(link) {
+      //   return link.source.index === d.index ? link.target.index : link.source.index;
+      // });
+
+      // console.log(neighborInvest);
+
+      // var neighborPorucs = graph.collaboration_connections.filter(function(link) {
+      //   return link.source.index === d.index || link.target.index === d.index;
+      // }).map(function(link) {
+      //   return link.source.index === d.index ? link.target.index : link.source.index;
+      // });
+
+      // console.log(neighborPorucs);
+
+      // var neighborData = graph.data_connections.filter(function(link) {
+      //   return link.source.index === d.index || link.target.index === d.index;
+      // }).map(function(link) {
+      //   return link.source.index === d.index ? link.target.index : link.source.index;
+      // });
+
+      // console.log(neighborData);
+
+      var isLinkTarget = function(link, node) {
+        return link.target.index === node.index;
+      } 
+
+      var isLinkSource = function(link, node) {
+        return link.source.index === node.index;
+      }
+
+      var neighboringNodesIndices = {};
+      neighboringNodesIndices[d.ID] = 1;
+
+      fundingConnections.forEach(function(link) {
+        if(isLinkSource(link, d)) neighboringNodesIndices[link.target.index] = 1;
+        if(isLinkTarget(link, d)) neighboringNodesIndices[link.source.index] = 1;
       });
 
-      var neighborInvest = graph.investment_connections.filter(function(link) {
-        return link.source.index === d.index || link.target.index === d.index;
-      }).map(function(link) {
-        return link.source.index === d.index ? link.target.index : link.source.index;
+      investmentConnections.forEach(function(link) {
+        if(isLinkSource(link, d)) neighboringNodesIndices[link.target.index] = 1;
+        if(isLinkTarget(link, d)) neighboringNodesIndices[link.source.index] = 1;
       });
 
-      var neighborPorucs = graph.collaboration_connections.filter(function(link) {
-        return link.source.index === d.index || link.target.index === d.index;
-      }).map(function(link) {
-        return link.source.index === d.index ? link.target.index : link.source.index;
+      collaborationConnections.forEach(function(link) {
+        if(isLinkSource(link, d)) neighboringNodesIndices[link.target.index] = 1;
+        if(isLinkTarget(link, d)) neighboringNodesIndices[link.source.index] = 1;
       });
 
-      var neighborData = graph.data_connections.filter(function(link) {
-        return link.source.index === d.index || link.target.index === d.index;
-      }).map(function(link) {
-        return link.source.index === d.index ? link.target.index : link.source.index;
+      dataConnections.forEach(function(link) {
+        if(isLinkSource(link, d)) neighboringNodesIndices[link.target.index] = 1;
+        if(isLinkTarget(link, d)) neighboringNodesIndices[link.source.index] = 1;
       });
 
       d3.select(this).style("stroke", "rgba(0,0,0,0.6)");
@@ -2358,8 +2396,8 @@
         .transition()
         .duration(350)
         .delay(0)
-        .style("opacity", function(l) {
-          if (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborData.indexOf(l.index) > -1 || l === d)
+        .style("opacity", function(n) {
+          if (n.ID in neighboringNodesIndices)
             return "1";
           else
             return "0.05";
@@ -2367,7 +2405,7 @@
 
         d3.select(this.parentNode).select("text").transition()
         .duration(350)
-        .delay(0).style("opacity", 1).style("font-size", "28px");
+        .delay(0).style("opacity", 1).style("font-size", "24px");
 
 
     }
@@ -2402,36 +2440,67 @@
           return "0.05";
       });
 
-      //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      var neighborFund = graph.funding_connections.filter(function(link) {
-        return link.source.index === d.index || link.target.index === d.index;
-      }).map(function(link) {
-        return link.source.index === d.index ? link.target.index : link.source.index;
+      // //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
+      // var neighborFund = graph.funding_connections.filter(function(link) {
+      //   return link.source.index === d.index || link.target.index === d.index;
+      // }).map(function(link) {
+      //   return link.source.index === d.index ? link.target.index : link.source.index;
+      // });
+
+      // //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
+      // var neighborInvest = graph.investment_connections.filter(function(link) {
+      //   return link.source.index === d.index || link.target.index === d.index;
+      // }).map(function(link) {
+      //   return link.source.index === d.index ? link.target.index : link.source.index;
+      // });
+
+      // //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
+      // var neighborPorucs = graph.collaboration_connections.filter(function(link) {
+      //   return link.source.index === d.index || link.target.index === d.index;
+      // }).map(function(link) {
+      //   return link.source.index === d.index ? link.target.index : link.source.index;
+      // });
+
+      // //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
+      // var neighborData = graph.data_connections.filter(function(link) {
+      //   return link.source.index === d.index || link.target.index === d.index;
+      // }).map(function(link) {
+      //   return link.source.index === d.index ? link.target.index : link.source.index;
+      // });
+
+      var isLinkTarget = function(link, node) {
+        return link.target.index === node.index;
+      } 
+
+      var isLinkSource = function(link, node) {
+        return link.source.index === node.index;
+      }
+
+      var neighboringNodesIndices = {};
+      neighboringNodesIndices[d.ID] = 1;
+
+      fundingConnections.forEach(function(link) {
+        if(isLinkSource(link, d)) neighboringNodesIndices[link.target.index] = 1;
+        if(isLinkTarget(link, d)) neighboringNodesIndices[link.source.index] = 1;
       });
 
-      //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      var neighborInvest = graph.investment_connections.filter(function(link) {
-        return link.source.index === d.index || link.target.index === d.index;
-      }).map(function(link) {
-        return link.source.index === d.index ? link.target.index : link.source.index;
+      investmentConnections.forEach(function(link) {
+        if(isLinkSource(link, d)) neighboringNodesIndices[link.target.index] = 1;
+        if(isLinkTarget(link, d)) neighboringNodesIndices[link.source.index] = 1;
       });
 
-      //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      var neighborPorucs = graph.collaboration_connections.filter(function(link) {
-        return link.source.index === d.index || link.target.index === d.index;
-      }).map(function(link) {
-        return link.source.index === d.index ? link.target.index : link.source.index;
+      collaborationConnections.forEach(function(link) {
+        if(isLinkSource(link, d)) neighboringNodesIndices[link.target.index] = 1;
+        if(isLinkTarget(link, d)) neighboringNodesIndices[link.source.index] = 1;
       });
 
-      //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      var neighborData = graph.data_connections.filter(function(link) {
-        return link.source.index === d.index || link.target.index === d.index;
-      }).map(function(link) {
-        return link.source.index === d.index ? link.target.index : link.source.index;
+      dataConnections.forEach(function(link) {
+        if(isLinkSource(link, d)) neighboringNodesIndices[link.target.index] = 1;
+        if(isLinkTarget(link, d)) neighboringNodesIndices[link.source.index] = 1;
       });
 
-      svg.selectAll('.node').style("opacity", function(l) {
-        if (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborData.indexOf(l.index) > -1 || l === d)
+      svg.selectAll('.node').style("opacity", function(n) {
+        if (n.ID in neighboringNodesIndices)
           return "1";
         else
           return "0.05";
