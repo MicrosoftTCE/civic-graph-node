@@ -576,6 +576,144 @@
       }
 
       // //  FUNDING
+
+      if(d.funding_received === null) {
+        s += '<br/><h6>' + 'No known funding received.' + '</h6><br/>';
+      } else {
+          s += '<br/>' + '<h6>' + 'Received funding from:' + '</h6><ul>';
+        (d.funding_received).forEach(function(d){
+          if(d.amount === 0)
+          {
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+          }
+          else
+          {
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount) + '</strong>' + '</li>';
+          }
+          if(d.year === null)
+          {
+
+          }
+          else
+          {
+
+          }
+        });
+        s += '</ul>'
+      }
+
+      if(d.funding_given === null) {
+        s += '<br/><h6>' + 'No known funding provided.' + '</h6><br/>';
+      } else {
+          s += '<br/>' + '<h6>' + 'Gave funding to:' + '</h6><ul>';
+        (d.funding_given).forEach(function(d){
+          if(d.amount === 0)
+          {
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+          }
+          else
+          {
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount) + '</strong>' + '</li>';
+          }
+          if(d.year === null)
+          {
+
+          }
+          else
+          {
+
+          }
+        });
+        s += '</ul>'
+      }
+
+      if(d.investments_received === null) {
+        s += '<br/><h6>' + 'No known investments received.' + '</h6><br/>';
+      } else {
+          s += '<br/>' + '<h6>' + 'Received investments from:' + '</h6><ul>';
+        (d.investments_received).forEach(function(d){
+          if(d.amount === 0)
+          {
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+          }
+          else
+          {
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount) + '</strong>' + '</li>';
+          }
+          if(d.year === null)
+          {
+
+          }
+          else
+          {
+
+          }
+        });
+        s += '</ul>'
+      }
+
+      if(d.investments_made === null) {
+        s += '<br/><h6>' + 'No known investments made.' + '</h6><br/>';
+      } else {
+          s += '<br/>' + '<h6>' + 'Invested in:' + '</h6><ul>';
+        (d.investments_made).forEach(function(d){
+          if(d.amount === 0)
+          {
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+          }
+          else
+          {
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount) + '</strong>' + '</li>';
+          }
+          if(d.year === null)
+          {
+
+          }
+          else
+          {
+
+          }
+        });
+        s += '</ul>'
+      }
+
+      if(d.collaborations === null) {
+        s += '<br/><h6>' + 'No known collaborations.' + '</h6><br/>';
+      } else {
+          s += '<br/>' + '<h6>' + 'Collaborated with:' + '</h6><ul>';
+        (d.collaborations).forEach(function(d){
+          
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + '</li>';
+
+        });
+        s += '</ul>'
+      }
+
+      if(d.data === null) {
+        s += '<br/><h6>' + 'No known external data usage.' + '</h6><br/>';
+      } else {
+          s += '<br/>' + '<h6>' + 'Obtained data from:' + '</h6><ul>';
+        (d.data).forEach(function(d){
+          
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + '</li>';
+
+        });
+        s += '</ul>'
+      }
+
+     // if(d.revenue === null) {
+     //    s += '<br/><h6>' + 'No known revenue information.' + '</h6><br/>';
+     //  } else {
+     //      s += '<br/>' + '<h6>' + 'Revenue:' + '</h6><ul>';
+     //    (d.revenue).forEach(function(d){
+     //      if()
+     //        s += '<li>' + d.year + '<strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+          
+     //    });
+     //    s += '</ul>'
+     //  }
+
+      
       // var fundOrgArr = [];
       // var fundAmtArr = [];
 
