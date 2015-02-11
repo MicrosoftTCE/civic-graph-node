@@ -1,4 +1,4 @@
-
+(function(){
   function transformText(d) {
     return "translate(" + d.x + "," + d.y + ")";
   }
@@ -4168,5 +4168,6 @@
 
 
   });
+})();
 
 //  Set flag to false inside the node click as opposed to the single click...
