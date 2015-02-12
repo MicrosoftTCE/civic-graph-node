@@ -145,7 +145,8 @@ var textElement;
   var empScale = d3.scale.sqrt().domain([10, 130000]).range([10, 50]);
   var twitScale = d3.scale.sqrt().domain([10, 1000000]).range([10, 50]);
 
-  d3.json("data/civic.json", function(error, graph) {
+  d3.json("/athena", function(error, graph) {
+    graph = JSON.parse(graph);
     var rawNodes = graph.nodes;
     var rawFundingConnections = graph.funding_connections;
     var rawInvestmentConnections = graph.investment_connections; 

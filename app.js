@@ -10,10 +10,6 @@ var connection = require('express-myconnection');
     // myConnection = require('express-myconnection');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
-var dbactions = require('./routes/dbactions');
-var staticaction = require('./routes/staticaction');
-var ajaxaction = require('./routes/ajax');
 
 var app = express();
 
@@ -35,11 +31,6 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
-app.use('/dbview', dbactions);
-app.use('/static', staticaction);
-app.use('/ajax', ajaxaction);
 
 //  For debugging purposes
 var logger = require('./logger');
@@ -60,10 +51,13 @@ app.use(connection(mysql, {
 //     console.log("Error connecting database ... \n\n");  
 // }
 // });
-app.set('json spaces', 40);
+app.set('json spaces', 20);
+
+var athena = require('./routes/athena');
+app.get('/athena', athena.retrieve_all);
 
 var entities = require('./routes/entities'); 
-app.get('/entities', entities.list);
+app.get('/entities', entities.retrieve_entities);
 app.get('/entities/:name', entities.retrieve_entity);
 app.get('/entities/:name/categories', entities.retrieve_categories);
 app.get('/entities/:name/key_people', entities.retrieve_key_people);
@@ -77,12 +71,18 @@ app.get('/entities/:name/data', entities.retrieve_data);
 app.get('/entities/:name/revenue', entities.retrieve_revenue);
 app.get('/entities/:name/expenses', entities.retrieve_expenses);
 
+var connections = require('./routes/connections');
+
+var operations = require('./routes/operations');
+
 var database = require('./routes/database');
 app.post('/database/save', parseUrlencoded, database.save);
 
-app.get('/', function(req, res) {
-res.sendFile(__dirname + '/index.html');
-});
+// app.get('/', function(req, res) {
+//   res.sendFile(__dirname + '/index.html');
+// });
+app.use('/', routes);
+
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -113,16 +113,6 @@ res.render('error', {
   message: err.message,
   error: {}
 });
-});
-
-// Update MySQL database
-app.post('/dbview', function(req, res) {
-console.log((req.body).name);
-});
-
-app.post('/ajax', function(req, res) {
-console.log('processing');
-res.send('processing the login form');
 });
 
 // connection.end();

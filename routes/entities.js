@@ -12,7 +12,7 @@ var getRelevantData = function(identifier, request){
   }
 
   switch(identifier){
-    case "list":
+    case "retrieve_entities":
         return data.nodes;
       break;
     case "retrieve_entity":
@@ -56,8 +56,8 @@ var getRelevantData = function(identifier, request){
   };
 };
 
-exports.list = function(request, response){
-  response.json(getRelevantData("list", request));
+exports.retrieve_entities = function(request, response){
+  response.json(getRelevantData("retrieve_entities", request));
 };
 
 //  Replace spaces with %20
