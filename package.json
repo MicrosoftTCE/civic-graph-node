@@ -18,6 +18,7 @@
     "stylus": "latest",
     "mysql": "latest",
     "geoip-lite": "latest",
-    "async": "latest"
+    "async": "latest",
+    "express-myconnection": "latest"
   }
 }

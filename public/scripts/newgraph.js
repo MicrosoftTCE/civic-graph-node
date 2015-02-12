@@ -1524,7 +1524,7 @@ function wrap(text, width) {
       $.ajax({
         type: 'POST',
         data: $.param(formObj),
-        url: '/handleData',
+        url: '/database/save',
             crossDomain: true
       }).done(function(returnData){
         
