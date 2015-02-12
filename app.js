@@ -8,6 +8,9 @@ var mysql = require('mysql');
 var fs = require('fs');
 var async = require('async');
 
+    // myConnection = require('express-myconnection');
+
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var dbactions = require('./routes/dbactions');
@@ -43,6 +46,33 @@ app.use('/ajax', ajaxaction);
 //  For debugging purposes
 var logger = require('./logger');
 app.use(logger);
+
+var connection = mysql.createConnection({
+        port: 3306,
+        host: 'us-cdbr-azure-east-b.cloudapp.net',
+        user: 'b5a370a8f6d91a',
+        password: 'e928dad7',
+        database: 'athena'
+});
+
+// app.use(myConnection(mysql, {
+//     host: process.env.DB_HOST,
+//     user: process.env.DB_USER,
+//     password: process.env.DB_PASSWORD,
+//     port: process.env.DB_PORT,
+//     database: process.env.DB_DATABASE
+// }, 'single'));
+
+connection.connect(function(err){
+if(!err) {
+    console.log("Database is connected ... \n\n");  
+} else {
+    console.log("Error connecting database ... \n\n");  
+}
+});
+
+var entities = require('./routes/entities'); 
+app.get('/entities', entities.list);
 
 var handleData = require('./routes/handleData');
 app.post('/handleData', parseUrlencoded, function(request, response) {
@@ -120,15 +150,7 @@ app.post('/handleData', parseUrlencoded, function(request, response) {
 
     console.log(entity);
 
-    var connection = mysql.createConnection({
-        port: 3306,
-        host: 'us-cdbr-azure-east-b.cloudapp.net',
-        user: 'b5a370a8f6d91a',
-        password: 'e928dad7',
-        database: 'athena'
-    });
-
-    connection.connect();
+    
 
     // connection.query('USE athena', function(err){
     //   if(err) throw err;

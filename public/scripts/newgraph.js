@@ -1,4 +1,4 @@
-
+(function(){
 d3.selection.prototype.moveToFront = function() {
   return this.each(function(){
     this.parentNode.appendChild(this);
@@ -170,11 +170,14 @@ var textElement;
       .links(rawConnections)
       .linkStrength(0)
       .charge(function(d) {
+        // if (d.employees !== null)
+        //   return -6 * empScale(d.employees);
+        // else
+        //   return -40;
         if (d.employees !== null)
           return -6 * empScale(d.employees);
         else
-          return -40;
-
+          return -25;
       })
       .on("tick", tick)
       .start();
@@ -484,11 +487,14 @@ function wrap(text, width) {
         .links(rawConnections)
         .linkStrength(0)
         .charge(function(d) {
+          // if (d.employees !== null)
+          //   return -5 * empScale(parseInt(d.employees));
+          // else
+          //   return -50;
           if (d.employees !== null)
-            return -5 * empScale(parseInt(d.employees));
-          else
-            return -50;
-
+          return -6 * empScale(d.employees);
+        else
+          return -25;
         })
         .on("tick", tick)
         .start();
@@ -550,7 +556,7 @@ function wrap(text, width) {
       var s = "";
 
       //  General Information
-      s += '<div><a style="float:right;"><i id="editCurrentInfo" class="icon-pencil on-left"></i></a></div>';
+      s += '<div style="height:30px"><a style="float:right;"><i id="editCurrentInfo" class="icon-pencil on-left"></i></a></div>';
       s += '<h1>' + "<a href=" + '"' + d.url + '" target="_blank">' + d.name + '</a></h1>';
       s += '<h6>' + 'Type of Entity: ' + '</h6>' + ' <h5>' + d.type + '</h5>';
 
@@ -3904,10 +3910,14 @@ function wrap(text, width) {
           .links(rawConnections)
           .linkStrength(0)
           .charge(function(d) {
+            // if (d.employees !== null)
+            //   return -5 * empScale(parseInt(d.employees));
+            // else
+            //   return -50;
             if (d.employees !== null)
-              return -5 * empScale(parseInt(d.employees));
+              return -6 * empScale(d.employees);
             else
-              return -50;
+              return -25;
           })
           .on("tick", tick)
           .start();
@@ -3919,5 +3929,5 @@ function wrap(text, width) {
 
 
   });
-
+})();
 //  Set flag to false inside the node click as opposed to the single click...
