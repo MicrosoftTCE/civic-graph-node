@@ -1,4 +1,19 @@
-(function(){
+
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function(){
+    this.parentNode.appendChild(this);
+  });
+};
+
+d3.selection.prototype.moveToBack = function() { 
+    return this.each(function() { 
+        var firstChild = this.parentNode.firstChild; 
+        if (firstChild) { 
+            this.parentNode.insertBefore(this, firstChild); 
+        } 
+    }); 
+};
+
   function transformText(d) {
     return "translate(" + d.x + "," + d.y + ")";
   }
@@ -28,6 +43,8 @@
     var forProfitNodes, nonProfitNodes, individualNodes, governmentNodes;
     var fiveMostConnectedForProfit = {}, fiveMostConnectedNonProfit = {}, fiveMostConnectedIndividuals = {}, fiveMostConnectedGovernment = {};
    
+var textElement;
+
     var resetFlag = 1;
 
   var dblclickobject;
@@ -220,37 +237,7 @@
       .on('dblclick', dblclick)
       .call(drag);
 
-    node = nodeInit.append("circle")
-      .attr("r", function(d) {
-        if (d.employees !== null)
-          return empScale(d.employees);
-        else
-          return "7";
-      })
-      .style("fill", function(d) {
-        if (d.type !== null) {
-          if (d.type === "Individual")
-            return "rgb(255,185,0)";
-          if (d.type === "Non-Profit")
-            return "rgb(0,164,239)";
-          if (d.type === "For-Profit")
-            return "rgb(127,186,0)";
-          if (d.type === "Government")
-            return "rgb(242,80,34)";          
-        }
-      })
-      .attr("cx", function(d) {
-        return d.x;
-      })
-      .attr("cy", function(d) {
-        return d.y;
-      })
-      .style("z-index", "500")
-      .style("stroke-width", '1.5px')
-      .style("stroke", 'white')
-      .on('mouseover', handleNodeHover)
-      .on('mouseout', offNode)
-      .on('click', sinclick);
+    
 
     // data section
     // combine collaboration and data
@@ -283,18 +270,18 @@
     });
 
 
-    var textElement = svg.selectAll('.node')
+    textElement = svg.selectAll('.node')
                           .append('text')
                           .text(function(d){
                             return d.nickname;
                           })
                           .attr("x", 0)
                         .attr("dy", "0.1em")
-                            .attr("y", function(d){
+                        .attr("y", function(d){
                             if (d.employees !== null)
-                              return empScale(d.employees) + 5;
+                              return empScale(d.employees) + 10;
                             else
-                              return 7 + 5;
+                              return 7 + 10;
                            }).style('opacity', function(d){
                           var textOpacity;
                           if(d.type === "For-Profit")
@@ -306,7 +293,7 @@
                           if(d.type === "Government")
                             textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
                           return textOpacity;
-                         }).style('font-size', '14px');
+                         }).style('font-size', '14px').style('pointer-events', 'none');
                         // .style("font-size", "14px")
                         //   .style('opacity', function(d){
                         //   var textOpacity;
@@ -320,8 +307,39 @@
                         //     textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
                         //   return textOpacity;
                         //  });
+  node = nodeInit.append("circle")
+      .attr("r", function(d) {
+        if (d.employees !== null)
+          return empScale(d.employees);
+        else
+          return "7";
+      })
+      .style("fill", function(d) {
+        if (d.type !== null) {
+          if (d.type === "Individual")
+            return "rgb(255,185,0)";
+          if (d.type === "Non-Profit")
+            return "rgb(0,164,239)";
+          if (d.type === "For-Profit")
+            return "rgb(127,186,0)";
+          if (d.type === "Government")
+            return "rgb(242,80,34)";          
+        }
+      })
+      .attr("cx", function(d) {
+        return d.x;
+      })
+      .attr("cy", function(d) {
+        return d.y;
+      })
+      .style("stroke-width", '1.5px')
+      .style("stroke", 'white')
+      .on('mouseover', handleNodeHover)
+      .on('mouseout', offNode)
+      .on('click', sinclick);
 
-        textElement.call(wrap, 25);
+        console.log(textElement);
+        textElement.call(wrap, 80);
                           
                         //  .append('text')
                         //  .text(function(d){
@@ -366,10 +384,10 @@
                          //  return textOpacity;
                          // });
 
-
+  
                          // .style('text-shadow', '0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff');
 
-    function wrap(text, width) {
+function wrap(text, width) {
   text.each(function() {
     var text = d3.select(this),
         words = text.text().split(/\s+/).reverse(),
@@ -378,7 +396,14 @@
         lineNumber = 0,
         lineHeight = 1.1, // ems
         dy = parseFloat(text.attr("dy")),
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("dy", dy + "em");
+        data = d3.select(this)[0][0].__data__,
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", function(){
+                            if (data.employees !== null)
+                              return empScale(data.employees) + 10;
+                            else
+                              return 7 + 10;
+                           }).attr("dy", dy + "em");
+    console.log(text);
     while (word = words.pop()) {
       line.push(word);
       tspan.text(line.join(" "));
@@ -387,7 +412,12 @@
         tspan.text(line.join(" "));
         line = [word];
         lineNumber++;
-        tspan = text.append("tspan").attr("x", 0).attr("dy", lineNumber * lineHeight + dy + "em").text(word);
+        tspan = text.append("tspan").attr("x", 0).attr("y", function(){
+                            if (data.employees !== null)
+                              return empScale(data.employees) + 5;
+                            else
+                              return 7 + 5;
+                           }).attr("dy", lineNumber * lineHeight + dy + "em").text(word);
       }
     }
   });
@@ -701,199 +731,6 @@
         s += '</ul>'
       }
 
-     // if(d.revenue === null) {
-     //    s += '<br/><h6>' + 'No known revenue information.' + '</h6><br/>';
-     //  } else {
-     //      s += '<br/>' + '<h6>' + 'Revenue:' + '</h6><ul>';
-     //    (d.revenue).forEach(function(d){
-     //      if()
-     //        s += '<li>' + d.year + '<strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-          
-     //    });
-     //    s += '</ul>'
-     //  }
-
-      
-      // var fundOrgArr = [];
-      // var fundAmtArr = [];
-
-      // if (d.funding_received === null) {
-      //   s += '<br/> <h6>' + 'No known funding.' + '</h6><br/>';
-      // } else {
-      //   var counter = 0;
-      //   var fundArr = [];
-      //   var fundtemp = [];
-      //   var holdTotalF;
-      //   var holdIndividsF;
-
-      //   //  If there's more than one funding contributor...
-      //   if ((d.funding_received).indexOf("; ") !== -1) {
-      //     fundArr = (d.funding).split("; ");
-      //     for (var count = 0; count < fundArr.length; count++) {
-      //       fundtemp = fundArr[count].split(":");
-      //       fundOrgArr.push(fundtemp[0]);
-      //       fundAmtArr.push(fundtemp[1]);
-
-      //       if (fundOrgArr[count] === "Total") {
-      //         holdTotalF = fundAmtArr[count];
-      //         continue;
-      //       }
-
-      //       if (fundOrgArr[count] === "Individuals") {
-      //         holdIndividsF = fundAmtArr[count];
-      //         continue;
-      //       }
-
-      //       if (fundAmtArr[count] === 'null') {
-      //         if (counter === 0) {
-      //           s += '<br/>' + '<h6>' + ' Received funding from:' + '</h6><ul>';
-      //           counter++;
-      //         }
-
-      //         s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (fundOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + fundOrgArr[count] + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-      //       } else {
-      //         if (counter === 0) {
-      //           s += '<br/>' + '<h6>' + ' Received funding from:' + '</h6><ul>';
-      //           counter++;
-      //         }
-
-      //         s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (fundOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + fundOrgArr[count] + '</a></h5>' + ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(fundAmtArr[count]) + '</strong>' + '</li>';
-      //       }
-      //     }
-      //   } else {
-      //     fundArr = (d.funding_connections).split(":");
-
-      //     if (fundArr[0] === "Total") {
-      //       s += '<br/>';
-      //       holdTotalF = fundArr[1];
-      //     } else if (fundArr[0] === "Individuals") {
-      //       s += '<br/>';
-      //       holdIndividsF = fundArr[1];
-      //     } else {
-      //       s += '<br/>' + '<h6>' + ' Received funding from:' + '</h6><ul>';
-
-      //       s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (fundArr[0]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + fundArr[0] + '</a></h5>';
-
-      //       if (fundArr[1] === 'null') {
-      //         s += ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-      //       } else {
-      //         s += ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(fundArr[1]) + '</strong>' + '</li>';
-      //       }
-      //     }
-      //   }
-
-      //   s += '</ul>';
-
-      //   if (!isNaN(holdIndividsF)) {
-      //     s += '<h6>' + 'Individuals provided ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdIndividsF) + '</strong></h5><h6> in fundings.</h6><br/>';
-      //   }
-
-      //   if (!isNaN(holdTotalF)) {
-      //     s += '<h6>' + 'Total funding received: ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdTotalF) + '</strong></h5><br/>';
-      //   }
-      // }
-
-      // //  INVESTING
-      // var investOrgArr = [];
-      // var investAmtArr = [];
-      // var holdTotalI;
-      // var holdIndividsI
-
-      // if (d.investmentR === null) {
-      //   s += '<br/> <h6>' + 'No known investments.' + '</h6> <br/>';
-      // } else {
-      //   var counter = 0;
-      //   var investArr = [];
-      //   var investtemp = [];
-
-      //   //  If there's more than one funding contributor...
-      //   if ((d.investmentR).indexOf("; ") !== -1) {
-      //     investArr = (d.investmentR).split("; ");
-
-      //     for (var count = 0; count < investArr.length; count++) {
-      //       investtemp = investArr[count].split(":");
-      //       investOrgArr.push(investtemp[0]);
-      //       investAmtArr.push(investtemp[1]);
-
-      //       if (investOrgArr[count] === "Total") {
-      //         holdTotalI = investAmtArr[count];
-      //         continue;
-      //       }
-
-      //       if (investOrgArr[count] === "Individuals") {
-      //         holdIndividsI = investAmtArr[count];
-      //         continue;
-      //       }
-
-      //       if (investAmtArr[count] === 'null') {
-      //         if (counter === 0) {
-      //           s += '<br/>' + '<h6>' + ' Received investments from:' + '</h6>' + '<ul>';
-      //           counter++;
-      //         }
-
-      //         s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (investOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + investOrgArr[count] + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-      //       } else {
-      //         if (counter === 0) {
-      //           s += '<br/>' + '<h6>' + ' Received investments from:' + '</h6>' + '<ul>';
-      //           counter++;
-      //         }
-
-      //         s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (investOrgArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + investOrgArr[count] + '</a></h5>' + ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(investAmtArr[count]) + '</strong>' + '</li>';
-      //       }
-      //     }
-      //   } else {
-      //     investArr = (d.investmentR).split(":");
-
-      //     if (investArr[0] === "Total") {
-      //       s += '<br/>';
-      //       holdTotalI = investAmtArr[1];
-      //     } else if (investArr[0] === "Individuals") {
-      //       s += '<br/>';
-      //       holdIndividsI = investAmtArr[1];
-      //     } else {
-      //       s += '<br/>' + '<h6>' + ' Received investments from:' + '</h6><ul>';
-
-      //       s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (investArr[0]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + investArr[0] + '</a></h5>';
-
-      //       if (investArr[1] === 'null') {
-      //         s += ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-      //       } else {
-      //         s += ': $' + '<strong style="color:rgb(127,186,0);">' + numCommas(investArr[1]) + '</strong>' + '</li>';
-      //       }
-      //     }
-      //   }
-
-      //   s += '</ul>';
-
-      //   if (!isNaN(holdIndividsI)) {
-      //     s += '<h6>' + 'Individuals provided ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdIndividsI) + '</strong> in investments.<br/>';
-      //   }
-
-      //   if (!isNaN(holdTotalI)) {
-      //     s += '<h6>' + 'Total investments received: ' + '</h6>' + ' $' + '<strong style="color:rgb(127,186,0);">' + numCommas(holdTotalI) + '</strong>.<br/>';
-      //   }
-      // }
-
-      // //RELATED TO
-      // if (d.relatedto === null) {
-      //   s += '<br/><h6>' + 'No known relations.' + '</h6><br/>';
-      // } else {
-      //   s += '<br/>' + '<h6>' + 'Related To:  ' + '</h6> <ul>';
-      //   var relatedtoArr = [];
-      //   var relatedtotemp = [];
-
-      //   //  If there's more than one data...
-      //   if ((d.relatedto).indexOf(", ") !== -1) {
-      //     relatedtoArr = (d.relatedto).split(", ");
-      //     for (var count = 0; count < relatedtoArr.length; count++) {
-      //       s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (relatedtoArr[count]).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + relatedtoArr[count] + '</a>' + '</h5></li>';
-      //     }
-      //   } else {
-      //     s += '<li><h5> ' + '<a href="http://www.bing.com/search?q=' + (d.relatedto).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.relatedto + '</a>' + '</h5></li>';
-      //   }
-      //   s += '</ul>';
-      // }
-
       displayFormA(d);
 
       return s;
@@ -1187,21 +1024,6 @@
       if(formObject.expenses.length === 0) {
         formObject.expenses = null;
       }
-
-      // formObject.grants = [];
-      // var grant_year;
-      // d3.selectAll('.grant-input .grant_amt').filter(function(d, i) {
-      //   if (this.value) {
-      //     grant_year = d3.selectAll('.grant-input .grant_year')[0][i].value;
-      //     if(grant_year)
-      //       formObject.grants.push({amount:this.value, year:grant_year});
-      //     else
-      //       formObject.grants.push({amount:this.value, year:null});
-      //   }
-      // });
-      // if (formObject.grants.length === 0) {
-      //   formObject.grants = null;
-      // }
     
       console.log(formObject);
 
@@ -1474,22 +1296,6 @@
         });
       }
     }
-
-    // function add_input_grant(counterG) {
-    //   if ($('#grant-' + counterG + ' input[name="grant_amt"]').val() !== "") {
-    //     d3.select('#grant-' + counterG + ' input[name="grant_amt"]').on('keyup', null);
-    //     counterG++; // counter -> 2
-
-    //     console.log(counterG);
-    //     $("#grant-" + (counterG - 1)).after('<div id="grant-' + counterG + '"><div class="grant-input input-control text" data-role="input-control">\
-    //        <input type="text" name="grant_amt" class="grant_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/>\
-    //       <input type="text" name="grant_year" class="grant_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
-    //     </div></div>');
-    //     d3.select("#grant-" + counterG + " input[name=grant_amt]").on("keyup", function() {
-    //       add_input_grant(counterG);
-    //     });
-    //   }
-    // }
 
     function displayFormA() {
       // Test if jQuery works within d3...
@@ -2276,6 +2082,8 @@
     }
 
     function handleNodeHover(d) {
+
+
       console.log("Inside node hover");
       var s = textDisplay(d);
 
@@ -2327,38 +2135,6 @@
             return "0.05";
         });
 
-      // var neighborFund = graph.funding_connections.filter(function(link) {
-      //   return link.source.index === d.index || link.target.index === d.index;
-      // }).map(function(link) {
-      //   return link.source.index === d.index ? link.target.index : link.source.index;
-      // });
-
-      // console.log(neighborFund);
-
-      // var neighborInvest = graph.investment_connections.filter(function(link) {
-      //   return link.source.index === d.index || link.target.index === d.index;
-      // }).map(function(link) {
-      //   return link.source.index === d.index ? link.target.index : link.source.index;
-      // });
-
-      // console.log(neighborInvest);
-
-      // var neighborPorucs = graph.collaboration_connections.filter(function(link) {
-      //   return link.source.index === d.index || link.target.index === d.index;
-      // }).map(function(link) {
-      //   return link.source.index === d.index ? link.target.index : link.source.index;
-      // });
-
-      // console.log(neighborPorucs);
-
-      // var neighborData = graph.data_connections.filter(function(link) {
-      //   return link.source.index === d.index || link.target.index === d.index;
-      // }).map(function(link) {
-      //   return link.source.index === d.index ? link.target.index : link.source.index;
-      // });
-
-      // console.log(neighborData);
-
       var isLinkTarget = function(link, node) {
         return link.target.index === node.index;
       } 
@@ -2401,13 +2177,16 @@
             return "1";
           else
             return "0.05";
-        });
+        }).select('text').style('opacity', 1);
 
         d3.select(this.parentNode).select("text").transition()
         .duration(350)
-        .delay(0).style("opacity", 1).style("font-size", "24px");
+        .delay(0).style("opacity", 1).style("font-weight", "bold");
 
-
+        // if (d.employees !== null)
+        //   return empScale(d.employees);
+        // else
+        //   return "7";
     }
 
     function handleAdjNodeClick(d) {
@@ -2439,34 +2218,6 @@
         } else
           return "0.05";
       });
-
-      // //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      // var neighborFund = graph.funding_connections.filter(function(link) {
-      //   return link.source.index === d.index || link.target.index === d.index;
-      // }).map(function(link) {
-      //   return link.source.index === d.index ? link.target.index : link.source.index;
-      // });
-
-      // //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      // var neighborInvest = graph.investment_connections.filter(function(link) {
-      //   return link.source.index === d.index || link.target.index === d.index;
-      // }).map(function(link) {
-      //   return link.source.index === d.index ? link.target.index : link.source.index;
-      // });
-
-      // //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      // var neighborPorucs = graph.collaboration_connections.filter(function(link) {
-      //   return link.source.index === d.index || link.target.index === d.index;
-      // }).map(function(link) {
-      //   return link.source.index === d.index ? link.target.index : link.source.index;
-      // });
-
-      // //http://stackoverflow.com/questions/16857806/apply-several-mouseover-events-to-neighboring-connected-nodes
-      // var neighborData = graph.data_connections.filter(function(link) {
-      //   return link.source.index === d.index || link.target.index === d.index;
-      // }).map(function(link) {
-      //   return link.source.index === d.index ? link.target.index : link.source.index;
-      // });
 
       var isLinkTarget = function(link, node) {
         return link.target.index === node.index;
@@ -2538,7 +2289,7 @@
         .delay(0)
         .style("stroke", "rgb(111,93,168)")
         .style("opacity", "0.2")
-        .style("stroke-width", "1px").style("z-index", "0");
+        .style("stroke-width", "1px");
       // .each(function(){this.parentNode.insertBefore(this, this);});
 
       investLink
@@ -2547,7 +2298,7 @@
         .delay(0)
         .style("stroke", "rgb(38,114,114)")
         .style("opacity", "0.2")
-        .style("stroke-width", "1px").style("z-index", "0");
+        .style("stroke-width", "1px");
       // .each(function(){this.parentNode.insertBefore(this, this);});
 
       porucsLink
@@ -2556,7 +2307,7 @@
         .delay(0)
         .style("stroke", "rgb(235,232,38)")
         .style("opacity", "0.2")
-        .style("stroke-width", "1px").style("z-index", "0");
+        .style("stroke-width", "1px");
       // .each(function(){this.parentNode.insertBefore(this, this);});
 
       dataLink
@@ -2565,7 +2316,7 @@
         .delay(0)
         .style("stroke", "rgb(191,72,150)")
         .style("opacity", "0.2")
-        .style("stroke-width", "1px").style("z-index", "0");
+        .style("stroke-width", "1px");
       // .each(function(){this.parentNode.insertBefore(this, this);});
 
       // svg.selectAll('.node text').style('opacity', 1); 
@@ -4168,6 +3919,5 @@
 
 
   });
-})();
 
 //  Set flag to false inside the node click as opposed to the single click...
