@@ -427,7 +427,7 @@ exports.save = function(request, response){
                         else
                         {
                           // console.log("Else: " + newEntity);
-                          connection.query('INSERT INTO Entities (' + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, ' + 'Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + newCollabrationEntity + '","' + newCollabrationEntity + '","' + 'Unknown' + '",' + null + ',"' + 'Unknown' + '",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(), 0);', function(err, resultInner) {
+                          connection.query('INSERT INTO Entities (' + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, ' + 'Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + newCollaborationEntity + '","' + newCollaborationEntity + '","' + 'Unknown' + '",' + null + ',"' + 'Unknown' + '",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(), 0);', function(err, resultInner) {
                             if (err) throw err;
                             connection.query('SELECT * FROM Entities WHERE Name = ' + "'" + newCollaborationEntity + "' OR Nickname = " + "'" + newCollaborationEntity + "'", function(err, innerRows, innerFields) {
                               if (err) throw err;
