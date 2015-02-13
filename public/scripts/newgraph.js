@@ -626,7 +626,7 @@ var textElement;
       } else {
           s += '<br/>' + '<h6>' + 'Received funding from:' + '</h6><ul>';
         (d.funding_received).forEach(function(d){
-          if(d.amount === 0)
+          if(d.amount === 0 || d.amount === null)
           {
             s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
           }
@@ -651,7 +651,7 @@ var textElement;
       } else {
           s += '<br/>' + '<h6>' + 'Gave funding to:' + '</h6><ul>';
         (d.funding_given).forEach(function(d){
-          if(d.amount === 0)
+          if(d.amount === 0 || d.amount === null)
           {
             s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
           }
@@ -676,7 +676,7 @@ var textElement;
       } else {
           s += '<br/>' + '<h6>' + 'Received investments from:' + '</h6><ul>';
         (d.investments_received).forEach(function(d){
-          if(d.amount === 0)
+          if(d.amount === 0 || d.amount === null)
           {
             s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
           }
@@ -701,7 +701,7 @@ var textElement;
       } else {
           s += '<br/>' + '<h6>' + 'Invested in:' + '</h6><ul>';
         (d.investments_made).forEach(function(d){
-          if(d.amount === 0)
+          if(d.amount === 0 || d.amount === null)
           {
             s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
           }

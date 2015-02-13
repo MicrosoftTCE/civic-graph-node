@@ -231,19 +231,9 @@ exports.save = function(request, response){
     });
   };
 
-  var insertNode = function(pastID, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people) {
-    connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + entity.name + '","' + entity.nickname + '","' + entity.type + '",' + categories + ',"' + entity.location + '",' + url + ',' + twitter_handle + ',' + followers + ',' + employees + ',' + influence + ',' + relations + ',' + key_people + ',' + 'NOW(), 1);', function(err, result) {
-          if (err) throw err;
-
-          console.log(result.insertId);
-          if(pastID !== -1)
-          {
-            connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID, function(err){
-              if (err) throw err;
-            });
-          }
-
-          if (entity.funding_received !== null) {
+  var developJSON = function(result, entity)
+  {
+    if (entity.funding_received !== null) {
             var newFundingReceivedEntity;
               (entity.funding_received).forEach(function(object) {
                 newFundingReceivedEntity = object;
@@ -539,6 +529,24 @@ exports.save = function(request, response){
                   });
              });
           });
+};
+
+  var insertNode = function(pastID, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people) {
+    connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + entity.name + '","' + entity.nickname + '","' + entity.type + '",' + categories + ',"' + entity.location + '",' + url + ',' + twitter_handle + ',' + followers + ',' + employees + ',' + influence + ',' + relations + ',' + key_people + ',' + 'NOW(), 1);', function(err, result) {
+          if (err) throw err;
+
+          console.log(result.insertId);
+          if(pastID !== -1)
+          {
+            connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID, function(err){
+              developJSON(result, entity);
+              if (err) throw err;
+            });
+          }
+          else
+          {
+            developJSON(result, entity);
+          }
       });
   };
 
