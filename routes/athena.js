@@ -6,6 +6,6 @@ exports.retrieve_all = function(request, response){
     if (err) {
       return console.log(err);
     }
-    response.json(data);
+    response.json(JSON.parse(data));
   });
 };

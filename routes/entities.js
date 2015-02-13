@@ -1,7 +1,7 @@
 var fs = require('fs');
 var file = __dirname + '../../public/data/civic.json';
 
-var getRelevantData = function(identifier, request){
+var getEntityData = function(identifier, request){
   var entity;
   var data = JSON.parse(fs.readFileSync(file, 'utf8'));
 
@@ -57,54 +57,54 @@ var getRelevantData = function(identifier, request){
 };
 
 exports.retrieve_entities = function(request, response){
-  response.json(getRelevantData("retrieve_entities", request));
+  response.json(getEntityData("retrieve_entities", request));
 };
 
 //  Replace spaces with %20
 exports.retrieve_entity = function(request, response){
-  response.json(getRelevantData("retrieve_entity", request));
+  response.json(getEntityData("retrieve_entity", request));
 };
 
 exports.retrieve_categories = function(request, response){
-  response.json(getRelevantData("retrieve_categories", request));
+  response.json(getEntityData("retrieve_categories", request));
 };
 
 exports.retrieve_key_people = function(request, response){
-  response.json(getRelevantData("retrieve_key_people", request));
+  response.json(getEntityData("retrieve_key_people", request));
 };
 
 exports.retrieve_relations = function(request, response){
-  response.json(getRelevantData("retrieve_relations", request));
+  response.json(getEntityData("retrieve_relations", request));
 };
 
 exports.retrieve_funding_received = function(request, response){
-  response.json(getRelevantData("retrieve_funding_received", request));
+  response.json(getEntityData("retrieve_funding_received", request));
 };
 
 exports.retrieve_funding_given = function(request, response){
-  response.json(getRelevantData("retrieve_funding_given", request));
+  response.json(getEntityData("retrieve_funding_given", request));
 };
 
 exports.retrieve_investments_received = function(request, response){
-  response.json(getRelevantData("retrieve_investments_received", request));
+  response.json(getEntityData("retrieve_investments_received", request));
 };
 
 exports.retrieve_investments_made = function(request, response){
-  response.json(getRelevantData("retrieve_investments_made", request));
+  response.json(getEntityData("retrieve_investments_made", request));
 };
 
 exports.retrieve_collaborations = function(request, response){
-  response.json(getRelevantData("retrieve_collaborations", request));
+  response.json(getEntityData("retrieve_collaborations", request));
 };
 
 exports.retrieve_data = function(request, response){
-  response.json(getRelevantData("retrieve_data", request));
+  response.json(getEntityData("retrieve_data", request));
 };
 
 exports.retrieve_revenue = function(request, response){
-  response.json(getRelevantData("retrieve_revenue", request));
+  response.json(getEntityData("retrieve_revenue", request));
 };
 
 exports.retrieve_expenses = function(request, response){
-  response.json(getRelevantData("retrieve_expenses", request));
+  response.json(getEntityData("retrieve_expenses", request));
 };

@@ -14,6 +14,43 @@ d3.selection.prototype.moveToBack = function() {
     }); 
 };
 
+
+function wrap(text, width) {
+  text.each(function() {
+    var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        dy = parseFloat(text.attr("dy")),
+        data = d3.select(this)[0][0].__data__,
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", function(){
+                            if (data.employees !== null)
+                              return empScale(data.employees) + 10;
+                            else
+                              return 7 + 10;
+                           }).attr("dy", dy + "em");
+    console.log(text);
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        lineNumber++;
+        tspan = text.append("tspan").attr("x", 0).attr("y", function(){
+                            if (data.employees !== null)
+                              return empScale(data.employees) + 5;
+                            else
+                              return 7 + 5;
+                           }).attr("dy", lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  });
+}
+
   function transformText(d) {
     return "translate(" + d.x + "," + d.y + ")";
   }
@@ -125,6 +162,42 @@ var textElement;
   // d3.select("svg").on("dblclick.zoom", null);
   d3.select('body > nav > nav > div').append('div').attr('id', 'editBox').append('p').text('Edit').style('color', '#2e92cf');
 
+  // d3.select("svg").append("rect")
+  //                   .attr("x", 10)
+  //                   .attr("y", 10)
+  //                   .attr("width", 380)
+  //                   .attr("height", 380)
+  //                   .style("fill", "rgb(242,80,34)")
+  //                   .style("opacity", 0.9)
+  //                   .style('pointer-events', 'none');
+
+  //   d3.select("svg").append("rect")
+  //                   .attr("x", 410)
+  //                   .attr("y", 10)
+  //                   .attr("width", 380)
+  //                   .attr("height", 380)
+  //                   .style("fill", "rgb(127,186,0")
+  //                   .style("opacity", 0.9)
+  //                   .style('pointer-events', 'none');
+
+  //   d3.select("svg").append("rect")
+  //                   .attr("x", 10)
+  //                   .attr("y", 410)
+  //                   .attr("width", 380)
+  //                   .attr("height", 380)
+  //                   .style("fill", "rgb(0,164,239)")
+  //                   .style("opacity", 0.9)
+  //                   .style('pointer-events', 'none');
+
+  //   d3.select("svg").append("rect")
+  //                   .attr("x", 410)
+  //                   .attr("y", 410)
+  //                   .attr("width", 380)
+  //                   .attr("height", 380)
+  //                   .style("fill", "rgb(255,185,0)")
+  //                   .style("opacity", 0.9)
+  //                   .style('pointer-events', 'none');
+
   //  document.createElement('svg')
 
   var aspect = width / height,
@@ -146,7 +219,7 @@ var textElement;
   var twitScale = d3.scale.sqrt().domain([10, 1000000]).range([10, 50]);
 
   d3.json("/athena", function(error, graph) {
-    graph = JSON.parse(graph);
+    // graph = JSON.parse(graph);
     var rawNodes = graph.nodes;
     var rawFundingConnections = graph.funding_connections;
     var rawInvestmentConnections = graph.investment_connections; 
@@ -163,7 +236,12 @@ var textElement;
     collaborationConnections = (rawCollaborationConnections).filter(function(d){return d.render === 1;});
     dataConnections = (rawDataConnections).filter(function(d){return d.render === 1;});
 
-    connectionLinks = fundingConnections.concat(investmentConnections).concat(collaborationConnections).concat(dataConnections);
+    connectionLinks = fundingConnections
+                        .concat(investmentConnections)
+                        .concat(collaborationConnections)
+                        .concat(dataConnections);  
+
+    
 
     var force = d3.layout.force()
       .nodes(rawNodes)
@@ -297,7 +375,9 @@ var textElement;
                           if(d.type === "Government")
                             textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
                           return textOpacity;
-                         }).style('font-size', '14px').style('pointer-events', 'none');
+                         }).style('font-size', '14px')
+                           .style('color', '#FFFFFF')
+                           .style('pointer-events', 'none');
                         // .style("font-size", "14px")
                         //   .style('opacity', function(d){
                         //   var textOpacity;
@@ -342,90 +422,10 @@ var textElement;
       .on('mouseout', offNode)
       .on('click', sinclick);
 
-        console.log(textElement);
         textElement.call(wrap, 80);
                           
-                        //  .append('text')
-                        //  .text(function(d){
-                        //     if(d.nickname.split(" ").length >= 3)
-                        //       return d.nickname.split(" ").join("\n");
-                        //     else
-                        //       return d.nickname;
-                        //   })
-                        //  // .attr("x", function(d){
-                        //  //    if (d.employees !== null)
-                        //  //      return empScale(d.employees);
-                        //  //    else
-                        //  //      return 7;
-                        //  //   })
-                        //  // // .attr("x", -8)
-                        //  //   // .attr("y", ".31em")
-                        //  //   .attr("y", function(d){
-                        //  //    if (d.employees !== null)
-                        //  //      return empScale(d.employees);
-                        //  //    else
-                        //  //      return 7;
-                        //  //   })
-                        // .attr("x", 0)
-                        // .attr("dy", ".35em")
-                        // .attr("text-anchor", "middle")
-                        // .style('color', 'black')
-                        // .style('font-size', '18px')
-                        //  .style('font-weight', 900)
-                        //  .style('font-family', "'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif")
-                        //  .style('pointer-events', 'none')
-                        //  .style('z-index', '999')
-                         // .style('opacity', function(d){
-                         //  var textOpacity;
-                         //  if(d.type === "For-Profit")
-                         //    textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
-                         //  if(d.type === "Non-Profit")
-                         //    textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
-                         //  if(d.type === "Individual")
-                         //    textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
-                         //  if(d.type === "Government")
-                         //    textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
-                         //  return textOpacity;
-                         // });
 
-  
-                         // .style('text-shadow', '0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff');
 
-function wrap(text, width) {
-  text.each(function() {
-    var text = d3.select(this),
-        words = text.text().split(/\s+/).reverse(),
-        word,
-        line = [],
-        lineNumber = 0,
-        lineHeight = 1.1, // ems
-        dy = parseFloat(text.attr("dy")),
-        data = d3.select(this)[0][0].__data__,
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", function(){
-                            if (data.employees !== null)
-                              return empScale(data.employees) + 10;
-                            else
-                              return 7 + 10;
-                           }).attr("dy", dy + "em");
-    console.log(text);
-    while (word = words.pop()) {
-      line.push(word);
-      tspan.text(line.join(" "));
-      if (tspan.node().getComputedTextLength() > width) {
-        line.pop();
-        tspan.text(line.join(" "));
-        line = [word];
-        lineNumber++;
-        tspan = text.append("tspan").attr("x", 0).attr("y", function(){
-                            if (data.employees !== null)
-                              return empScale(data.employees) + 5;
-                            else
-                              return 7 + 5;
-                           }).attr("dy", lineNumber * lineHeight + dy + "em").text(word);
-      }
-    }
-  });
-}
 
     // var textElement = svg.selectAll('.node')
     //   .append('text')
@@ -447,6 +447,8 @@ function wrap(text, width) {
       //   break;// Avoids infinite looping in case this solution was a bad idea
       // }
     }
+
+
 
     // Must adjust the force parameters...
 
@@ -584,7 +586,7 @@ function wrap(text, width) {
 
       if (d.type !== 'Individual') {
         if (d.employees !== null) {
-          s += '<h6>' + 'Employees: ' + '</h6> <h5>' + numCommas(d.employees) + '</h5><br/>';
+          s += '<h6>' + 'Employees: ' + '</h6> <h5>' + numCommas(d.employees.toString()) + '</h5><br/>';
         } else {
           s += '<h6>' + 'Employees: ' + '</h6> <h5>' + 'N/A' + '</h5><br/>';
         }
@@ -599,7 +601,12 @@ function wrap(text, width) {
 
         twitterLink = 'https://twitter.com/' + twitterLink;
         s += '<h6>' + 'Twitter:  ' + '</h6> <h5>' + "<a href=" + '"' + twitterLink + '" target="_blank">' + d.twitter_handle + '</h5></a><br/>';
-        s += '<h6>' + 'Twitter Followers:  ' + '</h6> <h5>' + numCommas(d.followers) + '</h5><br/>';
+        if(d.followers !== null){
+          s += '<h6>' + 'Twitter Followers:  ' + '</h6> <h5>' + numCommas(d.followers.toString()) + '</h5><br/>';
+        }
+        else{
+          s += '<h6>' + 'Twitter Followers:  ' + '</h6> <h5>' + 'N/A' + '</h5><br/>';
+        }
       }
 
       //  KEY PEOPLE
@@ -625,7 +632,7 @@ function wrap(text, width) {
           }
           else
           {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount) + '</strong>' + '</li>';
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
           }
           if(d.year === null)
           {
@@ -650,7 +657,7 @@ function wrap(text, width) {
           }
           else
           {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount) + '</strong>' + '</li>';
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
           }
           if(d.year === null)
           {
@@ -675,7 +682,7 @@ function wrap(text, width) {
           }
           else
           {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount) + '</strong>' + '</li>';
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
           }
           if(d.year === null)
           {
@@ -700,7 +707,7 @@ function wrap(text, width) {
           }
           else
           {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount) + '</strong>' + '</li>';
+            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
           }
           if(d.year === null)
           {
@@ -753,7 +760,10 @@ function wrap(text, width) {
 
     function editForm() {
       d3.select('#edit-add-info').html('<i class=" icon-file on-left"></i>' + 'Reset Form').on('click', editForm);
-
+      
+      node
+        .on('mouseover', null);
+      
       sa = displayFormA();
 
       // Render the string into HTML

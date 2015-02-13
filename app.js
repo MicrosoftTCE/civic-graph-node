@@ -68,9 +68,18 @@ app.get('/entities/:name/data', entities.retrieve_data);
 app.get('/entities/:name/revenue', entities.retrieve_revenue);
 app.get('/entities/:name/expenses', entities.retrieve_expenses);
 
-var connections = require('./routes/connections');
+// var connections = require('./routes/connections');
+// app.get('/connections', connections.retrieve_connections);
+// app.get('/connections/:name', connections.retrieve_entity_connections);
+// app.get('/connections/:name/funding', connections.retrieve_entity_funding);
+// app.get('/connections/:name/investments', connections.retrieve_entity_investments);
+// app.get('/connections/:name/collaborations', connections.retrieve_ent);
+// app.get('/connections/:name/data', connections.retrieve_entity_funding);
 
-var operations = require('./routes/operations');
+// var operations = require('./routes/operations');
+// app.get('/operations', operations.retrieve_operations);
+// app.get('/operations/revenue/year', operations.retrieve_revenue_year);
+// app.get('/operations/expenses/year', operations.retrieve_expenses_year);
 
 var database = require('./routes/database');
 app.post('/database/save', parseUrlencoded, database.save);
