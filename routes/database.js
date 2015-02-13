@@ -221,7 +221,7 @@ exports.save = function(request, response){
                                               
     content.nodes = result;
     
-    var file = __dirname + '/public/data/civic.json';
+    var file = __dirname + '/../public/data/civic.json';
     fs.writeFile(file, JSON.stringify(content), function(err) {
         if (err) {
             console.log(err);
@@ -236,10 +236,12 @@ exports.save = function(request, response){
           if (err) throw err;
 
           console.log(result.insertId);
-          connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID, function(err){
-            if (err) throw err;
-          });
-
+          if(pastID !== -1)
+          {
+            connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID, function(err){
+              if (err) throw err;
+            });
+          }
 
           if (entity.funding_received !== null) {
               (entity.funding_received).forEach(function(object) {
@@ -547,7 +549,7 @@ exports.save = function(request, response){
                       }
                       else
                       {
-                        insertNode(entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
+                        insertNode(-1, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
                       }
                     });
                 });

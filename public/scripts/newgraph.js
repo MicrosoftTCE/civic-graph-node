@@ -877,7 +877,7 @@ function wrap(text, width) {
 
         // Obtain the URL
         formObject.url = "";
-        if (formObject.url === "") {
+        if (d3.select("input[name='website']")[0][0].value === "") {
           formObject.url = null;
         } else {
           formObject.url = d3.select("input[name='website']")[0][0].value;
@@ -885,10 +885,10 @@ function wrap(text, width) {
 
         // Obtain the number of employees.
         formObject.employees = "";
-        if (formObject.employees === "") {
+        if (d3.select("input[name='employees']")[0][0].value === "") {
           formObject.employees = null;
         } else {
-          formObject.employees = d3.select("input[name='employees']")[0][0].value;
+          formObject.employees = parseInt(d3.select("input[name='employees']")[0][0].value);
         }
 
         // Obtain the key people (.kpeople)
