@@ -131,64 +131,70 @@ exports.save = function(request, response){
                   object['revenue'] = [];
                   object['expenses'] = [];
 
-                  rows.forEach(function(e) {
-                    switch (e.Connection) {
-                      case "Funding Received":
-                        // console.log(JSON.stringify({entity: entRows[0].Name, amount: e.Amount, year: e.ConnectionYear}));
-                        object['funding_received'].push({
-                          entity: e.Name,
-                          amount: e.Amount,
-                          year: e.ConnectionYear
-                        });
-                        break;
-                      case "Funding Given":
-                        object['funding_given'].push({
-                          entity: e.Name,
-                          amount: e.Amount,
-                          year: e.ConnectionYear
-                        });
-                        break;
-                      case "Investment Received":
-                        object['investments_received'].push({
+                  if(rows.length !== 0)
+                  {
+                    rows.forEach(function(e) {
+                      switch (e.Connection) {
+                        case "Funding Received":
+                          // console.log(JSON.stringify({entity: entRows[0].Name, amount: e.Amount, year: e.ConnectionYear}));
+                          object['funding_received'].push({
                             entity: e.Name,
                             amount: e.Amount,
                             year: e.ConnectionYear
-                        });
-                        break;
-                      case "Investment Made":
-                        object['investments_made'].push({
-                          entity: e.Name,
-                          amount: e.Amount,
-                          year: e.ConnectionYear
-                        });
-                        break;
-                      case "Collaboration":
-                        object['collaborations'].push({
-                          entity: e.Name
-                        });
-                        break;
-                      case "Data":
-                        object['data'].push({
-                          entity: e.Name
-                        });
-                        break;
-                      default:
-                        break;
-                    }
-                  });
+                          });
+                          break;
+                        case "Funding Given":
+                          object['funding_given'].push({
+                            entity: e.Name,
+                            amount: e.Amount,
+                            year: e.ConnectionYear
+                          });
+                          break;
+                        case "Investment Received":
+                          object['investments_received'].push({
+                              entity: e.Name,
+                              amount: e.Amount,
+                              year: e.ConnectionYear
+                          });
+                          break;
+                        case "Investment Made":
+                          object['investments_made'].push({
+                            entity: e.Name,
+                            amount: e.Amount,
+                            year: e.ConnectionYear
+                          });
+                          break;
+                        case "Collaboration":
+                          object['collaborations'].push({
+                            entity: e.Name
+                          });
+                          break;
+                        case "Data":
+                          object['data'].push({
+                            entity: e.Name
+                          });
+                          break;
+                        default:
+                          break;
+                      }
+                    });
+                  }
 
-                  operationRows.forEach(function(e){
-                    switch(e.Finance) {
-                      case "Revenue":
-                        object['revenue'].push({amount: e.Amount, year: e.Year});
-                        break;
-                      case "Expenses":
-                        object['expenses'].push({amount: e.Amount, year: e.Year});
-                        break;
-                      default:
-                        break;
-                    }
-                  });
+                  if(operationRows.length !== 0)
+                  {
+                    operationRows.forEach(function(e){
+                      switch(e.Finance) {
+                        case "Revenue":
+                          object['revenue'].push({amount: e.Amount, year: e.Year});
+                          break;
+                        case "Expenses":
+                          object['expenses'].push({amount: e.Amount, year: e.Year});
+                          break;
+                        default:
+                          break;
+                      }
+                    });
+                  }
 
                   object['render'] = d.Render;
 
@@ -535,10 +541,12 @@ exports.save = function(request, response){
     connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + entity.name + '","' + entity.nickname + '","' + entity.type + '",' + categories + ',"' + entity.location + '",' + url + ',' + twitter_handle + ',' + followers + ',' + employees + ',' + influence + ',' + relations + ',' + key_people + ',' + 'NOW(), 1);', function(err, result) {
           if (err) throw err;
 
-          console.log(result.insertId);
+          console.log("Current: " + result.insertId);
+          console.log("Past: " + pastID);
           if(pastID !== -1)
           {
             connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID, function(err){
+              console.log("Inside");
               developJSON(result, entity);
               if (err) throw err;
             });

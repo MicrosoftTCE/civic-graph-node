@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var connection = require('express-myconnection');
 
-var routes = require('./routes/index');
+var index = require('./routes/index');
 
 var app = express();
 
@@ -87,7 +87,7 @@ app.post('/database/save', parseUrlencoded, database.save);
 // app.get('/', function(req, res) {
 //   res.sendFile(__dirname + '/index.html');
 // });
-app.use('/', routes);
+app.get('/', index.render);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
