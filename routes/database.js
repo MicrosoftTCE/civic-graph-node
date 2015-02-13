@@ -591,7 +591,7 @@ exports.save = function(request, response){
                     (entity.key_people !== null) ? key_people = '"' + entity.key_people.join(", ") + '"': key_people = null;
 
                     //  Need to check if it exists prior to entering into the database.
-                    connection.query('SELECT * FROM Entities WHERE Name=LCASE("' + entity.name + '") OR Nickname=LCASE("' + entity.name + '" AND Render=1)', function(err, rows, field){
+                    connection.query('SELECT * FROM Entities WHERE ((Name=LCASE("' + entity.name + '") OR Nickname=LCASE("' + entity.name + '") AND Render=1 )) ORDER BY CreatedAt DESC LIMIT 1', function(err, rows, field){
                       if (err) throw err;
 
                       if(rows.length > 0)

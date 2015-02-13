@@ -22,4 +22,4 @@ exports.render = function(request, response){
   response.render('index', {title: 'Athena'});
 };
 
-module.exports = router;
+// module.exports = router;
