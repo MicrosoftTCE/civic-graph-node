@@ -231,11 +231,15 @@ exports.save = function(request, response){
     });
   };
 
-  var insertNode = function(entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people) {
+  var insertNode = function(pastID, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people) {
     connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + entity.name + '","' + entity.nickname + '","' + entity.type + '",' + categories + ',"' + entity.location + '",' + url + ',' + twitter_handle + ',' + followers + ',' + employees + ',' + influence + ',' + relations + ',' + key_people + ',' + 'NOW(), 1);', function(err, result) {
           if (err) throw err;
 
           console.log(result.insertId);
+          connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID, function(err){
+            if (err) throw err;
+          });
+
 
           if (entity.funding_received !== null) {
               (entity.funding_received).forEach(function(object) {
@@ -244,8 +248,7 @@ exports.save = function(request, response){
                           // If the entity already exists, use its ID for the entity id when inserting into connections...
                           connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"' + 'Funding Received' + '",' + object.year + ',' + object.amount + ', 1);', function(err) {
                               if (err) throw err;
-                          });
-                          
+                          });                
                       }
                       //  The entity mentioned in funding_received does not exist.
                       else
@@ -532,11 +535,15 @@ exports.save = function(request, response){
                       {
                         connection.query('UPDATE `Entities` SET `Render`=0 WHERE Name=LCASE("' + entity.name + '") OR Nickname=LCASE("' + entity.name + '")', function(err){
                           if (err) throw err;
-                          connection.query('UPDATE `Bridges` SET `Render`=0 WHERE Entity1ID=' + rows[0].ID + ' OR ' + 'Entity2ID=' + rows[0].ID, function(err){
-                            if (err) throw err;
-                            insertNode(entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
-                          });
+                          // connection.query('UPDATE `Bridges` SET `Render`=0 WHERE Entity1ID=' + rows[0].ID + ' OR ' + 'Entity2ID=' + rows[0].ID, function(err){
+                          //   if (err) throw err;
+                          //   insertNode(entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
+                          // });
                         });
+                        connection.query('UPDATE `Bridges` SET `Render`=0 WHERE Entity1ID=' + rows[0].ID, function(err){
+                            if (err) throw err;
+                            insertNode(rows[0].ID, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
+                          });
                       }
                       else
                       {

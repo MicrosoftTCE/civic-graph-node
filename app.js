@@ -7,8 +7,6 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var connection = require('express-myconnection');
 
-    // myConnection = require('express-myconnection');
-
 var routes = require('./routes/index');
 
 var app = express();
@@ -30,7 +28,6 @@ var parseUrlencoded = bodyParser.urlencoded({
 app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 //  For debugging purposes
 var logger = require('./logger');
@@ -82,7 +79,6 @@ app.post('/database/save', parseUrlencoded, database.save);
 //   res.sendFile(__dirname + '/index.html');
 // });
 app.use('/', routes);
-
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
