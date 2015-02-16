@@ -62,6 +62,14 @@ app.get('/api', api.render);
 var community = require('./routes/community');
 app.get('/community', community.render);
 
+// 
+// 
+// COMMENT IN TO ADD JOIN ROUTE
+// var join = require('./routes/join');
+// app.get('/join', join.render);
+// 
+// 
+
 var entities = require('./routes/entities'); 
 app.get('/entities', entities.retrieve_entities);
 app.get('/entities/:name', entities.retrieve_entity);
