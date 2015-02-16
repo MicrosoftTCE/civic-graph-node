@@ -168,7 +168,7 @@ label h3
   display: inline;
 }
  
-label h3:hover
+#athena-left-nav label h3:hover
 {
   cursor: context-menu;
 }
