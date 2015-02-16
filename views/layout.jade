@@ -19,18 +19,4 @@ html
 		script(type='text/javascript', src='http://d3js.org/d3.v3.min.js')
 	body.metro
 		block content
-		footer.site-footer
-			div.grid
-				div.row
-					div.span3
-					div.span4.footer-links
-						a(href='http://www.microsoft.com/en-us/default.aspx', target='_blank')
-							i.fa.fa-twitter-square.fa-2x#twitter
-						a(href='http://www.microsoft.com/en-us/default.aspx', target='_blank')
-							i.fa.fa-facebook-square.fa-2x#facebook
-						a(href='http://www.microsoft.com/en-us/default.aspx', target='_blank')
-							i.fa.fa-linkedin-square.fa-2x#linkedin
-						a(href='http://www.microsoft.com/en-us/default.aspx', target='_blank')
-							i.fa.fa-github-square.fa-2x#github
-					a.span2.offset9.footer-links(href='http://www.microsoft.com/en-us/default.aspx', target='_blank') 
-						h4#developer Developer
+		include ./partials/footer
