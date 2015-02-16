@@ -75,35 +75,11 @@ exports.save = function(request, response){
 
     console.log(entity);
 
-    
-
-    // connection.query('USE athena', function(err){
-    //   if(err) throw err;
-
-    //   connection.query("SELECT * FROM Bridges WHERE " + "Entity1ID=" + 1 + " OR " + "Entity2ID=" + 1, function(err, rows, fields){
-    //       // object['funding_received']
-    //       // object['funding_given']
-    //       // object['investments_received']
-    //       // object['investments_made']
-    //       // object['collaborations']
-    //       // object['data'] 
-    //       console.log(rows);
-    //       console.log(fields);
-    //   });
-    // });
-
-    // use `Athena`;
-    // set @count = -1;
-    // update `Entities` set `ID` = @count := @count + 1;
-    // ALTER TABLE `Entities` AUTO_INCREMENT = 0;
-    // SELECT * FROM athena.entities;
-
     var content = {
         nodes: [], data_connections: [], funding_connections: [], investment_connections: [], collaboration_connections: []
     };
 
     var acquireNodes = function(d, callback) {
-    
 
       connection.query("SELECT Entities.Name, Bridges.Entity1ID, Bridges.Entity2ID, Bridges.Connection, Bridges.ConnectionYear, Bridges.Amount FROM Bridges INNER JOIN Entities ON Bridges.Entity2ID=Entities.ID AND Bridges.Entity1ID=" + d.ID, function(err, rows, fields) {
               if (err) return err;
@@ -488,25 +464,55 @@ exports.save = function(request, response){
                               connections.filter(function(d) {
                                   return d.Connection === "Funding Received" || d.Connection === "Funding Given";
                                 }).forEach(function(d) {
+                                  if(d.Connection === "Funding Received")
+                                  {
                                     (content.funding_connections).push({
                                         source: d.Entity1ID,
                                         target: d.Entity2ID,
+                                        type: "Received",
                                         year: d.ConnectionYear,
                                         amount: d.Amount,
                                         render: d.Render
                                     });
+                                  }
+                                  else
+                                  {
+                                    (content.funding_connections).push({
+                                        source: d.Entity1ID,
+                                        target: d.Entity2ID,
+                                        type: "Given",
+                                        year: d.ConnectionYear,
+                                        amount: d.Amount,
+                                        render: d.Render
+                                    });
+                                  }
                                 });
 
                                 connections.filter(function(d) {
                                     return d.Connection === "Investment Received" || d.Connection === "Investment Made";
                                 }).forEach(function(d) {
+                                  if(d.Connection === "Investment Received")
+                                  {
                                     (content.investment_connections).push({
                                         source: d.Entity1ID,
                                         target: d.Entity2ID,
+                                        type: "Received",
                                         year: d.ConnectionYear,
                                         amount: d.Amount,
                                         render: d.Render
                                     });
+                                  }
+                                  else
+                                  {
+                                    (content.investment_connections).push({
+                                        source: d.Entity1ID,
+                                        target: d.Entity2ID,
+                                        type: "Made",
+                                        year: d.ConnectionYear,
+                                        amount: d.Amount,
+                                        render: d.Render
+                                    });
+                                  }
                                 });
 
                                 connections.filter(function(d) {

@@ -158,7 +158,7 @@ var textElement;
 
   // var svg = d3.select(".content").append("svg").attr("id", "network").attr("height", height).attr("width", width).attr("viewBox", "0 0 800 800").attr("preserveAspectRatio", "xMidYMid");
   //.attr("viewBox", '0 0 800 800')
-  var svg = d3.select('.content').append('svg').attr("xmlns", 'http://www.w3.org/2000/svg').attr("id", 'network').attr("height", height).attr("width", width).style("position", "fixed");
+  var svg = d3.select('.content').append('svg').attr("xmlns", 'http://www.w3.org/2000/svg').attr("id", 'network').attr("height", height).attr("width", width);
   // d3.select("svg").on("dblclick.zoom", null);
   d3.select('body > nav > nav > div').append('div').attr('id', 'editBox').append('p').text('Edit').style('color', '#2e92cf');
 
