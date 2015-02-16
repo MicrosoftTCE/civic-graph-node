@@ -483,7 +483,7 @@ var textElement;
           return -25;
         })
         .on("tick", tick)
-        .start();
+        .resume();
       // for (var i = 0; i < 1; ++i) {
       //                    force.tick();
       //                }
@@ -4023,7 +4023,7 @@ var textElement;
               return -25;
           })
           .on("tick", tick)
-          .start();
+          .resume();
 
 
       }
