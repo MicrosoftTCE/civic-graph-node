@@ -34,7 +34,7 @@ Running Application
 5. Inside a terminal or command prompt, navigate to the cloned repo and enter the following commands:
 
 			npm install
-			node app
+			node app (or npm start)
 
 6. Depending on the port, you should be able to access Athena on your local machine using the following links.
 	

@@ -168,7 +168,7 @@ label h3
   display: inline;
 }
  
-label h3:hover
+#athena-left-nav label h3:hover
 {
   cursor: context-menu;
 }
@@ -204,7 +204,7 @@ label h3:hover
   position: fixed;
   /*top: 6%;*/
   top:60px;
-  width: 13%;
+  width: 17%;
   height: 100%;
   background: rgb(207,208,208);
   z-index: 999;

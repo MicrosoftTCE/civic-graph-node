@@ -50,6 +50,27 @@ app.use(connection(mysql, {
 // });
 app.set('json spaces', 20);
 
+
+var athena = require('./routes/athena');
+app.get('/athena', athena.retrieve_all);
+
+var about = require('./routes/about');
+app.get('/about', about.render);
+
+var api = require('./routes/api');
+app.get('/api', api.render);
+
+var community = require('./routes/community');
+app.get('/community', community.render);
+
+// 
+// 
+// COMMENT IN TO ADD JOIN ROUTE
+// var join = require('./routes/join');
+// app.get('/join', join.render);
+// 
+// 
+
 // var athena = require('./routes/athena');
 // app.get('/athena', athena.retrieve_all);
 
