@@ -34,7 +34,7 @@ connection.query('CREATE DATABASE IF NOT EXISTS athena', function (err) {
             + 'KeyPeople VARCHAR(1000),'                            // Key People   
             + 'IPAddress VARCHAR(100),' 
             + 'IPGeolocation VARCHAR(100),'
-            + 'CreatedAt DATETIME,'
+            + 'CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,'
             + 'Render INT,'           
             + 'PRIMARY KEY(ID, CreatedAt)'
             +  ')', function (err) {
@@ -80,13 +80,35 @@ connection.query('CREATE DATABASE IF NOT EXISTS athena', function (err) {
           if(err) throw err;
         });
 
-        var file = __dirname + '/public/data/clean_data.json';
-
         fs.readFile(file, 'utf8', function(err, data){
             if(err){
                 console.log('Error: ' + err)
             }
-            console.log(data);
+            
+            data = JSON.parse(data);
+
+            for(var i = 0; i < (data.nodes).length; i++){
+              var categories, relations, key_people;
+              ((data.nodes)[i].categories !== null) ? categories = (data.nodes)[i].categories.join(", ") : categories = null;
+              ((data.nodes)[i].relations !== null) ? relations = (data.nodes)[i].relations.join(", ") : relations = null;
+              ((data.nodes)[i].key_people !== null) ? key_people = (data.nodes)[i].key_people.join(", ") : key_people = null;
+
+              var values = {ID: (data.nodes)[i].ID, Name: (data.nodes)[i].name, Nickname: (data.nodes)[i].nickname, Type: (data.nodes)[i].type, Categories: categories, Location: (data.nodes)[i].location, Website: (data.nodes)[i].url, TwitterHandle: (data.nodes)[i].twitter_handle, Followers: (data.nodes)[i].followers, Employees: (data.nodes)[i].employees, Influence: (data.nodes)[i].influence, Relations: relations, KeyPeople: key_people, Render: (data.nodes)[i].render};
+
+              var query = connection.query('INSERT INTO Entities SET ?', values, function(err, result){
+
+              });
+
+              console.log(query.sql);
+            }
+
+            for(var j = 0; j < (data.data_connections).length; j++)
+
+            for(var k = 0; k < (data.funding_connections).length; k++)
+
+            for(var l = 0; l < (data.investment_connections).length; l++)
+
+            for(var m = 0; m < (data.collaboration_connections).length; m++)
         });
     });
 });
