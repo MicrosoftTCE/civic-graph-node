@@ -53,6 +53,9 @@ app.set('json spaces', 20);
 var athena = require('./routes/athena');
 app.get('/athena', athena.retrieve_all);
 
+var about = require('./routes/about');
+app.get('/about', about.render);
+
 var entities = require('./routes/entities'); 
 app.get('/entities', entities.retrieve_entities);
 app.get('/entities/:name', entities.retrieve_entity);
