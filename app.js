@@ -56,6 +56,9 @@ app.get('/athena', athena.retrieve_all);
 var about = require('./routes/about');
 app.get('/about', about.render);
 
+var api = require('./routes/api');
+app.get('/api', api.render);
+
 var entities = require('./routes/entities'); 
 app.get('/entities', entities.retrieve_entities);
 app.get('/entities/:name', entities.retrieve_entity);

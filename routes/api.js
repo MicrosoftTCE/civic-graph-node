@@ -4,5 +4,5 @@ var router = express.Router();
 exports.render = function(request, response){
   request.getConnection(function(err, connection){
   });
-  response.render('about', {title: 'About'});
+  response.render('api', {title: 'API'});
 };
