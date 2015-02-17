@@ -29,30 +29,23 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-//  For debugging purposes
-var logger = require('./logger');
-app.use(logger);
+// app.use(connection(mysql, {
+//     host: 'localhost',
+//     user: 'root',
+//     password: 'MicrosoftNY',
+//     port: 3306,
+//     database: 'athena'
+// }, 'request'));
 
 app.use(connection(mysql, {
-    host: 'localhost',
-    user: 'root',
-    password: 'MicrosoftNY',
+    host: 'us-cdbr-azure-east-b.cloudapp.net',
+    user: 'b5a370a8f6d91a',
+    password: 'e928dad7',
     port: 3306,
     database: 'athena'
 }, 'request'));
 
-// connection.connect(function(err){
-// if(!err) {
-//     console.log("Database is connected ... \n\n");  
-// } else {
-//     console.log("Error connecting database ... \n\n");  
-// }
-// });
 app.set('json spaces', 20);
-
-
-var athena = require('./routes/athena');
-app.get('/athena', athena.retrieve_all);
 
 var about = require('./routes/about');
 app.get('/about', about.render);
@@ -64,17 +57,15 @@ var community = require('./routes/community');
 app.get('/community', community.render);
 
 // 
-// 
 // COMMENT IN TO ADD JOIN ROUTE
 // var join = require('./routes/join');
 // app.get('/join', join.render);
 // 
-// 
 
-var athena = require('./routes/athena');
+var athena = require('./routes/api/athena');
 app.get('/athena', athena.retrieve_all);
 
-var entities = require('./routes/entities'); 
+var entities = require('./routes/api/entities'); 
 app.get('/entities', entities.retrieve_entities);
 app.get('/entities/:name', entities.retrieve_entity);
 app.get('/entities/:name/categories', entities.retrieve_categories);
@@ -89,25 +80,26 @@ app.get('/entities/:name/data', entities.retrieve_data);
 app.get('/entities/:name/revenue', entities.retrieve_revenue);
 app.get('/entities/:name/expenses', entities.retrieve_expenses);
 
-// var connections = require('./routes/connections');
-// app.get('/connections', connections.retrieve_connections);
-// app.get('/connections/:name', connections.retrieve_entity_connections);
-// app.get('/connections/:name/funding', connections.retrieve_entity_funding);
-// app.get('/connections/:name/investments', connections.retrieve_entity_investments);
-// app.get('/connections/:name/collaborations', connections.retrieve_ent);
-// app.get('/connections/:name/data', connections.retrieve_entity_funding);
+var connections = require('./routes/api/connections');
+app.get('/connections', connections.retrieve_connections);
+app.get('/connections/funding', connections.retrieve_funding_connections);
+app.get('/connections/investments', connections.retrieve_investment_connections);
+app.get('/connections/collaborations', connections.retrieve_collaboration_connections);
+app.get('/connections/data', connections.retrieve_data_connections);
+app.get('/connections/:name', connections.retrieve_entity_connections);
+app.get('/connections/:name/funding', connections.retrieve_entity_funding);
+app.get('/connections/:name/investments', connections.retrieve_entity_investments);
+app.get('/connections/:name/collaborations', connections.retrieve_entity_collaborations);
+app.get('/connections/:name/data', connections.retrieve_entity_data);
 
-// var operations = require('./routes/operations');
-// app.get('/operations', operations.retrieve_operations);
-// app.get('/operations/revenue/year', operations.retrieve_revenue_year);
-// app.get('/operations/expenses/year', operations.retrieve_expenses_year);
+var operations = require('./routes/api/operations');
+app.get('/operations', operations.retrieve_operations);
+app.get('/operations/revenue/:year', operations.retrieve_revenue_year);
+app.get('/operations/expenses/:year', operations.retrieve_expenses_year);
 
-// var database = require('./routes/database');
-// app.post('/database/save', parseUrlencoded, database.save);
+var database = require('./routes/database');
+app.post('/database/save', parseUrlencoded, database.save);
 
-// app.get('/', function(req, res) {
-//   res.sendFile(__dirname + '/index.html');
-// });
 app.get('/', index.render);
 
 /// catch 404 and forward to error handler

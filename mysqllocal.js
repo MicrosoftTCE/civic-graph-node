@@ -23,16 +23,16 @@
               + 'ID INT NOT NULL AUTO_INCREMENT UNIQUE,'
               + 'Name VARCHAR(100) NOT NULL,'                  // Entity Name
               + 'Nickname VARCHAR(100) NOT NULL,'              // Nickname        
-              + 'Type VARCHAR(30) NOT NULL,'                          // Type of Entity
-              + 'Categories VARCHAR(100),'                            // Category
-              + 'Location VARCHAR(100) NOT NULL,'                     // Location
-              + 'Website VARCHAR(100),'                               // Website
-              + 'TwitterHandle VARCHAR(50),'                          // Twitter Handle
-              + 'Followers INT,'                                      // Number of Twitter Followers
-              + 'Employees INT,'                                      // Number of Employees
+              + 'Type VARCHAR(30) NOT NULL,'                   // Type of Entity
+              + 'Categories VARCHAR(100),'                     // Category
+              + 'Location VARCHAR(100) NOT NULL,'              // Location
+              + 'Website VARCHAR(100),'                        // Website
+              + 'TwitterHandle VARCHAR(50),'                   // Twitter Handle
+              + 'Followers INT,'                               // Number of Twitter Followers
+              + 'Employees INT,'                               // Number of Employees
               + 'Influence VARCHAR(8),'    
-              + 'Relations VARCHAR(1000),'                            // Related To
-              + 'KeyPeople VARCHAR(1000),'                            // Key People   
+              + 'Relations VARCHAR(1000),'                     // Related To
+              + 'KeyPeople VARCHAR(1000),'                     // Key People   
               + 'IPAddress VARCHAR(100),' 
               + 'IPGeolocation VARCHAR(100),'
               + 'CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,'

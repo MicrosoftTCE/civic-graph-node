@@ -1,5 +1,5 @@
 var fs = require('fs');
-var file = __dirname + '../../public/data/civic.json';
+var file = __dirname + '../../../public/data/civic.json';
 
 var getEntityData = function(identifier, request){
   var entity;
