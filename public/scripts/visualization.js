@@ -399,19 +399,7 @@
       }).style('font-size', '14px')
       .style('color', '#FFFFFF')
       .style('pointer-events', 'none');
-    // .style("font-size", "14px")
-    //   .style('opacity', function(d){
-    //   var textOpacity;
-    //   if(d.type === "For-Profit")
-    //     textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
-    //   if(d.type === "Non-Profit")
-    //     textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
-    //   if(d.type === "Individual")
-    //     textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
-    //   if(d.type === "Government")
-    //     textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
-    //   return textOpacity;
-    //  });
+ 
     node = nodeInit.append("circle")
       .attr("r", function(d) {
         if (d.employees !== null)
@@ -447,12 +435,8 @@
 
     while (force.alpha() > 0.025) {
       force.tick();
-      // if(safety++ > 500) {
-      //   break;// Avoids infinite looping in case this solution was a bad idea
-      // }
+
     }
-
-
 
     // Must adjust the force parameters...
 
@@ -1993,10 +1977,7 @@
         d3.selectAll('circle').style("stroke", "white");
 
         d3.selectAll('.node').style('opacity', function(n) {
-          if (n.location.toLowerCase().indexOf(query) === -1) {
-            return 0.05;
-          } else
-            return 1;
+          return (n.location.toLowerCase().indexOf(query) === -1) ? 0.05 : 1;
         }).select('text').style('opacity', 1);
 
         node.on('mouseout', null)

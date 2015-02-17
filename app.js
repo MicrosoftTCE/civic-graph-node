@@ -71,23 +71,23 @@ app.get('/community', community.render);
 // 
 // 
 
-// var athena = require('./routes/athena');
-// app.get('/athena', athena.retrieve_all);
+var athena = require('./routes/athena');
+app.get('/athena', athena.retrieve_all);
 
-// var entities = require('./routes/entities'); 
-// app.get('/entities', entities.retrieve_entities);
-// app.get('/entities/:name', entities.retrieve_entity);
-// app.get('/entities/:name/categories', entities.retrieve_categories);
-// app.get('/entities/:name/key_people', entities.retrieve_key_people);
-// app.get('/entities/:name/relations', entities.retrieve_relations);
-// app.get('/entities/:name/funding_received', entities.retrieve_funding_received);
-// app.get('/entities/:name/funding_given', entities.retrieve_funding_given);
-// app.get('/entities/:name/investments_received', entities.retrieve_investments_received);
-// app.get('/entities/:name/investments_made', entities.retrieve_investments_made);
-// app.get('/entities/:name/collaborations', entities.retrieve_collaborations);
-// app.get('/entities/:name/data', entities.retrieve_data);
-// app.get('/entities/:name/revenue', entities.retrieve_revenue);
-// app.get('/entities/:name/expenses', entities.retrieve_expenses);
+var entities = require('./routes/entities'); 
+app.get('/entities', entities.retrieve_entities);
+app.get('/entities/:name', entities.retrieve_entity);
+app.get('/entities/:name/categories', entities.retrieve_categories);
+app.get('/entities/:name/key_people', entities.retrieve_key_people);
+app.get('/entities/:name/relations', entities.retrieve_relations);
+app.get('/entities/:name/funding_received', entities.retrieve_funding_received);
+app.get('/entities/:name/funding_given', entities.retrieve_funding_given);
+app.get('/entities/:name/investments_received', entities.retrieve_investments_received);
+app.get('/entities/:name/investments_made', entities.retrieve_investments_made);
+app.get('/entities/:name/collaborations', entities.retrieve_collaborations);
+app.get('/entities/:name/data', entities.retrieve_data);
+app.get('/entities/:name/revenue', entities.retrieve_revenue);
+app.get('/entities/:name/expenses', entities.retrieve_expenses);
 
 // var connections = require('./routes/connections');
 // app.get('/connections', connections.retrieve_connections);
