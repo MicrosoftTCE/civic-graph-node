@@ -77,6 +77,9 @@
     return svg;
   }
 
+  var width = 1000;
+  var height = 1000;
+
   var forProfitNodes, nonProfitNodes, individualNodes, governmentNodes;
   var fiveMostConnectedForProfit = {},
     fiveMostConnectedNonProfit = {},
@@ -87,65 +90,13 @@
   
   var connectionLinks;
 
-  var width = 1000;
-  var height = 1000;
-
-  var organizations = {};
   var filteredNodes = {};
   var collaborationConnections = {};
   var dataConnections = {};
   var fundingConnections = {};
   var investmentConnections = {};
-  var fundLink = {};
-  var investLink = {};
-  var porucsLink = {};
-  var dataLink = {};
 
-  var newCenterFundLink = [];
-  var newCenterPorucsLink = [];
-  var newCenterInvestLink = [];
-  var newCenterDataLink = [];
-
-  var nodeInit;
-
-  var controlForce = {
-    init: true,
-    dblclick: false
-  };
   var centeredNode = {};
-
-  var fundLinkX1 = [];
-  var fundLinkX2 = [];
-
-  var investLinkX1 = [];
-  var investLinkX2 = [];
-
-  var porucsLinkX1 = [];
-  var porucsLinkX2 = [];
-
-  var dataLinkX1 = [];
-  var dataLinkX2 = [];
-
-  var fundLinkY1 = [];
-  var fundLinkY2 = [];
-
-  var investLinkY1 = [];
-  var investLinkY2 = [];
-
-  var porucsLinkY1 = [];
-  var porucsLinkY2 = [];
-
-  var dataLinkY1 = [];
-  var dataLinkY2 = [];
-
-  var nodeX = [];
-  var nodeY = [];
-
-  var node;
-
-  var flag = 1;
-
-  var didDBLClick = 0;
 
   // var svg = d3.select(".content").append("svg").attr("id", "network").attr("height", height).attr("width", width).attr("viewBox", "0 0 800 800").attr("preserveAspectRatio", "xMidYMid");
   //.attr("viewBox", '0 0 800 800')
@@ -268,7 +219,7 @@
       .on("dragend", dragend);
 
     //  FUNDINGS
-    fundLink = svg.selectAll(".fund")
+    var fundLink = svg.selectAll(".fund")
       .data(fundingConnections)
       .enter().append("line")
       .attr("class", "fund")
@@ -279,7 +230,7 @@
       .style("visibility", "visible");
 
     //  INVESTMENTS
-    investLink = svg.selectAll(".invest")
+    var investLink = svg.selectAll(".invest")
       .data(investmentConnections)
       .enter().append("line")
       .attr("class", "invest")
@@ -290,7 +241,7 @@
       .style("visibility", "visible");
 
     //  COLLABORATIONS
-    porucsLink = svg.selectAll(".porucs")
+    var porucsLink = svg.selectAll(".porucs")
       .data(collaborationConnections)
       .enter().append("line")
       .attr("class", "porucs")
@@ -301,7 +252,7 @@
       .style("visibility", "visible");
 
     //  data
-    dataLink = svg.selectAll(".data")
+    var dataLink = svg.selectAll(".data")
       .data(dataConnections)
       .enter().append("line")
       .attr("class", "data")
@@ -311,7 +262,7 @@
       .style("opacity", "0.2")
       .style("visibility", "visible");
 
-    nodeInit = svg.selectAll(".node")
+    var nodeInit = svg.selectAll(".node")
       .data(filteredNodes)
       .enter()
       .append("g")
@@ -388,7 +339,7 @@
       .style('color', '#FFFFFF')
       .style('pointer-events', 'none');
  
-    node = nodeInit.append("circle")
+    var node = nodeInit.append("circle")
       .attr("r", function(d) {
         if (d.employees !== null)
           return empScale(d.employees);
