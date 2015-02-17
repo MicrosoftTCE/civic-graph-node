@@ -1918,7 +1918,7 @@
       d3.select('.filter-name-location datalist')
         .html(s);
 
-
+      console.log("Master List of Locations" + nameOfLocations);
     }
 
     d3.selectAll('#search-text').on('keydown', function() {
@@ -1941,6 +1941,7 @@
       var count = 0;
       query = query.toLowerCase();
       if (nameOfEntities.indexOf(query) !== -1) {
+        console.log("Testing");
         nameOfEntities.forEach(function(name) {
           if (name === query && name.length === query.length) {
             var posName = nameOfEntities.indexOf(query);
@@ -1955,6 +1956,7 @@
           }
         });
       } else if (nicknameOfEntities.indexOf(query) !== -1) {
+        console.log("Testing2");
         nicknameOfEntities.forEach(function(name) {
           if (name === query && name.length === query.length) {
             var posName = nicknameOfEntities.indexOf(query);
@@ -1969,71 +1971,42 @@
           }
         });
       } else {
-        nameOfLocations.forEach(function(location) {
 
-          if (location !== null) {
 
-            var splitLocation = location.split("; ");
-            if (splitLocation.indexOf(query) !== -1) {
-              posLocation.push(count);
-            }
-
-          }
-          count++;
-        });
-        var counter = 0;
 
         fundLink.style("opacity", function(l) {
-          if ((l.source).location === query && (l.target).location === query) {
-            //console.log((l.source).location);
-            return "1";
-          } else
-            return "0.05";
+          return ((l.source).location.toLowerCase() === query && (l.target).location.toLowerCase() === query) ? 1 : 0.05;
         });
 
         investLink.style("opacity", function(l) {
-          if ((l.source).location === query && (l.target).location === query) {
-            return "1";
-          } else
-            return "0.05";
+          return ((l.source).location.toLowerCase() === query && (l.target).location.toLowerCase() === query) ? 1 : 0.05;
         });
 
         porucsLink.style("opacity", function(l) {
-          if ((l.source).location === query && (l.target).location === query) {
-            return "1";
-          } else
-            return "0.05";
+          return ((l.source).location.toLowerCase() === query && (l.target).location.toLowerCase() === query) ? 1 : 0.05;
         });
 
         dataLink.style("opacity", function(l) {
-          if ((l.source).location === query && (l.target).location === query) {
-            return "1";
-          } else
-            return "0.05";
+          return ((l.source).location.toLowerCase() === query && (l.target).location.toLowerCase() === query) ? 1 : 0.05;
         });
 
-        d3.selectAll('.node').style('opacity', function(n, i) {
+        d3.selectAll('circle').style("stroke", "white");
 
-          if (posLocation.indexOf(i) === -1) {
+        d3.selectAll('.node').style('opacity', function(n) {
+          if (n.location.toLowerCase().indexOf(query) === -1) {
             return 0.05;
           } else
             return 1;
+        }).select('text').style('opacity', 1);
 
-        }).on('mouseover', null);
-
-        node
-          .on('mouseout', null)
+        node.on('mouseout', null)
           .on('mouseover', null)
           .on('click', null);
 
         node.filter(function(n, i) {
-            if (nodeInit[0][i].style.opacity == 1)
-              return n;
-
+            return nodeInit[0][i].style.opacity == 1;
           })
-          .on('mouseout', null)
-          .on('mouseover', handleClickNodeHover)
-          .on('click', null);
+          .on('mouseover', handleClickNodeHover);
 
       }
 
@@ -2298,7 +2271,9 @@
             textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
 
           return textOpacity;
-        }).style('font-size', '14px');
+        }).style('font-size', '14px').style('font-weight', 'normal');
+
+
     }
 
     function sinclick(d) {
