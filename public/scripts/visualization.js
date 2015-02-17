@@ -83,24 +83,12 @@
     fiveMostConnectedIndividuals = {},
     fiveMostConnectedGovernment = {};
 
-  var textElement;
-
-  var resetFlag = 1;
-
-  var dblclickobject;
-
+  var clearResetFlag = 1;
+  
   var connectionLinks;
 
-  var centerNodeFundLink = [];
-  var centerNodeInvestLink = [];
-  var centerNodePorucsLink = [];
-  var centerNodeDataLink = [];
-
-  var color = d3.scale.category20();
   var width = 1000;
   var height = 1000;
-
-  var testNode;
 
   var organizations = {};
   var filteredNodes = {};
@@ -373,7 +361,7 @@
     });
 
 
-    textElement = svg.selectAll('.node')
+    var textElement = svg.selectAll('.node')
       .append('text')
       .text(function(d) {
         return d.nickname;
@@ -447,7 +435,7 @@
       });
       d3.select(this).on('mousedown.drag', null);
 
-      dblclickobject = (d3.select(this).data())[0];
+      var dblclickobject = (d3.select(this).data())[0];
 
       var svgWidth = parseInt(svg.style("width").substring(0, ((svg.style("width")).length + 1) / 2));
       var svgHeight = parseInt(svg.style("height").substring(0, ((svg.style("height")).length + 1) / 2));
@@ -703,6 +691,53 @@
 
           s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + '</li>';
 
+        });
+        s += '</ul>'
+      }
+
+
+      if (d.revenue === null) {
+        s += '<br/><h6>' + 'No known revenue information.' + '</h6><br/>';
+      } else {
+        s += '<br/>' + '<h6>' + 'Revenue:' + '</h6><ul>';
+        (d.revenue).forEach(function(d) {
+          if (d.amount === 0 || d.amount === null) {
+            if (d.year === null) {
+              s += '<li><h5>' + 'Unknown Year' + '</h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+            } else {
+              s += '<li><h5>' + d.year + '</h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+            }
+          } else {
+            if (d.year === null) {
+              s += '<li><h5>' + 'Unknown Year' + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
+            }
+            else {
+              s += '<li><h5>' + d.year + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
+            }
+          }
+        });
+        s += '</ul>'
+      }
+
+      if (d.expenses === null) {
+        s += '<br/><h6>' + 'No known expenses information.' + '</h6><br/>';
+      } else {
+        s += '<br/>' + '<h6>' + 'Expenses:' + '</h6><ul>';
+        (d.expenses).forEach(function(d) {
+          if (d.amount === 0 || d.amount === null) {
+            if (d.year === null) {
+              s += '<li><h5>' + 'Unknown Year' + '</h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+            } else {
+              s += '<li><h5>' + d.year + '</h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
+            }
+          } else {
+            if (d.year === null) {
+              s += '<li><h5>' + 'Unknown Year' + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
+            }
+            else {
+              s += '<li><h5>' + d.year + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
+            }
+          }
         });
         s += '</ul>'
       }
@@ -1445,7 +1480,6 @@
 
     // Prefilling the form for editing...
     function preFillFormA(obj) {
-      testNode = obj;
       // Time to prefill the form...
       d3.selectAll('#name').text(function(d) {
         this.value = obj.name;
@@ -2258,7 +2292,7 @@
     }
 
     function sinclick(d) {
-      resetFlag = 0;
+      clearResetFlag = 0;
       console.log("Clicked on node first");
 
       handleClickNodeHover(d);
@@ -3769,7 +3803,7 @@
       var m = d3.mouse(this);
       console.log(m);
 
-      if (resetFlag === 1) {
+      if (clearResetFlag === 1) {
         d3.event.preventDefault();
         offNode();
         d3.selectAll('g').classed("fixed", function(d) {
@@ -3802,7 +3836,7 @@
 
 
       }
-      resetFlag = 1;
+      clearResetFlag = 1;
     });
 
 
