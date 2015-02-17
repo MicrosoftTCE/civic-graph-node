@@ -250,10 +250,3 @@
     }
   };
 })();
-
-
-
-+ 'EntityID INT NOT NULL,'
-              + 'Finance VARCHAR(10) NOT NULL,'
-              + 'Amount BIGINT,'
-              + 'Year INT,'

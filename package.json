@@ -20,5 +20,11 @@
     "geoip-lite": "latest",
     "async": "latest",
     "express-myconnection": "latest"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-cssmin": "^0.12.1",
+    "grunt-contrib-uglify": "^0.7.0",
+    "grunt-jsbeautifier": "^0.2.8"
   }
 }
