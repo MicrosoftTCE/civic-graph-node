@@ -17,7 +17,7 @@ Filtering options provide a unique method for visualizing certain aspects of the
 |`Investing`|`Dark Green` 
 |`Funding`|`Purple`
 |`Collaboration`|`Yellow`
-|`Affiliation`|`Pink`
+|`Data`|`Pink`
 
 Cloning the Repository
 ----------------------
