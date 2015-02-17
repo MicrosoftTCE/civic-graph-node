@@ -2,7 +2,7 @@ module.exports = function(grunt){
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jsbeautifier: {
-      files: ["public/scripts/visualization.js", "public/stylesheets/*.css", "!public/stylesheets/*.min.css"],
+      files: ["public/scripts/visualization.js", "public/stylesheets/custom/*.css", "!public/stylesheets/custom/*.min.css"],
       options: {
         css: {
           indentChar: " ",
@@ -20,7 +20,7 @@ module.exports = function(grunt){
               jslintHappy: false,
               keepArrayIndentation: false,
               keepFunctionIndentation: false,
-              maxPreserveNewlines: 10,
+              maxPreserveNewlines: 1000,
               preserveNewlines: true,
               spaceBeforeConditional: true,
               spaceInParen: false,
@@ -37,16 +37,12 @@ module.exports = function(grunt){
       }
     },
     cssmin: {
-      options: {
-        shorthandCompacting: false,
-        roundingPrecision: -1
-      },
       target: {
         files: [{
           expand: true,
-          cwd: 'public/stylesheets',
+          cwd: 'public/stylesheets/custom',
           src: ['*.css', '!*.min.css'],
-          dest: 'public/stylesheets',
+          dest: 'public/stylesheets/custom-compress',
           ext: '.min.css'
         }]
       }
