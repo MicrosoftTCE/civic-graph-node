@@ -402,6 +402,8 @@ button#submit-B {
 .metro h3 {
   color: rgba(0, 0, 0, 1);
 }
+/*Macbook Pro 13"*/
+
 @media (max-width: 1271px) and (min-width: 986px) {
   #info > div.webform-content > div.webform-categories > div:nth-child(4) {
     margin-top: -11px !important;

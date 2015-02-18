@@ -31,7 +31,7 @@
           else
             return 7 + 10;
         }).attr("dy", dy + "em");
-      console.log(text);
+
       while (word = words.pop()) {
         line.push(word);
         tspan.text(line.join(" "));
@@ -87,8 +87,6 @@
     fiveMostConnectedGovernment = {};
 
   var clearResetFlag = 1;
-  
-  var connectionLinks;
 
   var filteredNodes = {};
   var collaborationConnections = {};
@@ -98,9 +96,12 @@
 
   var centeredNode = {};
 
+  var entitiesHash = {};
+  var locationsHash = {};
+
   // var svg = d3.select(".content").append("svg").attr("id", "network").attr("height", height).attr("width", width).attr("viewBox", "0 0 800 800").attr("preserveAspectRatio", "xMidYMid");
   //.attr("viewBox", '0 0 800 800')
-  var svg = d3.select('.content').append('svg').attr("xmlns", 'http://www.w3.org/2000/svg').attr("id", 'network').attr("height", height).attr("width", width).style("position", "fixed");
+  var svg = d3.select('.content').append('svg').attr("xmlns", 'http://www.w3.org/2000/svg').attr("id", 'network').attr("height", height).attr("width", width);
   // d3.select("svg").on("dblclick.zoom", null);
   d3.select('body > nav > nav > div').append('div').attr('id', 'editBox').append('p').text('Edit').style('color', '#2e92cf');
 
@@ -188,7 +189,7 @@
       return d.render === 1;
     });
 
-    connectionLinks = fundingConnections
+    var connectionLinks = fundingConnections
       .concat(investmentConnections)
       .concat(collaborationConnections)
       .concat(dataConnections);
@@ -210,7 +211,9 @@
         else
           return -25;
       })
-      .on("tick", tick)
+      .linkDistance(50)
+
+    .on("tick", tick)
       .start();
 
     var drag = force.drag()
@@ -338,7 +341,7 @@
       }).style('font-size', '14px')
       .style('color', '#FFFFFF')
       .style('pointer-events', 'none');
- 
+
     var node = nodeInit.append("circle")
       .attr("r", function(d) {
         if (d.employees !== null)
@@ -392,24 +395,18 @@
       var svgHeight = parseInt(svg.style("height").substring(0, ((svg.style("height")).length + 1) / 2));
       var halfSVGWidth = parseInt(svgWidth / 2);
       var halfSVGHeight = parseInt(svgHeight / 2);
-      // console.log("Half Width: " + halfSVGWidth);
-      // console.log("Half Height" + halfSVGHeight)
+
       multiplierX = svgWidth / width;
       multiplierY = svgHeight / height;
 
       scaledDX = multiplierX * d.x;
       scaledDY = multiplierY * d.y;
-      // console.log("Before X: " + d.x);
-      //     console.log("Before Y: " + d.y);
+
       centeredNode = jQuery.extend(true, {}, d);
 
       // Half viewbox...
       centeredNode.x = width / 2 - 10;
       centeredNode.y = height / 2 - 60;
-
-      // console.log("After X: " + centeredNode.x);
-      // console.log("After Y: " + centeredNode.y);
-      // console.log(centeredNode);
 
       var force = d3.layout.force()
         .nodes(rawNodes)
@@ -426,7 +423,9 @@
           else
             return -25;
         })
-        .on("tick", tick)
+        .linkDistance(50)
+
+      .on("tick", tick)
         .start();
       // for (var i = 0; i < 1; ++i) {
       //                    force.tick();
@@ -457,8 +456,6 @@
           return d3.select('#editBox').style("visibility", "visible");
         })
         .on('mousemove', function() {
-          console.log(d3.event.pageY);
-          console.log(d3.event.pageX);
           return d3.select('#editBox').style("top", (d3.event.pageY + 4) + "px").style("left", (d3.event.pageX + 16) + "px");
         })
         .on('mouseout', function() {
@@ -468,7 +465,6 @@
     }
 
     function prefillCurrent(d) {
-      console.log(d);
       editForm();
       preFillFormA(d);
     }
@@ -661,8 +657,7 @@
           } else {
             if (d.year === null) {
               s += '<li><h5>' + 'Unknown Year' + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
-            }
-            else {
+            } else {
               s += '<li><h5>' + d.year + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
             }
           }
@@ -684,8 +679,7 @@
           } else {
             if (d.year === null) {
               s += '<li><h5>' + 'Unknown Year' + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
-            }
-            else {
+            } else {
               s += '<li><h5>' + d.year + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
             }
           }
@@ -717,6 +711,21 @@
       // Render the string into HTML
       d3.select('#info')
         .html(sa);
+
+      namesList = uniqueNames.concat(uniqueNicknames);
+      namesList = namesList.sort();
+
+      var list = "";
+
+      for (var i = 0; i < namesList.length; i++) {
+        list += '<option value="' + namesList[i] + '">';
+      }
+
+      d3.select('datalist#list-name').html(list);
+
+      d3.select('input#name').on('keyup', function() {
+        preParseForm(this.value);
+      });
 
       d3.select('#key-people-0 input[name="kpeople"]').on('keyup', function() {
         add_input_kp(0);
@@ -778,20 +787,20 @@
 
       // Scrape the web form for pertinent information and store into the object data structure.
       if ($('input[name="name"]').val() === "" && $('input[name="location"]').val() === "") {
-        console.log("The entity name and location have not been filled out.");
+
         return {
           name: null,
           location: null,
           errorMessage: "The entity name and location have not been filled out."
         };
       } else if ($('input[name="name"]').val() === "") {
-        console.log("The entity name has not been filled out.");
+
         return {
           name: null,
           errorMessage: "The entity name has not been filled out."
         };
       } else if ($('input[name="location"]').val() === "") {
-        console.log("The location has not been filled out.");
+
         return {
           location: null,
           errorMessage: "The location has not been filled out."
@@ -816,16 +825,22 @@
           if (this.checked === true) {
             switch (this.value) {
               case 'General':
-                formObject.categories.push("General");
+                formObject.categories.push("General Civic Tech");
                 break;
-              case 'DataTrans':
-                formObject.categories.push("Data Transparency");
+              case 'DataAnalytics':
+                formObject.categories.push("Data and Analytics");
                 break;
-              case 'CJobsOpp':
-                formObject.categories.push("21st Century Jobs and Opportunities");
+              case 'EconGrowthEdu':
+                formObject.categories.push("Economic Growth and Education");
                 break;
               case 'SRCities':
                 formObject.categories.push("Smart and Resilient Cities");
+                break;
+              case 'SocialServ':
+                formObject.categories.push("Social Services");
+                break;
+              case 'GovTech':
+                formObject.categories.push("GovTech");
                 break;
               default:
                 break;
@@ -1112,7 +1127,6 @@
         formObject.expenses = null;
       }
 
-      console.log(formObject);
 
       return formObject;
 
@@ -1156,7 +1170,6 @@
 
         // Time to prefill the form...
         d3.selectAll('#name').text(function(d) {
-          console.log(formObject.name);
           this.value = formObject.name;
         }).attr("disabled", true);
         d3.selectAll('#location').text(function(d) {
@@ -1201,13 +1214,20 @@
       }
     }
 
+    function preParseForm(input) {
+      input = input.toLowerCase();
+      if (input in entitiesHash) {
+        editForm();
+        preFillFormA(entitiesHash[input]);
+      }
+    }
 
     function add_input_kp(counterK) {
       if ($('#key-people-' + counterK + ' input[name="kpeople"]').val() !== "") {
         d3.select('#key-people-' + counterK + ' input[name="kpeople"]').on('keyup', null);
         counterK++; // counter -> 2
 
-        console.log(counterK);
+
         $("#key-people-" + (counterK - 1)).after('<div id="key-people-' + counterK + '" class="input-control text" data-role="input-control"><input type="text" name="kpeople" class="kpeople" placeholder="Key Person\'s Name"/></div>');
         d3.select("#key-people-" + counterK + " input[name='kpeople']").on("keyup", function() {
           add_input_kp(counterK);
@@ -1220,7 +1240,7 @@
         d3.select('#funding-' + counterF + ' input[name="fund"]').on('keyup', null);
         counterF++; // counter -> 2
 
-        console.log(counterF);
+
         $("#funding-" + (counterF - 1)).after('<div id="funding-' + counterF + '"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;"/><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
         d3.select("#funding-" + counterF + " input[name='fund']").on("keyup", function() {
           add_input_fund(counterF);
@@ -1233,7 +1253,7 @@
         d3.select('#investing-' + counterI + ' input[name="invest"]').on('keyup', null);
         counterI++; // counter -> 2
 
-        console.log(counterI);
+
         $("#investing-" + (counterI - 1)).after('<div id="investing-' + counterI + '"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;"/><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
         d3.select("#investing-" + counterI + " input[name='invest']").on("keyup", function() {
           add_input_invest(counterI);
@@ -1246,7 +1266,7 @@
         d3.select('#fundinggiven-' + counterFG + ' input[name="fundgiven"]').on('keyup', null);
         counterFG++; // counter -> 2
 
-        console.log(counterFG);
+
         $("#fundinggiven-" + (counterFG - 1)).after('<div id="fundinggiven-' + counterFG + '"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;"/><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
         d3.select("#fundinggiven-" + counterFG + " input[name='fundgiven']").on("keyup", function() {
           add_input_fund_given(counterFG);
@@ -1259,7 +1279,7 @@
         d3.select('#investmentmade-' + counterIM + ' input[name="investmade"]').on('keyup', null);
         counterIM++; // counter -> 2
 
-        console.log(counterIM);
+
         $("#investmentmade-" + (counterIM - 1)).after('<div id="investmentmade-' + counterIM + '"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;"/><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
         d3.select("#investmentmade-" + counterIM + " input[name='investmade']").on("keyup", function() {
           add_input_invest_made(counterIM);
@@ -1272,7 +1292,7 @@
         d3.select('#data-' + counterD + ' input[name="data"]').on('keyup', null);
         counterD++; // counter -> 2
 
-        console.log(counterD);
+
         $("#data-" + (counterD - 1)).after('<div id="data-' + counterD + '" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource"/></div>');
         d3.select("#data-" + counterD + " input[name='data']").on("keyup", function() {
           add_input_data(counterD);
@@ -1285,7 +1305,7 @@
         d3.select('#collaboration-' + counterC + ' input[name="collaboration"]').on('keyup', null);
         counterC++; // counter -> 2
 
-        console.log(counterC);
+
         $("#collaboration-" + (counterC - 1)).after('<div id="collaboration-' + counterC + '" class="input-control text" data-role="input-control"><input type="text" name="collaboration" class="collaborator" placeholder="Collaborator"/></div>');
         d3.select("#collaboration-" + counterC + " input[name='collaboration']").on("keyup", function() {
           add_input_collab(counterC);
@@ -1298,7 +1318,7 @@
         d3.select('#revenue-' + counterR + ' input[name="revenue_amt"]').on('keyup', null);
         counterR++; // counter -> 2
 
-        console.log(counterR);
+
         $("#revenue-" + (counterR - 1)).after('<div id="revenue-' + counterR + '"><div class="revenue-input input-control text" data-role="input-control"><input type="text" name="revenue_amt" class="revenue_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/><input type="text" name="revenue_year" class="revenue_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
         d3.select("#revenue-" + counterR + " input[name=revenue_amt]").on("keyup", function() {
           add_input_rev(counterR);
@@ -1311,7 +1331,7 @@
         d3.select('#expense-' + counterE + ' input[name="expense_amt"]').on('keyup', null);
         counterE++; // counter -> 2
 
-        console.log(counterE);
+
         $("#expense-" + (counterE - 1)).after('<div id="expense-' + counterE + '"><div class="expense-input input-control text" data-role="input-control"><input type="text" name="expense_amt" class="expense_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/><input type="text" name="expense_year" class="expense_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
         d3.select("#expense-" + counterE + " input[name=expense_amt]").on("keyup", function() {
           add_input_exp(counterE);
@@ -1322,7 +1342,7 @@
     function displayFormA() {
       // Test if jQuery works within d3...
       //var elementCount = $( "*" ).css( "border", "3px solid red" ).length;
-      s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity"/></div><h3 class="form-header">What type of entity?</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><h3 class="form-header">What type(s) of work do they do?</h3><h4>(Select All That Apply)</h4><div class="webform-categories"><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_gen" type="checkbox" name="gen" data-show="general" value="General"/><span class="check"></span><h4 class="webform-labels">General</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_datat" type="checkbox" name="datat" data-show="datatrans" value="DataTrans"/><span class="check"></span><h4 class="webform-labels">Data Transparency</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_cjao" type="checkbox" name="cjao" data-show="cjobsopp" value="CJobsOpp"/><span class="check"></span><h4 class="webform-labels">21st Century Jobs and Opportunities</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_src" type="checkbox" name="src" data-show="srcities" value="SRCities"/><span class="check"></span><h4 class="webform-labels">Smart and Resilient Cities</h4></label></div></div><div class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City, State"/></div><div class="input-control text" data-role="input-control"><input type="text" name="website" id="website" placeholder="Website"/></div><h3 class="form-header" style="display:inline-block;">Number of Employees</h3><div class="input-control text" data-role="input-control" style="width:27% !important; display:inline-block; float:right; margin-top: 2%;"><input type="text" name="employees" id="employee" maxlength="6" style="width:100% !important;"/></div><h3 class="form-header">Key People?</h3><div id="key-people-0" class="input-control text" data-role="input-control"><input type="text" name="kpeople" class="kpeople" placeholder="Key Person\'s Name"/></div><h3 class="form-header">Who funds them via grants?</h3><div id="funding-0"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;"/><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who invests in them via equity stakes (stock)?</h3><div id="investing-0"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;"/><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they fund via grants?</h3><div id="fundinggiven-0"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;"/><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they invest in via equity stakes (stock)?</h3><div id="investmentmade-0"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;"/><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who provides them with data?</h3><div id="data-0" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource"/></div><div id="nextPhase"><span>Almost done...</span><button type="button" id="submit-A" href="javascript: check_empty()">Next</button></div></div><hr/><div class="webform-footer"><span id="">Some entities lack adequate information. Would you like to help?</span><br/><span id="toFormC">Click here!</span></div>';
+      s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity" list="list-name"/><datalist id="list-name"></datalist></div><h3 class="form-header">What type of entity?</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><h3 class="form-header">What kind of work do they do?</h3><h4>(Select All That Apply)</h4><div class="webform-categories"><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_gen" type="checkbox" name="gen" data-show="general" value="General"/><span class="check"></span><h4 class="webform-labels">General Civic Tech</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_datat" type="checkbox" name="datat" data-show="datalytics" value="DataAnalytics"/><span class="check"></span><h4 class="webform-labels">Data & Analytics</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_eced" type="checkbox" name="eced" data-show="econedu" value="EconGrowthEdu"/><span class="check"></span><h4 class="webform-labels">Jobs & Education</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_src" type="checkbox" name="srcities" data-show="srcities" value="SRCities"/><span class="check"></span><h4 class="webform-labels">Smart & Resilient Cities</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_socs" type="checkbox" name="socserv" data-show="socserv" value="SocialServ"/><span class="check"></span><h4 class="webform-labels">Social Services</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_govt" type="checkbox" name="govtech" data-show="govtech" value="GovTech"/><span class="check"></span><h4 class="webform-labels">GovTech</h4></label></div></div><div class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City, State"/></div><div class="input-control text" data-role="input-control"><input type="text" name="website" id="website" placeholder="Website"/></div><h3 class="form-header" style="display:inline-block;">Number of Employees</h3><div class="input-control text" data-role="input-control" style="width:27% !important; display:inline-block; float:right; margin-top: 2%;"><input type="text" name="employees" id="employee" maxlength="6" style="width:100% !important;"/></div><h3 class="form-header">Key People?</h3><div id="key-people-0" class="input-control text" data-role="input-control"><input type="text" name="kpeople" class="kpeople" placeholder="Key Person\'s Name"/></div><h3 class="form-header">Who funds them via grants?</h3><div id="funding-0"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;"/><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who invests in them via equity stakes (stock)?</h3><div id="investing-0"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;"/><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they fund via grants?</h3><div id="fundinggiven-0"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;"/><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they invest in via equity stakes (stock)?</h3><div id="investmentmade-0"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;"/><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who provides them with data?</h3><div id="data-0" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource"/></div><div id="nextPhase"><span>Almost done...</span><button type="button" id="submit-A" href="javascript: check_empty()">Next</button></div></div><hr/><div class="webform-footer"><span id="">Some entities lack adequate information. Would you like to help?</span><br/><span id="toFormC">Click here!</span></div>';
 
       return s;
 
@@ -1376,12 +1396,12 @@
           // countFive++;
         }
       });
-      console.log(potentialSuggestions.length);
+
       var fiveSuggestions = [];
 
       while (fiveSuggestions.length < 5) {
         var indexValue = Math.floor(Math.random() * potentialSuggestions.length);
-        console.log(indexValue);
+
         if (fiveSuggestions.indexOf(potentialSuggestions[indexValue]) !== -1) {
           continue;
         } else {
@@ -1394,13 +1414,13 @@
 
     function displayFormCSendJSON(obj) {
       var formObj = processFormB(obj);
-      console.log(obj);
+
       var s = "";
       s += '<h2 id="webform-head">Information</h2><hr/><div style="text-align:center;" class="webform-content"><p>Thanks for submitting information to Athena!</p><p>Might you be interested in helping with other entities?</p>';
       s += '<ul id="suggestions">';
 
       // var suggestions = determineNullFields();
-      // console.log(suggestions);
+
 
       // suggestions.forEach(function(d) {
       //   s += '<li><a style="cursor:pointer;">' + d.name + '</a></li>';
@@ -1473,7 +1493,7 @@
         // keypeople.forEach(function(d, i) {
         //   // typeIntoFields(d, 0, d3.selectAll('#keypeople input')[0][i]);
 
-        //   // d3.select('#key-people-' + i + " input[name='kpeople']").text(function(e){console.log(d.value); d.value = e});
+
         // });
         d3.select('#key-people-' + keypeople.length + ' input[name="kpeople"]').on('keyup', function() {
           add_input_kp(keypeople.length);
@@ -1616,9 +1636,9 @@
           d3.select('#collaboration-' + i + ' input[name="collaboration"]').text(function(e) {
             this.value = d.entity;
           });
-          // d3.select('#key-people-' + i + " input[name='kpeople']").text(function(e){console.log(d.value); d.value = e});
+
         });
-        console.log(collaboration.length);
+
         d3.select('#collaboration-' + collaboration.length + ' input[name="collaboration"]').on('keyup', function() {
           add_input_collab(collaboration.length);
         });
@@ -1838,7 +1858,7 @@
 
     //click-location works here...
     d3.selectAll('.click-location').on('click', function(r) {
-      //console.log(r);
+
       handleQuery(this.innerHTML);
     });
 
@@ -1862,9 +1882,11 @@
 
         if (uniqueNames.indexOf(d.name) === -1 && d.name !== null) {
           uniqueNames.push(d.name);
+          entitiesHash[d.name.toLowerCase()] = d;
         }
         if (uniqueNames.indexOf(d.nickname) === -1 && d.nickname !== null) {
           uniqueNicknames.push(d.nickname);
+          entitiesHash[d.nickname.toLowerCase()] = d;
         }
         if (uniqueLocations.indexOf(d.location) === -1 && d.location !== null) {
           var splitLocations = (d.location).split("; ");
@@ -1874,11 +1896,28 @@
             }
           });
         }
+        if (!(d.location.toLowerCase() in locationsHash)) {
+          console.log("If: " + d.location);
+          var splitLocations = (d.location).split("; ");
+          splitLocations.forEach(function(location) {
+            if (!(location.toLowerCase() in locationsHash)) {
+              locationsHash[location.toLowerCase()] = [];
+              locationsHash[location.toLowerCase()].push(d);
+            } else {
+              locationsHash[location.toLowerCase()].push(d);
+            }
+          });
+        } else {
+          console.log("Else: " + d.location);
+          locationsHash[d.location.toLowerCase()].push(d);
+        }
       });
       masterList = masterList.concat(uniqueLocations);
       masterList = masterList.concat(uniqueNicknames)
       masterList = masterList.concat(uniqueNames);
       masterList = masterList.sort();
+
+      console.log(locationsHash);
 
       for (var count = 0; count < masterList.length; count++) {
         s += '<option value="' + masterList[count] + '">';
@@ -1887,7 +1926,11 @@
       d3.select('.filter-name-location datalist')
         .html(s);
 
-      console.log("Master List of Locations" + nameOfLocations);
+      // d3.select('input#search-text').on('keyup', function() {
+      //   autoHighlight(this.value);
+      // });
+
+
     }
 
     d3.selectAll('#search-text').on('keydown', function() {
@@ -1898,26 +1941,27 @@
     });
 
     d3.selectAll('option').on('keydown', function(n, i) {
-      console.log("Hello");
       if (d3.event.keyCode === 13) {
         var query = (d3.selectAll('option'))[0][i].value;
         handleQuery(query);
       }
     });
 
+
+
     function handleQuery(query) {
       var posLocation = [];
       var count = 0;
       query = query.toLowerCase();
       if (nameOfEntities.indexOf(query) !== -1) {
-        console.log("Testing");
+
         nameOfEntities.forEach(function(name) {
           if (name === query && name.length === query.length) {
             var posName = nameOfEntities.indexOf(query);
-            //console.log(query);
+
             nodeInit.filter(function(l, i) {
               if (i === posName) {
-                //console.log(l);
+
                 // handleNodeHover(l);
                 sinclick(l);
               }
@@ -1925,14 +1969,14 @@
           }
         });
       } else if (nicknameOfEntities.indexOf(query) !== -1) {
-        console.log("Testing2");
+
         nicknameOfEntities.forEach(function(name) {
           if (name === query && name.length === query.length) {
             var posName = nicknameOfEntities.indexOf(query);
-            //console.log(query);
+
             nodeInit.filter(function(l, i) {
               if (i === posName) {
-                //console.log(l);
+
                 // handleNodeHover(l);
                 sinclick(l);
               }
@@ -1981,7 +2025,7 @@
     function handleNodeHover(d) {
 
 
-      console.log("Inside node hover");
+
       var s = textDisplay(d);
 
       //  Printing to side panel within web application.
@@ -2244,7 +2288,7 @@
 
     function sinclick(d) {
       clearResetFlag = 0;
-      console.log("Clicked on node first");
+
 
       handleClickNodeHover(d);
 
@@ -2414,7 +2458,7 @@
           .attr("y2", function(d) {
             return d.target.y;
           });
-        //console.log("Inside 2") 
+
         investLink.attr("x1", function(d) {
             return d.source.x;
           })
@@ -2427,7 +2471,7 @@
           .attr("y2", function(d) {
             return d.target.y;
           });
-        //console.log("Inside 3")
+
         porucsLink.attr("x1", function(d) {
             return d.source.x;
           })
@@ -2440,7 +2484,7 @@
           .attr("y2", function(d) {
             return d.target.y;
           });
-        //console.log("Inside 4")
+
         dataLink.attr("x1", function(d) {
             return d.source.x;
           })
@@ -2468,115 +2512,115 @@
         fundLink.attr("x1", function(d) {
             if (d.source === centeredNode) {
               d.source.x = centeredNode.x;
-              console.log("Test");
+
               return d.source.x;
             } else return d.source.x;
           })
           .attr("y1", function(d) {
             if (d.source === centeredNode) {
               d.source.y = centeredNode.y;
-              console.log("Test");
+
               return d.source.y;
             } else return d.source.y;
           })
           .attr("x2", function(d) {
             if (d.target === centeredNode) {
               d.target.x = centeredNode.x;
-              console.log("Test");
+
               return d.target.x;
             } else return d.target.x;
           })
           .attr("y2", function(d) {
             if (d.target === centeredNode) {
               d.target.y = centeredNode.y;
-              console.log("Test");
+
               return d.target.y;
             } else return d.target.y;
           });
-        //console.log("Inside 2") 
+
         investLink.attr("x1", function(d) {
             if (d.source === centeredNode) {
               d.source.x = centeredNode.x;
-              console.log("Test");
+
               return d.source.x;
             } else return d.source.x;
           })
           .attr("y1", function(d) {
             if (d.source === centeredNode) {
               d.source.y = centeredNode.y;
-              console.log("Test");
+
               return d.source.y;
             } else return d.source.y;
           })
           .attr("x2", function(d) {
             if (d.target === centeredNode) {
               d.target.x = centeredNode.x;
-              console.log("Test");
+
               return d.target.x;
             } else return d.target.x;
           })
           .attr("y2", function(d) {
             if (d.target === centeredNode) {
               d.target.y = centeredNode.y;
-              console.log("Test");
+
               return d.target.y;
             } else return d.target.y;
           });
-        //console.log("Inside 3")
+
         porucsLink.attr("x1", function(d) {
             if (d.source === centeredNode) {
               d.source.x = centeredNode.x;
-              console.log("Test");
+
               return d.source.x;
             } else return d.source.x;
           })
           .attr("y1", function(d) {
             if (d.source === centeredNode) {
               d.source.y = centeredNode.y;
-              console.log("Test");
+
               return d.source.y;
             } else return d.source.y;
           })
           .attr("x2", function(d) {
             if (d.target === centeredNode) {
               d.target.x = centeredNode.x;
-              console.log("Test");
+
               return d.target.x;
             } else return d.target.x;
           })
           .attr("y2", function(d) {
             if (d.target === centeredNode) {
               d.target.y = centeredNode.y;
-              console.log("Test");
+
               return d.target.y;
             } else return d.target.y;
           });
-        //console.log("Inside 4")
+
         dataLink.attr("x1", function(d) {
             if (d.source === centeredNode) {
               d.source.x = centeredNode.x;
-              console.log("Test");
+
               return d.source.x;
             } else return d.source.x;
           })
           .attr("y1", function(d) {
             if (d.source === centeredNode) {
               d.source.y = centeredNode.y;
-              console.log("Test");
+
               return d.source.y;
             } else return d.source.y;
           })
           .attr("x2", function(d) {
             if (d.target === centeredNode) {
               d.target.x = centeredNode.x;
-              console.log("Test");
+
               return d.target.x;
             } else return d.target.x;
           })
           .attr("y2", function(d) {
             if (d.target === centeredNode) {
               d.target.y = centeredNode.y;
-              console.log("Test");
+
               return d.target.y;
             } else return d.target.y;
           });
@@ -2633,7 +2677,6 @@
           } else
             return "hidden";
         });
-        //console.log(count);
         // .classed("visfund", true); 
       }
 
@@ -2663,7 +2706,6 @@
 
 
 
-        // //console.log(visibleNodes);
 
         // drawInvestLink();
         d3.selectAll('.invest').style("visibility", function(l) {
@@ -2672,7 +2714,7 @@
           } else
             return "hidden";
         });
-        // //console.log("inside invest" + visibleNodes.length);
+
         // .classed("visinvest", true);
 
       }
@@ -2746,8 +2788,7 @@
       if (!document.getElementById("cb_data").checked) {
         // d3.selectAll(".porucs").remove();
         d3.selectAll('.data').style("visibility", function(l) {
-          // //console.log(l.source);
-          //console.log(this.style.visibility);
+
           // if(visibleNodes.indexOf(l.source) > -1 && visibleNodes.indexOf(l.target) > -1 && this.style.visibility === "visible")
           return "hidden";
 
@@ -3513,7 +3554,7 @@
           }
         });
 
-        //console.log(alreadyHFundLinks);
+
       }
 
       if (!document.getElementById("cb_invest").checked) {
@@ -3523,7 +3564,7 @@
           }
         });
 
-        //console.log(alreadyHInvestLinks);
+        //
       }
 
       if (!document.getElementById("cb_porucs").checked) {
@@ -3533,7 +3574,7 @@
           }
         });
 
-        //console.log(alreadyHPorucsLinks);
+        //
       }
 
       if (!document.getElementById("cb_data").checked) {
@@ -3543,7 +3584,7 @@
           }
         });
 
-        //console.log(alreadyHDataLinks);
+
       }
 
       d3.selectAll('.fund').style('visibility', function(l, i) {
@@ -3655,10 +3696,6 @@
         }
       }
 
-      //console.log("counting fund: " + countFund);
-      //console.log("counting invest: " + countInvest);
-      //console.log("counting porucs: " + countPorucs);
-      //console.log("counting data: " + countData);
 
       // If all funding connections are hidden
       if (countFund === fundLink[0].length)
@@ -3750,9 +3787,7 @@
     });
 
     d3.select('svg').on('click', function() {
-      console.log("Clicked on SVG");
       var m = d3.mouse(this);
-      console.log(m);
 
       if (clearResetFlag === 1) {
         d3.event.preventDefault();
@@ -3763,7 +3798,6 @@
         d3.selectAll('g').call(drag);
         centeredNode = jQuery.extend(true, {}, {});
 
-        console.log(fiveMostConnectedForProfit);
 
 
 
@@ -3782,7 +3816,9 @@
             else
               return -25;
           })
-          .on("tick", tick)
+          .linkDistance(50)
+
+        .on("tick", tick)
           .start();
 
 

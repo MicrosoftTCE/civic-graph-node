@@ -29,21 +29,21 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use(connection(mysql, {
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'MicrosoftNY',
-//     port: 3306,
-//     database: 'athena'
-// }, 'request'));
-
 app.use(connection(mysql, {
-    host: 'us-cdbr-azure-east-b.cloudapp.net',
-    user: 'b5a370a8f6d91a',
-    password: 'e928dad7',
+    host: 'localhost',
+    user: 'root',
+    password: 'MicrosoftNY',
     port: 3306,
     database: 'athena'
 }, 'request'));
+
+// app.use(connection(mysql, {
+//     host: 'us-cdbr-azure-east-b.cloudapp.net',
+//     user: 'b5a370a8f6d91a',
+//     password: 'e928dad7',
+//     port: 3306,
+//     database: 'athena'
+// }, 'request'));
 
 app.set('json spaces', 20);
 

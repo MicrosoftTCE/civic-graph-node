@@ -371,7 +371,7 @@ input[type="checkbox"]:checked ~ .check:after {
 }
 /*nonprofit checkbox  before */
 
-.metro .input-control.checkbox input[data-show="datatrans"] ~ .check:before {
+.metro .input-control.checkbox input[data-show="datalytics"] ~ .check:before {
   display: block;
   content: "" !important;
   width: 16px;
@@ -381,7 +381,7 @@ input[type="checkbox"]:checked ~ .check:after {
 }
 /*nonprofit checkbox  after */
 
-.metro .input-control.checkbox input[data-show="datatrans"] ~ .check:after {
+.metro .input-control.checkbox input[data-show="datalytics"] ~ .check:after {
   display: block;
   content: "" !important;
   width: 18px;
@@ -393,7 +393,7 @@ input[type="checkbox"]:checked ~ .check:after {
 }
 /*for profit checkbox before*/
 
-.metro .input-control.checkbox input[data-show="cjobsopp"] ~ .check:before {
+.metro .input-control.checkbox input[data-show="econedu"] ~ .check:before {
   display: block;
   content: "" !important;
   width: 16px;
@@ -403,7 +403,7 @@ input[type="checkbox"]:checked ~ .check:after {
 }
 /*for profit checkbox after*/
 
-.metro .input-control.checkbox input[data-show="cjobsopp"] ~ .check:after {
+.metro .input-control.checkbox input[data-show="econedu"] ~ .check:after {
   display: block;
   content: "" !important;
   width: 18px;
@@ -426,6 +426,46 @@ input[type="checkbox"]:checked ~ .check:after {
 /*government after */
 
 .metro .input-control.checkbox input[data-show="srcities"] ~ .check:after {
+  display: block;
+  content: "" !important;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  margin: 0px;
+  top: -1px;
+  right: -1px;
+}
+.metro .input-control.checkbox input[data-show="socserv"] ~ .check:before {
+  display: block;
+  content: "" !important;
+  width: 16px;
+  height: 16px;
+  background-color: black;
+  margin: 0px;
+}
+/*government after */
+
+.metro .input-control.checkbox input[data-show="socserv"] ~ .check:after {
+  display: block;
+  content: "" !important;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  margin: 0px;
+  top: -1px;
+  right: -1px;
+}
+.metro .input-control.checkbox input[data-show="govtech"] ~ .check:before {
+  display: block;
+  content: "" !important;
+  width: 16px;
+  height: 16px;
+  background-color: black;
+  margin: 0px;
+}
+/*government after */
+
+.metro .input-control.checkbox input[data-show="govtech"] ~ .check:after {
   display: block;
   content: "" !important;
   width: 18px;

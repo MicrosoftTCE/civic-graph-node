@@ -7,16 +7,17 @@ body {
 }
 #wrapper {
   min-height: 100%;
-  margin-bottom: 40px;
+  /*margin-bottom: 40px;*/
 }
 #wrapper:after {
   content: "";
   display: block;
 }
-.site-footer,
+/*.site-footer,
 .page-wrap:after {
   height: 70px;
-}
+}*/
+
 .site-footer {
   background: #333;
 }

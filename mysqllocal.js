@@ -165,7 +165,7 @@
                     Render: (data.funding_connections[k].render)  
                 };
 
-      ((data.funding_connections)[k].type === "Received") ? values['Connection'] = "Received" : values['Connection'] = "Given";
+      ((data.funding_connections)[k].type === "Received") ? values['Connection'] = "Funding Received" : values['Connection'] = "Funding Given";
 
       var query = connection.query('INSERT INTO Bridges SET ?', values, function(err, result){
         if (err) throw err;
@@ -186,7 +186,7 @@
                       Render: (data.investment_connections[l].render)
                   };
 
-      ((data.investment_connections)[l].type === "Received") ? values['Connection'] = "Received" : values['Connection'] = "Given";
+      ((data.investment_connections)[l].type === "Received") ? values['Connection'] = "Investment Received" : values['Connection'] = "Investment Given";
 
       var query = connection.query('INSERT INTO Bridges SET ?', values, function(err, result){
         if (err) throw err;
@@ -216,7 +216,7 @@
   var insertOperations = function(data){
     for(var n = 0; n < (data.nodes).length; n++){
       if((data.nodes)[n].revenue !== null){
-        for(var o = 0; o < (data.nodes).length; o++){
+        for(var o = 0; o < ((data.nodes)[n].revenue).length; o++){
           var values = {
                         EntityID: (data.nodes)[n].ID,
                         Finance: 'Revenue',

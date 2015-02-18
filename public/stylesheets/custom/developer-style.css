@@ -1,3 +1,39 @@
 .about-text h2 {
   margin: 20px 0;
 }
+@media (max-height: 600px) and (max-width: 1300px) {
+  .grid.mainbody {
+    left: 18%;
+    position: relative;
+  }
+  .footer-grid {
+    margin-bottom: 0px !important;
+  }
+  .site-footer {
+    bottom: 0px;
+    position: relative;
+    height: 40px;
+    /*left: 18%;*/
+    
+    width: 100%;
+    z-index: 1000
+  }
+  .footer-links {
+    margin-top: 8px;
+    margin-left: 3% !important;
+  }
+  .footer-grid#developer {
+    margin: 0px;
+    margin-top: 5px;
+  }
+  .span4.offset4.footer-links {
+    margin-left: 58% !important;
+    width: 15% !important;
+  }
+  .span.socialmedia.footer-links {
+    margin-left: 3% !important;
+  }
+  .fixed {
+    position: fixed;
+  }
+}
