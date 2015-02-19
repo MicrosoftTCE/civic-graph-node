@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
-var connection = require('express-myconnection');
+var myConnection = require('express-myconnection');
 
 var index = require('./routes/index');
 
@@ -29,7 +29,7 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(connection(mysql, {
+app.use(myConnection(mysql, {
     host: 'localhost',
     user: 'root',
     password: 'MicrosoftNY',
