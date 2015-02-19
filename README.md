@@ -41,13 +41,15 @@ Setting Up MySQL Database Locally
 
 6. Edit the following piece of code in the app.js file:
 
-    app.use(myConnection(mysql, {
-    host: localhost,
-    user: root,
-    password: your_password,
-    port: 3306,
-    database: 'athena'
-    }, 'request'));
+```
+app.use(myConnection(mysql, {
+  host: localhost,
+  user: root,
+  password: your_password,
+  port: 3306,
+  database: 'athena'
+  }, 'request'));
+```
 
 7. Execute the mysqllocal.js script to parse the database:
 
