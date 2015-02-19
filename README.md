@@ -24,24 +24,48 @@ Cloning the Repository
 
 		git clone https://github.com/microsoftny/athena-civic.git
 
+Setting Up MySQL Database Locally
+---------------------------------
+
+1. Install MAMP (for MACOSX), WAMP (for Windows), LAMP (Linux) or XAMPP (multi-platform) stack.
+2. Turn on the stack's server.
+3. Inside a browser, type into the address bar "localhost/phpmyadmin" to access the database's dashboard.
+4. Establish local credentials via the "Users" tab and editing privileges:
+
+![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_1.PNG "Screenshot 1")
+![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_2.PNG "Screenshot 2")
+![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_3.PNG "Screenshot 3")
+![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_4.PNG "Screenshot 4")
+
+5. Navigate to the config.inc file to retrieve your local database's credentials.
+
+6. Edit the following piece of code in the app.js file:
+
+    app.use(myConnection(mysql, {
+      host: *********,
+      user: *********,
+      password: ********,
+      port: 3306,
+      database: 'athena'
+      }, 'request'));
+
+7. Execute the mysqllocal.js script to parse the database:
+
+    node mysqllocal
+
 Running Application
 --------------------
 
-1. Install MAMP (for MACOSX), WAMP (for Windows) or XAMPP (multi-platform).
-2. For Macs, the "MAMP" folder can be found under Applications. For Windows, the "wamp" folder can be found under C:
-3. Clone the Github repo to htdocs under the "MAMP" folder if on a Mac machine, or clone the Github repo to www under the "wamp" folder if on a Windows machine.
-4. Execute the MAMP or WAMP application and turn on the localhost server.
-5. Inside a terminal or command prompt, navigate to the cloned repo and enter the following commands:
+1. Clone the repository to the current directory. 
+2. Change the working directory to the directoy of the repository.
+3. Execute the following command, depending on the machine's OS.
 
-			npm install
-			node app (or npm start)
+      Running on localhost
+      --------------------
 
-6. Depending on the port, you should be able to access Athena on your local machine using the following links.
-	
-Running on localhost
---------------------
+      |Machine | Command
+      |------- | ---
+      |`Windows`| `DEBUG=app ./bin/www`
+      |`Mac`| `npm start`
 
-|Machine | URL
-|------- | ---
-|`Windows`| `localhost:3000`
-|`Mac`| `localhost:port_number/athena-civic`
+4. Inside a browser, type into the address bar "http://localhost:3000" to launch the application.
