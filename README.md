@@ -39,7 +39,10 @@ Setting Up MySQL Database Locally
 
 5. Navigate to the config.inc file to retrieve your local database's credentials.
 
-6. Edit the following piece of code in the app.js file:
+![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_5.PNG "Screenshot 5")
+![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_6.PNG "Screenshot 6")
+
+6. Edit the following piece of code in the app.js file based on the configurations found:
 
 ```
 app.use(myConnection(mysql, {
