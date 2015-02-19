@@ -42,9 +42,9 @@ Setting Up MySQL Database Locally
 6. Edit the following piece of code in the app.js file:
 
     app.use(myConnection(mysql, {
-      host: *********,
-      user: *********,
-      password: ********,
+      host: localhost,
+      user: root,
+      password: your_password,
       port: 3306,
       database: 'athena'
       }, 'request'));
@@ -60,12 +60,12 @@ Running Application
 2. Change the working directory to the directoy of the repository.
 3. Execute the following command, depending on the machine's OS.
 
-      Running on localhost
-      --------------------
+Running on localhost
+--------------------
 
-      |Machine | Command
-      |------- | ---
-      |`Windows`| `DEBUG=app ./bin/www`
-      |`Mac`| `npm start`
+|Machine | Command
+|------- | ---
+|`Windows`| `DEBUG=app ./bin/www`
+|`Mac`| `npm start`
 
 4. Inside a browser, type into the address bar "http://localhost:3000" to launch the application.
