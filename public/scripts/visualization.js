@@ -80,7 +80,12 @@
   var width = 1000;
   var height = 1000;
 
-  var forProfitNodes, nonProfitNodes, individualNodes, governmentNodes;
+  var filteredNodes,
+    forProfitNodes,
+    nonProfitNodes,
+    individualNodes,
+    governmentNodes;
+
   var fiveMostConnectedForProfit = {},
     fiveMostConnectedNonProfit = {},
     fiveMostConnectedIndividuals = {},
@@ -88,16 +93,19 @@
 
   var clearResetFlag = 1;
 
-  var filteredNodes = {};
-  var collaborationConnections = {};
-  var dataConnections = {};
-  var fundingConnections = {};
-  var investmentConnections = {};
+  var collaborationConnections;
+  var dataConnections;
+  var fundingConnections;
+  var investmentConnections;
 
   var centeredNode = {};
 
-  var entitiesHash = {};
-  var locationsHash = {};
+  var entitiesHash = {}; //lowercase
+  var locationsHash = {}; //Lowercase
+
+  var sortedNamesList = []; // Presentation
+  var sortedLocationsList = []; // Presentation
+  var sortedSearchList = []; // Presentation
 
   // var svg = d3.select(".content").append("svg").attr("id", "network").attr("height", height).attr("width", width).attr("viewBox", "0 0 800 800").attr("preserveAspectRatio", "xMidYMid");
   //.attr("viewBox", '0 0 800 800')
@@ -273,7 +281,6 @@
       .style("visibility", "visible")
       .on('dblclick', dblclick)
       .call(drag);
-
 
 
     // data section
@@ -712,13 +719,10 @@
       d3.select('#info')
         .html(sa);
 
-      namesList = uniqueNames.concat(uniqueNicknames);
-      namesList = namesList.sort();
-
       var list = "";
 
-      for (var i = 0; i < namesList.length; i++) {
-        list += '<option value="' + namesList[i] + '">';
+      for (var i = 0; i < sortedNamesList.length; i++) {
+        list += '<option value="' + sortedNamesList[i] + '">';
       }
 
       d3.select('datalist#list-name').html(list);
@@ -1862,82 +1866,63 @@
       handleQuery(this.innerHTML);
     });
 
-    var nameOfEntities = [];
-    var nameOfLocations = [];
-    var nicknameOfEntities = [];
-    var uniqueNames = [];
-    var uniqueNicknames = [];
-    var uniqueLocations = [];
-    var masterList = [];
 
     searchAutoComplete();
+
 
     function searchAutoComplete() {
       var s = "";
 
       filteredNodes.forEach(function(d) {
-        nameOfEntities.push((d.name).toLowerCase());
-        nameOfLocations.push((d.location).toLowerCase());
-        nicknameOfEntities.push((d.nickname).toLowerCase());
+        name = d.name.toLowerCase();
+        nickname = d.nickname.toLowerCase();
+        var splitLocations = (d.location).split("; ");
 
-        if (uniqueNames.indexOf(d.name) === -1 && d.name !== null) {
-          uniqueNames.push(d.name);
-          entitiesHash[d.name.toLowerCase()] = d;
+        if (!(name in entitiesHash)) {
+          entitiesHash[name] = d;
+          sortedNamesList.push(d.name);
         }
-        if (uniqueNames.indexOf(d.nickname) === -1 && d.nickname !== null) {
-          uniqueNicknames.push(d.nickname);
-          entitiesHash[d.nickname.toLowerCase()] = d;
+
+        if (!(nickname in entitiesHash)) {
+          entitiesHash[nickname] = d;
+          sortedNamesList.push(d.nickname);
         }
-        if (uniqueLocations.indexOf(d.location) === -1 && d.location !== null) {
-          var splitLocations = (d.location).split("; ");
-          splitLocations.forEach(function(location) {
-            if (uniqueLocations.indexOf(location) === -1) {
-              uniqueLocations.push(location);
-            }
-          });
-        }
-        if (!(d.location.toLowerCase() in locationsHash)) {
-          console.log("If: " + d.location);
-          var splitLocations = (d.location).split("; ");
-          splitLocations.forEach(function(location) {
-            if (!(location.toLowerCase() in locationsHash)) {
-              locationsHash[location.toLowerCase()] = [];
-              locationsHash[location.toLowerCase()].push(d);
-            } else {
-              locationsHash[location.toLowerCase()].push(d);
-            }
-          });
-        } else {
-          console.log("Else: " + d.location);
-          locationsHash[d.location.toLowerCase()].push(d);
-        }
+
+        splitLocations.forEach(function(l) {
+          var lwcLocation = l.toLowerCase();
+          (!(lwcLocation in locationsHash)) ? (locationsHash[lwcLocation] = [], locationsHash[lwcLocation].push(d), sortedLocationsList.push(l)) : (locationsHash[lwcLocation].push(d));
+        });
+
       });
-      masterList = masterList.concat(uniqueLocations);
-      masterList = masterList.concat(uniqueNicknames)
-      masterList = masterList.concat(uniqueNames);
-      masterList = masterList.sort();
 
-      console.log(locationsHash);
+      // entitiesHash = _.sortBy(entitiesHash, function(value, key, object){
+      //   return key;
+      // });
 
-      for (var count = 0; count < masterList.length; count++) {
-        s += '<option value="' + masterList[count] + '">';
+      sortedNamesList = _.sortBy(sortedNamesList, function(names) {
+        return names.toLowerCase();
+      });
+      sortedLocationsList = _.sortBy(sortedLocationsList, function(locations) {
+        return locations.toLowerCase();
+      });
+      sortedSearchList = _.sortBy(sortedNamesList.concat(sortedLocationsList), function(keys) {
+        return keys;
+      });
+
+      for (var count = 0; count < sortedSearchList.length; count++) {
+        s += '<option value="' + sortedSearchList[count] + '">';
       }
 
       d3.select('.filter-name-location datalist')
         .html(s);
-
-      // d3.select('input#search-text').on('keyup', function() {
-      //   autoHighlight(this.value);
-      // });
-
-
     }
 
     d3.selectAll('#search-text').on('keydown', function() {
       if (d3.event.keyCode === 13) {
-        var query = document.getElementById('search-text').value;
-        handleQuery(query);
+        handleQuery(this.value);
       }
+    }).on('keyup', function() {
+      handleQuery(this.value);
     });
 
     d3.selectAll('option').on('keydown', function(n, i) {
@@ -1947,46 +1932,15 @@
       }
     });
 
-
-
     function handleQuery(query) {
-      var posLocation = [];
-      var count = 0;
+
       query = query.toLowerCase();
-      if (nameOfEntities.indexOf(query) !== -1) {
 
-        nameOfEntities.forEach(function(name) {
-          if (name === query && name.length === query.length) {
-            var posName = nameOfEntities.indexOf(query);
+      if (query in entitiesHash) {
+        sinclick(entitiesHash[query]);
+      }
 
-            nodeInit.filter(function(l, i) {
-              if (i === posName) {
-
-                // handleNodeHover(l);
-                sinclick(l);
-              }
-            });
-          }
-        });
-      } else if (nicknameOfEntities.indexOf(query) !== -1) {
-
-        nicknameOfEntities.forEach(function(name) {
-          if (name === query && name.length === query.length) {
-            var posName = nicknameOfEntities.indexOf(query);
-
-            nodeInit.filter(function(l, i) {
-              if (i === posName) {
-
-                // handleNodeHover(l);
-                sinclick(l);
-              }
-            });
-          }
-        });
-      } else {
-
-
-
+      if (query in locationsHash) {
         fundLink.style("opacity", function(l) {
           return ((l.source).location.toLowerCase() === query && (l.target).location.toLowerCase() === query) ? 1 : 0.05;
         });
@@ -2017,14 +1971,10 @@
             return nodeInit[0][i].style.opacity == 1;
           })
           .on('mouseover', handleClickNodeHover);
-
       }
-
     }
 
     function handleNodeHover(d) {
-
-
 
       var s = textDisplay(d);
 
@@ -2042,38 +1992,25 @@
       fundLink.transition()
         .duration(350)
         .delay(0).style("opacity", function(l) {
-          if (d === l.source || d === l.target) {
-            return "1";
-          } else
-            return "0.05";
+          return (d === l.source || d === l.target) ? 1 : 0.05;
         });
 
       investLink.transition()
         .duration(350)
         .delay(0).style("opacity", function(l) {
-          if (d === l.source || d === l.target) {
-
-            return "1";
-          } else
-            return "0.05";
+          return (d === l.source || d === l.target) ? 1 : 0.05;
         });
 
       porucsLink.transition()
         .duration(350)
         .delay(0).style("opacity", function(l) {
-          if (d === l.source || d === l.target) {
-            return "1";
-          } else
-            return "0.05";
+          return (d === l.source || d === l.target) ? 1 : 0.05;
         });
 
       dataLink.transition()
         .duration(350)
         .delay(0).style("opacity", function(l) {
-          if (d === l.source || d === l.target) {
-            return "1";
-          } else
-            return "0.05";
+          return (d === l.source || d === l.target) ? 1 : 0.05;
         });
 
       var isLinkTarget = function(link, node) {
@@ -2123,11 +2060,6 @@
       d3.select(this.parentNode).select("text").transition()
         .duration(350)
         .delay(0).style("opacity", 1).style("font-weight", "bold");
-
-      // if (d.employees !== null)
-      //   return empScale(d.employees);
-      // else
-      //   return "7";
     }
 
     function handleAdjNodeClick(d) {
