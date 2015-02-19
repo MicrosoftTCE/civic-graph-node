@@ -1,7 +1,7 @@
 Athena Civic
 ============
 
-[Athena](athenacivic.azurewebsites.net) is a web application for visualizing the civic technology space through an intuitive and interactive graphical network. Nodes represent the entities, which would consist of people and organizations, involved within this space, and the links represent the type of relationship/connection these entities share. 
+[Athena](civicinsight.azurewebsites.net) is a web application for visualizing the civic technology space through an intuitive and interactive graphical network. Nodes represent the entities, which would consist of people and organizations, involved within this space, and the links represent the type of relationship/connection these entities share. 
 
 Filtering options provide a unique method for visualizing certain aspects of the civic technology space.
 
