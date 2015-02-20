@@ -1,0 +1,1 @@
+SELECT E.Name, O.EntityID, O.Finance, E.Render FROM cdb_c7da98943c.operations O join cdb_c7da98943c.entities E on (O.EntityID = E.ID);
