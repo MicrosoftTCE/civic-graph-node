@@ -1,7 +1,7 @@
 Athena - Civic Insight
 ======================
 
-[Athena](http://civicinsight.azurewebsites.net) is a web application for visualizing the civic technology space through an intuitive and interactive graphical network. Nodes represent the entities, which would consist of people and organizations, involved within this space, and the links represent the type of relationship/connection these entities share. 
+[Athena](http://civicinsight.azurewebsites.net) is a web application for better understanding the field of civic technology through an intuitive and interactive graphical network view. Nodes represent entities, which could consist of people or organizations involved in the field of civic technology. The links among the entities represent the types of relationships or connections these entities share. 
 
 Filtering options provide a unique method for visualizing certain aspects of the civic technology space.
 
