@@ -1497,7 +1497,7 @@
 
     function displayFormC() {
       var s = "";
-      s += '<h2 id="webform-head">Information</h2><hr/><div style="text-align:center;" class="webform-content"><p>Thanks for contributing information to Athena! Reload the page to see your changes reflected (in a few moments).</p><p>Might you be interested in helping with other entities?</p>';
+      s += '<h2 id="webform-head">Information</h2><hr/><div style="text-align:center;" class="webform-content"><p>Thank you for contributing to Athena! Refresh the page to view your changes (it might take a few moments).</p><p>Would you like to add or edit more info?</p>';
       s += '<ul id="suggestions">';
 
       var suggestions = determineNullFields();
