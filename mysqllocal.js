@@ -23,9 +23,9 @@
 
   connection.connect();
 
-  connection.query('CREATE DATABASE IF NOT EXISTS cdb_c7da98943c', function (err) {
+  connection.query('CREATE DATABASE IF NOT EXISTS athena', function (err) {
       if (err) throw err;
-      connection.query('USE cdb_c7da98943c', function (err) {
+      connection.query('USE athena', function (err) {
           if (err) throw err;
 
           connection.query('CREATE TABLE IF NOT EXISTS Entities('

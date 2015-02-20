@@ -76,3 +76,7 @@
     position: fixed;
   }
 }
+.index-footer {
+  float: right !important;
+  left: 0px !important;
+}
