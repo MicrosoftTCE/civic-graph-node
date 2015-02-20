@@ -12,11 +12,20 @@
     password: 'MicrosoftNY'
   });
 
+  // var connection = mysql.createConnection(
+  // {
+  //   port: 3306,
+  //   host: 'au-cdbr-azure-east-a.cloudapp.net',
+  //   user: 'b0c63aecaa6676',
+  //   password: '8e008947'
+  // });
+
+
   connection.connect();
 
-  connection.query('CREATE DATABASE IF NOT EXISTS athena', function (err) {
+  connection.query('CREATE DATABASE IF NOT EXISTS cdb_c7da98943c', function (err) {
       if (err) throw err;
-      connection.query('USE athena', function (err) {
+      connection.query('USE cdb_c7da98943c', function (err) {
           if (err) throw err;
 
           connection.query('CREATE TABLE IF NOT EXISTS Entities('
@@ -224,7 +233,7 @@
                         Year: ((data.nodes)[n].revenue)[o].year
                       };
 
-          var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
+          var query = connection.query('INSERT INTO Operations SET ?', values, function(err, result){
             if (err) throw err;
           });
 
@@ -240,7 +249,7 @@
                         Year:  ((data.nodes)[n].revenue)[p].year
                       };
 
-          var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
+          var query = connection.query('INSERT INTO Operations SET ?', values, function(err, result){
             if (err) throw err;
           });
 

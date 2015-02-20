@@ -38,15 +38,13 @@
     position: fixed;
   }
 }
-
 @media (min-height: 601px) {
   .grid.mainbody {
     left: 17%;
-width: 83%;
-position: relative;
+    width: 83%;
+    position: relative;
   }
-
-    .footer-grid {
+  .footer-grid {
     margin-bottom: 0px !important;
   }
   .site-footer {

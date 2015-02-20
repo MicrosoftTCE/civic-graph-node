@@ -35,7 +35,7 @@ app.use(myConnection(mysql, {
     password: 'MicrosoftNY',
     port: 3306,
     database: 'athena'
-}, 'request'));
+}, 'pool'));
 
 // app.use(connection(mysql, {
 //     host: 'us-cdbr-azure-east-b.cloudapp.net',

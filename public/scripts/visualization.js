@@ -107,13 +107,16 @@
   var sortedLocationsList = []; // Presentation
   var sortedSearchList = []; // Presentation
 
+  var dataListSortedNames;
+  var dataListSortedLocations;
+
   // var svg = d3.select(".content").append("svg").attr("id", "network").attr("height", height).attr("width", width).attr("viewBox", "0 0 800 800").attr("preserveAspectRatio", "xMidYMid");
   //.attr("viewBox", '0 0 800 800')
   var svg = d3.select('.content').append('svg').attr("xmlns", 'http://www.w3.org/2000/svg').attr("id", 'network').attr("height", height).attr("width", width);
   // d3.select("svg").on("dblclick.zoom", null);
   d3.select('body > nav > nav > div').append('div').attr('id', 'editBox').append('p').text('Edit').style('color', '#2e92cf');
 
-  
+
 
   //  document.createElement('svg')
 
@@ -138,7 +141,7 @@
 
 
   d3.json("/athena", function(error, graph) {
-    
+
     // d3.select("svg").append("rect")
     //                 .attr("x", 10)
     //                 .attr("y", 10)
@@ -722,45 +725,48 @@
       d3.select('#info')
         .html(sa);
 
-      var listNameOptions = "";
-
-      for (var i = 0; i < sortedNamesList.length; i++) {
-        listNameOptions += '<option value="' + sortedNamesList[i] + '">';
-      }
-
-      var listLocationOptions = "";
-
-      for (var i = 0; i < sortedLocationsList.length; i++) {
-        listLocationOptions += '<option value="' + sortedLocationsList[i] + '">';
-      }
-
-      d3.select('datalist#list-location').html(listLocationOptions);
-
-      d3.select('input#location').on('keyup', function() {
-        preFillLocation(this.value);
-      });
-
+      d3.select('datalist#list-name').html(dataListSortedNames);
       d3.select('input#name').on('keyup', function() {
         preParseForm(this.value);
+      });
+
+      d3.select('datalist#list-location').html(dataListSortedLocations);
+      d3.select('input#location').on('keyup', function() {
+        preFillLocation(this.value);
       });
 
       d3.select('#key-people-0 input[name="kpeople"]').on('keyup', function() {
         add_input_kp(0);
       });
+
+      addDataList('#funding-0 datalist');
       d3.select('#funding-0 input[name="fund"]').on('keyup', function() {
         add_input_fund(0);
+        preFillName(this.value, '#funding-0 input');
       });
+
+      addDataList('#investing-0 datalist');
       d3.select('#investing-0 input[name="invest"]').on('keyup', function() {
         add_input_invest(0);
+        preFillName(this.value, '#investing-0 input');
       });
+
+      addDataList('#fundinggiven-0 datalist');
       d3.select('#fundinggiven-0 input[name="fundgiven"]').on('keyup', function() {
         add_input_fund_given(0);
+        preFillName(this.value, '#fundinggiven-0 input');
       });
+
+      addDataList('#investmentmade-0 datalist');
       d3.select('#investmentmade-0 input[name="investmade"]').on('keyup', function() {
         add_input_invest_made(0);
+        preFillName(this.value, '#investmentmade-0 input');
       });
+
+      addDataList('#data-0 datalist');
       d3.select('#data-0 input[name="data"]').on('keyup', function() {
         add_input_data(0);
+        preFillName(this.value, '#data-0 input');
       });
 
       d3.select("#toFormC").on('click', function() {
@@ -845,13 +851,13 @@
                 formObject.categories.push("General Civic Tech");
                 break;
               case 'DataAnalytics':
-                formObject.categories.push("Data and Analytics");
+                formObject.categories.push("Data & Analytics");
                 break;
               case 'EconGrowthEdu':
-                formObject.categories.push("Economic Growth and Education");
+                formObject.categories.push("Jobs & Education");
                 break;
               case 'SRCities':
-                formObject.categories.push("Smart and Resilient Cities");
+                formObject.categories.push("Smart & Resilient Cities");
                 break;
               case 'SocialServ':
                 formObject.categories.push("Social Services");
@@ -1172,7 +1178,7 @@
 
         // Time to render the nickname, twitter handle fields
         // Also circle of influence, collaboration, revenue, revenue and grant...
-        s += '<hr/><div class = "input-control text" data-role="input-control"><input type="text" name="nickname" id="nickname" placeholder="Nickname/Abbr."/></div><div class = "input-control text" data-role="input-control"><input type="text" name="twitterhandle" id="twitterhandle" placeholder="Twitter Handle"/></div><h3 class="form-header" style="display:inline-block;">Circle of Influence: </h3><div class="webform-influence"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_local" type="radio" name="influence-type" value="Local Influence" checked="checked"/><span class="check"></span><h4 class="webform-labels">Local Influence</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_global" type="radio" name="influence-type" value="Global Influence" checked="checked"/><span class="check"></span><h4 class="webform-labels">Global Influence</h4></label></div></div><h3 class="form-header">Collaboration</h3><div id="collaboration-0" class="input-control text" data-role="input-control"><input type="text" name="collaboration" class="collaborator" placeholder="Collaborator"/></div><h3 class="form-header">Revenue</h3><div id="revenue-0"><div class="revenue-input input-control text" data-role="input-control"><input type="text" name="revenue_amt" class="revenue_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/><input type="text" name="revenue_year" class="revenue_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Expenses</h3><div id="expense-0"><div class="expense-input input-control text" data-role="input-control"><input type="text" name="expense_amt" class="expense_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/><input type="text" name="expense_year" class="expense_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><button type="button" id="submit-B" href="javascript: check_empty()">Submit</button></div>';
+        s += '<hr/><div class = "input-control text" data-role="input-control"><input type="text" name="nickname" id="nickname" placeholder="Nickname/Abbr."/></div><div class = "input-control text" data-role="input-control"><input type="text" name="twitterhandle" id="twitterhandle" placeholder="Twitter Handle"/></div><h3 class="form-header" style="display:inline-block;">Circle of Influence: </h3><div class="webform-influence"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_local" type="radio" name="influence-type" value="Local Influence" checked="checked"/><span class="check"></span><h4 class="webform-labels">Local Influence</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_global" type="radio" name="influence-type" value="Global Influence" checked="checked"/><span class="check"></span><h4 class="webform-labels">Global Influence</h4></label></div></div><h3 class="form-header">Collaboration</h3><div id="collaboration-0" class="input-control text" data-role="input-control"><input type="text" name="collaboration" class="collaborator" placeholder="Collaborator" list="collaborator-list"/><datalist id="collaborator-list"></datalist></div><h3 class="form-header">Revenue</h3><div id="revenue-0"><div class="revenue-input input-control text" data-role="input-control"><input type="text" name="revenue_amt" class="revenue_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/><input type="text" name="revenue_year" class="revenue_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Expenses</h3><div id="expense-0"><div class="expense-input input-control text" data-role="input-control"><input type="text" name="expense_amt" class="expense_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/><input type="text" name="expense_year" class="expense_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><button type="button" id="submit-B" href="javascript: check_empty()">Submit</button></div>';
 
         // <h3 class="form-header">Grants</h3>\
         // <div id="grant-0">\
@@ -1184,6 +1190,9 @@
 
         d3.select('#info')
           .html(s);
+
+        addDataList('#collaboration-0 datalist');
+
 
         // Time to prefill the form...
         d3.selectAll('#name').text(function(d) {
@@ -1203,6 +1212,7 @@
         // Add action listeners
         d3.selectAll('input[name="collaboration"]').on('keyup', function() {
           add_input_collab(0);
+          preFillName(this.value, '#collaboration-0 input');
         });
         d3.selectAll('input[name="revenue_amt"]').on('keyup', function() {
           add_input_rev(0);
@@ -1218,7 +1228,7 @@
           displayFormCSendJSON(formObject);
           // if(!_.isEmpty(sb))
         });
-      } else {
+      } else { //  Error checking the form...
         if (!formObject.name && !formObject.location) {
           d3.select('#name').style("border-color", "#e51400");
           d3.select('#location').style("border-color", "#e51400");
@@ -1228,6 +1238,19 @@
           else
             d3.select('#location').style("border-color", "#e51400");
         }
+      }
+
+    }
+
+    function addDataList(dataListSelector) {
+      d3.select(dataListSelector).html(dataListSortedNames);
+    }
+
+    function preFillName(input, inputSelector) {
+      if (input.toLowerCase() in entitiesHash) {
+        d3.selectAll(inputSelector).text(function(d) {
+          this.value = entitiesHash[input].name;
+        });
       }
     }
 
@@ -1262,11 +1285,14 @@
 
     function add_input_fund(counterF) {
       if ($('#funding-' + counterF + ' input[name="fund"]').val() !== "") {
-        d3.select('#funding-' + counterF + ' input[name="fund"]').on('keyup', null);
+        d3.select('#funding-' + counterF + ' input[name="fund"]').on('keyup', function() {
+          preFillName(this.value, '#funding-' + (counterF - 1) + ' input[name="fund"]');
+        });
         counterF++; // counter -> 2
 
 
-        $("#funding-" + (counterF - 1)).after('<div id="funding-' + counterF + '"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;"/><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+        $("#funding-" + (counterF - 1)).after('<div id="funding-' + counterF + '"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;" list="funding-received-list"/><datalist id="funding-received-list"></datalist><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+        addDataList('#funding-' + counterF + ' datalist');
         d3.select("#funding-" + counterF + " input[name='fund']").on("keyup", function() {
           add_input_fund(counterF);
         });
@@ -1275,11 +1301,14 @@
 
     function add_input_invest(counterI) {
       if ($('#investing-' + counterI + ' input[name="invest"]').val() !== "") {
-        d3.select('#investing-' + counterI + ' input[name="invest"]').on('keyup', null);
+        d3.select('#investing-' + counterI + ' input[name="invest"]').on('keyup', function() {
+          preFillName(this.value, '#investing-' + (counterI - 1) + ' input[name="invest"]');
+        });
         counterI++; // counter -> 2
 
 
-        $("#investing-" + (counterI - 1)).after('<div id="investing-' + counterI + '"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;"/><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+        $("#investing-" + (counterI - 1)).after('<div id="investing-' + counterI + '"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;" list="investment-received-list"/><datalist id="investment-received-list"></datalist><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+        addDataList('#investing-' + counterI + ' datalist');
         d3.select("#investing-" + counterI + " input[name='invest']").on("keyup", function() {
           add_input_invest(counterI);
         });
@@ -1288,11 +1317,14 @@
 
     function add_input_fund_given(counterFG) {
       if ($('#fundinggiven-' + counterFG + ' input[name="fundgiven"]').val() !== "") {
-        d3.select('#fundinggiven-' + counterFG + ' input[name="fundgiven"]').on('keyup', null);
+        d3.select('#fundinggiven-' + counterFG + ' input[name="fundgiven"]').on('keyup', function() {
+          preFillName(this.value, '#fundinggiven-' + (counterFG - 1) + ' input[name="fundgiven"]');
+        });
         counterFG++; // counter -> 2
 
 
-        $("#fundinggiven-" + (counterFG - 1)).after('<div id="fundinggiven-' + counterFG + '"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;"/><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+        $("#fundinggiven-" + (counterFG - 1)).after('<div id="fundinggiven-' + counterFG + '"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;" list="funding-given-list"/><datalist id="funding-given-list"></datalist><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+        addDataList('#fundinggiven-' + counterFG + ' datalist');
         d3.select("#fundinggiven-" + counterFG + " input[name='fundgiven']").on("keyup", function() {
           add_input_fund_given(counterFG);
         });
@@ -1301,11 +1333,14 @@
 
     function add_input_invest_made(counterIM) {
       if ($('#investmentmade-' + counterIM + ' input[name="investmade"]').val() !== "") {
-        d3.select('#investmentmade-' + counterIM + ' input[name="investmade"]').on('keyup', null);
+        d3.select('#investmentmade-' + counterIM + ' input[name="investmade"]').on('keyup', function() {
+          preFillName(this.value, '#investmentmade-' + (counterIM - 1) + ' input[name="investmade"]');
+        });
         counterIM++; // counter -> 2
 
 
-        $("#investmentmade-" + (counterIM - 1)).after('<div id="investmentmade-' + counterIM + '"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;"/><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+        $("#investmentmade-" + (counterIM - 1)).after('<div id="investmentmade-' + counterIM + '"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;" list="investment-made-list"/><datalist id="investment-made-list"></datalist><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+        addDataList('#investmentmade-' + counterIM + ' datalist');
         d3.select("#investmentmade-" + counterIM + " input[name='investmade']").on("keyup", function() {
           add_input_invest_made(counterIM);
         });
@@ -1314,11 +1349,14 @@
 
     function add_input_data(counterD) {
       if ($('#data-' + counterD + ' input[name="data"]').val() !== "") {
-        d3.select('#data-' + counterD + ' input[name="data"]').on('keyup', null);
+        d3.select('#data-' + counterD + ' input[name="data"]').on('keyup', function() {
+          preFillName(this.value, '#data-' + (counterD - 1) + ' input[name="data"]');
+        });
         counterD++; // counter -> 2
 
 
-        $("#data-" + (counterD - 1)).after('<div id="data-' + counterD + '" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource"/></div>');
+        $("#data-" + (counterD - 1)).after('<div id="data-' + counterD + '" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource" list="data-received-list"/><datalist id="data-received-list"></datalist></div>');
+        addDataList('#data-' + counterD + ' datalist');
         d3.select("#data-" + counterD + " input[name='data']").on("keyup", function() {
           add_input_data(counterD);
         });
@@ -1327,13 +1365,17 @@
 
     function add_input_collab(counterC) {
       if ($('#collaboration-' + counterC + ' input[name="collaboration"]').val() !== "") {
-        d3.select('#collaboration-' + counterC + ' input[name="collaboration"]').on('keyup', null);
+        d3.select('#collaboration-' + counterC + ' input[name="collaboration"]').on('keyup', function() {
+          preFillName(this.value, '#collaboration-' + (counterC - 1) + ' input[name="collaboration"]');
+        });
         counterC++; // counter -> 2
 
 
-        $("#collaboration-" + (counterC - 1)).after('<div id="collaboration-' + counterC + '" class="input-control text" data-role="input-control"><input type="text" name="collaboration" class="collaborator" placeholder="Collaborator"/></div>');
+        $("#collaboration-" + (counterC - 1)).after('<div id="collaboration-' + counterC + '" class="input-control text" data-role="input-control"><input type="text" name="collaboration" class="collaborator" placeholder="Collaborator" list="collaborator-list"/><datalist id="collaborator-list"></datalist></div>');
+        addDataList('#collaboration-' + counterC + ' datalist');
         d3.select("#collaboration-" + counterC + " input[name='collaboration']").on("keyup", function() {
           add_input_collab(counterC);
+
         });
       }
     }
@@ -1367,7 +1409,7 @@
     function displayFormA() {
       // Test if jQuery works within d3...
       //var elementCount = $( "*" ).css( "border", "3px solid red" ).length;
-      s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity" list="list-name"/><datalist id="list-name"></datalist></div><h3 class="form-header">What type of entity?</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><h3 class="form-header">What kind of work do they do?</h3><h4>(Select All That Apply)</h4><div class="webform-categories"><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_gen" type="checkbox" name="gen" data-show="general" value="General"/><span class="check"></span><h4 class="webform-labels">General Civic Tech</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_datat" type="checkbox" name="datat" data-show="datalytics" value="DataAnalytics"/><span class="check"></span><h4 class="webform-labels">Data & Analytics</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_eced" type="checkbox" name="eced" data-show="econedu" value="EconGrowthEdu"/><span class="check"></span><h4 class="webform-labels">Jobs & Education</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_src" type="checkbox" name="srcities" data-show="srcities" value="SRCities"/><span class="check"></span><h4 class="webform-labels">Smart & Resilient Cities</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_socs" type="checkbox" name="socserv" data-show="socserv" value="SocialServ"/><span class="check"></span><h4 class="webform-labels">Social Services</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_govt" type="checkbox" name="govtech" data-show="govtech" value="GovTech"/><span class="check"></span><h4 class="webform-labels">GovTech</h4></label></div></div><div class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City, State" list="list-location"/><datalist id="list-location"></datalist></div><div class="input-control text" data-role="input-control"><input type="text" name="website" id="website" placeholder="Website"/></div><h3 class="form-header" style="display:inline-block;">Number of Employees</h3><div class="input-control text" data-role="input-control" style="width:27% !important; display:inline-block; float:right; margin-top: 2%;"><input type="text" name="employees" id="employee" maxlength="6" style="width:100% !important;"/></div><h3 class="form-header">Key People?</h3><div id="key-people-0" class="input-control text" data-role="input-control"><input type="text" name="kpeople" class="kpeople" placeholder="Key Person\'s Name"/></div><h3 class="form-header">Who funds them via grants?</h3><div id="funding-0"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;"/><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who invests in them via equity stakes (stock)?</h3><div id="investing-0"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;"/><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they fund via grants?</h3><div id="fundinggiven-0"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;"/><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they invest in via equity stakes (stock)?</h3><div id="investmentmade-0"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;"/><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who provides them with data?</h3><div id="data-0" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource"/></div><div id="nextPhase"><span>Almost done...</span><button type="button" id="submit-A" href="javascript: check_empty()">Next</button></div></div><hr/><div class="webform-footer"><span id="">Some entities lack adequate information. Would you like to help?</span><br/><span id="toFormC">Click here!</span></div>';
+      s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity" list="list-name"/><datalist id="list-name"></datalist></div><h3 class="form-header">What type of entity?</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><h3 class="form-header">What kind of work do they do?</h3><h4>(Select All That Apply)</h4><div class="webform-categories"><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_gen" type="checkbox" name="gen" data-show="general" value="General"/><span class="check"></span><h4 class="webform-labels">General Civic Tech</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_datat" type="checkbox" name="datat" data-show="datalytics" value="DataAnalytics"/><span class="check"></span><h4 class="webform-labels">Data & Analytics</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_eced" type="checkbox" name="eced" data-show="econedu" value="EconGrowthEdu"/><span class="check"></span><h4 class="webform-labels">Jobs & Education</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_src" type="checkbox" name="srcities" data-show="srcities" value="SRCities"/><span class="check"></span><h4 class="webform-labels">Smart & Resilient Cities</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_socs" type="checkbox" name="socserv" data-show="socserv" value="SocialServ"/><span class="check"></span><h4 class="webform-labels">Social Services</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_govt" type="checkbox" name="govtech" data-show="govtech" value="GovTech"/><span class="check"></span><h4 class="webform-labels">GovTech</h4></label></div></div><div class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City, State" list="list-location"/><datalist id="list-location"></datalist></div><div class="input-control text" data-role="input-control"><input type="text" name="website" id="website" placeholder="Website"/></div><h3 class="form-header" style="display:inline-block;">Number of Employees</h3><div class="input-control text" data-role="input-control" style="width:27% !important; display:inline-block; float:right; margin-top: 2%;"><input type="text" name="employees" id="employee" maxlength="6" style="width:100% !important;"/></div><h3 class="form-header">Key People?</h3><div id="key-people-0" class="input-control text" data-role="input-control"><input type="text" name="kpeople" class="kpeople" placeholder="Key Person\'s Name"/></div><h3 class="form-header">Who funds them via grants?</h3><div id="funding-0"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;" list="funding-received-list"/><datalist id="funding-received-list"></datalist><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who invests in them via equity stakes (stock)?</h3><div id="investing-0"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;" list="investment-received-list"/><datalist id="investment-received-list"></datalist><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they fund via grants?</h3><div id="fundinggiven-0"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;" list="funding-given-list"/><datalist id="funding-given-list"></datalist><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they invest in via equity stakes (stock)?</h3><div id="investmentmade-0"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;" list="investment-made-list"/><datalist id="investment-made-list"></datalist><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who provides them with data?</h3><div id="data-0" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource" list="data-received-list"/><datalist id="data-received-list"></datalist></div><div id="nextPhase"><span>Almost done...</span><button type="button" id="submit-A" href="javascript: check_empty()">Next</button></div></div><hr/><div class="webform-footer"><span id="">Some entities lack adequate information. Would you like to help?</span><br/><span id="toFormC">Click here!</span></div>';
 
       return s;
 
@@ -1533,8 +1575,12 @@
         var fundingreceived = obj.funding_received;
 
         fundingreceived.forEach(function(d, i) {
-          $("#funding-" + i).after('<div id="funding-' + (i + 1) + '"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;"/><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
-          d3.select('#funding-' + i + ' input[name="fund"]').on('keyup', null);
+          $("#funding-" + i).after('<div id="funding-' + (i + 1) + '"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;" list="funding-received-list"/><datalist id="funding-received-list"></datalist><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+          addDataList('#funding-' + i + ' datalist');
+
+          d3.select('#funding-' + i + ' input[name="fund"]').on('keyup', function() {
+            preFillName(this.value, '#funding-' + i + ' input[name="fund"]');
+          });
           d3.select('#funding-' + i + ' input[name="fund"]').text(function(e) {
             this.value = d.entity;
           });
@@ -1554,8 +1600,12 @@
         var fundinggiven = obj.funding_given;
 
         fundinggiven.forEach(function(d, i) {
-          $("#fundinggiven-" + i).after('<div id="fundinggiven-' + (i + 1) + '"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;"/><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
-          d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').on('keyup', null);
+          $("#fundinggiven-" + i).after('<div id="fundinggiven-' + (i + 1) + '"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;" list="funding-given-list"/><datalist id="funding-given-list"></datalist><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+          addDataList('#fundinggiven-' + i + ' datalist');
+
+          d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').on('keyup', function() {
+            preFillName(this.value, '#fundinggiven-' + i + ' input[name="fundgiven"]');
+          });
           d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').text(function(e) {
             this.value = d.entity;
           });
@@ -1575,8 +1625,12 @@
         var investmentreceived = obj.investments_received;
 
         investmentreceived.forEach(function(d, i) {
-          $("#investing-" + i).after('<div id="investing-' + (i + 1) + '"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;"/><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
-          d3.select('#investing-' + i + ' input[name="invest"]').on('keyup', null);
+          $("#investing-" + i).after('<div id="investing-' + (i + 1) + '"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;" list="investment-received-list"/><datalist id="investment-received-list"></datalist><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+          addDataList('#investing-' + i + ' datalist');
+
+          d3.select('#investing-' + i + ' input[name="invest"]').on('keyup', function() {
+            preFillName(this.value, '#investing-' + i + ' input[name="invest"]');
+          });
           d3.select('#investing-' + i + ' input[name="invest"]').text(function(e) {
             this.value = d.entity;
           });
@@ -1597,8 +1651,12 @@
         var investmentsmade = obj.investments_made;
 
         investmentsmade.forEach(function(d, i) {
-          $("#investmentmade-" + i).after('<div id="investmentmade-' + (i + 1) + '"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;"/><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
-          d3.select('#investmentmade-' + i + ' input[name="investmade"]').on('keyup', null);
+          $("#investmentmade-" + i).after('<div id="investmentmade-' + (i + 1) + '"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;" list="investment-made-list"/><datalist id="investment-made-list"></datalist><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div>');
+          addDataList('#investmentmade-' + i + ' datalist');
+
+          d3.select('#investmentmade-' + i + ' input[name="investmade"]').on('keyup', function() {
+            preFillName(this.value, '#investmentmade-' + i + ' input[name="investmade"]');
+          });
           d3.select('#investmentmade-' + i + ' input[name="investmade"]').text(function(e) {
             this.value = d.entity;
           });
@@ -1619,8 +1677,12 @@
         var dataProviders = obj.data;
 
         dataProviders.forEach(function(d, i) {
-          $("#data-" + i).after('<div id="data-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource"/></div>');
-          d3.select('#data-' + i + ' input[name="data"]').on('keyup', null);
+          $("#data-" + i).after('<div id="data-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource" list="data-received-list"/><datalist id="data-received-list"></datalist></div>');
+          addDataList('#data-' + i + ' datalist');
+
+          d3.select('#data-' + i + ' input[name="data"]').on('keyup', function() {
+            preFillName(this.value, '#data-' + i + ' input[name="data"]');
+          });
           d3.select('#data-' + i + ' input[name="data"]').text(function(e) {
             this.value = d.entity;
           });
@@ -1660,8 +1722,12 @@
 
         collaboration.forEach(function(d, i) {
           // typeIntoFields(d, 0, d3.selectAll('#keypeople input')[0][i]);
-          $("#collaboration-" + i).after('<div id="collaboration-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="collaboration" class="collaborator" placeholder="Collaborator"/></div>');
-          d3.select('#collaboration-' + i + ' input[name="collaboration"]').on('keyup', null);
+          $("#collaboration-" + i).after('<div id="collaboration-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="collaboration" class="collaborator" placeholder="Collaborator" list="collaborator-list"/><datalist id="collaborator-list"></datalist></div>');
+          addDataList('#collaboration-' + i + ' datalist');
+
+          d3.select('#collaboration-' + i + ' input[name="collaboration"]').on('keyup', function() {
+            preFillName(this.value, '#collaboration-' + i + ' input[name="collaboration"]');
+          });
           d3.select('#collaboration-' + i + ' input[name="collaboration"]').text(function(e) {
             this.value = d.entity;
           });
@@ -1962,6 +2028,7 @@
       query = query.toLowerCase();
 
       if (query in entitiesHash) {
+
         sinclick(entitiesHash[query]);
       }
 
@@ -1998,6 +2065,19 @@
           .on('mouseover', handleClickNodeHover);
       }
     }
+
+    dataListSortedNames = generateNamesDataList(sortedNamesList);
+    dataListSortedLocations = generateNamesDataList(sortedLocationsList);
+
+
+    function generateNamesDataList(sortedList) {
+      var datalist = "";
+      for (var i = 0; i < sortedList.length; i++) {
+        datalist += '<option value="' + sortedList[i] + '">';
+      }
+      return datalist;
+    }
+
 
     function handleNodeHover(d) {
 
@@ -2328,7 +2408,7 @@
         .duration(350)
         .delay(0).style("opacity", function(l) {
           return (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborData.indexOf(l.index) > -1 || l === d) ? 1 : 0.05;
-        });
+        }).select('text').style('opacity', 1);
 
 
       node.filter(function(l) {

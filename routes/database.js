@@ -191,7 +191,7 @@ exports.save = function(request, response){
                   if(object['expenses'].length === 0)
                     object['expenses'] = null;
                   
-                  // console.log(object);
+                  console.log("testing");
                   callback(null, object);
               });
         
@@ -219,23 +219,23 @@ exports.save = function(request, response){
             var newFundingReceivedEntity;
               (entity.funding_received).forEach(function(object) {
                 newFundingReceivedEntity = object;
-                  connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + (newFundingReceivedEntity.name) + "' OR Nickname = " + "'" + (newFundingReceivedEntity.name) + "') AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;", 
+                  connection.query('SELECT * FROM Entities WHERE ((Name = "' + (newFundingReceivedEntity.name) + '" OR Nickname = "' + (newFundingReceivedEntity.name) + '") AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;', 
                     (function(newFundingReceivedEntity){
                       return function(err, rows, fields){
                         if (rows !== undefined && rows.length >= 1) {
                           // If the entity already exists, use its ID for the entity id when inserting into connections...
-                          connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"' + 'Funding Received' + '",' + newFundingReceivedEntity.year + ',' + newFundingReceivedEntity.amount + ', 1);', function(err) {
+                          connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"Funding Received",' + newFundingReceivedEntity.year + ',' + newFundingReceivedEntity.amount + ',1);', function(err) {
                               if (err) throw err;
                           });                
                         }
                         //  The entity mentioned in funding_received does not exist.
                         else
                         {
-                          connection.query('INSERT INTO Entities (' + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, ' + 'Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + (newFundingReceivedEntity.name) + '","' + (newFundingReceivedEntity.name) + '","' + 'Unknown' + '",' + null + ',"' + 'Unknown' + '",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(), 0);', function(err, resultInner) {
+                          connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + (newFundingReceivedEntity.name) + '","' + (newFundingReceivedEntity.name) + '","Unknown",' + null + ',"Unknown",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(),0);', function(err, resultInner) {
                               if (err) throw err;
-                              connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + (newFundingReceivedEntity.name) + "' OR Nickname = " + "'" + (newFundingReceivedEntity.name) + "') AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;", function(err, innerRows, innerFields) {
+                              connection.query('SELECT * FROM Entities WHERE ((Name = "' + (newFundingReceivedEntity.name) + '" OR Nickname = "' + (newFundingReceivedEntity.name) + '") AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;', function(err, innerRows, innerFields) {
                                 if (err) throw err;
-                                connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"' + 'Funding Received' + '",' + newFundingReceivedEntity.year + ',' + newFundingReceivedEntity.amount + ', 0);', function(err) {
+                                connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"Funding Received",' + newFundingReceivedEntity.year + ',' + newFundingReceivedEntity.amount + ',0);', function(err) {
                                   if (err) throw err;
                                 });
                               });
@@ -251,23 +251,23 @@ exports.save = function(request, response){
             var newInvestmentsReceivedEntity;
               (entity.investments_received).forEach(function(object) {
                 newInvestmentsReceivedEntity = object;
-                  connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + (newInvestmentsReceivedEntity.name) + "' OR Nickname = " + "'" + (newInvestmentsReceivedEntity.name) + "') AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;", 
+                  connection.query('SELECT * FROM Entities WHERE ((Name = "' + (newInvestmentsReceivedEntity.name) + '" OR Nickname = "' (newInvestmentsReceivedEntity.name) + '" AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;', 
                     (function(newInvestmentsReceivedEntity){
                       return function(err, rows, fields){
                         if (rows !== undefined && rows.length >= 1) {
                           // If the entity already exists, use its ID for the entity id when inserting into connections...
-                          connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"' + 'Investment Received' + '",' + newInvestmentsReceivedEntity.year + ',' + newInvestmentsReceivedEntity.amount + ', 1);', function(err) {
+                          connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"Investment Received",' + newInvestmentsReceivedEntity.year + ',' + newInvestmentsReceivedEntity.amount + ',1);', function(err) {
                               if (err) throw err;
                           });
                           
                         }
                         else
                         {
-                          connection.query('INSERT INTO Entities (' + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, ' + 'Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + (newInvestmentsReceivedEntity.name) + '","' + (newInvestmentsReceivedEntity.name) + '","' + 'Unknown' + '",' + null + ',"' + 'Unknown' + '",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(), 0);', function(err, resultInner) {
+                          connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + (newInvestmentsReceivedEntity.name) + '","' + (newInvestmentsReceivedEntity.name) + '","Unknown",' + null + ',"Unknown",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(),0);', function(err, resultInner) {
                               if (err) throw err;
-                              connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + (newInvestmentsReceivedEntity.name) + "' OR Nickname = " + "'" + (newInvestmentsReceivedEntity.name) + "') AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;", function(err, innerRows, innerFields) {
+                              connection.query('SELECT * FROM Entities WHERE ((Name = "' + (newInvestmentsReceivedEntity.name) + '" OR Nickname = "' + (newInvestmentsReceivedEntity.name) + '") AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;', function(err, innerRows, innerFields) {
                                 if (err) throw err;
-                                connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"' + 'Investment Received' + '",' + newInvestmentsReceivedEntity.year + ',' + newInvestmentsReceivedEntity.amount + ', 0);', function(err) {
+                                connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"Investment Received",' + newInvestmentsReceivedEntity.year + ',' + newInvestmentsReceivedEntity.amount + ',0);', function(err) {
                                   if (err) throw err;
                                 });
                               });
@@ -284,23 +284,23 @@ exports.save = function(request, response){
             var newInvestmentsMadeEntity;
               (entity.investments_made).forEach(function(object) {
                 newInvestmentsMadeEntity = object;
-                  connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + (newInvestmentsMadeEntity.name) + "' OR Nickname = " + "'" + (newInvestmentsMadeEntity.name) + "') AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;", 
+                  connection.query('SELECT * FROM Entities WHERE ((Name = "' + (newInvestmentsMadeEntity.name) + '" OR Nickname = "' + (newInvestmentsMadeEntity.name) + '") AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;', 
                     (function(newInvestmentsMadeEntity){
                       return function(err, rows, fields){
                         if (rows !== undefined && rows.length >= 1) {
                             // If the entity already exists, use its ID for the entity id when inserting into connections...
-                              connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"' + 'Investment Made' + '",' + newInvestmentsMadeEntity.year + ',' + newInvestmentsMadeEntity.amount + ', 1);', function(err) {
+                              connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"Investment Made",' + newInvestmentsMadeEntity.year + ',' + newInvestmentsMadeEntity.amount + ',1);', function(err) {
                                   if (err) throw err;
                               });
                             
                         }
                         else
                         {
-                          connection.query('INSERT INTO Entities (' + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, ' + 'Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + (newInvestmentsMadeEntity.name) + '","' + (newInvestmentsMadeEntity.name) + '","' + 'Unknown' + '",' + null + ',"' + 'Unknown' + '",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(), 0);', function(err, resultInner) {
+                          connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + (newInvestmentsMadeEntity.name) + '","' + (newInvestmentsMadeEntity.name) + '","Unknown",' + null + ',"Unknown",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(),0);', function(err, resultInner) {
                               if (err) throw err;
-                              connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + (newInvestmentsMadeEntity.name) + "' OR Nickname = " + "'" + (newInvestmentsMadeEntity.name) + "') AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;", function(err, innerRows, innerFields) {
+                              connection.query('SELECT * FROM Entities WHERE ((Name = "' + (newInvestmentsMadeEntity.name) + '" OR Nickname = "' + (newInvestmentsMadeEntity.name) + '") AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;', function(err, innerRows, innerFields) {
                                 if (err) throw err;
-                                connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"' + 'Investment Made' + '",' + newInvestmentsMadeEntity.year + ',' + newInvestmentsMadeEntity.amount + ', 0);', function(err) {
+                                connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"Investment Made",' + newInvestmentsMadeEntity.year + ',' + newInvestmentsMadeEntity.amount + ',0);', function(err) {
                                   if (err) throw err;
                                 });
                               });
@@ -320,23 +320,23 @@ exports.save = function(request, response){
             var newFundingGivenEntity;
               (entity.funding_given).forEach(function(object) {
                 newFundingGivenEntity = object;
-                  connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + (newFundingGivenEntity.name) + "' OR Nickname = " + "'" + (newFundingGivenEntity.name) + "') AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;",
+                  connection.query('SELECT * FROM Entities WHERE ((Name = "' + (newFundingGivenEntity.name) + '" OR Nickname = "' + (newFundingGivenEntity.name) + '") AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;',
                       (function(newFundingGivenEntity){
                         return function(err, rows, fields){
                           if (rows !== undefined && rows.length >= 1) {
                           // If the entity already exists, use its ID for the entity id when inserting into connections...
-                            connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"' + 'Funding Given' + '",' + (newFundingGivenEntity.year) + ',' + (newFundingGivenEntity.amount) + ', 1);', function(err) {
+                            connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"Funding Given",' + (newFundingGivenEntity.year) + ',' + (newFundingGivenEntity.amount) + ',1);', function(err) {
                                 if (err) throw err;
                             });
                           
                           }
                           else
                           {
-                            connection.query('INSERT INTO Entities (' + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, ' + 'Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + (newFundingGivenEntity.name) + '","' + (newFundingGivenEntity.name) + '","' + 'Unknown' + '",' + null + ',"' + 'Unknown' + '",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(), 0);', function(err, resultInner) {
+                            connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + (newFundingGivenEntity.name) + '","' + (newFundingGivenEntity.name) + '","Unknown",' + null + ',"Unknown",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(),0);', function(err, resultInner) {
                                 if (err) throw err;
-                                connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + (newFundingGivenEntity.name) + "' OR Nickname = " + "'" + (newFundingGivenEntity.name) + "') AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;", function(err, innerRows, innerFields) {
+                                connection.query('SELECT * FROM Entities WHERE ((Name = "' + (newFundingGivenEntity.name) + '" OR Nickname = "' + (newFundingGivenEntity.name) + '") AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;', function(err, innerRows, innerFields) {
                                   if (err) throw err;
-                                  connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"' + 'Funding Given' + '",' + (newFundingGivenEntity.year) + ',' + (newFundingGivenEntity.amount) + ', 0);', function(err) {
+                                  connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, ConnectionYear, Amount, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"Funding Given",' + (newFundingGivenEntity.year) + ',' + (newFundingGivenEntity.amount) + ',0);', function(err) {
                                     if (err) throw err;
                                   });
                                 });
@@ -353,23 +353,23 @@ exports.save = function(request, response){
             var newDataEntity;
               for (var i = 0; i < entity.data.length; i++) {
                   newDataEntity = entity.data[i];
-                  connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + newDataEntity + "' OR Nickname = " + "'" + newDataEntity + "') AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;",
+                  connection.query('SELECT * FROM Entities WHERE ((Name = "' + newDataEntity + '" OR Nickname = "' + newDataEntity + '") AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;',
                      (function(newDataEntity){
                         return function(err, rows, fields){
                           if (rows !== undefined && rows.length >= 1) {
                           // If the entity already exists, use its ID for the entity id when inserting into connections...
-                            connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"' + 'Data' + '", 1);', function(err) {
+                            connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"Data", 1);', function(err) {
                               if (err) throw err;
                             });
                           
                           }
                           else
                           {
-                            connection.query('INSERT INTO Entities (' + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, ' + 'Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + newDataEntity + '","' + newDataEntity + '","' + 'Unknown' + '",' + null + ',"' + 'Unknown' + '",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(), 0);', function(err, resultInner) {
+                            connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + newDataEntity + '","' + newDataEntity + '","Unknown",' + null + ',"Unknown",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(),0);', function(err, resultInner) {
                               if (err) throw err;
-                              connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + newDataEntity + "' OR Nickname = " + "'" + newDataEntity + "') AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;", function(err, innerRows, innerFields) {
+                              connection.query('SELECT * FROM Entities WHERE ((Name = "' + newDataEntity + '" OR Nickname = "' + newDataEntity + '") AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;', function(err, innerRows, innerFields) {
                                 if (err) throw err;
-                                connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"' + 'Data' + '", 0);', function(err) {
+                                connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"Data", 0);', function(err) {
                                   if (err) throw err;
                                 });
                               });
@@ -386,12 +386,12 @@ exports.save = function(request, response){
               for (var j = 0; j < entity.collaborations.length; j++) {
                 // console.log("Index " + j + ": " + entity.collaborations[j]);
                 newCollaborationEntity = entity.collaborations[j];
-                  connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + newCollaborationEntity + "' OR Nickname = " + "'" + newCollaborationEntity + "') AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;", 
+                  connection.query('SELECT * FROM Entities WHERE ((Name = "' + newCollaborationEntity + '" OR Nickname = "' + newCollaborationEntity + '") AND (Render=1)) ORDER BY CreatedAt DESC LIMIT 1;', 
                     (function(newCollaborationEntity){
                       return function(err, rows, fields){
                          if (rows !== undefined && rows.length >= 1) {
                           // If the entity already exists, use its ID for the entity id when inserting into connections...
-                          connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"' + 'Collaboration' + '", 1);', function(err) {
+                          connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, Render) VALUES (' + result.insertId + ',' + rows[0].ID + ',"Collaboration", 1);', function(err) {
                               if (err) throw err;
                           });
                       
@@ -399,11 +399,11 @@ exports.save = function(request, response){
                         else
                         {
                           // console.log("Else: " + newEntity);
-                          connection.query('INSERT INTO Entities (' + 'Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, ' + 'Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + newCollaborationEntity + '","' + newCollaborationEntity + '","' + 'Unknown' + '",' + null + ',"' + 'Unknown' + '",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(), 0);', function(err, resultInner) {
+                          connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + newCollaborationEntity + '","' + newCollaborationEntity + '","Unknown",' + null + ',"Unknown",' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + null + ',' + 'NOW(), 0);', function(err, resultInner) {
                             if (err) throw err;
-                            connection.query('SELECT * FROM Entities WHERE ((Name = ' + "'" + newCollaborationEntity + "' OR Nickname = " + "'" + newCollaborationEntity + "') AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;", function(err, innerRows, innerFields) {
+                            connection.query('SELECT * FROM Entities WHERE ((Name = "' + newCollaborationEntity + '" OR Nickname = "' + newCollaborationEntity + '") AND Render=1) ORDER BY CreatedAt DESC LIMIT 1;', function(err, innerRows, innerFields) {
                               if (err) throw err;
-                              connection.query('INSERT INTO Bridges (' + 'Entity1ID, Entity2ID, Connection, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"' + 'Collaboration' + '", 0);', function(err) {
+                              connection.query('INSERT INTO Bridges (Entity1ID, Entity2ID, Connection, Render) VALUES (' + result.insertId + ',' + innerRows[0].ID + ',"Collaboration", 0);', function(err) {
                                 if (err) throw err;
                                });
                               });
@@ -419,7 +419,7 @@ exports.save = function(request, response){
               (entity.revenue).forEach(function(object) {
                   var id = result.insertId;
 
-                  connection.query('INSERT INTO Operations (' + 'EntityID, Finance, Amount, Year) VALUES (' + id + ',"' + 'Revenue' + '",' + object.amount + ',' + object.year + ');', function(err) {
+                  connection.query('INSERT INTO Operations (EntityID, Finance, Amount, Year) VALUES (' + id + ',"Revenue",' + object.amount + ',' + object.year + ');', function(err) {
                       if (err) throw err;
                   });
               });
@@ -429,7 +429,7 @@ exports.save = function(request, response){
               (entity.expenses).forEach(function(object) {
                   var id = result.insertId;
 
-                  connection.query('INSERT INTO Operations (' + 'EntityID, Finance, Amount, Year) VALUES (' + id + ',"' + 'Expenses' + '",' + object.amount + ',' + object.year + ');', function(err) {
+                  connection.query('INSERT INTO Operations (EntityID, Finance, Amount, Year) VALUES (' + id + ',"Expenses",' + object.amount + ',' + object.year + ');', function(err) {
                       if (err) throw err;
                   });
               });
@@ -529,6 +529,9 @@ exports.save = function(request, response){
                                 });
 
                               async.map(entities,acquireNodes, done);
+
+                              console.log("Connection has closed...");
+                              connection.release();
                           });
                       });
                   });
