@@ -1,0 +1,17 @@
+{
+        "status": "Beta",
+        "thumbnailUrl": "http://civicinsight.azurewebsites.net/",
+        "bornAt": "Microsoft Technology and Civic Innovation",
+        "geography": "NYC",
+        "politicalEntity":"",
+        "type":"Web App",
+        "needs": [
+                {"need": "Mappers"},
+                {"need": "Node Dev"},
+                {"need": "D3 Dev"}
+        ],
+        "categories": [
+                {"category": "Community"},
+                {"category": "Civic Technology"}
+        ]
+}
