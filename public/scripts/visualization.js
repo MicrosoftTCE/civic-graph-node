@@ -221,10 +221,13 @@
         //   return -6 * empScale(d.employees);
         // else
         //   return -40;
-        if (d.employees !== null)
-          return -6 * empScale(d.employees);
-        else
-          return -25;
+        if (d.render === 1) {
+          if (d.employees !== null)
+            return -6 * empScale(d.employees);
+          else
+            return -25;
+        } else
+          return 0;
       })
       .linkDistance(50)
 
@@ -432,10 +435,13 @@
           //   return -5 * empScale(parseInt(d.employees));
           // else
           //   return -50;
-          if (d.employees !== null)
-            return -6 * empScale(d.employees);
-          else
-            return -25;
+          if (d.render === 1) {
+            if (d.employees !== null)
+              return -6 * empScale(d.employees);
+            else
+              return -25;
+          } else
+            return 0;
         })
         .linkDistance(50)
 
@@ -1484,6 +1490,9 @@
 
       displayFormC();
 
+      console.log(formObj);
+      console.log($.param(formObj));
+
       $.ajax({
         type: 'POST',
         data: $.param(formObj),
@@ -1497,7 +1506,8 @@
 
     function displayFormC() {
       var s = "";
-      s += '<h2 id="webform-head">Information</h2><hr/><div style="text-align:center;" class="webform-content"><p>Thanks for contributing information to Athena! Reload the page to see your changes reflected (in a few moments).</p><p>Might you be interested in helping with other entities?</p>';
+      s += '<h2 id="webform-head">Information</h2><hr/><div style="text-align:center;" class="webform-content"><p>Thank you for contributing to Athena! Refresh the page to view your changes (it might take a few moments).</p><p>Would you like to add or edit more info?</p>';
+
       s += '<ul id="suggestions">';
 
       var suggestions = determineNullFields();
@@ -3848,10 +3858,13 @@
             //   return -5 * empScale(parseInt(d.employees));
             // else
             //   return -50;
-            if (d.employees !== null)
-              return -6 * empScale(d.employees);
-            else
-              return -25;
+            if (d.render === 1) {
+              if (d.employees !== null)
+                return -6 * empScale(d.employees);
+              else
+                return -25;
+            } else
+              return 0;
           })
           .linkDistance(50)
 
