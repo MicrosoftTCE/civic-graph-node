@@ -32,27 +32,27 @@ Setting Up MySQL Database Locally
 3. Inside a browser, type into the address bar "localhost/phpmyadmin" to access the database's dashboard.
 4. Establish local credentials via the "Users" tab and editing privileges:
 
-  1. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_1.PNG "Screenshot 1")
-  2. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_2.PNG "Screenshot 2")
-  3. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_3.PNG "Screenshot 3")
-  4. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_4.PNG "Screenshot 4")
+  ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_1.PNG "Screenshot 1")
+  ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_2.PNG "Screenshot 2")
+  ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_3.PNG "Screenshot 3")
+  ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_4.PNG "Screenshot 4")
 
 5. Navigate to the config.inc file to retrieve your local database's credentials.
 
-  1. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_5.PNG "Screenshot 5")
-  2. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_6.PNG "Screenshot 6")
+  ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_5.PNG "Screenshot 5")
+  ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_6.PNG "Screenshot 6")
 
 6. Edit the following piece of code in the app.js file based on the configurations found:
 
-```
-app.use(myConnection(mysql, {
-  host: localhost,
-  user: root,
-  password: your_password,
-  port: 3306,
-  database: 'athena'
-  }, 'request'));
-```
+  ```
+  app.use(myConnection(mysql, {
+    host: localhost,
+    user: root,
+    password: your_password,
+    port: 3306,
+    database: 'athena'
+    }, 'request'));
+  ```
 
 7. Execute the mysqllocal.js script to parse the database:
 
