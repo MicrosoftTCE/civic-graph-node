@@ -56,7 +56,9 @@ Setting Up MySQL Database Locally
 
 7. Execute the mysqllocal.js script to parse the database:
 
+  ```
     node mysqllocal
+  ```
 
 Running Application
 --------------------
