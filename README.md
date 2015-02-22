@@ -32,15 +32,15 @@ Setting Up MySQL Database Locally
 3. Inside a browser, type into the address bar "localhost/phpmyadmin" to access the database's dashboard.
 4. Establish local credentials via the "Users" tab and editing privileges:
 
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_1.PNG "Screenshot 1")
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_2.PNG "Screenshot 2")
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_3.PNG "Screenshot 3")
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_4.PNG "Screenshot 4")
+  1. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_1.PNG "Screenshot 1")
+  2. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_2.PNG "Screenshot 2")
+  3. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_3.PNG "Screenshot 3")
+  4. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_4.PNG "Screenshot 4")
 
 5. Navigate to the config.inc file to retrieve your local database's credentials.
 
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_5.PNG "Screenshot 5")
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_6.PNG "Screenshot 6")
+  1. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_5.PNG "Screenshot 5")
+  2. ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_6.PNG "Screenshot 6")
 
 6. Edit the following piece of code in the app.js file based on the configurations found:
 
