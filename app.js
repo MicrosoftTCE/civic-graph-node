@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
-var myConnection = require('express-myconnection');
+var connection = require('express-myconnection');
 
 var index = require('./routes/index');
 
@@ -29,21 +29,14 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(myConnection(mysql, {
+app.use(connection(mysql, {
+port: 3306,
     host: 'localhost',
     user: 'root',
-    password: 'MicrosoftNY',
-    port: 3306,
+    password: 'root',
     database: 'athena'
 }, 'pool'));
 
-// app.use(connection(mysql, {
-//     host: 'us-cdbr-azure-east-b.cloudapp.net',
-//     user: 'b5a370a8f6d91a',
-//     password: 'e928dad7',
-//     port: 3306,
-//     database: 'athena'
-// }, 'request'));
 
 app.set('json spaces', 20);
 

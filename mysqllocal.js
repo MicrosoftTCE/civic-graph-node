@@ -9,23 +9,15 @@
     port: 3306,
     host: 'localhost',
     user: 'root',
-    password: 'MicrosoftNY'
+    password: 'root',
+    database: 'athena'
   });
-
-  // var connection = mysql.createConnection(
-  // {
-  //   port: 3306,
-  //   host: 'au-cdbr-azure-east-a.cloudapp.net',
-  //   user: 'b0c63aecaa6676',
-  //   password: '8e008947'
-  // });
-
 
   connection.connect();
 
-  connection.query('CREATE DATABASE IF NOT EXISTS athena', function (err) {
+  connection.query('CREATE DATABASE IF NOT EXISTS cdb_c7da98943c', function (err) {
       if (err) throw err;
-      connection.query('USE athena', function (err) {
+      connection.query('USE cdb_c7da98943c', function (err) {
           if (err) throw err;
 
           connection.query('CREATE TABLE IF NOT EXISTS Entities('
@@ -118,8 +110,22 @@
     for(var i = 0; i < (data.nodes).length; i++){
       var categories, relations, key_people;
       ((data.nodes)[i].categories !== null) ? categories = (data.nodes)[i].categories.join(", ") : categories = null;
-      ((data.nodes)[i].relations !== null) ? relations = (data.nodes)[i].relations.join(", ") : relations = null;
-      ((data.nodes)[i].key_people !== null) ? key_people = (data.nodes)[i].key_people.join(", ") : key_people = null;
+      if((data.nodes)[i].relations !== null) 
+      {
+        (data.nodes)[i].relations.forEach(function(d, i){if(i === (data.nodes)[i].relations.length){relations += d.entity;} else{relations += d.entity + ", "; }});
+      }
+      else
+      {
+        key_people = null;
+      }
+      if((data.nodes)[i].key_people !== null) 
+      {
+        (data.nodes)[i].key_people.forEach(function(d, i){if(i === (data.nodes)[i].key_people.length){key_people += d.name;} else{key_people += d.name + ", "; }});
+      }
+      else
+      {
+        key_people = null;
+      }
 
       var values = {
                       ID: (data.nodes)[i].ID, 
@@ -195,7 +201,7 @@
                       Render: (data.investment_connections[l].render)
                   };
 
-      ((data.investment_connections)[l].type === "Received") ? values['Connection'] = "Investment Received" : values['Connection'] = "Investment Given";
+      ((data.investment_connections)[l].type === "Received") ? values['Connection'] = "Investment Received" : values['Connection'] = "Investment Made";
 
       var query = connection.query('INSERT INTO Bridges SET ?', values, function(err, result){
         if (err) throw err;
@@ -233,7 +239,7 @@
                         Year: ((data.nodes)[n].revenue)[o].year
                       };
 
-          var query = connection.query('INSERT INTO Operations SET ?', values, function(err, result){
+          var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
             if (err) throw err;
           });
 
@@ -249,7 +255,7 @@
                         Year:  ((data.nodes)[n].revenue)[p].year
                       };
 
-          var query = connection.query('INSERT INTO Operations SET ?', values, function(err, result){
+          var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
             if (err) throw err;
           });
 

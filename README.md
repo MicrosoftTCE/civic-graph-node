@@ -1,7 +1,7 @@
-Athena - Civic Insight
-======================
+Athena Civic
+============
 
-[Athena](http://civicinsight.azurewebsites.net) is a web application for better understanding the field of civic technology through an intuitive and interactive graphical network view. Nodes represent entities, which could consist of people or organizations involved in the field of civic technology. The links among the entities represent the types of relationships or connections these entities share. 
+[Athena](athenacivic.azurewebsites.net) is a web application for visualizing the civic technology space through an intuitive and interactive graphical network. Nodes represent the entities, which would consist of people and organizations, involved within this space, and the links represent the type of relationship/connection these entities share. 
 
 Filtering options provide a unique method for visualizing certain aspects of the civic technology space.
 
@@ -17,60 +17,31 @@ Filtering options provide a unique method for visualizing certain aspects of the
 |`Investing`|`Dark Green` 
 |`Funding`|`Purple`
 |`Collaboration`|`Yellow`
-|`Data`|`Pink`
+|`Affiliation`|`Pink`
 
 Cloning the Repository
 ----------------------
 
 		git clone https://github.com/microsoftny/athena-civic.git
 
-Setting Up MySQL Database Locally
----------------------------------
-
-1. Install MAMP (for MACOSX), WAMP (for Windows), LAMP (Linux) or XAMPP (multi-platform) stack.
-2. Turn on the stack's server.
-3. Inside a browser, type into the address bar "localhost/phpmyadmin" to access the database's dashboard.
-4. Establish local credentials via the "Users" tab and editing privileges:
-
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_1.PNG "Screenshot 1")
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_2.PNG "Screenshot 2")
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_3.PNG "Screenshot 3")
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_4.PNG "Screenshot 4")
-
-5. Navigate to the config.inc file to retrieve your local database's credentials.
-
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_5.PNG "Screenshot 5")
-![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_6.PNG "Screenshot 6")
-
-6. Edit the following piece of code in the app.js file based on the configurations found:
-
-```
-app.use(myConnection(mysql, {
-  host: localhost,
-  user: root,
-  password: your_password,
-  port: 3306,
-  database: 'athena'
-  }, 'request'));
-```
-
-7. Execute the mysqllocal.js script to parse the database:
-
-    node mysqllocal
-
 Running Application
 --------------------
 
-1. Clone the repository to the current directory. 
-2. Change the working directory to the directoy of the repository.
-3. Execute one of the two commands shown in the table below, depending on the machine's OS.
+1. Install MAMP (for MACOSX), WAMP (for Windows) or XAMPP (multi-platform).
+2. For Macs, the "MAMP" folder can be found under Applications. For Windows, the "wamp" folder can be found under C:
+3. Clone the Github repo to htdocs under the "MAMP" folder if on a Mac machine, or clone the Github repo to www under the "wamp" folder if on a Windows machine.
+4. Execute the MAMP or WAMP application and turn on the localhost server.
+5. Inside a terminal or command prompt, navigate to the cloned repo and enter the following commands:
 
+			npm install
+			node app (or npm start)
+
+6. Depending on the port, you should be able to access Athena on your local machine using the following links.
+	
 Running on localhost
 --------------------
 
-|Machine | Command
+|Machine | URL
 |------- | ---
-|`Windows`| `DEBUG=app ./bin/www`
-|`Mac`| `npm start`
-
-4. Inside a browser, type into the address bar "http://localhost:3000" to launch the application.
+|`Windows`| `localhost:3000`
+|`Mac`| `localhost:port_number/athena-civic`

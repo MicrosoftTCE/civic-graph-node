@@ -100,6 +100,7 @@ body {
   /*padding-right:20px;
 }*/
 
+.views,
 .types,
 .connections,
 .relevance {
@@ -555,3 +556,15 @@ button#submit-B {
   height: 20px;
   position: absolute;
 }
+
+
+
+
+.land {
+    fill: #ccc;
+  }
+
+  .state-boundary {
+    fill: none;
+    stroke: #000;
+  }

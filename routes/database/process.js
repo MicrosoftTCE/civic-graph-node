@@ -1,7 +1,4 @@
 var async = require('async');
-var fs = require('fs');
-var path = require("path");
-var file = path.join(__dirname, '..', 'routes', 'data.json');
 
 exports.save = function(request, response){
   var entity = request.body;
@@ -73,21 +70,7 @@ exports.save = function(request, response){
         }
     }
 
-
     console.log(entity);
-
-    fs.readFile(file, 'utf8', function (err,data) {
-        if (err) {
-            console.log(err);
-        } else {
-            data = JSON.parse(data);
-            data.push(entity);
-            fs.writeFile(file, JSON.stringify(data), function (err) {
-              if (err) return console.log(err);
-              console.log('File saved.');
-            });
-        }
-    });
 
   request.getConnection(function (err, connection){
     //  Cleans up the sent stringified data.
@@ -462,20 +445,6 @@ exports.save = function(request, response){
               if (err) throw err;
               connection.query("UPDATE `Entities` SET `ID` = @count := @count + 1;", function(err) {
                   if (err) throw err;
-          
-                    fs.readFile(file, 'utf8', function (err,data) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            data = JSON.parse(data);
-                            data.pop();
-                            fs.writeFile(file, JSON.stringify(data), function (err) {
-                              if (err) return console.log(err);
-                              console.log('File saved.');
-                              connection.release();
-                            });
-                        }
-                    });
                     connection.release();
                     console.log("Completed");
                   });
