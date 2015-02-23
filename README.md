@@ -33,14 +33,14 @@ Setting Up MySQL Database Locally
 	 (For MACOSX type "localhost:8888/phpmyadmin")
 4. Establish local credentials via the "Users" tab and editing privileges:
 
-	 (For Windows:)
+	 For Windows
 
   ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_1.PNG "Screenshot 1")
   ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_2.PNG "Screenshot 2")
   ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_3.PNG "Screenshot 3")
   ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_4.PNG "Screenshot 4")
 
-	(For MACOSX:)
+	For MACOSX
 
 	![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mySQLMAC1.png "Mac Screenshot 1")
 	![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mySQLMAC2.png "Mac Screenshot 2")
@@ -51,17 +51,17 @@ Setting Up MySQL Database Locally
 5. Navigate to the config.inc.php file to retrieve your local database's credentials.
 	 (For MACOSX the config.inc.php file is in applications/mamp/bin/phpMyAdmin/)
 
- 	(For Windows:)
+ 	For Windows
   ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_5.PNG "Screenshot 5")
   ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_6.PNG "Screenshot 6")
 
-	(For MACOSX:)
+	For MACOSX
 	![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mySQLMAC5.png "Mac Screenshot 5")
 
 
 6. Edit the following piece of code in the app.js file based on the configurations found:
 
-	(For Windows:)
+	For Windows
 
   ```
   app.use(myConnection(mysql, {
