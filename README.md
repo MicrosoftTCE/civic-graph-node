@@ -32,6 +32,7 @@ Setting Up MySQL Database Locally
 3. Inside a browser, type into the address bar "localhost/phpmyadmin" to access the database's dashboard.
 	 (For MACOSX type "localhost:8888/phpmyadmin")
 4. Establish local credentials via the "Users" tab and editing privileges:
+
 	 (For Windows:)
 
   ![Alt text](https://raw.githubusercontent.com/microsoftny/athena-civic/master/screenshots/mysql_localhost_1.PNG "Screenshot 1")
