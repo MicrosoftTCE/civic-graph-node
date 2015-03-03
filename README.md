@@ -102,3 +102,11 @@ Running on localhost
 |`Mac`| `npm start`
 
 4. Inside a browser, type into the address bar "http://localhost:3000" to launch the application.
+
+Editing .HTML files
+--------------------
+After you make changes .HTML files, you can run grunt to convert them to HTML
+
+```
+grunt jade
+```

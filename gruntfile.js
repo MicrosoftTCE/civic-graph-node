@@ -1,9 +1,37 @@
 module.exports = function(grunt){
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    jade: {
+      compile: {
+        options: {
+          data: {
+            debug: false
+          }
+        },
+        files: {
+          "views/html/layout.html": ["views/layout.jade"],
+          "views/html/join.html": ["views/join.jade"],
+          "views/html/index.html":["views/index.jade"],
+          "views/html/community.html":["views/community.jade"],
+          "views/html/api.html":["views/api.jade"],
+          "views/html/about.html":["views/about.jade"],
+          "views/html/partials/*.html" : ["views/partials/*.jade"]
+        }
+      }
+    },
     jsbeautifier: {
-      files: ["public/scripts/visualization.js", "public/stylesheets/custom/*.css", "!public/stylesheets/custom/*.min.css"],
+      files: ["views/html/*.html", "views/html/partials/*.html","public/scripts/visualization.js", "public/stylesheets/custom/*.css", "!public/stylesheets/custom/*.min.css"],
       options: {
+        html: {
+          braceStyle: "collapse",
+          indentChar: " ",
+          indentScripts: "keep",
+          indentSize: 4,
+          maxPreserveNewlines: 10,
+          preserveNewlines: true,
+          unformatted: ["a", "sub", "sup", "b", "i", "u"],
+          wrapLineLength: 0
+        },
         css: {
           indentChar: " ",
           indentSize: 2
@@ -47,11 +75,13 @@ module.exports = function(grunt){
         }]
       }
     }
-  }); 
+  });
 
+  grunt.loadNpmTasks('grunt-contrib-jade');
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('default', ['jsbeautifier', 'uglify', 'cssmin']);
+
+  grunt.registerTask('default', ['jade', 'jsbeautifier', 'uglify', 'cssmin']);
 }
