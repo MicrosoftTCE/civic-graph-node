@@ -6,22 +6,6 @@ block content
 			.filter-name-location.input-control.text
 				input#search-text(type='text', placeholder='Filter by name or location', list='data-name-location')
 				datalist#data-name-location
-			.group-items.views
-				div
-					label
-						.viewstext
-							strong
-								h3 View
-					.input-control.radio.default-style.views(data-role='input-control')
-						label
-							input#cb_networkview(type='radio', name='views', value='Network Diagram', checked='checked')
-							span.check
-							h4 Network
-					.input-control.radio.default-style.views(data-role='input-control')
-						label
-							input#cb_mapview(type='radio', name='views', value='Map')
-							span.check
-							h4 Map
 			.group-items.types
 				div
 					label
@@ -96,6 +80,22 @@ block content
 							//input#cb_revenue(type='radio', name='relevance', value='Revenue')
 							//span.check
 							//h4 Revenue
+			.group-items.current-view
+				div
+					label
+						.viewstext
+							strong
+								h3 View
+					.input-control.radio.default-style.views(data-role='input-control')
+						label
+							input#cb_networkview(type='radio', name='views', value='Network Diagram', checked='checked')
+							span.check
+							h4 Network
+					.input-control.radio.default-style.views(data-role='input-control')
+						label
+							input#cb_mapview(type='radio', name='views', value='Map')
+							span.check
+							h4 Map
 	.page-wrap
 		.content
 		#edit
@@ -103,4 +103,4 @@ block content
 			#info
 		include ./partials/index-footer
 	script(type='text/javascript', src='/scripts/underscore-min.js')
-	script(type='text/javascript', src='/scripts/visualization.js')
+	script(type='text/javascript', src='/scripts/vis.js')
