@@ -4,8 +4,6 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mysql = require('mysql');
-var connection = require('express-myconnection');
 
 var index = require('./routes/index');
 
@@ -29,19 +27,10 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(connection(mysql, {
-port: 3306,
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    database: 'athena'
-}, 'pool'));
-
-
 app.set('json spaces', 20);
 
-var about = require('./routes/about');
-app.get('/about', about.render);
+var developer = require('./routes/developer');
+app.get('/developer', developer.render);
 
 var api = require('./routes/api');
 app.get('/api', api.render);
