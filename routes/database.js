@@ -3,8 +3,20 @@ var fs = require('fs');
 var path = require("path");
 var file = path.join(__dirname, '..', 'routes', 'data.json');
 
+var mysql = require('mysql');
+
+var db_config = require('./../configuration/credentials.js');
+var pool = mysql.createPool(db_config.cred.cleardb);
+
+var start2;
+
 exports.save = function(request, response){
+  console.log("Request!!!!" + request);
   var entity = request.body;
+
+
+  var start = new Date().getTime();
+
 
   //  Convert ALL empty strings to null...
     for (var property in entity) {
@@ -73,8 +85,11 @@ exports.save = function(request, response){
         }
     }
 
+    var end = new Date().getTime();
 
-    console.log(entity);
+    console.log("Process data: " + (end - start));
+
+    console.log("This is the entity: " + entity);
 
     fs.readFile(file, 'utf8', function (err,data) {
         if (err) {
@@ -89,16 +104,23 @@ exports.save = function(request, response){
         }
     });
 
-  request.getConnection(function (err, connection){
+  var start1 = new Date().getTime();
+  pool.getConnection(function (err, connection){
+    console.log("Got a connection!");
+    var end1 = new Date().getTime();
+    console.log("Getting connection:" + (end1 - start1));
+    console.log("This is what it looks like: " + connection);
     //  Cleans up the sent stringified data.
     if(err) throw err;
     
 
   var developJSON = function(result, entity)
   {
+    
       var asyncTasks = [];
 
         asyncTasks.push(function(callback){
+          
           var counterFR = 0;
           if (entity.funding_received !== null) {
             var newFundingReceivedEntity;
@@ -114,7 +136,7 @@ exports.save = function(request, response){
                               
                               if(counterFR === entity.funding_received.length - 1)
                               {
-                                callback();
+                                callback(null, 'Funding Received');
                               }
                               else
                               {
@@ -133,7 +155,7 @@ exports.save = function(request, response){
                                   if (err) throw err;
                                   if(counterFR === entity.funding_received.length - 1)
                                   {
-                                    callback();
+                                    callback('Funding Received');
                                   }
                                   else
                                   {
@@ -147,6 +169,9 @@ exports.save = function(request, response){
                       };
                     })(newFundingReceivedEntity));                   
               });
+          }
+          else{
+            callback(null, 'Funding Received');
           }
 
         });
@@ -166,7 +191,7 @@ exports.save = function(request, response){
                               if (err) throw err;
                               if(counterIR === entity.investments_received.length - 1)
                               {
-                                callback();
+                                callback(null, 'Investments Received');
                               }
                               else
                               {
@@ -185,7 +210,7 @@ exports.save = function(request, response){
                                   if (err) throw err;
                                   if(counterIR === entity.investments_received.length - 1)
                                   {
-                                    callback();
+                                    callback('Investments Received');
                                   }
                                   else
                                   {
@@ -200,6 +225,9 @@ exports.save = function(request, response){
                     })(newInvestmentsReceivedEntity));
 
               });
+          }
+          else {
+            callback(null, 'Investments Received');
           }
         });
 
@@ -218,7 +246,7 @@ exports.save = function(request, response){
                                   if (err) throw err;
                                   if(counterIM === entity.investments_made.length - 1)
                                   {
-                                    callback();
+                                    callback(null, 'Investments Made');
                                   }
                                   else
                                   {
@@ -237,7 +265,7 @@ exports.save = function(request, response){
                                   if (err) throw err;
                                   if(counterIM === entity.investments_made.length - 1)
                                   {
-                                    callback();
+                                    callback(null, 'Investments Made');
                                   }
                                   else
                                   {
@@ -256,6 +284,9 @@ exports.save = function(request, response){
               
               });
           }
+          else {
+            callback(null, 'Investments Made');
+          }
         });
 
         asyncTasks.push(function(callback){
@@ -273,7 +304,7 @@ exports.save = function(request, response){
                                 if (err) throw err;
                                 if(counterFG === entity.funding_given.length - 1)
                                   {
-                                    callback();
+                                    callback(null, 'Funding Given');
                                   }
                                   else
                                   {
@@ -292,7 +323,7 @@ exports.save = function(request, response){
                                     if (err) throw err;
                                     if(counterFG === entity.funding_given.length - 1)
                                     {
-                                      callback();
+                                      callback(null, 'Funding Given');
                                     }
                                     else
                                     {
@@ -307,6 +338,9 @@ exports.save = function(request, response){
                   })(newFundingGivenEntity));
    
                   });
+          }
+          else{
+            callback(null, 'Funding Given');
           }
         });
 
@@ -325,7 +359,7 @@ exports.save = function(request, response){
                               if (err) throw err;
                               if(counterD === entity.data.length - 1)
                               {
-                                callback();
+                                callback(null, 'Data');
                               }
                               else
                               {
@@ -344,7 +378,7 @@ exports.save = function(request, response){
                                   if (err) throw err;
                                   if(counterD === entity.data.length - 1)
                                   {
-                                    callback();
+                                    callback(null, 'Data');
                                   }
                                   else
                                   {
@@ -358,6 +392,9 @@ exports.save = function(request, response){
                         };
                      })(newDataEntity));
               }
+          }
+          else {
+            callback(null, 'Data');
           }
         });
 
@@ -377,7 +414,7 @@ exports.save = function(request, response){
                               if (err) throw err;
                               if(counterC === entity.collaborations.length - 1)
                               {
-                                callback();
+                                callback(null, 'Collaboration');
                               }
                               else
                               {
@@ -397,7 +434,7 @@ exports.save = function(request, response){
                                 if (err) throw err;
                                 if(counterC === entity.collaborations.length - 1)
                                 {
-                                  callback();
+                                  callback(null, 'Collaboration');
                                 }
                                 else
                                 {
@@ -412,6 +449,9 @@ exports.save = function(request, response){
                     })(newCollaborationEntity));
               }
           }
+          else {
+            callback(null, 'Collaboration');
+          }
         });
 
         asyncTasks.push(function(callback){
@@ -424,7 +464,7 @@ exports.save = function(request, response){
                       if (err) throw err;
                       if(counterR === entity.revenue.length - 1)
                       {
-                        callback();
+                        callback(null, 'Revenue');
                       }
                       else
                       {
@@ -432,6 +472,9 @@ exports.save = function(request, response){
                       }
                   });
               });
+          }
+          else {
+            callback(null, 'Revenue');
           }
         });
 
@@ -445,7 +488,7 @@ exports.save = function(request, response){
                       if (err) throw err;
                       if(counterE === entity.expenses.length - 1)
                       {
-                        callback();
+                        callback(null, 'Expenses');
                       }
                       else
                       {
@@ -454,36 +497,41 @@ exports.save = function(request, response){
                   });
               });
           }
+          else {
+            callback(null, 'Expenses');
+          }
         });
 
-        async.parallel(asyncTasks, function(){
+        async.parallel(asyncTasks, function(err, results){
+          console.log(results);
           //  Time to export this data to a json file!
-          connection.query("SET @count = -1;", function(err) {
-              if (err) throw err;
-              connection.query("UPDATE `Entities` SET `ID` = @count := @count + 1;", function(err) {
-                  if (err) throw err;
-          
-                    fs.readFile(file, 'utf8', function (err,data) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            data = JSON.parse(data);
-                            data.pop();
-                            fs.writeFile(file, JSON.stringify(data), function (err) {
-                              if (err) return console.log(err);
-                              console.log('File saved.');
-                              connection.release();
-                            });
-                        }
-                    });
+
+          fs.readFile(file, 'utf8', function (err,data) {
+            var end2 = new Date().getTime();
+          console.log("Connection Lines: " + (end2 - start2));
+              if (err) {
+                  console.log(err);
+              } else {
+                  data = JSON.parse(data);
+                  console.log(data);
+                  data.splice(-1,1);
+                  
+                  fs.writeFile(file, JSON.stringify(data), function (err) {
+                    if (err) return console.log(err);
                     connection.release();
-                    console.log("Completed");
+                    console.log('File saved.-----------------------------');
                   });
-              }); 
+              }
+          });
+                    //connection.release();
+                    //console.log("Completed");
+                
         });
     };  
 
   var insertNode = function(pastID, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people) {
+    var start5 = new Date().getTime();
+
     connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + entity.name + '","' + entity.nickname + '","' + entity.type + '",' + categories + ',"' + entity.location + '",' + url + ',' + twitter_handle + ',' + followers + ',' + employees + ',' + influence + ',' + relations + ',' + key_people + ',' + 'NOW(), 1);', function(err, result) {
           if (err) throw err;
 
@@ -494,23 +542,31 @@ exports.save = function(request, response){
             connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID + ' AND Render=1', function(err){
               if (err) throw err;
               console.log("Inside");
+              var end5 = new Date().getTime();
+              console.log("Actual insertion: " + (end5 - start5));
+              start2 = new Date().getTime();
               developJSON(result, entity);
               
             });
           }
           else
           {
+            var end5 = new Date().getTime();
+              console.log("Actual insertion: " + (end5 - start5));
+              start2 = new Date().getTime();
             developJSON(result, entity);
           }
       });
   };
 
+        var start4 = new Date().getTime();
+
         connection.query("SET @count = -1;", function(err) {
             if (err) throw err;
             connection.query("UPDATE `Entities` SET `ID` = @count := @count + 1;", function(err) {
                 if (err) throw err;
-                connection.query("ALTER TABLE `Entities` AUTO_INCREMENT = 1;", function(err) {
-                    if (err) throw err;
+                // connection.query("ALTER TABLE `Entities` AUTO_INCREMENT = 1;", function(err) {
+                    // if (err) throw err;
                     var followers, employees, categories, url,
                         twitter_handle, influence,
                         relations, key_people;
@@ -523,6 +579,7 @@ exports.save = function(request, response){
                         if (err) throw err;
                     });
 
+                    console.log("Finally got here...");
 
                     (entity.categories !== null) ? categories = '"' + entity.categories.join(", ") + '"': categories = null;
                     (entity.url !== null) ? url = '"' + entity.url + '"': url = null;
@@ -539,14 +596,19 @@ exports.save = function(request, response){
 
                       if(rows.length > 0)
                       {
-                        connection.query('UPDATE `Entities` SET `Render`=0 WHERE Name="' + entity.name + '" OR Nickname="' + entity.name + '"', function(err){
+                        connection.query('UPDATE `Entities` SET `Render`=0 WHERE ((Name="' + entity.name + '" OR Nickname="' + entity.name + '") AND Render=1)', function(err){
                           if (err) throw err;
-                          connection.query('UPDATE `Bridges` SET `Render`=0 WHERE Entity1ID=' + rows[0].ID, function(err){
+                          connection.query('UPDATE `Bridges` SET `Render`=0 WHERE (Entity1ID=' + rows[0].ID + ' AND Render=1)', function(err){
                             if (err) throw err;
+                            
                             if(typeof(rows[0].Followers) === "number"){
+                              var end4 = new Date().getTime();
+                            console.log("Before insertion: " + (end4 - start4));
                               insertNode(rows[0].ID, entity, categories, url, twitter_handle, rows[0].Followers, employees, influence, relations, key_people);
                             }
                             else{
+                              var end4 = new Date().getTime();
+                            console.log("Before insertion: " + (end4 - start4));
                               insertNode(rows[0].ID, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
                             }
                           });
@@ -555,10 +617,12 @@ exports.save = function(request, response){
                       }
                       else
                       {
+                        var end4 = new Date().getTime();
+                            console.log("Before insertion: " + (end4 - start4));
                         insertNode(-1, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
                       }
                     });
-                });
+                // });
             });
         });
   });

@@ -7,19 +7,19 @@ var router = express.Router();
 // });
 
 exports.render = function(request, response){
-  request.getConnection(function(err, connection){
-    if(err) throw err;
-      connection.query("SET @count = -1;", function(err) {
-            if (err) throw err;
-            connection.query("UPDATE `Entities` SET `ID` = @count := @count + 1;", function(err) {
-                if (err) throw err;
-                connection.query("ALTER TABLE `Entities` AUTO_INCREMENT = 1;", function(err) {
-                    if (err) throw err;
-                  });
-              });
-          });
-  });
-  response.render('index', {title: 'Athena'});
+  // request.getConnection(function(err, connection){
+  //   if(err) throw err;
+  //     connection.query("SET @count = -1;", function(err) {
+  //           if (err) throw err;
+  //           connection.query("UPDATE `Entities` SET `ID` = @count := @count + 1;", function(err) {
+  //               if (err) throw err;
+  //               connection.query("ALTER TABLE `Entities` AUTO_INCREMENT = 1;", function(err) {
+  //                   if (err) throw err;
+  //                 });
+  //             });
+  //         });
+  // });
+  response.render('index', {title: 'Civic Graph'});
 };
 
 // module.exports = router;

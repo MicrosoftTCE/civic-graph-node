@@ -2,7 +2,5 @@ var express = require('express');
 var router = express.Router();
 
 exports.render = function(request, response){
-  request.getConnection(function(err, connection){
-  });
-  response.render('community', {title: 'Our Community'});
+  response.render('community', {title: 'Civic Graph'});
 };
