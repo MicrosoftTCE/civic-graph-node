@@ -1,7 +1,7 @@
-Athena Civic
-============
+Civic Graph (formerly known as Athena Civic Insights)
+======================
 
-[Athena](athenacivic.azurewebsites.net) is a web application for visualizing the civic technology space through an intuitive and interactive graphical network. Nodes represent the entities, which would consist of people and organizations, involved within this space, and the links represent the type of relationship/connection these entities share. 
+[Civic Graph](http://civicinsight.azurewebsites.net) is a web application for better understanding the field of civic technology through an intuitive and interactive graphical network view. Nodes represent entities, which could consist of people or organizations involved in the field of civic technology. The links among the entities represent the types of relationships or connections these entities share.
 
 Filtering options provide a unique method for visualizing certain aspects of the civic technology space.
 
@@ -10,38 +10,15 @@ Filtering options provide a unique method for visualizing certain aspects of the
 |`For-Profit`|`Green`
 |`Non-Profit`|`Blue`
 |`Government`|`Red`
-|`Individuals`|`Orange` 
+|`Individuals`|`Orange`
 
 |Type of Connections | Color Representation
 |----------------|-----------------
-|`Investing`|`Dark Green` 
+|`Investing`|`Dark Green`
 |`Funding`|`Purple`
 |`Collaboration`|`Yellow`
-|`Affiliation`|`Pink`
+|`Data`|`Pink`
 
-Cloning the Repository
-----------------------
-
-		git clone https://github.com/microsoftny/athena-civic.git
-
-Running Application
---------------------
-
-1. Install MAMP (for MACOSX), WAMP (for Windows) or XAMPP (multi-platform).
-2. For Macs, the "MAMP" folder can be found under Applications. For Windows, the "wamp" folder can be found under C:
-3. Clone the Github repo to htdocs under the "MAMP" folder if on a Mac machine, or clone the Github repo to www under the "wamp" folder if on a Windows machine.
-4. Execute the MAMP or WAMP application and turn on the localhost server.
-5. Inside a terminal or command prompt, navigate to the cloned repo and enter the following commands:
-
-			npm install
-			node app (or npm start)
-
-6. Depending on the port, you should be able to access Athena on your local machine using the following links.
-	
-Running on localhost
---------------------
-
-|Machine | URL
-|------- | ---
-|`Windows`| `localhost:3000`
-|`Mac`| `localhost:port_number/athena-civic`
+### To Start Developing
+   * [Setup for Windows](https://github.com/microsoftny/civic-graph/wiki/Getting-Started---Windows)
+   * [Setup for Mac](https://github.com/microsoftny/civic-graph/wiki/Getting-Started---Windows)
