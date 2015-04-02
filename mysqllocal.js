@@ -6,12 +6,12 @@
 
   var db_config = require('./configuration/credentials.js');
   var connection = mysql.createConnection(db_config.cred.cleardb);
-  console.log(db_config.cred.cleardb.database);
+
   connection.connect();
 
-  var test = connection.query('CREATE DATABASE IF NOT EXISTS ' + db_config.cred.cleardb.database, function (err) {
+  connection.query('CREATE DATABASE IF NOT EXISTS civicteabtdklgiw', function (err) {
       if (err) throw err;
-      connection.query('USE ' + db_config.cred.cleardb.database, function (err) {
+      connection.query('USE civicteabtdklgiw', function (err) {
           if (err) throw err;
 
           connection.query('CREATE TABLE IF NOT EXISTS Entities('
@@ -100,14 +100,28 @@
       });
   });
 
-  console.log(test.sql);
-
   var insertEntities = function(data){
     for(var i = 0; i < (data.nodes).length; i++){
-      var categories, relations, key_people;
+      var categories;
+      var relations = '';
+      var key_people = '';
       ((data.nodes)[i].categories !== null) ? categories = (data.nodes)[i].categories.join(", ") : categories = null;
-      ((data.nodes)[i].relations !== null) ? relations = (data.nodes)[i].relations.join(", ") : relations = null;
-      ((data.nodes)[i].key_people !== null) ? key_people = (data.nodes)[i].key_people.join(", ") : key_people = null;
+      if((data.nodes)[i].relations !== null) 
+      {
+        (data.nodes)[i].relations.forEach(function(d, x){if(x === (data.nodes)[i].relations.length){relations += d.entity;} else{relations += d.entity + ", "; }});
+      }
+      else
+      {
+        relations = null;
+      }
+      if((data.nodes)[i].key_people !== null) 
+      {
+        (data.nodes)[i].key_people.forEach(function(d, x){if(x === (data.nodes)[i].key_people.length){key_people += d.name;} else{key_people += d.name + ", "; }});
+      }
+      else
+      {
+        key_people = null;
+      }
 
       var values = {
                       ID: (data.nodes)[i].ID, 
