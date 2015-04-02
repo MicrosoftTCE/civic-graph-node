@@ -18,3 +18,7 @@ Filtering options provide a unique method for visualizing certain aspects of the
 |`Funding`|`Purple`
 |`Collaboration`|`Yellow`
 |`Data`|`Pink`
+
+##To Start Developing
+*[Setup for Windows](https://github.com/microsoftny/civic-graph/wiki/Getting-Started---Windows)
+*[Setup for Mac](https://github.com/microsoftny/civic-graph/wiki/Getting-Started---Windows)
