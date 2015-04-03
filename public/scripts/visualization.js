@@ -122,7 +122,7 @@
 
       var collaborationConnections;
       var dataConnections;
-      // var fundingConnections;
+      var fundingConnections;
       var investmentConnections;
 
       var centeredNode = {};
@@ -266,7 +266,7 @@
           .on("dragend", dragend);
 
         //  FUNDINGS
-        fundLink = svg.selectAll(".fund")
+        var fundLink = svg.selectAll(".fund")
           .data(fundingConnections)
           .enter().append("line")
           .attr("class", "fund")
@@ -288,7 +288,8 @@
           .style("visibility", "visible");
 
         //  COLLABORATIONS
-        porucsLink = svg.selectAll(".porucs")
+
+        var porucsLink = svg.selectAll(".porucs")
           .data(collaborationConnections)
           .enter().append("line")
           .attr("class", "porucs")
@@ -309,7 +310,7 @@
           .style("opacity", "0.2")
           .style("visibility", "visible");
 
-        nodeInit = svg.selectAll(".node")
+        var nodeInit = svg.selectAll(".node")
           .data(filteredNodes)
           .enter()
           .append("g")
@@ -423,7 +424,6 @@
           force.tick();
         }
 
-
         // Must adjust the force parameters...
 
         function dblclick(d) {
@@ -474,10 +474,9 @@
 
           .on("tick", tick)
             .start();
-          // for (var i = 0; i < 1; ++i) {
-          //                    force.tick();
-          //                }
-          //                force.stop();
+          for (var i = 0; i < 150; ++i) {
+            force.tick();
+          }
         }
 
 
@@ -578,6 +577,7 @@
           }
 
           //  KEY PEOPLE
+
           if (d.key_people !== null) {
             s += '<br/><h6>' + 'Key People:' + '</h6>' + '<ul><h5>';
             for (var count = 0; count < d.key_people.length; count++) {
@@ -2718,9 +2718,6 @@
 
         }
 
-
-
-
         var determineVisibleNodes = function() {
           //  Construct associative array of the visible nodes' indices (keys) and corresponding objects (values).
           var visibleNodes = {};
@@ -2883,8 +2880,6 @@
         typesCheckboxActions();
 
 
-
-
         d3.selectAll('#cb_emp, #cb_numtwit').on('click', function() {
           if (document.getElementById("cb_emp").checked) {
             node.transition()
@@ -2956,6 +2951,10 @@
 
             .on("tick", tick)
               .start();
+            for (var i = 0; i < 150; ++i) {
+              force.tick();
+            }
+
           }
           clearResetFlag = 1;
         });
@@ -3074,7 +3073,6 @@
       drawGraph();
       var map = document.getElementById('map');
       map.parentNode.removeChild(map);
-      console.log("asd");
     }
   });
 
@@ -3085,6 +3083,5 @@
       drawMap();
     }
   });
-
-
 })();
+

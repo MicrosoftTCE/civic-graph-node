@@ -222,6 +222,19 @@ input[type="checkbox"]:checked ~ .check:after {
   margin: 0px;
   margin-left: 0px;
 }
+<<<<<<< HEAD
+=======
+.metro .input-control.radio.default-style.views input[type="radio"]:checked ~ .check:after {
+  display: block;
+  content: "" !important;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #1d1d1d;
+  margin: 0px;
+  margin-left: 0px;
+}
+>>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
 /*
 square radio button code */
 /*

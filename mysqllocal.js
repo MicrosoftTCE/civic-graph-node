@@ -4,20 +4,15 @@
 
   var file = __dirname + '/public/data/civic.json';
 
-  var connection = mysql.createConnection(
-  {
-    port: 3306,
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    database: 'athena'
-  });
+
+  var db_config = require('./configuration/credentials.js');
+  var connection = mysql.createConnection(db_config.cred.cleardb);
 
   connection.connect();
 
-  connection.query('CREATE DATABASE IF NOT EXISTS cdb_c7da98943c', function (err) {
+    connection.query('CREATE DATABASE IF NOT EXISTS ' + db_config.cred.cleardb.database, function (err) {
       if (err) throw err;
-      connection.query('USE cdb_c7da98943c', function (err) {
+      connection.query('USE ' + db_config.cred.cleardb.database, function (err) {
           if (err) throw err;
 
           connection.query('CREATE TABLE IF NOT EXISTS Entities('
@@ -108,19 +103,21 @@
 
   var insertEntities = function(data){
     for(var i = 0; i < (data.nodes).length; i++){
-      var categories, relations, key_people;
+      var categories;
+      var relations = '';
+      var key_people = '';
       ((data.nodes)[i].categories !== null) ? categories = (data.nodes)[i].categories.join(", ") : categories = null;
       if((data.nodes)[i].relations !== null) 
       {
-        (data.nodes)[i].relations.forEach(function(d, i){if(i === (data.nodes)[i].relations.length){relations += d.entity;} else{relations += d.entity + ", "; }});
+        (data.nodes)[i].relations.forEach(function(d, x){if(x === (data.nodes)[i].relations.length){relations += d.entity;} else{relations += d.entity + ", "; }});
       }
       else
       {
-        key_people = null;
+        relations = null;
       }
       if((data.nodes)[i].key_people !== null) 
       {
-        (data.nodes)[i].key_people.forEach(function(d, i){if(i === (data.nodes)[i].key_people.length){key_people += d.name;} else{key_people += d.name + ", "; }});
+        (data.nodes)[i].key_people.forEach(function(d, x){if(x === (data.nodes)[i].key_people.length){key_people += d.name;} else{key_people += d.name + ", "; }});
       }
       else
       {
