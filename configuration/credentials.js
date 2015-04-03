@@ -2,15 +2,15 @@ exports.cred = {
     'cleardb' : {
       port: 3306,
       host: 'us-cdbr-azure-east-b.cloudapp.net',
-      user: 'bab063a997d6ce',
-      password: 'd5fd92fd',
-      database: 'civicteabtdklgiw'
+      user: 'b184e9dc5c53b9',
+      password: 'cb023509',
+      database: 'civicteA9MEi6nPl'
     },
     'localhost' : {
       port: 3306,
       host: 'us-cdbr-azure-east-b.cloudapp.net',
-      user: 'bab063a997d6ce',
-      password: 'd5fd92fd',
-      database: 'civicteabtdklgiw'
+      user: 'b184e9dc5c53b9',
+      password: 'cb023509',
+      database: 'civicteA9MEi6nPl'
     }
 };

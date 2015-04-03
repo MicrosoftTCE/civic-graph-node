@@ -9,9 +9,9 @@
 
   connection.connect();
 
-  connection.query('CREATE DATABASE IF NOT EXISTS civicteabtdklgiw', function (err) {
+    connection.query('CREATE DATABASE IF NOT EXISTS ' + db_config.cred.cleardb.database, function (err) {
       if (err) throw err;
-      connection.query('USE civicteabtdklgiw', function (err) {
+      connection.query('USE ' + db_config.cred.cleardb.database, function (err) {
           if (err) throw err;
 
           connection.query('CREATE TABLE IF NOT EXISTS Entities('
