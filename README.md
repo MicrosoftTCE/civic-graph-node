@@ -1,5 +1,7 @@
-Civic Graph (formerly known as Athena Civic Insights)
+Civic Graph 
 ======================
+
+#####(formerly known as Athena Civic Insights)
 
 [Civic Graph](http://civicinsight.azurewebsites.net) is a web application for better understanding the field of civic technology through an intuitive and interactive graphical network view. Nodes represent entities, which could consist of people or organizations involved in the field of civic technology. The links among the entities represent the types of relationships or connections these entities share.
 
