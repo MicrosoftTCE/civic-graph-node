@@ -1,2 +1,0 @@
-username: CivicGraphMSFT@outlook.com
-password: MicrosoftTCE
