@@ -48,10 +48,10 @@ module.exports = function(grunt){
       }
     }
   }); 
+
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-
 
   grunt.registerTask('default', ['jsbeautifier', 'uglify', 'cssmin']);
 }

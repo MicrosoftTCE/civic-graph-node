@@ -4,7 +4,6 @@
 
   var file = __dirname + '/public/data/civic.json';
 
-
   var db_config = require('./configuration/credentials.js');
   var connection = mysql.createConnection(db_config.cred.cleardb);
 
