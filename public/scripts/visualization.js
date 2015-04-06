@@ -1,5 +1,4 @@
-// (function() {
-
+(function() {
   function get_url_params() {
     // This function is anonymous, is executed immediately and 
     // the return value is assigned to QueryString!
@@ -422,7 +421,7 @@
         while (force.alpha() > 0.025) {
           force.tick();
         }
-        
+
 
         // Must adjust the force parameters...
 
@@ -474,15 +473,10 @@
 
           .on("tick", tick)
             .start();
-
-          for (var i = 0; i < 150; ++i) {
-            force.tick();
-          }
-          
           // for (var i = 0; i < 1; ++i) {
           //                    force.tick();
           //                }
-          //                
+          //                force.stop();
         }
 
 
@@ -583,7 +577,6 @@
           }
 
           //  KEY PEOPLE
-          console.log(d.key_people)
           if (d.key_people !== null) {
             s += '<br/><h6>' + 'Key People:' + '</h6>' + '<ul><h5>';
             for (var count = 0; count < d.key_people.length; count++) {
@@ -1539,7 +1532,7 @@
 
         function displayFormC() {
           var s = "";
-          s += '<h2 id="webform-head">Information</h2><hr/><div style="text-align:center;" class="webform-content"><p>Thank you for contributing to Athena! Refresh the page to view your changes (it might take a few moments).</p><p>Would you like to add or edit more info?</p>';
+          s += '<h2 id="webform-head">Information</h2><hr/><div style="text-align:center;" class="webform-content"><p>Thank you for contributing to Civic Graph! Refresh the page to view your changes (it might take a few moments).</p><p>Would you like to add or edit more info?</p>';
 
           s += '<ul id="suggestions">';
 
@@ -2724,1111 +2717,193 @@
 
         }
 
-        function determineVisibleNodes() {
-          var visibleNodesIndices = [];
+
+
+
+
+
+
+
+
+
+        var determineVisibleNodes = function() {
+          //  Construct associative array of the visible nodes' indices (keys) and corresponding objects (values).
+          var visibleNodes = {};
           for (var x = 0; x < nodeInit[0].length; x++) {
             if (nodeInit[0][x].style.visibility === "visible") {
-              visibleNodesIndices.push(x);
+              visibleNodes[nodeInit[0][x].__data__.ID] = nodeInit[0][x];
             }
           }
-
-          var visibleNodes = [];
-          nodeInit.filter(function(d, i) {
-            if (visibleNodesIndices.indexOf(i) > -1)
-              visibleNodes.push(d);
-          });
-
           return visibleNodes;
+        };
+
+        /***
+
+          For the "Connections" checkboxes
+
+        ***/
+        var connectionsCheckboxActions = function() {
+
+          var connectionClasses = ['.invest', '.fund', '.porucs', '.data'];
+
+          d3.selectAll('.group-items.connections input')[0].forEach(function(d, i) {
+            d3.selectAll('#' + d.id).on('click', (function(d, i) {
+              return function() {
+                // d3.selectAll('#cb_fund')[0][0].checked
+                var visibleNodes = determineVisibleNodes();
+                $('#' + d.id).is(':checked') ? revealConnections(connectionClasses[i], visibleNodes) : hideConnections(connectionClasses[i]);
+                shouldCheckboxRemainUnchecked(connectionClasses[i], visibleNodes);
+              };
+            })(d, i));
+          });
+        };
+
+        // Only reveal the connections with both source and target nodes visible.
+        var revealConnections = function(selector, visibleNodes) {
+          // drawFundLink();
+          d3.selectAll(selector).style("visibility", function(l) {
+            if (l.source.index in visibleNodes && l.target.index in visibleNodes && this.style.visibility === "hidden") {
+              return "visible";
+            } else
+              return "hidden";
+          });
+        };
+
+        //  
+        var hideConnections = function(selector) {
+          d3.selectAll(selector).style("visibility", function(l) {
+            return "hidden";
+          });
+        };
+
+        // If none of the type's nodes are visible, then the connections should not be visible as well (no nodes = no connections).
+        var shouldCheckboxRemainUnchecked = function(selector, visibleNodes) {
+          if (visibleNodes.length === 0 || ($('#cb_individ').is('checked') && $('#cb_forpro').is('checked') && $('#cb_nonpro').is('checked') && $('#cb_gov').is('checked'))) {
+            $(selector).attr('checked', false);
+          }
         }
 
-        d3.selectAll('#cb_fund').on('click', function() {
-          var visibleNodes = determineVisibleNodes();
-          //  Form links for funds.
 
-          if (document.getElementById("cb_fund").checked) {
-
-
-            var count = 0;
-            // drawFundLink();
-            d3.selectAll('.fund').style("visibility", function(l) {
-              if (visibleNodes.indexOf(l.source) > -1 && visibleNodes.indexOf(l.target) > -1 && this.style.visibility === "hidden") {
-                count++;
-                return "visible";
-              } else
-                return "hidden";
-            });
-            // .classed("visfund", true); 
-          }
-
-          if (!document.getElementById("cb_fund").checked) {
-            // d3.selectAll(".fund").remove();
-            d3.selectAll('.fund').style("visibility", function(l) {
-              // if(visibleNodes.indexOf(l.source) > -1 && visibleNodes.indexOf(l.target) > -1 && this.style.visibility === "visible")
-              // {
-              return "hidden";
-              // }
-            });
-
-            // .classed("visfund", false);
-          }
-
-          if (visibleNodes.length === 0 || (!document.getElementById("cb_individ").checked && !document.getElementById("cb_forpro").checked && !document.getElementById("cb_nonpro").checked && !document.getElementById("cb_gov").checked)) {
-            document.getElementById("cb_fund").checked = false;
-          }
-
-        });
-
-        d3.selectAll('#cb_invest').on('click', function() {
-          var visibleNodes = determineVisibleNodes();
-
-          //  Form links for investments.
-          if (document.getElementById("cb_invest").checked) {
-
-
-
-
-            // drawInvestLink();
-            d3.selectAll('.invest').style("visibility", function(l) {
-              if (visibleNodes.indexOf(l.source) > -1 && visibleNodes.indexOf(l.target) > -1 && this.style.visibility === "hidden") {
-                return "visible";
-              } else
-                return "hidden";
-            });
-
-            // .classed("visinvest", true);
-
-          }
-
-          if (!document.getElementById("cb_invest").checked) {
-            // d3.selectAll(".invest").remove();
-            d3.selectAll('.invest').style("visibility", function(l) {
-              // if(visibleNodes.indexOf(l.source) > -1 && visibleNodes.indexOf(l.target) > -1 && this.style.visibility === "visible")
-              return "hidden";
-            });
-            // .classed("visinvest", false);
-
-          }
-
-          if (visibleNodes.length === 0 || (!document.getElementById("cb_individ").checked && !document.getElementById("cb_forpro").checked && !document.getElementById("cb_nonpro").checked && !document.getElementById("cb_gov").checked)) {
-            document.getElementById("cb_invest").checked = false;
-          }
-        });
-
-        d3.selectAll('#cb_porucs').on('click', function() {
-          var visibleNodes = determineVisibleNodes();
-
-          //  Form links for partnerships or unidentified collaborations.
-          if (document.getElementById("cb_porucs").checked) {
-
-
-            // drawInvestLink();
-            d3.selectAll('.porucs').style("visibility", function(l) {
-              if (visibleNodes.indexOf(l.source) > -1 && visibleNodes.indexOf(l.target) > -1 && this.style.visibility === "hidden")
-                return "visible";
-              else
-                return "hidden";
-            });
-            // .classed("visporucs", true);
-
-          }
-
-          if (!document.getElementById("cb_porucs").checked) {
-            // d3.selectAll(".porucs").remove();
-            d3.selectAll('.porucs').style("visibility", function(l) {
-              // if(visibleNodes.indexOf(l.source) > -1 && visibleNodes.indexOf(l.target) > -1 && this.style.visibility === "visible")
-              return "hidden";
-            });
-            // .classed("visporucs", false);
-
-          }
-
-          if (visibleNodes.length === 0 || (!document.getElementById("cb_individ").checked && !document.getElementById("cb_forpro").checked && !document.getElementById("cb_nonpro").checked && !document.getElementById("cb_gov").checked)) {
-            document.getElementById("cb_porucs").checked = false;
-          }
-        });
-
-        d3.selectAll('#cb_data').on('click', function() {
-          var visibleNodes = determineVisibleNodes();
-
-          //  Form links for data.
-          if (document.getElementById("cb_data").checked) {
-
-
-            // drawInvestLink();
-            d3.selectAll('.data').style("visibility", function(l) {
-              if (visibleNodes.indexOf(l.source) > -1 && visibleNodes.indexOf(l.target) > -1 && this.style.visibility === "hidden")
-                return "visible";
-              else
-                return "hidden";
-            });
-            // .classed("visdata", true);
-
-          }
-
-          if (!document.getElementById("cb_data").checked) {
-            // d3.selectAll(".porucs").remove();
-            d3.selectAll('.data').style("visibility", function(l) {
-
-              // if(visibleNodes.indexOf(l.source) > -1 && visibleNodes.indexOf(l.target) > -1 && this.style.visibility === "visible")
-              return "hidden";
-
-            });
-            // .classed("visdata", false);
-
-          }
-
-          if (visibleNodes.length === 0 || (!document.getElementById("cb_individ").checked && !document.getElementById("cb_forpro").checked && !document.getElementById("cb_nonpro").checked && !document.getElementById("cb_gov").checked)) {
-            document.getElementById("cb_data").checked = false;
-          }
-
-        });
-
-
-        d3.selectAll('#cb_individ, #cb_nonpro, #cb_forpro, #cb_gov').on('click', function() {
-          //  Variables for visible.
-
-          var fNCArray0v = [];
-          var iNCArray0v = [];
-          var pcNCArray0v = [];
-          var aNCArray0v = [];
-          var countIndex0v = [];
-
-          var fNCArray1v = [];
-          var iNCArray1v = [];
-          var pcNCArray1v = [];
-          var aNCArray1v = [];
-          var countIndex1v = [];
-
-          var fNCArray2v = [];
-          var iNCArray2v = [];
-          var pcNCArray2v = [];
-          var aNCArray2v = [];
-          var countIndex2v = [];
-
-          var fNCArray3v = [];
-          var iNCArray3v = [];
-          var pcNCArray3v = [];
-          var aNCArray3v = [];
-          var countIndex3v = [];
-
-          //  Variables for hidden.
-
-          var fNCArray0h = [];
-          var iNCArray0h = [];
-          var pcNCArray0h = [];
-          var aNCArray0h = [];
-          var countIndex0h = [];
-
-          var fNCArray1h = [];
-          var iNCArray1h = [];
-          var pcNCArray1h = [];
-          var aNCArray1h = [];
-          var countIndex1h = [];
-
-          var fNCArray2h = [];
-          var iNCArray2h = [];
-          var pcNCArray2h = [];
-          var aNCArray2h = [];
-          var countIndex2h = [];
-
-          var fNCArray3h = [];
-          var iNCArray3h = [];
-          var pcNCArray3h = [];
-          var aNCArray3h = [];
-          var countIndex3h = [];
-
-
-          if (document.getElementById("cb_individ").checked) {
-
-            d3.selectAll(".node").filter(function(d) {
-              if (d.type === "Individual") return this;
-            }).style("visibility", "visible");
-            //  For funding connections
-
-            countIndex0v = 0;
-
-            filteredNodes.forEach(function(node0v) {
-              if (node0v.type === 'Individual') {
-                fundingConnections.forEach(function(fundNodeCon0v) {
-                  if (node0v === fundNodeCon0v.source || node0v === fundNodeCon0v.target) {
-                    fNCArray0v.push(countIndex0v); //  store positions inside of array...
-                  }
-                  countIndex0v++;
-                });
-                countIndex0v = 0;
-              }
-            });
-
-            //  For investing connections
-
-            countIndex0v = 0;
-
-            filteredNodes.forEach(function(node0v) {
-              if (node0v.type === 'Individual') {
-                investmentConnections.forEach(function(investNodeCon0v) {
-                  if (node0v === investNodeCon0v.source || node0v === investNodeCon0v.target) {
-                    iNCArray0v.push(countIndex0v); //  store positions inside of array...
-                  }
-                  countIndex0v++;
-                });
-                countIndex0v = 0;
-              }
-            });
-
-            //  For partnerships/collaborations connections
-
-            countIndex0v = 0;
-
-            filteredNodes.forEach(function(node0v) {
-              if (node0v.type === 'Individual') {
-                collaborationConnections.forEach(function(porucsNodeCon0v) {
-                  if (node0v === porucsNodeCon0v.source || node0v === porucsNodeCon0v.target) {
-                    pcNCArray0v.push(countIndex0v); //  store positions inside of array...
-                  }
-                  countIndex0v++;
-                });
-                countIndex0v = 0;
-              }
-            });
-
-            //  For data connections
-
-            countIndex0 = 0;
-
-            filteredNodes.forEach(function(node0) {
-              if (node0.type === 'Individual') {
-                dataConnections.forEach(function(dataNodeCon0) {
-                  if (node0 === dataNodeCon0.source || node0 === dataNodeCon0.target) {
-                    aNCArray0v.push(countIndex0); //  store positions inside of array...
-                  }
-                  countIndex0++;
-                });
-                countIndex0 = 0;
-              }
-            });
-
-          }
-          if (!document.getElementById("cb_individ").checked)
-
-          {
-
-            d3.selectAll(".node").filter(function(d) {
-              if (d.type === "Individual") return this;
-            }).style("visibility", "hidden");
-
-            //  For funding connections
-
-            countIndex0h = 0;
-
-            filteredNodes.forEach(function(node0h) {
-              if (node0h.type === 'Individual') {
-                fundingConnections.forEach(function(fundNodeCon0h) {
-                  if (node0h === fundNodeCon0h.source || node0h === fundNodeCon0h.target) {
-                    fNCArray0h.push(countIndex0h); //  store positions inside of array...
-                  }
-                  countIndex0h++;
-                });
-                countIndex0h = 0;
-              }
-            });
-
-            //  For investing connections
-
-            countIndex0h = 0;
-
-            filteredNodes.forEach(function(node0h) {
-              if (node0h.type === 'Individual') {
-                investmentConnections.forEach(function(investNodeCon0h) {
-                  if (node0h === investNodeCon0h.source || node0h === investNodeCon0h.target) {
-                    iNCArray0h.push(countIndex0h); //  store positions inside of array...
-                  }
-                  countIndex0h++;
-                });
-                countIndex0h = 0;
-              }
-            });
-
-            //  For partnerships/collaborations connections
-
-            countIndex0h = 0;
-
-            filteredNodes.forEach(function(node0h) {
-              if (node0h.type === 'Individual') {
-                collaborationConnections.forEach(function(porucsNodeCon0h) {
-                  if (node0h === porucsNodeCon0h.source || node0h === porucsNodeCon0h.target) {
-                    pcNCArray0h.push(countIndex0h); //  store positions inside of array...
-                  }
-                  countIndex0h++;
-                });
-                countIndex0h = 0;
-              }
-            });
-
-            //  For data connections
-
-            countIndex0h = 0;
-
-            filteredNodes.forEach(function(node0h) {
-              if (node0h.type === 'Individual') {
-                dataConnections.forEach(function(dataNodeCon0h) {
-                  if (node0h === dataNodeCon0h.source || node0h === dataNodeCon0h.target) {
-                    aNCArray0h.push(countIndex0h); //  store positions inside of array...
-                  }
-                  countIndex0h++;
-                });
-                countIndex0h = 0;
-              }
-            });
-          }
-
-          if (document.getElementById("cb_nonpro").checked) {
-            d3.selectAll(".node").filter(function(d) {
-              if (d.type === "Non-Profit") return this;
-            }).style("visibility", "visible");
-
-            //  For funding connections
-
-            countIndex1v = 0;
-
-            filteredNodes.forEach(function(node1v) {
-              if (node1v.type === 'Non-Profit') {
-                fundingConnections.forEach(function(fundNodeCon1v) {
-                  if ((node1v === fundNodeCon1v.source || node1v === fundNodeCon1v.target) && fNCArray1v.indexOf(countIndex1v) === -1) {
-                    fNCArray1v.push(countIndex1v); //  store positions inside of array...
-                  }
-                  countIndex1v++;
-                });
-                countIndex1v = 0;
-              }
-            });
-
-            //  For investing connections
-
-            countIndex1v = 0;
-
-            filteredNodes.forEach(function(node1v) {
-              if (node1v.type === 'Non-Profit') {
-                investmentConnections.forEach(function(investNodeCon1v) {
-                  if ((node1v === investNodeCon1v.source || node1v === investNodeCon1v.target) && iNCArray1v.indexOf(countIndex1v) === -1) {
-                    iNCArray1v.push(countIndex1v); //  store positions inside of array...
-                  }
-                  countIndex1v++;
-                });
-                countIndex1v = 0;
-              }
-            });
-
-            //  For partnerships/collaborations connections
-
-            countIndex1v = 0;
-
-            filteredNodes.forEach(function(node1v) {
-              if (node1v.type === 'Non-Profit') {
-                collaborationConnections.forEach(function(porucsNodeCon1v) {
-                  if ((node1v === porucsNodeCon1v.source || node1v === porucsNodeCon1v.target) && pcNCArray1v.indexOf(countIndex1v) === -1) {
-                    pcNCArray1v.push(countIndex1v); //  store positions inside of array...
-                  }
-                  countIndex1v++;
-                });
-                countIndex1v = 0;
-              }
-            });
-
-            //  For data connections
-
-            countIndex1v = 0;
-
-            filteredNodes.forEach(function(node1v) {
-              if (node1v.type === 'Non-Profit') {
-                dataConnections.forEach(function(dataNodeCon1v) {
-                  if ((node1v === dataNodeCon1v.source || node1v === dataNodeCon1v.target) && aNCArray1v.indexOf(countIndex1v) === -1) {
-                    aNCArray1v.push(countIndex1v); //  store positions inside of array...
-                  }
-                  countIndex1v++;
-                });
-                countIndex1v = 0;
-              }
-            });
-
-
-          }
-          if (!document.getElementById("cb_nonpro").checked) {
-            d3.selectAll(".node").filter(function(d) {
-              if (d.type === "Non-Profit") return this;
-            }).style("visibility", "hidden");
-
-
-            //  For funding connections
-
-            countIndex1h = 0;
-
-            filteredNodes.forEach(function(node1h) {
-              if (node1h.type === 'Non-Profit') {
-                fundingConnections.forEach(function(fundNodeCon1h) {
-                  if ((node1h === fundNodeCon1h.source || node1h === fundNodeCon1h.target) && fNCArray1h.indexOf(countIndex1h) === -1) {
-                    fNCArray1h.push(countIndex1h); //  store positions inside of array...
-                  }
-                  countIndex1h++;
-                });
-                countIndex1h = 0;
-              }
-            });
-
-            //  For investing connections
-
-            countIndex1h = 0;
-
-            filteredNodes.forEach(function(node1h) {
-              if (node1h.type === 'Non-Profit') {
-                investmentConnections.forEach(function(investNodeCon1h) {
-                  if ((node1h === investNodeCon1h.source || node1h === investNodeCon1h.target) && iNCArray1h.indexOf(countIndex1h) === -1) {
-                    iNCArray1h.push(countIndex1h); //  store positions inside of array...
-                  }
-                  countIndex1h++;
-                });
-                countIndex1h = 0;
-              }
-            });
-
-            //  For partnerships/collaborations connections
-
-            countIndex1h = 0;
-
-            filteredNodes.forEach(function(node1h) {
-              if (node1h.type === 'Non-Profit') {
-                collaborationConnections.forEach(function(porucsNodeCon1h) {
-                  if ((node1h === porucsNodeCon1h.source || node1h === porucsNodeCon1h.target) && pcNCArray1h.indexOf(countIndex1h) === -1) {
-                    pcNCArray1h.push(countIndex1h); //  store positions inside of array...
-                  }
-                  countIndex1h++;
-                });
-                countIndex1h = 0;
-              }
-            });
-
-            //  For data connections
-
-            countIndex1h = 0;
-
-            filteredNodes.forEach(function(node1h) {
-              if (node1h.type === 'Non-Profit') {
-                dataConnections.forEach(function(dataNodeCon1h) {
-                  if ((node1h === dataNodeCon1h.source || node1h === dataNodeCon1h.target) && aNCArray1h.indexOf(countIndex1h) === -1) {
-                    aNCArray1h.push(countIndex1h); //  store positions inside of array...
-                  }
-                  countIndex1h++;
-                });
-                countIndex1h = 0;
-              }
-            });
-
-
-
-          }
-
-
-          if (document.getElementById("cb_forpro").checked) {
-            d3.selectAll(".node").filter(function(d) {
-              if (d.type === "For-Profit") return this;
-            }).style("visibility", "visible");
-
-
-            //  For funding connections
-
-            countIndex2v = 0;
-
-            filteredNodes.forEach(function(node2v) {
-              if (node2v.type === 'For-Profit') {
-                fundingConnections.forEach(function(fundNodeCon2v) {
-                  if ((node2v === fundNodeCon2v.source || node2v === fundNodeCon2v.target) && fNCArray2v.indexOf(countIndex2v) === -1) {
-                    fNCArray2v.push(countIndex2v); //  store positions inside of array...
-                  }
-                  countIndex2v++;
-                });
-                countIndex2v = 0;
-              }
-            });
-
-            //  For investing connections
-
-            countIndex2v = 0;
-
-            filteredNodes.forEach(function(node2v) {
-              if (node2v.type === 'For-Profit') {
-                investmentConnections.forEach(function(investNodeCon2v) {
-                  if ((node2v === investNodeCon2v.source || node2v === investNodeCon2v.target) && iNCArray2v.indexOf(countIndex2v) === -1) {
-                    iNCArray2v.push(countIndex2v); //  store positions inside of array...
-                  }
-                  countIndex2v++;
-                });
-                countIndex2v = 0;
-              }
-            });
-
-            //  For partnerships/collaborations connections
-
-            countIndex2v = 0;
-
-            filteredNodes.forEach(function(node2v) {
-              if (node2v.type === 'For-Profit') {
-                collaborationConnections.forEach(function(porucsNodeCon2v) {
-                  if ((node2v === porucsNodeCon2v.source || node2v === porucsNodeCon2v.target) && pcNCArray2v.indexOf(countIndex2v) === -1) {
-                    pcNCArray2v.push(countIndex2v); //  store positions inside of array...
-                  }
-                  countIndex2v++;
-                });
-                countIndex2v = 0;
-              }
-            });
-
-            //  For data connections
-
-            countIndex2v = 0;
-
-            filteredNodes.forEach(function(node2v) {
-              if (node2v.type === 'For-Profit') {
-                dataConnections.forEach(function(dataNodeCon2v) {
-                  if ((node2v === dataNodeCon2v.source || node2v === dataNodeCon2v.target) && aNCArray2v.indexOf(countIndex2v) === -1) {
-                    aNCArray2v.push(countIndex2v); //  store positions inside of array...
-                  }
-                  countIndex2v++;
-                });
-                countIndex2v = 0;
-              }
-            });
-
-          }
-          if (!document.getElementById("cb_forpro").checked)
-
-          {
-            d3.selectAll(".node").filter(function(d) {
-              if (d.type === "For-Profit") return this;
-            }).style("visibility", "hidden");
-
-            //  For funding connections
-
-            countIndex2h = 0;
-
-            filteredNodes.forEach(function(node2h) {
-              if (node2h.type === 'For-Profit') {
-                fundingConnections.forEach(function(fundNodeCon2h) {
-                  if ((node2h === fundNodeCon2h.source || node2h === fundNodeCon2h.target) && fNCArray2h.indexOf(countIndex2h) === -1) {
-                    fNCArray2h.push(countIndex2h); //  store positions inside of array...
-                  }
-                  countIndex2h++;
-                });
-                countIndex2h = 0;
-              }
-            });
-
-            //  For investing connections
-
-            countIndex2h = 0;
-
-            filteredNodes.forEach(function(node2h) {
-              if (node2h.type === 'For-Profit') {
-                investmentConnections.forEach(function(investNodeCon2h) {
-                  if ((node2h === investNodeCon2h.source || node2h === investNodeCon2h.target) && iNCArray2h.indexOf(countIndex2h) === -1) {
-                    iNCArray2h.push(countIndex2h); //  store positions inside of array...
-                  }
-                  countIndex2h++;
-                });
-                countIndex2h = 0;
-              }
-            });
-
-
-
-            //  For partnerships/collaborations connections
-
-            countIndex2h = 0;
-
-            filteredNodes.forEach(function(node2h) {
-              if (node2h.type === 'For-Profit') {
-                collaborationConnections.forEach(function(porucsNodeCon2h) {
-                  if ((node2h === porucsNodeCon2h.source || node2h === porucsNodeCon2h.target) && pcNCArray2h.indexOf(countIndex2h) === -1) {
-                    pcNCArray2h.push(countIndex2h); //  store positions inside of array...
-                  }
-                  countIndex2h++;
-                });
-                countIndex2h = 0;
-              }
-            });
-
-            //  For data connections
-
-            countIndex2h = 0;
-
-            filteredNodes.forEach(function(node2h) {
-              if (node2h.type === 'For-Profit') {
-                dataConnections.forEach(function(dataNodeCon2h) {
-                  if ((node2h === dataNodeCon2h.source || node2h === dataNodeCon2h.target) && aNCArray2h.indexOf(countIndex2h) === -1) {
-                    aNCArray2h.push(countIndex2h); //  store positions inside of array...
-                  }
-                  countIndex2h++;
-                });
-                countIndex2h = 0;
-              }
-            });
-
-
-          }
-
-          if (document.getElementById("cb_gov").checked) {
-            d3.selectAll(".node").filter(function(d) {
-              if (d.type === "Government") return this;
-            }).style("visibility", "visible");
-
-            // For funding connections
-
-            countIndex3v = 0;
-
-            filteredNodes.forEach(function(node3v) {
-              if (node3v.type === 'Government') {
-                fundingConnections.forEach(function(fundNodeCon3v) {
-                  if ((node3v === fundNodeCon3v.source || node3v === fundNodeCon3v.target) && fNCArray3v.indexOf(countIndex3v) === -1) {
-                    fNCArray3v.push(countIndex3v); //  store positions inside of array...
-                  }
-                  countIndex3v++;
-                });
-                countIndex3v = 0;
-              }
-            });
-
-
-
-
-            //  For investing connections
-
-            countIndex3v = 0;
-
-            filteredNodes.forEach(function(node3v) {
-              if (node3v.type === 'Government') {
-                investmentConnections.forEach(function(investNodeCon3v) {
-                  if ((node3v === investNodeCon3v.source || node3v === investNodeCon3v.target) && iNCArray3v.indexOf(countIndex3v) === -1) {
-                    iNCArray3v.push(countIndex3v); //  store positions inside of array...
-                  }
-                  countIndex3v++;
-                });
-                countIndex3v = 0;
-              }
-            });
-
-
-
-            //  For partnerships/collaborations connections
-
-            countIndex3v = 0;
-
-            filteredNodes.forEach(function(node3v) {
-              if (node3v.type === 'Government') {
-                collaborationConnections.forEach(function(porucsNodeCon3v) {
-                  if ((node3v === porucsNodeCon3v.source || node3v === porucsNodeCon3v.target) && pcNCArray3v.indexOf(countIndex3v) === -1) {
-                    pcNCArray3v.push(countIndex3v); //  store positions inside of array...
-                  }
-                  countIndex3v++;
-                });
-                countIndex3v = 0;
-              }
-            });
-
-
-
-            //  For data connections
-
-            countIndex3v = 0;
-
-            filteredNodes.forEach(function(node3v) {
-              if (node3v.type === 'Government') {
-                dataConnections.forEach(function(dataNodeCon3v) {
-                  if ((node3v === dataNodeCon3v.source || node3v === dataNodeCon3v.target) && aNCArray3v.indexOf(countIndex3v) === -1) {
-                    aNCArray3v.push(countIndex3v); //  store positions inside of array...
-                  }
-                  countIndex3v++;
-                });
-                countIndex3v = 0;
-              }
-            });
-
-          }
-          if (!document.getElementById("cb_gov").checked) {
-            d3.selectAll(".node").filter(function(d) {
-              if (d.type === "Government") return this;
-            }).style("visibility", "hidden");
-            //  For funding connections
-
-            countIndex3h = 0;
-
-            filteredNodes.forEach(function(node3h) {
-              if (node3h.type === 'Government') {
-                fundingConnections.forEach(function(fundNodeCon3h) {
-                  if ((node3h === fundNodeCon3h.source || node3h === fundNodeCon3h.target) && fNCArray3h.indexOf(countIndex3h) === -1) {
-                    fNCArray3h.push(countIndex3h); //  store positions inside of array...
-                  }
-                  countIndex3h++;
-                });
-                countIndex3h = 0;
-              }
-            });
-
-            //  For investing connections
-
-            countIndex3h = 0;
-
-            filteredNodes.forEach(function(node3h) {
-              if (node3h.type === 'Government') {
-                investmentConnections.forEach(function(investNodeCon3h) {
-                  if ((node3h === investNodeCon3h.source || node3h === investNodeCon3h.target) && iNCArray3h.indexOf(countIndex3h) === -1) {
-                    iNCArray3h.push(countIndex3h); //  store positions inside of array...
-                  }
-                  countIndex3h++;
-                });
-                countIndex3h = 0;
-              }
-            });
-
-            //  For partnerships/collaborations connections
-
-            countIndex3h = 0;
-
-            filteredNodes.forEach(function(node3h) {
-              if (node3h.type === 'Government') {
-                collaborationConnections.forEach(function(porucsNodeCon3h) {
-                  if ((node3h === porucsNodeCon3h.source || node3h === porucsNodeCon3h.target) && pcNCArray3h.indexOf(countIndex3h) === -1) {
-                    pcNCArray3h.push(countIndex3h); //  store positions inside of array...
-                  }
-                  countIndex3h++;
-                });
-                countIndex3h = 0;
-              }
-            });
-
-            //  For data connections
-
-            countIndex3h = 0;
-
-            filteredNodes.forEach(function(node3h) {
-              if (node3h.type === 'Government') {
-                dataConnections.forEach(function(dataNodeCon3h) {
-                  if ((node3h === dataNodeCon3h.source || node3h === dataNodeCon3h.target) && aNCArray3h.indexOf(countIndex3h) === -1) {
-                    aNCArray3h.push(countIndex3h); //  store positions inside of array...
-                  }
-                  countIndex3h++;
-                });
-                countIndex3h = 0;
-              }
-            });
-
-            // return;
-          }
-          //  Merge and eliminate dupllicate elements
-
-          function merge() {
-            var args = arguments;
-            var hash = {};
-            var arr = [];
-            for (var i = 0; i < args.length; i++) {
-              for (var j = 0; j < args[i].length; j++) {
-                if (hash[args[i][j]] !== true) {
-                  arr[arr.length] = args[i][j];
-                  hash[args[i][j]] = true;
-                }
-              }
+        connectionsCheckboxActions();
+
+        /***
+
+          For the "Types" checkboxes
+
+        ***/
+        var typesCheckboxActions = function() {
+          d3.selectAll('#cb_forpro, #cb_nonpro, #cb_gov, #cb_individ').on('click', function() {
+            $('#cb_forpro').is(':checked') ? nodeVisibility('For-Profit', 'visible') : nodeVisibility('For-Profit', 'hidden');
+            $('#cb_nonpro').is(':checked') ? nodeVisibility('Non-Profit', 'visible') : nodeVisibility('Non-Profit', 'hidden');
+            $('#cb_gov').is(':checked') ? nodeVisibility('Government', 'visible') : nodeVisibility('Government', 'hidden');
+            $('#cb_individ').is(':checked') ? nodeVisibility('Individual', 'visible') : nodeVisibility('Individual', 'hidden');
+
+            var visibleNodes = determineVisibleNodes();
+
+            toggleLinks(visibleNodes);
+          });
+        };
+
+        //  Initialize the display accordingly...
+        var nodeVisibility = function(type, visibility) {
+          d3.selectAll(".node").filter(function(d) {
+            if (d.type === type) return this;
+          }).style("visibility", visibility);
+        };
+
+        var setVisibility = function(link, linkData, visibleNodes, connectionType) {
+          if (linkData.source.ID in visibleNodes && linkData.target.ID in visibleNodes) {
+            switch (connectionType) {
+              case "Funding":
+                ($('#cb_fund').is(':checked')) ? d3.select(link).style('visibility', 'visible'): d3.select(link).style('visibility', 'hidden');
+                break;
+              case "Investment":
+                ($('#cb_invest').is(':checked')) ? d3.select(link).style('visibility', 'visible'): d3.select(link).style('visibility', 'hidden');
+                break;
+              case "Collaboration":
+                ($('#cb_porucs').is(':checked')) ? d3.select(link).style('visibility', 'visible'): d3.select(link).style('visibility', 'hidden');
+                break;
+              case "Data":
+                ($('#cb_data').is(':checked')) ? d3.select(link).style('visibility', 'visible'): d3.select(link).style('visibility', 'hidden');
+                break;
+              default:
+                break;
             }
-            return arr;
+          } else {
+            d3.select(link).style('visibility', 'hidden');
           }
+        };
 
-          var fNCArrayV = [];
-          var iNCArrayV = [];
-          var pcNCArrayV = [];
-          var aNCArrayV = [];
+        //  For each rendered node, if the node is a for-profit, then for each connection type, determine if the node is a source or target of the connection, add the connection to the array.
+        var toggleLinks = function(visibleNodes) {
 
-          if (fNCArray0v.length !== 0)
-            fNCArrayV = merge(fNCArrayV, fNCArray0v);
-          if (fNCArray1v.length !== 0)
-            fNCArrayV = fNCArrayV = merge(fNCArrayV, fNCArray1v);
-          if (fNCArray2v.length !== 0)
-            fNCArrayV = merge(fNCArrayV, fNCArray2v);
-          if (fNCArray3v.length !== 0)
-            fNCArrayV = merge(fNCArrayV, fNCArray3v);
-
-          if (iNCArray0v.length !== 0)
-            iNCArrayV = merge(iNCArrayV, iNCArray0v);
-          if (iNCArray1v.length !== 0)
-            iNCArrayV = merge(iNCArrayV, iNCArray1v);
-          if (iNCArray2v.length !== 0)
-            iNCArrayV = merge(iNCArrayV, iNCArray2v);
-          if (iNCArray3v.length !== 0)
-            iNCArrayV = merge(iNCArrayV, iNCArray3v);
-
-          if (pcNCArray0v.length !== 0)
-            pcNCArrayV = merge(pcNCArrayV, pcNCArray0v);
-          if (pcNCArray1v.length !== 0)
-            pcNCArrayV = merge(pcNCArrayV, pcNCArray1v);
-          if (pcNCArray2v.length !== 0)
-            pcNCArrayV = merge(pcNCArrayV, pcNCArray2v);
-          if (pcNCArray3v.length !== 0)
-            pcNCArrayV = merge(pcNCArrayV, pcNCArray3v);
-
-          if (aNCArray0v.length !== 0)
-            aNCArrayV = merge(aNCArrayV, aNCArray0v);
-          if (aNCArray1v.length !== 0)
-            aNCArrayV = merge(aNCArrayV, aNCArray1v);
-          if (aNCArray2v.length !== 0)
-            aNCArrayV = merge(aNCArrayV, aNCArray2v);
-          if (aNCArray3v.length !== 0)
-            aNCArrayV = merge(aNCArrayV, aNCArray3v);
-
-          //  hidden
-
-          var fNCArrayH = [];
-          var iNCArrayH = [];
-          var pcNCArrayH = [];
-          var aNCArrayH = [];
-
-          if (fNCArray0h.length !== 0)
-            fNCArrayH = merge(fNCArrayH, fNCArray0h);
-          if (fNCArray1h.length !== 0)
-            fNCArrayH = merge(fNCArrayH, fNCArray1h);
-          if (fNCArray2h.length !== 0)
-            fNCArrayH = merge(fNCArrayH, fNCArray2h);
-          if (fNCArray3h.length !== 0)
-            fNCArrayH = merge(fNCArrayH, fNCArray3h);
-
-          if (iNCArray0h.length !== 0)
-            iNCArrayH = merge(iNCArrayH, iNCArray0h);
-          if (iNCArray1h.length !== 0)
-            iNCArrayH = merge(iNCArrayH, iNCArray1h);
-          if (iNCArray2h.length !== 0)
-            iNCArrayH = merge(iNCArrayH, iNCArray2h);
-          if (iNCArray3h.length !== 0)
-            iNCArrayH = merge(iNCArrayH, iNCArray3h);
-
-          if (pcNCArray0h.length !== 0)
-            pcNCArrayH = merge(pcNCArrayH, pcNCArray0h);
-          if (pcNCArray1h.length !== 0)
-            pcNCArrayH = merge(pcNCArrayH, pcNCArray1h);
-          if (pcNCArray2h.length !== 0)
-            pcNCArrayH = merge(pcNCArrayH, pcNCArray2h);
-          if (pcNCArray3h.length !== 0)
-            pcNCArrayH = merge(pcNCArrayH, pcNCArray3h);
-
-          if (aNCArray0h.length !== 0)
-            aNCArrayH = merge(aNCArrayH, aNCArray0h);
-          if (aNCArray1h.length !== 0)
-            aNCArrayH = merge(aNCArrayH, aNCArray1h);
-          if (aNCArray2h.length !== 0)
-            aNCArrayH = merge(aNCArrayH, aNCArray2h);
-          if (aNCArray3h.length !== 0)
-            aNCArrayH = merge(aNCArrayH, aNCArray3h);
-
-          var alreadyHFundLinks = [];
-          var alreadyHInvestLinks = [];
-          var alreadyHPorucsLinks = [];
-          var alreadyHDataLinks = [];
-
-          if (!document.getElementById("cb_fund").checked) {
-            fundLink.filter(function(d, i) {
-              if (fundLink[0][i].style.visibility === "hidden") {
-                alreadyHFundLinks.push(i);
-              }
-            });
-
-
-          }
-
-          if (!document.getElementById("cb_invest").checked) {
-            investLink.filter(function(d, i) {
-              if (investLink[0][i].style.visibility === "hidden") {
-                alreadyHInvestLinks.push(i);
-              }
-            });
-
-            //
-          }
-
-          if (!document.getElementById("cb_porucs").checked) {
-            porucsLink.filter(function(d, i) {
-              if (porucsLink[0][i].style.visibility === "hidden") {
-                alreadyHPorucsLinks.push(i);
-              }
-            });
-
-            //
-          }
-
-          if (!document.getElementById("cb_data").checked) {
-            dataLink.filter(function(d, i) {
-              if (dataLink[0][i].style.visibility === "hidden") {
-                alreadyHDataLinks.push(i);
-              }
-            });
-
-
-          }
-
-          d3.selectAll('.fund').style('visibility', function(l, i) {
-            //  If the index of the funding line equals to the funding connection index...
-            if (fNCArrayV.indexOf(i) > -1) {
-              return "visible";
-            } else {
-              return "hidden";
-            }
-
+          //  Finding links with nodes of a certain type.
+          fundLink.filter(function(link) {
+            setVisibility(this, this.__data__, visibleNodes, "Funding");
+          });
+          investLink.filter(function(link) {
+            setVisibility(this, this.__data__, visibleNodes, "Investment");
+          });
+          porucsLink.filter(function(link) {
+            setVisibility(this, this.__data__, visibleNodes, "Collaboration");
+          });
+          dataLink.filter(function(link) {
+            setVisibility(this, this.__data__, visibleNodes, "Data");
           });
 
-          d3.selectAll('.invest').style('visibility', function(l, i) {
-            //  If the index of the funding line equals to the funding connection index...
-            if (iNCArrayV.indexOf(i) > -1) {
+          // porucsLink.filter(function(d){console.log(d3.select(this).style('visibility', 'hidden'))})
 
-              return "visible";
-            } else {
-              return "hidden";
-            }
+          // Time to reflect these changes accordingly with the connection checkboxes to ensure consistency.
+          reflectConnectionChanges();
+        };
+
+        var reflectConnectionChanges = function() {
+          var visibleFundingConnections = fundLink.filter(function(link) {
+            return d3.select(this).style('visibility') === 'visible';
+          });
+          var visibleInvestmentConnections = investLink.filter(function(link) {
+            return d3.select(this).style('visibility') === 'visible';
+          });
+          var visibleCollaborationsConnections = porucsLink.filter(function(link) {
+            return d3.select(this).style('visibility') === 'visible';
+          });
+          var visibleDataConnections = dataLink.filter(function(link) {
+            return d3.select(this).style('visibility') === 'visible';
           });
 
-
-          d3.selectAll('.porucs').style('visibility', function(l, i) {
-            //  If the index of the funding line equals to the funding connection index...
-            if (pcNCArrayV.indexOf(i) > -1) {
-
-              return "visible";
-            } else {
-              return "hidden";
-            }
-
-          });
-
-
-          d3.selectAll('.data').style('visibility', function(l, i) {
-            //  If the index of the funding line equals to the funding connection index...
-            if (aNCArrayV.indexOf(i) > -1) {
-              return "visible";
-            } else {
-              return "hidden";
-            }
-          });
-
-          d3.selectAll('.fund').style('visibility', function(l, i) {
-            //  If the index of the funding line equals to the funding connection index...
-            if (fNCArrayH.indexOf(i) > -1 || alreadyHFundLinks.indexOf(i) > -1) {
-              return "hidden";
-            } else {
-              return "visible";
-            }
-
-          });
-
-          d3.selectAll('.invest').style('visibility', function(l, i) {
-            //  If the index of the funding line equals to the funding connection index...
-            if (iNCArrayH.indexOf(i) > -1 || alreadyHInvestLinks.indexOf(i) > -1) {
-
-              return "hidden";
-            } else {
-              return "visible";
-            }
-          });
-
-          d3.selectAll('.porucs').style('visibility', function(l, i) {
-            //  If the index of the funding line equals to the funding connection index...
-            if (pcNCArrayH.indexOf(i) > -1 || alreadyHPorucsLinks.indexOf(i) > -1) {
-
-              return "hidden";
-            } else {
-              return "visible";
-            }
-          });
-
-          d3.selectAll('.data').style('visibility', function(l, i) {
-            //  If the index of the funding line equals to the funding connection index...
-            if (aNCArrayH.indexOf(i) > -1 || alreadyHDataLinks.indexOf(i) > -1) {
-              return "hidden";
-            } else {
-              return "visible";
-            }
-          });
-
-          var countFund = 0;
-          for (var x = 0; x < fundLink[0].length; x++) {
-            if (fundLink[0][x].style.visibility === "hidden") {
-              countFund++;
-            }
+          if (visibleFundingConnections[0].length === 0) {
+            $('#cb_fund').attr('checked', false);
           }
-
-          var countInvest = 0;
-          for (var x = 0; x < investLink[0].length; x++) {
-            if (investLink[0][x].style.visibility === "hidden") {
-              countInvest++;
-            }
+          if (visibleInvestmentConnections[0].length === 0) {
+            $('#cb_invest').attr('checked', false);
           }
-
-          var countPorucs = 0;
-          for (var x = 0; x < porucsLink[0].length; x++) {
-            if (porucsLink[0][x].style.visibility === "hidden") {
-              countPorucs++;
-            }
+          if (visibleCollaborationsConnections[0].length === 0) {
+            $('#cb_porucs').attr('checked', false);
           }
-
-          var countData = 0;
-          for (var x = 0; x < dataLink[0].length; x++) {
-            if (dataLink[0][x].style.visibility === "hidden") {
-              countData++;
-            }
+          if (visibleDataConnections[0].length === 0) {
+            $('#cb_data').attr('checked', false);
           }
+        };
 
-
-          // If all funding connections are hidden
-          if (countFund === fundLink[0].length)
-            if (document.getElementById("cb_fund").checked) {
-              document.getElementById("cb_fund").checked = false;
-              // document.getElementById("cb_fund").disabled = true;
-            }
-            //  If some or all funding connections are shown
-          if (countFund !== fundLink[0].length)
-            if (!document.getElementById("cb_fund").checked) {
-              document.getElementById("cb_fund").checked = true;
-              // document.getElementById("cb_fund").disabled = false;
-            }
-            // If all investing connections are hidden
-          if (countInvest === investLink[0].length)
-            if (document.getElementById("cb_invest").checked) {
-              document.getElementById("cb_invest").checked = false;
-              // document.getElementById("cb_invest").disabled = true;
-            }
-            //  If some or all investing connections are shown
-          if (countInvest !== investLink[0].length)
-            if (!document.getElementById("cb_invest").checked) {
-              document.getElementById("cb_invest").checked = true;
-              // document.getElementById("cb_invest").disabled = false;
-            }
-            // If all collaboration connections are hidden
-          if (countPorucs === porucsLink[0].length)
-            if (document.getElementById("cb_porucs").checked) {
-              document.getElementById("cb_porucs").checked = false;
-              // document.getElementById("cb_porucs").disabled = true;
-            }
-            //  If some or all collaboration connections are shown
-          if (countPorucs !== porucsLink[0].length)
-            if (!document.getElementById("cb_porucs").checked) {
-              document.getElementById("cb_porucs").checked = true;
-              // document.getElementById("cb_porucs").disabled = false;
-            }
-            // If all data connections are hidden
-          if (countData === dataLink[0].length)
-            if (document.getElementById("cb_data").checked) {
-              document.getElementById("cb_data").checked = false;
-              // document.getElementById("cb_data").disabled = true;
-            }
-            //  If some or all data connections are shown
-          if (countData !== dataLink[0].length)
-            if (!document.getElementById("cb_data").checked) {
-              document.getElementById("cb_data").checked = true;
-              // document.getElementById("cb_data").disabled = false;
-            }
+        typesCheckboxActions();
 
 
 
-        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         d3.selectAll('#cb_emp, #cb_numtwit').on('click', function() {
           if (document.getElementById("cb_emp").checked) {
@@ -3901,10 +2976,6 @@
 
             .on("tick", tick)
               .start();
-            for (var i = 0; i < 150; ++i) {
-              force.tick();
-            }
-            
           }
           clearResetFlag = 1;
         });
@@ -4023,6 +3094,7 @@
       drawGraph();
       var map = document.getElementById('map');
       map.parentNode.removeChild(map);
+      console.log("asd");
     }
   });
 
@@ -4033,6 +3105,4 @@
       drawMap();
     }
   });
-
-
-// })();
+})();
