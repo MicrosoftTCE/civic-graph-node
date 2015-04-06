@@ -66,11 +66,7 @@ body {
 }
 .navstyle {
   /*width: 30%;*/
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
   font-weight: 100;
   margin: 0 auto;
   float: left;
@@ -104,11 +100,7 @@ body {
   /*padding-right:20px;
 }*/
 
-<<<<<<< HEAD
-.views,
-=======
 .current-view,
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
 .types,
 .connections,
 .relevance {
@@ -158,13 +150,6 @@ label h3 {
 #athena-left-nav label h3:hover {
   cursor: context-menu;
 }
-<<<<<<< HEAD
-#athena-left-nav{
-  height: 80vh;
-  overflow-y: scroll;
-}
-=======
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
 .rel-icon {
   margin: 10px;
 }
@@ -179,11 +164,7 @@ label h3 {
 }
 #info {
   /*padding-top: 20px;*/
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
   padding-bottom: 20px;
   padding-right: 10px;
   padding-left: 10px;
@@ -191,11 +172,7 @@ label h3 {
 .main-nav {
   position: fixed;
   /*top: 6%;*/
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
   top: 60px;
   width: 17%;
   height: 100%;
@@ -271,13 +248,10 @@ input[type="radio"]:checked ~ .check:after {
   font-size: 20px;
   color: #000000;
 }
-<<<<<<< HEAD
-=======
 .metro .viewstext h3 {
   color: rgba(0, 0, 0, 1);
   font-size: 20px;
 }
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
 .metro .sized_bytext h3 {
   font-size: 20px;
   color: #000000;
@@ -340,21 +314,13 @@ li {
   padding-bottom: 20px;
   padding-right: 10px;
   padding-left: 10px;*/
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
   z-index: 999;
   display: inline-block;
   float: right;
   width: 25%;
   /*background-color: #f9fafa !important;*/
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
   text-align: center;
   margin-top: 2%;
   margin-right: 2%;
@@ -365,11 +331,7 @@ li {
   font-family: 'Segoe UI_', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
   font-size: 18px;
   /*font-weight: bold;*/
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
   font-weight: normal;
   line-height: 2.0rem;
   color: #2e92cf;
@@ -506,11 +468,7 @@ button#submit-B {
     width:15px;
     height:15px;
   }*/
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
   .metro .navigation-bar {
     position: fixed;
     z-index: 999;
@@ -542,21 +500,13 @@ button#submit-B {
     padding-top:5px;
     /*padding-right:20px;
   }*/
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
   #logo {
     padding-right: 20px;
   }
   .main-nav {
     /*top:11%; */
-<<<<<<< HEAD
-
-=======
     
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
     top: 65px;
     position: fixed;
     width: 18%;
@@ -610,20 +560,6 @@ button#submit-B {
   height: 20px;
   position: absolute;
 }
-<<<<<<< HEAD
-
-
-
-
-.land {
-    fill: #ccc;
-  }
-
-  .state-boundary {
-    fill: none;
-    stroke: #000;
-  }
-=======
 .land {
   fill: #ccc;
 }
@@ -631,4 +567,3 @@ button#submit-B {
   fill: none;
   stroke: #000;
 }
->>>>>>> 25343f356fbf751162120abfdf261b0b58bc179b
