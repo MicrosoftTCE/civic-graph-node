@@ -2,7 +2,7 @@ var mysql = require('mysql');
 
 var db_config = require('./../../configuration/credentials.js');
 var client = require('../client.js')
-var pool = mysql.createPool(db_config.cred.cleardb);
+var pool = mysql.createPool(db_config.cred.localhost);
 
 exports.retrieve_operations = function(request, response){
   client.replaceClientOnDisconnect(pool);

@@ -6,7 +6,7 @@ var file = path.join(__dirname, '..', 'routes', 'data.json');
 var mysql = require('mysql');
 
 var db_config = require('./../configuration/credentials.js');
-var pool = mysql.createPool(db_config.cred.cleardb);
+var pool = mysql.createPool(db_config.cred.localhost);
 
 var start2;
 
