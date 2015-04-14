@@ -539,15 +539,19 @@ exports.save = function(request, response){
           console.log("Past: " + pastID);
           if(pastID !== -1)
           {
-            connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID + ' AND Render=1', function(err){
+
+            connection.query('UPDATE `Operations` SET `EntityID`=? WHERE (EntityID=?)', [result.insertId, pastID), function(err){
               if (err) throw err;
-              console.log("Inside");
-              var end5 = new Date().getTime();
-              console.log("Actual insertion: " + (end5 - start5));
-              start2 = new Date().getTime();
-              developJSON(result, entity);
-              
-            });
+              connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID + ' AND Render=1', function(err){
+                if (err) throw err;
+                console.log("Inside");
+                var end5 = new Date().getTime();
+                console.log("Actual insertion: " + (end5 - start5));
+                start2 = new Date().getTime();
+                developJSON(result, entity);
+                
+              });
+            }
           }
           else
           {
@@ -598,6 +602,7 @@ exports.save = function(request, response){
                       {
                         connection.query('UPDATE `Entities` SET `Render`=0 WHERE ((Name="' + entity.name + '" OR Nickname="' + entity.name + '") AND Render=1)', function(err){
                           if (err) throw err;
+
                           connection.query('UPDATE `Bridges` SET `Render`=0 WHERE (Entity1ID=' + rows[0].ID + ' AND Render=1)', function(err){
                             if (err) throw err;
                             
