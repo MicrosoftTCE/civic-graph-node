@@ -540,7 +540,7 @@ exports.save = function(request, response){
           if(pastID !== -1)
           {
 
-            connection.query('UPDATE `Operations` SET `EntityID`=? WHERE (EntityID=?)', [result.insertId, pastID), function(err){
+            connection.query('UPDATE `Operations` SET `EntityID`=? WHERE (EntityID=?)', [result.insertId, pastID], function(err){
               if (err) throw err;
               connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID + ' AND Render=1', function(err){
                 if (err) throw err;
@@ -551,7 +551,7 @@ exports.save = function(request, response){
                 developJSON(result, entity);
                 
               });
-            }
+            });
           }
           else
           {
