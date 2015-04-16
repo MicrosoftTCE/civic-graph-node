@@ -38,16 +38,16 @@ app.get('/api', api.render);
 var community = require('./routes/community');
 app.get('/community', community.render);
 
-// 
+//
 // COMMENT IN TO ADD JOIN ROUTE
 // var join = require('./routes/join');
 // app.get('/join', join.render);
-// 
+//
 
 var athena = require('./routes/api/athena');
 app.get('/athena', athena.retrieve_all);
 
-var entities = require('./routes/api/entities'); 
+var entities = require('./routes/api/entities');
 app.get('/entities', entities.retrieve_entities);
 app.get('/entities/:name', entities.retrieve_entity);
 app.get('/entities/:name/categories', entities.retrieve_categories);
@@ -78,6 +78,9 @@ var operations = require('./routes/api/operations');
 app.get('/operations', operations.retrieve_operations);
 app.get('/operations/revenue/:year', operations.retrieve_revenue_year);
 app.get('/operations/expenses/:year', operations.retrieve_expenses_year);
+
+var cities = require('./routes/api/cities');
+app.get('/cities', cities.retrieve_locations);
 
 var database = require('./routes/database');
 app.post('/database/save', parseUrlencoded, database.save);
