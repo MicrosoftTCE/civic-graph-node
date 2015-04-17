@@ -2,11 +2,12 @@ var mysql = require('mysql');
 var fs = require('fs');
 var http = require('http');
 
+var request = require('request');
 
 var file = __dirname + '/public/data/civic.json';
 
 var db_config = require('./configuration/credentials.js');
-var connection = mysql.createConnection(db_config.cred.cleardb);
+var connection = mysql.createConnection(db_config.cred.localhost);
 var async = require('async');
 connection.connect();
 
@@ -19,7 +20,6 @@ fs.readFile(file, 'utf8', function(err, data){
 
   populateCityTable(data);
   populateLocationTable();
-
 });
 
 function arrays_equal(a, b) { 
@@ -51,26 +51,37 @@ var removeDuplicateNewYork = function(item) {
 }
 
 var populateLocationTable = function() {
-	var tmpTableData = [];
-	var queryString = 'SELECT Entities.ID AS EntityID, Cities.ID AS CityID FROM Entities JOIN Cities ON Entities.Location REGEXP CONCAT(Cities.City_Name, \',[ ]?\', Cities.State_Code)';
+	var tmpData = {};
+	var queryString = 'SELECT Entities.ID AS Entity_ID, Cities.ID AS City_ID FROM Entities JOIN Cities ON Entities.Location REGEXP CONCAT(Cities.City_Name, \',[ ]?\', Cities.State_Code)';
 	connection.query(queryString, function(err, rows, fields) {
 		if(err) throw err;
-		console.log(rows);
-		// for (var i in rows) {
-		// 	console.log(rows[i]);
-		// }
+			tmpData = rows;
+			for (var i = 0; i < tmpData.length; i++) {
+				console.log(tmpData[i]);
+				var query = connection.query('INSERT INTO Locations SET ?', tmpData[i], function(err, result) {
+					if (err) throw err;
+				});
+				console.log(query.sql);
+			}
 	});
-	// console.log(tmpTableData);
 };
 
-var populateCityTable = function(data) {
+var populateCityTable = function(data, callbackfunction) {
 	var uniqueLocation = [];
+	unknownLocationsArray = [];
 	for(var i = 0; i < (data.nodes).length; i++) {
 		var Locations = data.nodes[i].location;
 		var EntityId = data.nodes[i].ID;
+
+		// for known locations
 		if (Locations !== 'Unknown'){
+
+			//parse by semicolon
 			var semicolonChecks = Locations.match(/([^;])+/g);
-			trimArrayString(semicolonChecks);
+
+			// console.log('Returned Array: ' + semicolonChecks);
+
+			trimArrayString(semicolonChecks); 
 			if (semicolonChecks.length > 1) {
 				while(semicolonChecks.length > 0) {
 				var commaSplit = semicolonChecks.splice(0, 1);
@@ -81,7 +92,15 @@ var populateCityTable = function(data) {
 				uniqueLocation.push(semicolonChecks);
 			}
 		}
+
+		// when location is unknown
+		else {
+			var unknownLocations = data.nodes[i].ID;
+			unknownLocationsArray.push(unknownLocations);
+			console.log('Unknown Location: ' + unknownLocations);
+		}
 	}
+	console.log(unknownLocationsArray.length);
 	uniqueLocation = uniqueLocation.unique()
 	removeDuplicateNewYork(uniqueLocation);
 	async.forEach(uniqueLocation, function(semicolonCheck, callback){
@@ -95,23 +114,34 @@ var populateCityTable = function(data) {
 				City_Lat: !!splitResult.City_Lat ? splitResult.City_Lat : null,
 				City_Long: !!splitResult.City_Long ? splitResult.City_Long : null
 			};
+			// console.log(values);
 			callback();
 			var query = connection.query('INSERT INTO Cities SET ?', values, function(err, result){
 				if (err) throw err;
 	    });
-	    // console.log(query.sql);
+	    console.log(query.sql);
 		});
 	}, function (err){
 
 	});
+	var unknownCityValues = {
+		City_Name: 'Unknown',
+		State_Code: null,
+		State_Name: null,
+		Country_Code: null,
+		Country_Name: null,
+		City_Lat: null,
+		City_Long: null
+	}
+	var query = connection.query('INSERT INTO Cities SET ?', unknownCityValues, function(err, result){
+		if (err) throw err;
+  });
+  console.log(query.sql);
 };
 
 var splitLocation = function(data, callback) {
-	var result;
-	var splitString = data.split(',');
+	var result = {};
 	getCityCoordinates(data.trim(), function(cityCoordinates){
-		splitString;
-		result = locationFilter(splitString);
 		result.City_Lat = cityCoordinates.latitude;
 		result.City_Long = cityCoordinates.longitude;
 		result.Country_Code = cityCoordinates.countryCode;
@@ -120,15 +150,17 @@ var splitLocation = function(data, callback) {
 		result.City_Name = cityCoordinates.cityName;
 		callback(result);
 	}, function(returnedValues){
-		splitString;
-		result = locationFilter(splitString);
-		result.City_Lat = returnedValues.latitude;
-		result.City_Long = returnedValues.longitude;
-		result.Country_Code = returnedValues.countryCode;
-		result.Country_Name = returnedValues.countryName;
-		result.State_Code = returnedValues.stateCode;
-		result.City_Name = returnedValues.cityName;
-		callback(result);
+		// console.log('Locations with empty API call result: ' + returnedValues);
+		var result1;
+		var splitString = returnedValues.split(',');
+		// console.log('splitted Location string by comma: ' + splitString.length);
+		result1 = locationFilter(splitString);
+		result1.City_Lat = returnedValues.latitude;
+		result1.City_Long = returnedValues.longitude;
+		// result1.Country_Code = returnedValues.countryCode;
+		// console.log('Adjusted with empty API call result: ' + '\n' + result1.City_Lat)
+		// console.
+		callback(result1);
 	});
 };
 
@@ -141,10 +173,24 @@ var locationFilter = function(data) {
 			};
 		}
 		else if(data.length === 2) {
-			result = {
-				City_Name: data[0],
-				State_Code: data[1]
-			};
+			// special case for Minnesota
+			if (data[1] === ' Minnesota') {
+				result = {
+					City_Name: data[0],
+					State_Name: data[1]
+				};
+			}
+			else if(data[1].length > 3) {
+				result = {
+					City_Name: data[0],
+					Country_Name: data[1]
+				};
+			} else {
+				result = {
+					City_Name: data[0],
+					State_Code: data[1]
+				};
+			}
 		}
 		else if(data.length === 3) {
 			result = {
@@ -154,6 +200,7 @@ var locationFilter = function(data) {
 			};
 		}
 	}
+	// console.log('Country Name: ' + result.Country_Name + ', City Name: ' + result.City_Name + ', State Name: ' + result.State_Name+ ', State Code: ' + result.State_Code);
 	return result;
 };
 
@@ -183,6 +230,7 @@ var getCityCoordinates = function(loc, callback, errorCallback){
 						});
 					});		
 			} else {
+				// secondApiCall(loc);
 				errorCallback(loc);
 			}
 		}).on('error', function(err) {
@@ -190,6 +238,8 @@ var getCityCoordinates = function(loc, callback, errorCallback){
 	});
 
 };
+
+
 
 
 
