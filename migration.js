@@ -17,9 +17,26 @@ fs.readFile(file, 'utf8', function(err, data){
   }
 
   data = JSON.parse(data);
-
-  populateCityTable(data);
-  populateLocationTable();
+  async.series([
+    function(callback){
+      // do some stuff ...
+      console.log('first call');
+      populateCityTable(data, function(){
+      	callback(null, 'one');
+      });
+    },
+    function(callback){
+      // do some more stuff ...
+      console.log('second call');
+      populateLocationTable(function(){
+      	callback(null, 'two');
+      });
+    }
+	],
+	// optional callback
+	function(err, results){
+	    // results is now equal to ['one', 'two']
+	});
 });
 
 function arrays_equal(a, b) { 
@@ -50,23 +67,24 @@ var removeDuplicateNewYork = function(item) {
 	}
 }
 
-var populateLocationTable = function() {
+var populateLocationTable = function(done) {
 	var tmpData = {};
 	var queryString = 'SELECT Entities.ID AS Entity_ID, Cities.ID AS City_ID FROM Entities JOIN Cities ON Entities.Location REGEXP CONCAT(Cities.City_Name, \',[ ]?\', Cities.State_Code)';
 	connection.query(queryString, function(err, rows, fields) {
 		if(err) throw err;
 			tmpData = rows;
 			for (var i = 0; i < tmpData.length; i++) {
-				console.log(tmpData[i]);
+				// console.log(tmpData[i]);
 				var query = connection.query('INSERT INTO Locations SET ?', tmpData[i], function(err, result) {
 					if (err) throw err;
 				});
 				console.log(query.sql);
 			}
+		done();
 	});
 };
 
-var populateCityTable = function(data, callbackfunction) {
+var populateCityTable = function(data, done) {
 	var uniqueLocation = [];
 	unknownLocationsArray = [];
 	for(var i = 0; i < (data.nodes).length; i++) {
@@ -97,12 +115,12 @@ var populateCityTable = function(data, callbackfunction) {
 		else {
 			var unknownLocations = data.nodes[i].ID;
 			unknownLocationsArray.push(unknownLocations);
-			console.log('Unknown Location: ' + unknownLocations);
 		}
 	}
-	console.log(unknownLocationsArray.length);
 	uniqueLocation = uniqueLocation.unique()
 	removeDuplicateNewYork(uniqueLocation);
+
+
 	async.forEach(uniqueLocation, function(semicolonCheck, callback){
 		splitLocation(semicolonCheck[0], function(splitResult) {
 			var values = {
@@ -122,21 +140,9 @@ var populateCityTable = function(data, callbackfunction) {
 	    console.log(query.sql);
 		});
 	}, function (err){
-
+		console.log('City is populated');
+		done();
 	});
-	var unknownCityValues = {
-		City_Name: 'Unknown',
-		State_Code: null,
-		State_Name: null,
-		Country_Code: null,
-		Country_Name: null,
-		City_Lat: null,
-		City_Long: null
-	}
-	var query = connection.query('INSERT INTO Cities SET ?', unknownCityValues, function(err, result){
-		if (err) throw err;
-  });
-  console.log(query.sql);
 };
 
 var splitLocation = function(data, callback) {
@@ -150,16 +156,11 @@ var splitLocation = function(data, callback) {
 		result.City_Name = cityCoordinates.cityName;
 		callback(result);
 	}, function(returnedValues){
-		// console.log('Locations with empty API call result: ' + returnedValues);
 		var result1;
 		var splitString = returnedValues.split(',');
-		// console.log('splitted Location string by comma: ' + splitString.length);
 		result1 = locationFilter(splitString);
 		result1.City_Lat = returnedValues.latitude;
 		result1.City_Long = returnedValues.longitude;
-		// result1.Country_Code = returnedValues.countryCode;
-		// console.log('Adjusted with empty API call result: ' + '\n' + result1.City_Lat)
-		// console.
 		callback(result1);
 	});
 };
@@ -200,9 +201,9 @@ var locationFilter = function(data) {
 			};
 		}
 	}
-	// console.log('Country Name: ' + result.Country_Name + ', City Name: ' + result.City_Name + ', State Name: ' + result.State_Name+ ', State Code: ' + result.State_Code);
 	return result;
 };
+
 
 var getCityCoordinates = function(loc, callback, errorCallback){
 	http.get('http://dev.virtualearth.net/REST/v1/Locations?query=' + encodeURI(loc) + '&key=Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M', function(res) {
@@ -238,6 +239,7 @@ var getCityCoordinates = function(loc, callback, errorCallback){
 	});
 
 };
+
 
 
 

@@ -283,7 +283,6 @@
         }
       }
       if((data.nodes)[n].expenses !== null){
-        console.log("got here TOOOOOOO");
         for(var p = 0; p < ((data.nodes)[n].expenses).length; p++){
           var values = {
                         EntityID: (data.nodes)[n].ID,
