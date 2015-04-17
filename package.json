@@ -6,18 +6,19 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "express": "~4.2.0",
-    "static-favicon": "~1.0.0",
-    "morgan": "~1.0.0",
-    "cookie-parser": "~1.0.1",
-    "body-parser": "~1.0.0",
-    "debug": "~0.7.4",
-    "jade": "~1.3.0",
-    "stylus": "latest",
-    "mysql": "latest",
-    "geoip-lite": "latest",
     "async": "latest",
-    "express-myconnection": "latest"
+    "body-parser": "~1.0.0",
+    "cookie-parser": "~1.0.1",
+    "debug": "~0.7.4",
+    "express": "~4.2.0",
+    "express-myconnection": "latest",
+    "geoip-lite": "latest",
+    "jade": "~1.3.0",
+    "lodash": "^3.6.0",
+    "morgan": "~1.0.0",
+    "mysql": "latest",
+    "static-favicon": "~1.0.0",
+    "stylus": "latest"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

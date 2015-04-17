@@ -63,6 +63,35 @@
                   if(err) throw err;
               });
 
+          connection.query('CREATE TABLE IF NOT EXISTS Cities('
+              + 'ID INT NOT NULL AUTO_INCREMENT UNIQUE,'
+              + 'City_Name VARCHAR(50) NULL,'
+              + 'State_Code VARCHAR(5) NULL,'
+              + 'State_Name VARCHAR(50) NULL,'
+              + 'Country_Code VARCHAR(5) NULL,'
+              + 'Country_Name VARCHAR(50) NULL,'
+              + 'City_Lat DECIMAL(18, 15) NULL,'
+              + 'City_Long DECIMAL(18, 15) NULL,'
+              + 'PRIMARY KEY (ID)'
+              + ')', function (err) {
+                  if(err) throw err;
+              });
+
+          connection.query('CREATE TABLE IF NOT EXISTS Locations('
+              + 'ID INT NOT NULL AUTO_INCREMENT UNIQUE,'
+              + 'Entity_ID INT NOT NULL,'
+              + 'City_ID INT NOT NULL,'
+              + 'Address VARCHAR(200) NULL,'
+              + 'Address_Lat DECIMAL(18, 15),'
+              + 'Address_Long DECIMAL(18, 15),'
+              + 'PRIMARY KEY (ID),'
+              + 'FOREIGN KEY (Entity_ID) REFERENCES Entities(ID) ON UPDATE CASCADE,'
+              + 'FOREIGN KEY (City_ID) REFERENCES Cities(ID) ON UPDATE CASCADE'
+              + ')', function (err) {
+                  if(err) throw err;
+                  // console.log(err);
+              });
+
           connection.query('SET @@auto_increment_increment=1;', function(err){
               if(err) throw err;
           });
@@ -79,6 +108,14 @@
               });
 
               connection.query('ALTER TABLE Operations AUTO_INCREMENT=1;', function(err){
+                if(err) throw err;
+              });
+
+              connection.query('ALTER TABLE Locations AUTO_INCREMENT=1;', function(err){
+                if(err) throw err;
+              });
+
+              connection.query('ALTER TABLE Cities AUTO_INCREMENT=1;', function(err){
                 if(err) throw err;
               });
           });
@@ -101,6 +138,7 @@
   });
 
   var insertEntities = function(data){
+    // console.log(data);
     for(var i = 0; i < (data.nodes).length; i++){
       var categories;
       var relations = '';
@@ -227,7 +265,9 @@
   var insertOperations = function(data){
     console.log(data);
     for(var n = 0; n < (data.nodes).length; n++){
+      // console.log((data.nodes)[n].revenue);
       if((data.nodes)[n].revenue !== null){
+        console.log("got here AGAIN");
         for(var o = 0; o < ((data.nodes)[n].revenue).length; o++){
           var values = {
                         EntityID: (data.nodes)[n].ID,
@@ -235,11 +275,11 @@
                         Amount: ((data.nodes)[n].revenue)[o].amount,
                         Year: ((data.nodes)[n].revenue)[o].year
                       };
+          // console.log(values);
 
           var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
             if (err) throw err;
           });
-
           console.log(query.sql);
         }
       }
@@ -251,7 +291,7 @@
                         Amount: ((data.nodes)[n].expenses)[p].amount,
                         Year:  ((data.nodes)[n].expenses)[p].year
                       };
-
+          // console.log(values);
           var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
             if (err) throw err;
           });
