@@ -5,13 +5,13 @@
   var file = __dirname + '/public/data/civic.json';
 
   var db_config = require('./configuration/credentials.js');
-  var connection = mysql.createConnection(db_config.cred.localhost);
+  var connection = mysql.createConnection(db_config.cred.cleardb);
 
   connection.connect();
 
-    connection.query('CREATE DATABASE IF NOT EXISTS ' + db_config.cred.localhost.database, function (err) {
+    connection.query('CREATE DATABASE IF NOT EXISTS ' + db_config.cred.cleardb.database, function (err) {
       if (err) throw err;
-      connection.query('USE ' + db_config.cred.localhost.database, function (err) {
+      connection.query('USE ' + db_config.cred.cleardb.database, function (err) {
           if (err) throw err;
 
           connection.query('CREATE TABLE IF NOT EXISTS Entities('
