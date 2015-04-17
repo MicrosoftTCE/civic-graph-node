@@ -2980,6 +2980,8 @@ typesCheckboxActions();
 
         });
     }
+
+    var map, d3MapTools, d3Layer;
     // drawGraph();
 
     function drawMap() {
@@ -2998,6 +3000,18 @@ typesCheckboxActions();
         .attr("width", width)
         .attr("height", height)
         .attr("id", "map");
+
+    map = new Microsoft.Maps.Map(svg, {
+        credentials: 'Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M',
+        center: new Microsoft.Maps.Location(52, -115),
+        zoom: 4
+    });
+
+    //Register and load the D3 Overlay Module
+    Microsoft.Maps.registerModule("D3OverlayModule", "scripts/D3OverlayManager.js");
+    Microsoft.Maps.loadModule("D3OverlayModule", {
+        callback: loadD3Layer
+    });
 
     d3.json("../data/us.json", function (error, us) {
       svg.insert("path", ".graticule")
@@ -3102,4 +3116,39 @@ typesCheckboxActions();
             drawMap();
         }
     });
+
+var map, d3MapTools, d3Layer;
+
+function getMap() {
+    map = new Microsoft.Maps.Map(document.getElementById('map'), {
+        credentials: 'Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M',
+        center: new Microsoft.Maps.Location(52, -115),
+        zoom: 4
+    });
+
+    //Register and load the D3 Overlay Module
+    Microsoft.Maps.registerModule("D3OverlayModule", "scripts/D3OverlayManager.js");
+    Microsoft.Maps.loadModule("D3OverlayModule", {
+        callback: loadD3Layer
+    });
+}
+
+function loadD3Layer() {
+    //Create an instance of the D3 Overlay Manager
+    d3MapTools = new D3OverlayManager(map);
+    
+    //Create a data layer onto the map.
+    d3Layer = d3MapTools.addLayer({
+        loaded: function (svg, projection) {
+        
+            //Add code for rendering data using d3
+
+        }
+    });
+}
+
+//Optionally you can remove a layer from the map.
+function removeD3Layer(){
+    d3MapTools.removeLayer(d3Layer);
+}
 
