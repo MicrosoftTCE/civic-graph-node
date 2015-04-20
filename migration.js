@@ -2,6 +2,7 @@ var mysql = require('mysql');
 var fs = require('fs');
 var http = require('http');
 
+var request = require('request');
 
 var file = __dirname + '/public/data/civic.json';
 
@@ -16,9 +17,26 @@ fs.readFile(file, 'utf8', function(err, data){
   }
 
   data = JSON.parse(data);
-  populateCityTable(data);
-  populateLocationTable();
-
+  async.series([
+    function(callback){
+      // do some stuff ...
+      console.log('first call');
+      populateCityTable(data, function(){
+      	callback(null, 'one');
+      });
+    },
+    function(callback){
+      // do some more stuff ...
+      console.log('second call');
+      populateLocationTable(function(){
+      	callback(null, 'two');
+      });
+    }
+	],
+	// optional callback
+	function(err, results){
+	    // results is now equal to ['one', 'two']
+	});
 });
 
 function arrays_equal(a, b) {
@@ -49,26 +67,38 @@ var removeDuplicateNewYork = function(item) {
 	}
 }
 
-var populateLocationTable = function() {
-	var tmpTableData = [];
-	var queryString = 'SELECT Entities.ID AS EntityID, Cities.ID AS CityID FROM Entities JOIN Cities ON Entities.Location REGEXP CONCAT(Cities.City_Name, \',[ ]?\', Cities.State_Code)';
+var populateLocationTable = function(done) {
+	var tmpData = {};
+	var queryString = 'SELECT Entities.ID AS Entity_ID, Cities.ID AS City_ID FROM Entities JOIN Cities ON Entities.Location REGEXP CONCAT(Cities.City_Name, \',[ ]?\', Cities.State_Code)';
 	connection.query(queryString, function(err, rows, fields) {
 		if(err) throw err;
-		console.log(rows);
-		// for (var i in rows) {
-		// 	console.log(rows[i]);
-		// }
+			tmpData = rows;
+			for (var i = 0; i < tmpData.length; i++) {
+				// console.log(tmpData[i]);
+				var query = connection.query('INSERT INTO Locations SET ?', tmpData[i], function(err, result) {
+					if (err) throw err;
+				});
+				console.log(query.sql);
+			}
+		done();
 	});
-	// console.log(tmpTableData);
 };
 
-var populateCityTable = function(data) {
+var populateCityTable = function(data, done) {
 	var uniqueLocation = [];
+	unknownLocationsArray = [];
 	for(var i = 0; i < (data.nodes).length; i++) {
 		var Locations = data.nodes[i].location;
 		var EntityId = data.nodes[i].ID;
+
+		// for known locations
 		if (Locations !== 'Unknown'){
+
+			//parse by semicolon
 			var semicolonChecks = Locations.match(/([^;])+/g);
+
+			// console.log('Returned Array: ' + semicolonChecks);
+
 			trimArrayString(semicolonChecks);
 			if (semicolonChecks.length > 1) {
 				while(semicolonChecks.length > 0) {
@@ -80,9 +110,17 @@ var populateCityTable = function(data) {
 				uniqueLocation.push(semicolonChecks);
 			}
 		}
+
+		// when location is unknown
+		else {
+			var unknownLocations = data.nodes[i].ID;
+			unknownLocationsArray.push(unknownLocations);
+		}
 	}
 	uniqueLocation = uniqueLocation.unique()
 	removeDuplicateNewYork(uniqueLocation);
+
+
 	async.forEach(uniqueLocation, function(semicolonCheck, callback){
 		splitLocation(semicolonCheck[0], function(splitResult) {
 			var values = {
@@ -94,23 +132,22 @@ var populateCityTable = function(data) {
 				City_Lat: !!splitResult.City_Lat ? splitResult.City_Lat : null,
 				City_Long: !!splitResult.City_Long ? splitResult.City_Long : null
 			};
+			// console.log(values);
 			callback();
 			var query = connection.query('INSERT INTO Cities SET ?', values, function(err, result){
 				if (err) throw err;
 	    });
-	    // console.log(query.sql);
+	    console.log(query.sql);
 		});
 	}, function (err){
-
+		console.log('City is populated');
+		done();
 	});
 };
 
 var splitLocation = function(data, callback) {
-	var result;
-	var splitString = data.split(',');
+	var result = {};
 	getCityCoordinates(data.trim(), function(cityCoordinates){
-		splitString;
-		result = locationFilter(splitString);
 		result.City_Lat = cityCoordinates.latitude;
 		result.City_Long = cityCoordinates.longitude;
 		result.Country_Code = cityCoordinates.countryCode;
@@ -119,15 +156,12 @@ var splitLocation = function(data, callback) {
 		result.City_Name = cityCoordinates.cityName;
 		callback(result);
 	}, function(returnedValues){
-		splitString;
-		result = locationFilter(splitString);
-		result.City_Lat = returnedValues.latitude;
-		result.City_Long = returnedValues.longitude;
-		result.Country_Code = returnedValues.countryCode;
-		result.Country_Name = returnedValues.countryName;
-		result.State_Code = returnedValues.stateCode;
-		result.City_Name = returnedValues.cityName;
-		callback(result);
+		var result1;
+		var splitString = returnedValues.split(',');
+		result1 = locationFilter(splitString);
+		result1.City_Lat = returnedValues.latitude;
+		result1.City_Long = returnedValues.longitude;
+		callback(result1);
 	});
 };
 
@@ -140,10 +174,24 @@ var locationFilter = function(data) {
 			};
 		}
 		else if(data.length === 2) {
-			result = {
-				City_Name: data[0],
-				State_Code: data[1]
-			};
+			// special case for Minnesota
+			if (data[1] === ' Minnesota') {
+				result = {
+					City_Name: data[0],
+					State_Name: data[1]
+				};
+			}
+			else if(data[1].length > 3) {
+				result = {
+					City_Name: data[0],
+					Country_Name: data[1]
+				};
+			} else {
+				result = {
+					City_Name: data[0],
+					State_Code: data[1]
+				};
+			}
 		}
 		else if(data.length === 3) {
 			result = {
@@ -183,12 +231,16 @@ var getCityCoordinates = function(loc, callback, errorCallback){
 						});
 					});
 			} else {
+				// secondApiCall(loc);
 				errorCallback(loc);
 			}
 		}).on('error', function(err) {
 		});
 	});
 };
+
+
+
 
 
 

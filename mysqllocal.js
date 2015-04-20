@@ -263,6 +263,7 @@
   };
 
   var insertOperations = function(data){
+    console.log(data);
     for(var n = 0; n < (data.nodes).length; n++){
       // console.log((data.nodes)[n].revenue);
       if((data.nodes)[n].revenue !== null){
@@ -283,13 +284,12 @@
         }
       }
       if((data.nodes)[n].expenses !== null){
-        console.log("got here TOOOOOOO");
         for(var p = 0; p < ((data.nodes)[n].expenses).length; p++){
           var values = {
                         EntityID: (data.nodes)[n].ID,
                         Finance: 'Expenses',
-                        Amount: ((data.nodes)[n].revenue)[p].amount,
-                        Year:  ((data.nodes)[n].revenue)[p].year
+                        Amount: ((data.nodes)[n].expenses)[p].amount,
+                        Year:  ((data.nodes)[n].expenses)[p].year
                       };
           // console.log(values);
           var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
