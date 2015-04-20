@@ -2,6 +2,7 @@ var nodeInit;
 var fundLink;
 var fundingConnections;
 var porucsLink;
+
   function get_url_params() {
     // This function is anonymous, is executed immediately and
     // the return value is assigned to QueryString!
@@ -172,13 +173,8 @@ var porucsLink;
         var twitScale = d3.scale.sqrt().domain([10, 1000000]).range([10, 50]);
 
 
-        d3.json("/cities", function(error, cities){
-            console.log(cities);
-        });
-
-
         d3.json("/athena", function(error, graph) {
-            // d3.select("svg").append("rect")
+
             //                 .attr("x", 10)
             //                 .attr("y", 10)
             //                 .attr("width", width / 2 - 10 - 20)
@@ -773,8 +769,29 @@ var porucsLink;
                 d3.select('datalist#list-location').html(dataListSortedLocations);
                 d3.select('input#location').on('keyup', function() {
                     preFillLocation(this.value);
-                    add_input_locations(0);
                 });
+
+
+
+                // Todo: add location to support multiples fields
+
+                document.getElementById("location").addEventListener("input",function() {
+                    add_input_locations(0);
+                    var string = $(this).val();
+                    var splitString = string.split(",");
+                    $('#location').val(splitString[0]);
+                    d3.xhr("/cities", function(error, cities){
+                        var cities = JSON.parse(cities.response);
+                        for (var i in cities) {
+                            var city = cities[i];
+                            if(city.City_Name == splitString[0]) {
+                                $('#state').val(city.State_Code);
+                                $('#country').val(city.Country_Code);
+                            }
+                        }
+                    });
+                });
+
 
                 d3.select('#key-people-0 input[name="kpeople"]').on('keyup', function() {
                     add_input_kp(0);
@@ -1215,7 +1232,7 @@ var porucsLink;
 
                     // Render form B.
 
-                    s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity"/></div><h3 class="form-header">Entity Type</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><div class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City"/><input type="text" name="location" id="location" placeholder="State"/></div>';
+                    s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity"/></div><h3 class="form-header">Entity Type</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><div class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City"/><input type="text" name="location" id="state" placeholder="State"/></div>';
                     // d3.select("#expense").on("keyup", function() {
                     //     add_input_exp(counterE);
                     // });
@@ -1321,7 +1338,7 @@ var porucsLink;
                     });
                     counterJ++;
 
-                    $("#location-" + (counterJ - 1)).after('<div id="location-' + counterJ + '" class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City" list="list-location" style="width:50%;"/><input type="text" placeholder="State" style="width:22%;"/><input type="text" placeholder="Country" style="width:28%;"/></div>');
+                    $("#location-" + (counterJ - 1)).after('<div id="location-' + counterJ + '" class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City" list="list-location" style="width:50%;"/><input type="text" id="state" placeholder="State" style="width:22%;"/><input type="text" id="country" placeholder="Country" style="width:28%;"/></div>');
                     d3.select("#location-" + counterJ +  " input[name='location']").on("keyup", function() {
                         add_input_locations(counterJ);
                     });
@@ -1467,7 +1484,7 @@ var porucsLink;
             function displayFormA() {
                 // Test if jQuery works within d3...
                 //var elementCount = $( "*" ).css( "border", "3px solid red" ).length;
-                s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity" list="list-name"/><datalist id="list-name"></datalist></div><h3 class="form-header">What type of entity?</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><h3 class="form-header">What kind of work do they do?</h3><h4>(Select All That Apply)</h4><div class="webform-categories"><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_gen" type="checkbox" name="gen" data-show="general" value="General"/><span class="check"></span><h4 class="webform-labels">General Civic Tech</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_datat" type="checkbox" name="datat" data-show="datalytics" value="DataAnalytics"/><span class="check"></span><h4 class="webform-labels">Data & Analytics</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_eced" type="checkbox" name="eced" data-show="econedu" value="EconGrowthEdu"/><span class="check"></span><h4 class="webform-labels">Jobs & Education</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_src" type="checkbox" name="srcities" data-show="srcities" value="SRCities"/><span class="check"></span><h4 class="webform-labels">Smart & Resilient Cities</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_socs" type="checkbox" name="socserv" data-show="socserv" value="SocialServ"/><span class="check"></span><h4 class="webform-labels">Social Services</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_govt" type="checkbox" name="govtech" data-show="govtech" value="GovTech"/><span class="check"></span><h4 class="webform-labels">GovTech</h4></label></div></div><div id="location-0"><div class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City" list="list-location" style="width:50%;"/><input type="text" placeholder="State" style="width:22%;"/><input type="text" placeholder="Country" style="width:28%;"/></div></div><datalist id="list-location"></datalist></div><div class="input-control text" data-role="input-control"><input type="text" name="website" id="website" placeholder="Website"/></div><h3 class="form-header" style="display:inline-block;">Number of Employees</h3><div class="input-control text" data-role="input-control" style="width:27% !important; display:inline-block; float:right; margin-top: 2%;"><input type="text" name="employees" id="employee" maxlength="6" style="width:100% !important;"/></div><h3 class="form-header">Key People?</h3><div id="key-people-0" class="input-control text" data-role="input-control"><input type="text" name="kpeople" class="kpeople" placeholder="Key Person\'s Name"/></div><h3 class="form-header">Who funds them via grants?</h3><div id="funding-0"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;" list="funding-received-list"/><datalist id="funding-received-list"></datalist><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who invests in them via equity stakes (stock)?</h3><div id="investing-0"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;" list="investment-received-list"/><datalist id="investment-received-list"></datalist><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they fund via grants?</h3><div id="fundinggiven-0"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;" list="funding-given-list"/><datalist id="funding-given-list"></datalist><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they invest in via equity stakes (stock)?</h3><div id="investmentmade-0"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;" list="investment-made-list"/><datalist id="investment-made-list"></datalist><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who provides them with data?</h3><div id="data-0" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource" list="data-received-list"/><datalist id="data-received-list"></datalist></div><div id="nextPhase"><button type="button" id="submit-A" href="javascript: check_empty()">Next</button></div></div><hr/><div class="webform-footer"><span id="">Some entities lack adequate information. Would you like to help?</span><br/><span id="toFormC">Click here!</span></div>';
+                s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity" list="list-name"/><datalist id="list-name"></datalist></div><h3 class="form-header">What type of entity?</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><h3 class="form-header">What kind of work do they do?</h3><h4>(Select All That Apply)</h4><div class="webform-categories"><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_gen" type="checkbox" name="gen" data-show="general" value="General"/><span class="check"></span><h4 class="webform-labels">General Civic Tech</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_datat" type="checkbox" name="datat" data-show="datalytics" value="DataAnalytics"/><span class="check"></span><h4 class="webform-labels">Data & Analytics</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_eced" type="checkbox" name="eced" data-show="econedu" value="EconGrowthEdu"/><span class="check"></span><h4 class="webform-labels">Jobs & Education</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_src" type="checkbox" name="srcities" data-show="srcities" value="SRCities"/><span class="check"></span><h4 class="webform-labels">Smart & Resilient Cities</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_socs" type="checkbox" name="socserv" data-show="socserv" value="SocialServ"/><span class="check"></span><h4 class="webform-labels">Social Services</h4></label></div><div data-role="input-control" class="input-control checkbox webform"><label><input id="cb_govt" type="checkbox" name="govtech" data-show="govtech" value="GovTech"/><span class="check"></span><h4 class="webform-labels">GovTech</h4></label></div></div><div id="location-0"><div class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City" list="list-location" style="width:50%;"/><input type="text" id="state" placeholder="State" style="width:22%;"/><input type="text" id="country" placeholder="Country" style="width:28%;"/></div></div><datalist id="list-location"></datalist></div><div class="input-control text" data-role="input-control"><input type="text" name="website" id="website" placeholder="Website"/></div><h3 class="form-header" style="display:inline-block;">Number of Employees</h3><div class="input-control text" data-role="input-control" style="width:27% !important; display:inline-block; float:right; margin-top: 2%;"><input type="text" name="employees" id="employee" maxlength="6" style="width:100% !important;"/></div><h3 class="form-header">Key People?</h3><div id="key-people-0" class="input-control text" data-role="input-control"><input type="text" name="kpeople" class="kpeople" placeholder="Key Person\'s Name"/></div><h3 class="form-header">Who funds them via grants?</h3><div id="funding-0"><div class="fund-input input-control text" data-role="input-control"><input type="text" name="fund" class="funder" placeholder="Funder" style="display:inline-block; width:50%;" list="funding-received-list"/><datalist id="funding-received-list"></datalist><input type="text" name="fund_amt" class="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fund_year" class="fund_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who invests in them via equity stakes (stock)?</h3><div id="investing-0"><div class="invest-input input-control text" data-role="input-control"><input type="text" name="invest" class="investor" placeholder="Investor" style="display:inline-block; width:50%;" list="investment-received-list"/><datalist id="investment-received-list"></datalist><input type="text" name="invest_amt" class="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="invest_year" class="invest_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they fund via grants?</h3><div id="fundinggiven-0"><div class="fundgiven-input input-control text" data-role="input-control"><input type="text" name="fundgiven" class="fundee" placeholder="Fundee" style="display:inline-block; width:50%;" list="funding-given-list"/><datalist id="funding-given-list"></datalist><input type="text" name="fundgiven_amt" class="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="fundgiven_year" class="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who do they invest in via equity stakes (stock)?</h3><div id="investmentmade-0"><div class="investmade-input input-control text" data-role="input-control"><input type="text" name="investmade" class="investee" placeholder="Investee" style="display:inline-block; width:50%;" list="investment-made-list"/><datalist id="investment-made-list"></datalist><input type="text" name="investmade_amt" class="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;"/><input type="text" name="investmade_year" class="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Who provides them with data?</h3><div id="data-0" class="input-control text" data-role="input-control"><input type="text" name="data" class="data-entity" placeholder="Data Resource" list="data-received-list"/><datalist id="data-received-list"></datalist></div><div id="nextPhase"><button type="button" id="submit-A" href="javascript: check_empty()">Next</button></div></div><hr/><div class="webform-footer"><span id="">Some entities lack adequate information. Would you like to help?</span><br/><span id="toFormC">Click here!</span></div>';
 
                 return s;
 
@@ -2023,44 +2040,71 @@ var porucsLink;
             searchAutoComplete();
 
 
+
             function searchAutoComplete() {
                 var s = "";
 
-                filteredNodes.forEach(function(d) {
-                    name = d.name.toLowerCase();
-                    nickname = d.nickname.toLowerCase();
-                    var splitLocations = (d.location).split("; ");
+                d3.xhr("/cities", function(error, cities){
+                    filteredNodes.forEach(function(d) {
+                        name = d.name.toLowerCase();
+                        nickname = d.nickname.toLowerCase();
+                        var splitLocations = (d.location).split("; ");
 
-                    if (!(name in entitiesHash)) {
-                        entitiesHash[name] = d;
-                        sortedNamesList.push(d.name);
-                    }
+                        if (!(name in entitiesHash)) {
+                            entitiesHash[name] = d;
+                            sortedNamesList.push(d.name);
+                        }
 
-                    if (!(nickname in entitiesHash)) {
-                        entitiesHash[nickname] = d;
-                        sortedNamesList.push(d.nickname);
-                    }
+                        if (!(nickname in entitiesHash)) {
+                            entitiesHash[nickname] = d;
+                            sortedNamesList.push(d.nickname);
+                        }
+                        splitLocations.forEach(function(l) {
+                            locations = JSON.parse(cities.response);
+                            var this_city = l.split(",")[0];
+                            loop:
+                            for(var i in locations) {
+                                var location = locations[i];
+                                if(location.City_Name == this_city) {
+                                    var cityName = location.City_Name;
+                                    var stateName = location.State_Name || '-';
+                                    var countryName = location.Country_Name || '-';
+                                    var locationString = cityName.concat(',' + ' ' + stateName).concat(' ,' + ' ' + countryName);
+                                    d.location = locationString;
+                                    break loop;
+                                } else {
 
-                    splitLocations.forEach(function(l) {
-                        var lwcLocation = l.toLowerCase();
-                        (!(lwcLocation in locationsHash)) ? (locationsHash[lwcLocation] = [], locationsHash[lwcLocation].push(d), sortedLocationsList.push(l)) : (locationsHash[lwcLocation].push(d));
+                                }
+                            }
+                            var lwcLocation = l.toLowerCase();
+                            (!(d.location in locationsHash)) ? (locationsHash[lwcLocation] = [], locationsHash[lwcLocation].push(d), sortedLocationsList.push(d.location)) : (locationsHash[lwcLocation].push(d));
+                        });
+
                     });
-
                 });
 
                 // entitiesHash = _.sortBy(entitiesHash, function(value, key, object){
                 //   return key;
                 // });
 
+                //filter the location and name to support city, state and country
+
+
                 sortedNamesList = _.sortBy(sortedNamesList, function(names) {
                     return names.toLowerCase();
                 });
-                sortedLocationsList = _.sortBy(sortedLocationsList, function(locations) {
-                    return locations.toLowerCase();
-                });
-                sortedSearchList = _.sortBy(sortedNamesList.concat(sortedLocationsList), function(keys) {
-                    return keys;
-                });
+
+                setTimeout(function(){
+                    sortedLocationsList = _.sortBy(sortedLocationsList, function(locations) {
+                        return locations.toLowerCase();
+                    });
+
+                    sortedSearchList = _.sortBy(sortedNamesList.concat(sortedLocationsList), function(keys) {
+                        return keys;
+                    });
+                }, 1000);
+
+
 
                 for (var count = 0; count < sortedSearchList.length; count++) {
                     s += '<option value="' + sortedSearchList[count] + '">';
@@ -2129,8 +2173,9 @@ var porucsLink;
             }
 
             dataListSortedNames = generateNamesDataList(sortedNamesList);
-            dataListSortedLocations = generateNamesDataList(sortedLocationsList);
-
+            setTimeout(function(){
+                dataListSortedLocations = generateNamesDataList(sortedLocationsList);
+            }, 2000);
 
             function generateNamesDataList(sortedList) {
                 var datalist = "";

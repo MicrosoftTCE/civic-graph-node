@@ -1,13 +1,14 @@
 var mysql = require('mysql');
 var fs = require('fs');
-var http = require('https');
+var http = require('http');
+
 
 var file = __dirname + '/public/data/civic.json';
 
 var db_config = require('./configuration/credentials.js');
 var connection = mysql.createConnection(db_config.cred.localhost);
 var async = require('async');
-// connection.connect();
+connection.connect();
 
 fs.readFile(file, 'utf8', function(err, data){
   if(err){
@@ -15,70 +16,96 @@ fs.readFile(file, 'utf8', function(err, data){
   }
 
   data = JSON.parse(data);
+  populateCityTable(data);
+  populateLocationTable();
 
-  extractLocationFromEntities(data);
 });
 
-var extractLocationFromEntities = function(data) {
-	var locationArray = [];
-	console.log(locationArray, 'gsdugsg');
-	for(var i = 0; i < (data.nodes).length; i++) {
-		var Locations = data.nodes[i].location;
-		if (Locations !== 'Unknown'){
-			var semicolonChecks = Locations.match(/([^;])+/g);
-			locationArray.push(semicolonChecks);
+function arrays_equal(a, b) {
+	return !!a && !!b && !(a<b || b<a);
+}
 
-
-			// async.forEach(semicolonChecks, function(semicolonCheck, callback){
-			// 	splitLocation(semicolonCheck, function(splitResult) {
-			// 		var values = {
-			// 			City_Name: !!splitResult.City_Name ? splitResult.City_Name : null,
-			// 			State_Code: !!splitResult.State_Code ? splitResult.State_Code : null,
-			// 			State_Name: !!splitResult.State_Name ? splitResult.State_Name : null,
-			// 			Country_Code: !!splitResult.Country_Code ? splitResult.Country_Code : null,
-			// 			Country_Name: !!splitResult.Country_Name ? splitResult.Country_Name : null,
-			// 			City_Lat: !!splitResult.City_Lat ? splitResult.City_Lat : null,
-			// 			City_Long: !!splitResult.City_Long ? splitResult.City_Long : null
-			// 		};
-			// 		console.log(semicolonCheck, 'semicolonCheck');
-			// 		console.log(values, 'values');
-			// 		callback();
-			// 	// var query = connection.query('INSERT INTO Cities SET ?', values, function(err, result){
-
-		 //  //   });
-			// 	});
-			// }, function (err){
-
-			// });
-		}
-	}
-			for(var i=0; i < locationArray.length; i++){
-				if(locationArray.length > 1) {
-					var final = [];
-					while(locationArray.length > 1) {
-					    final.push(locationArray.splice(0, 1))
-					}
-					console.log(final, 'final');
-					// for(var i=0; i<final.length; i++){
-					// 	var locationArray1 = final[i];
-					// 	loopJ: for(var j=0; j<final.length; j++){
-					// 		var locationArray2 = final[j];
-					// 		// console.log(locationArray2);
-					// 		if(locationArray1 === locationArray2) continue;
-
-					// 		for(var k=locationArray2.length; k>=0; k--){
-					// 			if (locationArray2[k] !== locationArray1[k]) continue loopJ;
-					// 		}
-					// 		locationArray.splice(j, 1);
-					// 	}
-					// }
-				}
-			}
-	// console.log(locationArray, 'locationArray');
-
+Array.prototype.unique = function() {
+  var a = [];
+  for (var i = 0, l = this.length; i<l; i++) {
+      for (var j = i + 1; j < l; j++) if (arrays_equal(this[i], this[j])) j = ++i;
+      a.push(this[i]);
+  }
+  return a;
 };
 
-var splitLocation = function(data, callback, errorCallback) {
+var trimArrayString = function(array) {
+	for (var i = 0; i < array.length; i++) {
+    array[i] = array[i].trim();
+	}
+	return array;
+}
+
+var removeDuplicateNewYork = function(item) {
+	for (var i = 0; i < item.length; i++) {
+		if(item[i].toString() ===  'New York, New York' || item[i].toString() === 'NY, NY' ) {
+			item.splice(i, 1);
+		}
+	}
+}
+
+var populateLocationTable = function() {
+	var tmpTableData = [];
+	var queryString = 'SELECT Entities.ID AS EntityID, Cities.ID AS CityID FROM Entities JOIN Cities ON Entities.Location REGEXP CONCAT(Cities.City_Name, \',[ ]?\', Cities.State_Code)';
+	connection.query(queryString, function(err, rows, fields) {
+		if(err) throw err;
+		console.log(rows);
+		// for (var i in rows) {
+		// 	console.log(rows[i]);
+		// }
+	});
+	// console.log(tmpTableData);
+};
+
+var populateCityTable = function(data) {
+	var uniqueLocation = [];
+	for(var i = 0; i < (data.nodes).length; i++) {
+		var Locations = data.nodes[i].location;
+		var EntityId = data.nodes[i].ID;
+		if (Locations !== 'Unknown'){
+			var semicolonChecks = Locations.match(/([^;])+/g);
+			trimArrayString(semicolonChecks);
+			if (semicolonChecks.length > 1) {
+				while(semicolonChecks.length > 0) {
+				var commaSplit = semicolonChecks.splice(0, 1);
+				uniqueLocation.push(commaSplit);
+				}
+			}
+			else{
+				uniqueLocation.push(semicolonChecks);
+			}
+		}
+	}
+	uniqueLocation = uniqueLocation.unique()
+	removeDuplicateNewYork(uniqueLocation);
+	async.forEach(uniqueLocation, function(semicolonCheck, callback){
+		splitLocation(semicolonCheck[0], function(splitResult) {
+			var values = {
+				City_Name: !!splitResult.City_Name ? splitResult.City_Name : null,
+				State_Code: !!splitResult.State_Code && splitResult.State_Code.length < 5 ? splitResult.State_Code : null,
+				State_Name: !!splitResult.State_Name ? splitResult.State_Name : null,
+				Country_Code: !!splitResult.Country_Code ? splitResult.Country_Code : null,
+				Country_Name: !!splitResult.Country_Name ? splitResult.Country_Name : null,
+				City_Lat: !!splitResult.City_Lat ? splitResult.City_Lat : null,
+				City_Long: !!splitResult.City_Long ? splitResult.City_Long : null
+			};
+			callback();
+			var query = connection.query('INSERT INTO Cities SET ?', values, function(err, result){
+				if (err) throw err;
+	    });
+	    // console.log(query.sql);
+		});
+	}, function (err){
+
+	});
+};
+
+var splitLocation = function(data, callback) {
 	var result;
 	var splitString = data.split(',');
 	getCityCoordinates(data.trim(), function(cityCoordinates){
@@ -89,17 +116,18 @@ var splitLocation = function(data, callback, errorCallback) {
 		result.Country_Code = cityCoordinates.countryCode;
 		result.Country_Name = cityCoordinates.countryName;
 		result.State_Code = cityCoordinates.stateCode;
+		result.City_Name = cityCoordinates.cityName;
 		callback(result);
-	}, function(errorCallback) {
+	}, function(returnedValues){
 		splitString;
 		result = locationFilter(splitString);
-		result.City_Lat = errorCallback.latitude;
-		result.City_Long = errorCallback.longitude;
-		result.Country_Code = errorCallback.countryCode;
-		result.Country_Name = errorCallback.countryName;
-		result.State_Code = errorCallback.stateCode;
+		result.City_Lat = returnedValues.latitude;
+		result.City_Long = returnedValues.longitude;
+		result.Country_Code = returnedValues.countryCode;
+		result.Country_Name = returnedValues.countryName;
+		result.State_Code = returnedValues.stateCode;
+		result.City_Name = returnedValues.cityName;
 		callback(result);
-		console.log(errorCallback);
 	});
 };
 
@@ -120,7 +148,7 @@ var locationFilter = function(data) {
 		else if(data.length === 3) {
 			result = {
 				City_Name: data[0],
-				State_Code: data[1],
+				State_Name: data[1],
 				Country_Name: data[2]
 			};
 		}
@@ -128,30 +156,38 @@ var locationFilter = function(data) {
 	return result;
 };
 
-var getCityCoordinates = function(data, callback, errorCallback){
-http.get('https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyAi3_QO-1ri4zNJm70fwhhluQgstPlymBk', function(res) {
-	  res.on('data', function(chunk) {
-	  	var location = JSON.parse(chunk);
-	  	console.log(location);
-		 //  if(location[data] !== 'Unknown' && location[data] !== null) {
-		 //  	var cityCooordinates = {
-		 //  		countryCode: location[data].country_code,
-		 //  		countryName: location[data].country_name,
-		 //  		stateCode: location[data].region,
-		 //  		latitude: location[data].latitude,
-		 //  		longitude: location[data].longitude
-		 //  	};
-		 //  	callback(cityCooordinates);
-		 //  } else {
-		 //  	console.log(data, 'data');
-		 //  	errorCallback(data);
-		 //  }
-	  // }).on('error', function(err) {
-	  // 	console.log(err, 'err');
-	  });
+
+var getCityCoordinates = function(loc, callback, errorCallback){
+	http.get('http://dev.virtualearth.net/REST/v1/Locations?query=' + encodeURI(loc) + '&key=Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M', function(res) {
+		var data = '';
+		res.on('data', function(chunk) {
+			data += chunk;
+		}).on('end', function() {
+			var location = JSON.parse(data);
+			if (location && location.resourceSets && location.resourceSets.length > 0 && location.resourceSets[0].resources && location.resourceSets[0].resources.length > 0) {
+					http.get('http://restcountries.eu/rest/v1/name/' + location.resourceSets[0].resources[0].address.countryRegion + '?fullText=true', function(res) {
+						var result = '';
+						res.on('data', function(chunk) {
+							result += chunk;
+						}).on('end', function() {
+							var countryDetail = JSON.parse(result);
+							var cityDetails = {
+								cityName: location.resourceSets[0].resources[0].address.locality,
+								countryCode: countryDetail[0].alpha3Code,
+								countryName: location.resourceSets[0].resources[0].address.countryRegion,
+								stateCode: location.resourceSets[0].resources[0].address.adminDistrict,
+								latitude: location.resourceSets[0].resources[0].point.coordinates[0],
+								longitude: location.resourceSets[0].resources[0].point.coordinates[1]
+							};
+							callback(cityDetails);
+						});
+					});
+			} else {
+				errorCallback(loc);
+			}
+		}).on('error', function(err) {
+		});
 	});
-
-
 };
 
 

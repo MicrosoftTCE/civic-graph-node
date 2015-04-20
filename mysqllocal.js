@@ -17,7 +17,7 @@
           connection.query('CREATE TABLE IF NOT EXISTS Entities('
               + 'ID INT NOT NULL AUTO_INCREMENT UNIQUE,'
               + 'Name VARCHAR(100) NOT NULL,'                  // Entity Name
-              + 'Nickname VARCHAR(100) NOT NULL,'              // Nickname        
+              + 'Nickname VARCHAR(100) NOT NULL,'              // Nickname
               + 'Type VARCHAR(30) NOT NULL,'                   // Type of Entity
               + 'Categories VARCHAR(100),'                     // Category
               + 'Location VARCHAR(100) NOT NULL,'              // Location
@@ -25,13 +25,13 @@
               + 'TwitterHandle VARCHAR(50),'                   // Twitter Handle
               + 'Followers INT,'                               // Number of Twitter Followers
               + 'Employees INT,'                               // Number of Employees
-              + 'Influence VARCHAR(8),'    
+              + 'Influence VARCHAR(8),'
               + 'Relations VARCHAR(1000),'                     // Related To
-              + 'KeyPeople VARCHAR(1000),'                     // Key People   
-              + 'IPAddress VARCHAR(100),' 
+              + 'KeyPeople VARCHAR(1000),'                     // Key People
+              + 'IPAddress VARCHAR(100),'
               + 'IPGeolocation VARCHAR(100),'
               + 'CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,'
-              + 'Render INT,'           
+              + 'Render INT,'
               + 'PRIMARY KEY(ID, CreatedAt)'
               +  ')', function (err) {
                   if (err) throw err;
@@ -44,7 +44,7 @@
               + 'Connection VARCHAR(30),'
               + 'ConnectionYear INT,'
               + 'Amount BIGINT,'
-              + 'Render INT,'  
+              + 'Render INT,'
               + 'PRIMARY KEY (ID),'
               + 'FOREIGN KEY (Entity1ID) REFERENCES Entities(ID) ON UPDATE CASCADE,'
               + 'FOREIGN KEY (Entity2ID) REFERENCES Entities(ID) ON UPDATE CASCADE'
@@ -63,20 +63,6 @@
                   if(err) throw err;
               });
 
-          connection.query('CREATE TABLE IF NOT EXISTS Locations('
-              + 'ID INT NOT NULL AUTO_INCREMENT UNIQUE,'
-              + 'Entity_ID INT NOT NULL,'
-              + 'City_ID INT NOT NULL,'
-              + 'Address VARCHAR(200) NULL,'
-              + 'Address_Lat DECIMAL(9, 6),'
-              + 'Address_Long DECIMAL(9, 6),'
-              + 'PRIMARY KEY (ID),'
-              + 'FOREIGN KEY (Entity_ID) REFERENCES Entities(ID) ON UPDATE CASCADE,'
-              + 'FOREIGN KEY (City_ID) REFERENCES Cities(ID) ON UPDATE CASCADE'
-              + ')', function (err) {
-                  if(err) throw err;
-              });
-
           connection.query('CREATE TABLE IF NOT EXISTS Cities('
               + 'ID INT NOT NULL AUTO_INCREMENT UNIQUE,'
               + 'City_Name VARCHAR(50) NULL,'
@@ -84,11 +70,26 @@
               + 'State_Name VARCHAR(50) NULL,'
               + 'Country_Code VARCHAR(5) NULL,'
               + 'Country_Name VARCHAR(50) NULL,'
-              + 'City_Lat DECIMAL(9, 6) NULL,'
-              + 'City_Long DECIMAL(9, 6) NULL,'
+              + 'City_Lat DECIMAL(18, 15) NULL,'
+              + 'City_Long DECIMAL(18, 15) NULL,'
               + 'PRIMARY KEY (ID)'
               + ')', function (err) {
                   if(err) throw err;
+              });
+
+          connection.query('CREATE TABLE IF NOT EXISTS Locations('
+              + 'ID INT NOT NULL AUTO_INCREMENT UNIQUE,'
+              + 'Entity_ID INT NOT NULL,'
+              + 'City_ID INT NOT NULL,'
+              + 'Address VARCHAR(200) NULL,'
+              + 'Address_Lat DECIMAL(18, 15),'
+              + 'Address_Long DECIMAL(18, 15),'
+              + 'PRIMARY KEY (ID),'
+              + 'FOREIGN KEY (Entity_ID) REFERENCES Entities(ID) ON UPDATE CASCADE,'
+              + 'FOREIGN KEY (City_ID) REFERENCES Cities(ID) ON UPDATE CASCADE'
+              + ')', function (err) {
+                  if(err) throw err;
+                  // console.log(err);
               });
 
           connection.query('SET @@auto_increment_increment=1;', function(err){
@@ -123,7 +124,7 @@
               if(err){
                   console.log('Error: ' + err)
               }
-              
+
               data = JSON.parse(data);
 
               insertEntities(data);
@@ -143,7 +144,7 @@
       var relations = '';
       var key_people = '';
       ((data.nodes)[i].categories !== null) ? categories = (data.nodes)[i].categories.join(", ") : categories = null;
-      if((data.nodes)[i].relations !== null) 
+      if((data.nodes)[i].relations !== null)
       {
         (data.nodes)[i].relations.forEach(function(d, x){if(x === (data.nodes)[i].relations.length){relations += d.entity;} else{relations += d.entity + ", "; }});
       }
@@ -151,7 +152,7 @@
       {
         relations = null;
       }
-      if((data.nodes)[i].key_people !== null) 
+      if((data.nodes)[i].key_people !== null)
       {
         (data.nodes)[i].key_people.forEach(function(d, x){if(x === (data.nodes)[i].key_people.length){key_people += d.name;} else{key_people += d.name + ", "; }});
       }
@@ -161,19 +162,19 @@
       }
 
       var values = {
-                      ID: (data.nodes)[i].ID, 
-                      Name: (data.nodes)[i].name, 
-                      Nickname: (data.nodes)[i].nickname, 
-                      Type: (data.nodes)[i].type, 
-                      Categories: categories, 
-                      Location: (data.nodes)[i].location, 
-                      Website: (data.nodes)[i].url, 
-                      TwitterHandle: (data.nodes)[i].twitter_handle, 
-                      Followers: (data.nodes)[i].followers, 
-                      Employees: (data.nodes)[i].employees, 
-                      Influence: (data.nodes)[i].influence, 
-                      Relations: relations, 
-                      KeyPeople: key_people, 
+                      ID: (data.nodes)[i].ID,
+                      Name: (data.nodes)[i].name,
+                      Nickname: (data.nodes)[i].nickname,
+                      Type: (data.nodes)[i].type,
+                      Categories: categories,
+                      Location: (data.nodes)[i].location,
+                      Website: (data.nodes)[i].url,
+                      TwitterHandle: (data.nodes)[i].twitter_handle,
+                      Followers: (data.nodes)[i].followers,
+                      Employees: (data.nodes)[i].employees,
+                      Influence: (data.nodes)[i].influence,
+                      Relations: relations,
+                      KeyPeople: key_people,
                       Render: (data.nodes)[i].render
                   };
 
@@ -187,7 +188,7 @@
 
   var insertDataConnections = function(data){
     for(var j = 0; j < (data.data_connections).length; j++){
-      var values = {  
+      var values = {
                       Entity1ID: (data.data_connections)[j].source,
                       Entity2ID: (data.data_connections)[j].target,
                       Connection: 'Data',
@@ -210,7 +211,7 @@
                     Connection: null, //  Received vs. Given
                     ConnectionYear: (data.funding_connections[k].year),
                     Amount: (data.funding_connections[k].amount),
-                    Render: (data.funding_connections[k].render)  
+                    Render: (data.funding_connections[k].render)
                 };
 
       ((data.funding_connections)[k].type === "Received") ? values['Connection'] = "Funding Received" : values['Connection'] = "Funding Given";
@@ -250,7 +251,7 @@
                       Entity1ID: (data.collaboration_connections)[m].source,
                       Entity2ID: (data.collaboration_connections)[m].target,
                       Connection: 'Collaboration',
-                      Render: (data.collaboration_connections)[m].render 
+                      Render: (data.collaboration_connections)[m].render
                   };
 
       var query = connection.query('INSERT INTO Bridges SET ?', values, function(err, result){
@@ -263,7 +264,9 @@
 
   var insertOperations = function(data){
     for(var n = 0; n < (data.nodes).length; n++){
+      // console.log((data.nodes)[n].revenue);
       if((data.nodes)[n].revenue !== null){
+        console.log("got here AGAIN");
         for(var o = 0; o < ((data.nodes)[n].revenue).length; o++){
           var values = {
                         EntityID: (data.nodes)[n].ID,
@@ -271,15 +274,16 @@
                         Amount: ((data.nodes)[n].revenue)[o].amount,
                         Year: ((data.nodes)[n].revenue)[o].year
                       };
+          // console.log(values);
 
           var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
             if (err) throw err;
           });
-
           console.log(query.sql);
         }
       }
       if((data.nodes)[n].expenses !== null){
+        console.log("got here TOOOOOOO");
         for(var p = 0; p < ((data.nodes)[n].expenses).length; p++){
           var values = {
                         EntityID: (data.nodes)[n].ID,
@@ -287,7 +291,7 @@
                         Amount: ((data.nodes)[n].revenue)[p].amount,
                         Year:  ((data.nodes)[n].revenue)[p].year
                       };
-
+          // console.log(values);
           var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
             if (err) throw err;
           });
