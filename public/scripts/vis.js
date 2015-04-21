@@ -2981,13 +2981,17 @@ typesCheckboxActions();
         });
     }
 
-    var map, d3MapTools, d3Layer;
+var d3MapTools, d3Layer;
     // drawGraph();
 
-    function drawMap() {
-      var width = 960,
-        height = 500;
+function drawMap() {
+  var width = 960,
+    height = 500;
 
+  var wmap = d3.select(".content").append("div")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "map");
 
 
 
@@ -2998,21 +3002,19 @@ typesCheckboxActions();
     // var path = d3.geo.path()
     //     .projection(projection);
 
-    var svg = d3.select(".content").append("div")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("id", "map");
+  // var world_map = d3.select(".content").append("div").attr("id", "canvas");
 
-    map = new Microsoft.Maps.Map(document.getElementById('map'), {
-      credentials: 'Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M',
-      center: new Microsoft.Maps.Location(40, -80),
-      zoom: 4
-    });
 
-    Microsoft.Maps.registerModule("D3OverlayModule", "scripts/D3OverlayManager.js");
-    Microsoft.Maps.loadModule("D3OverlayModule", {
-        callback: loadD3Layer
-    });
+  map = new Microsoft.Maps.Map(document.getElementById('map'), {
+    credentials: 'Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M',
+    center: new Microsoft.Maps.Location(40, -80),
+    zoom: 4
+  });
+
+  Microsoft.Maps.registerModule("D3OverlayModule", "scripts/D3OverlayManager.js");
+  Microsoft.Maps.loadModule("D3OverlayModule", {
+      callback: loadD3Layer
+  });
 
 
     // d3.json("../data/us.json", function (error, us) {
@@ -3027,66 +3029,66 @@ typesCheckboxActions();
     //       .attr("d", path);
 
 
-      // var locations = {};
+    //   var locations = {};
 
-      // d3.json("../data/civicgeo.json", function (error, json) {
-      //   console.log("asdasd")
-      //   console.log(error)
-      //   if (error) return console.warn(error);
-      //   data = json;
+    //   d3.json("../data/civicgeo.json", function (error, json) {
+    //     console.log("asdasd")
+    //     console.log(error)
+    //     if (error) return console.warn(error);
+    //     data = json;
 
-      //   data.nodes.forEach(function (d) {
-      //     if (d.coordinates == null)
-      //       return
-      //     d.coordinates.forEach(function (coordinate) {
+    //     data.nodes.forEach(function (d) {
+    //       if (d.coordinates == null)
+    //         return
+    //       d.coordinates.forEach(function (coordinate) {
             
-      //       key = coordinate[0] + ":" + coordinate[1]
-      //       if (key in locations) {
-      //         locations[key]++;
-      //       }
-      //       else {
-      //         locations[key] = 1
-      //       }
-      //     });
-      //   });
+    //         key = coordinate[0] + ":" + coordinate[1]
+    //         if (key in locations) {
+    //           locations[key]++;
+    //         }
+    //         else {
+    //           locations[key] = 1
+    //         }
+    //       });
+    //     });
 
         
-      //   var maxVal = 0
-      //   locationData = [];
-      //   for (var loc in locations) {
-      //     var d = {};
-      //     coor = loc.split(":");
-      //     d.val = locations[loc];
-      //     d.lat = coor[0];
-      //     d.lon = coor[1];
-      //     locationData[locationData.length] = d;
+    //     var maxVal = 0
+    //     locationData = [];
+    //     for (var loc in locations) {
+    //       var d = {};
+    //       coor = loc.split(":");
+    //       d.val = locations[loc];
+    //       d.lat = coor[0];
+    //       d.lon = coor[1];
+    //       locationData[locationData.length] = d;
 
-      //     if (d.val > maxVal) {
-      //       maxVal = d.val;
-      //     }
-      //   }
+    //       if (d.val > maxVal) {
+    //         maxVal = d.val;
+    //       }
+    //     }
         
-      //   radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
-      //   svg.selectAll("circle")
-      //        .data(locationData)
-      //        .enter()
-      //        .append("circle")
-      //        .attr("cx", function (d) {
-      //          return projection([d.lon, d.lat])[0];
-      //        })
-      //        .attr("cy", function (d) {
-      //          return projection([d.lon, d.lat])[1];
-      //        })
-      //        .attr("r", function (d) {
-      //          return radiusScale(d.val);
-      //        })
-      //        .style("fill", "red");
-      // });
+    //     radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
+    //     svg.selectAll("circle")
+    //          .data(locationData)
+    //          .enter()
+    //          .append("circle")
+    //          .attr("cx", function (d) {
+    //            return projection([d.lon, d.lat])[0];
+    //          })
+    //          .attr("cy", function (d) {
+    //            return projection([d.lon, d.lat])[1];
+    //          })
+    //          .attr("r", function (d) {
+    //            return radiusScale(d.val);
+    //          })
+    //          .style("fill", "red");
+    //   });
     // });
-    console.log('map display');
+    // console.log('map display');
     d3.select(self.frameElement).style("height", height + "px");
 
-    }
+}
 
     if (current_view == 'map') {
       drawMap();
@@ -3120,86 +3122,77 @@ typesCheckboxActions();
     });
 
 function loadD3Layer() {
-
-  var locations = {};
-  //Create an instance of the D3 Overlay Manager
-  d3MapTools = new D3OverlayManager(map);
-  
-  //Create a data layer onto the map.
-  d3Layer = d3MapTools.addLayer({
-    loaded: function (svg, projection) {
+    //Create an instance of the D3 Overlay Manager
+    // console.log(map);
+    d3MapTools = new D3OverlayManager(map);
     
-        //Add code for rendering data using d3
-       d3.json('data/us.json', function (error, topology) {
-          var topoData = topojson.feature(topology, topology.objects.states).features;
+    //Create a data layer onto the map.
+    d3Layer = d3MapTools.addLayer({
+        loaded: function (svg, projection) {
 
-          svg.selectAll('path')
-              .data(topoData)
+          // var width = 960,
+          //   height = 500;
+          // var projection1 = d3.geo.albers()
+          //   .scale(1000)
+          //   .translate([width / 2 , height / 2 + 220]);
+          // console.log(projection);
+
+          // var path = d3.geo.path();
+        
+            //Add code for rendering data using d3
+          // d3.json('data/us.json', function (error, topology) {
+          //   var topoData = topojson.feature(topology, topology.objects.states).features;
+
+          //   svg.selectAll('path')
+          //       .data(topoData)
+          //     .enter().append('path')
+          //       .attr('class', 'states')
+          //       .attr('d', projection)
+          //   .on('click', function (feature) {
+          //       alert('Clicked on state id: ' + feature.id);
+          //   });
+
+          // });
+        d3.json("data/us.json", function(error, us) {
+          if (error) return console.error(error);
+
+          // var zoom = d3.behavior.zoom()
+          //   .on("zoom",function() {
+          //       g.attr("transform","translate("+ 
+          //           d3.event.translate.join(",")+")scale("+d3.event.scale+")");
+          //       g.selectAll("circle")  
+          //           .attr("d", projection); 
+          // });
+
+
+           svg.attr('id', 'layer')
+              .selectAll('path')
+              .data(topojson.feature(us, us.objects.states).features)
             .enter().append('path')
               .attr('class', 'states')
               .attr('d', projection)
-              .attr('opacity', 0.7)
-          .on('click', function (feature) {
-              alert('Clicked on state id: ' + feature.id);
-          });
+              .attr('opacity', 0.7);
+
+          // svg.append("path")
+          //   .datum(topojson.feature(us, us.objects.nation))
+          //   .attr("class", "land")
+          //   .attr("d", path);
+
+          // Append to svg here.
+          svg
+          .append('g')
+          .selectAll('circle')
+          .data(topojson.feature(us, us.objects.states).features)
+          .enter()
+          .append('circle')
+          .attr("transform", function(d) { return "translate(" + projection.centroid(d) + ")"; })
+          .attr('r', 5)
+          .style('fill', 'green');
         });
+        
 
-      d3.json("../data/civicgeo.json", function (error, json) {
-        console.log("asdasd")
-        console.log(error)
-        if (error) return console.warn(error);
-        data = json;
-
-        // console.log(data, 'from civicgeo');
-        data.nodes.forEach(function (d) {
-          console.log(d.coordinates, 'the coordinates');
-        //   if (d.coordinates == null)
-        //     return
-        //   d.coordinates.forEach(function (coordinate) {
-            
-        //     key = coordinate[0] + ":" + coordinate[1]
-        //     if (key in locations) {
-        //       locations[key]++;
-        //     }
-        //     else {
-        //       locations[key] = 1
-        //     }
-        //   });
-        });
-
-      
-        // var maxVal = 0
-        // locationData = [];
-        // for (var loc in locations) {
-        //   var d = {};
-        //   coor = loc.split(":");
-        //   d.val = locations[loc];
-        //   d.lat = coor[0];
-        //   d.lon = coor[1];
-        //   locationData[locationData.length] = d;
-
-        //   if (d.val > maxVal) {
-        //     maxVal = d.val;
-        //   }
-        // }
-      
-        // radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
-        // svg.selectAll("circle")
-        //      .data(locationData)
-        //      .enter()
-        //      .append("circle")
-        //      .attr("cx", function (d) {
-        //        return projection([d.lon, d.lat])[0];
-        //      })
-        //      .attr("cy", function (d) {
-        //        return projection([d.lon, d.lat])[1];
-        //      })
-        //      .attr("r", function (d) {
-        //        return radiusScale(d.val);
-        //      })
-        //      .style("fill", "red");
-      });
-    }
-  });
+        }
+    });
 }
+
 
