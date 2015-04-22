@@ -2982,95 +2982,95 @@ typesCheckboxActions();
     }
     // drawGraph();
 
-    function drawMap() {
-      var width = 960,
-        height = 500;
+    // function drawMap() {
+    //   var width = 960,
+    //     height = 500;
 
 
-    var projection = d3.geo.albers()
-        .scale(1000)
-        .translate([width / 2 - 40, height / 2 + 30]);
+    // var projection = d3.geo.albers()
+    //     .scale(1000)
+    //     .translate([width / 2 - 40, height / 2 + 30]);
 
-    var path = d3.geo.path()
-        .projection(projection);
+    // var path = d3.geo.path()
+    //     .projection(projection);
 
-    var svg = d3.select(".content").append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("id", "map");
+    // var svg = d3.select(".content").append("svg")
+    //     .attr("width", width)
+    //     .attr("height", height)
+    //     .attr("id", "map");
 
-    d3.json("../data/us.json", function (error, us) {
-      svg.insert("path", ".graticule")
-          .datum(topojson.feature(us, us.objects.land))
-          .attr("class", "land")
-          .attr("d", path);
+    // d3.json("../data/us.json", function (error, us) {
+    //   svg.insert("path", ".graticule")
+    //       .datum(topojson.feature(us, us.objects.land))
+    //       .attr("class", "land")
+    //       .attr("d", path);
 
-      svg.insert("path", ".graticule")
-          .datum(topojson.mesh(us, us.objects.states, function (a, b) { return a !== b; }))
-          .attr("class", "state-boundary")
-          .attr("d", path);
+    //   svg.insert("path", ".graticule")
+    //       .datum(topojson.mesh(us, us.objects.states, function (a, b) { return a !== b; }))
+    //       .attr("class", "state-boundary")
+    //       .attr("d", path);
 
 
-      var locations = {};
+    //   var locations = {};
 
-      d3.json("../data/civicgeo.json", function (error, json) {
-        console.log("asdasd")
-        console.log(error)
-        if (error) return console.warn(error);
-        data = json;
+    //   d3.json("../data/civicgeo.json", function (error, json) {
+    //     console.log("asdasd")
+    //     console.log(error)
+    //     if (error) return console.warn(error);
+    //     data = json;
 
-        data.nodes.forEach(function (d) {
-          if (d.coordinates == null)
-            return
-          d.coordinates.forEach(function (coordinate) {
+    //     data.nodes.forEach(function (d) {
+    //       if (d.coordinates == null)
+    //         return
+    //       d.coordinates.forEach(function (coordinate) {
             
-            key = coordinate[0] + ":" + coordinate[1]
-            if (key in locations) {
-              locations[key]++;
-            }
-            else {
-              locations[key] = 1
-            }
-          });
-        });
+    //         key = coordinate[0] + ":" + coordinate[1]
+    //         if (key in locations) {
+    //           locations[key]++;
+    //         }
+    //         else {
+    //           locations[key] = 1
+    //         }
+    //       });
+    //     });
 
         
-        var maxVal = 0
-        locationData = [];
-        for (var loc in locations) {
-          var d = {};
-          coor = loc.split(":");
-          d.val = locations[loc];
-          d.lat = coor[0];
-          d.lon = coor[1];
-          locationData[locationData.length] = d;
+    //     var maxVal = 0
+    //     locationData = [];
+    //     for (var loc in locations) {
+    //       var d = {};
+    //       coor = loc.split(":");
+    //       d.val = locations[loc];
+    //       d.lat = coor[0];
+    //       d.lon = coor[1];
+    //       locationData[locationData.length] = d;
 
-          if (d.val > maxVal) {
-            maxVal = d.val;
-          }
-        }
+    //       if (d.val > maxVal) {
+    //         maxVal = d.val;
+    //       }
+    //     }
         
-        radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
-        svg.selectAll("circle")
-             .data(locationData)
-             .enter()
-             .append("circle")
-             .attr("cx", function (d) {
-               return projection([d.lon, d.lat])[0];
-             })
-             .attr("cy", function (d) {
-               return projection([d.lon, d.lat])[1];
-             })
-             .attr("r", function (d) {
-               return radiusScale(d.val);
-             })
-             .style("fill", "red");
-      });
-    });
+    //     radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
+    //     svg.selectAll("circle")
+    //          .data(locationData)
+    //          .enter()
+    //          .append("circle")
+    //          .attr("cx", function (d) {
+    //            return projection([d.lon, d.lat])[0];
+    //          })
+    //          .attr("cy", function (d) {
+    //            return projection([d.lon, d.lat])[1];
+    //          })
+    //          .attr("r", function (d) {
+    //            return radiusScale(d.val);
+    //          })
+    //          .style("fill", "red");
+    //   });
+    // });
 
-    d3.select(self.frameElement).style("height", height + "px");
+    // d3.select(self.frameElement).style("height", height + "px");
 
-    }
+    // }
 
     if (current_view == 'map') {
       drawMap();
@@ -3081,9 +3081,9 @@ typesCheckboxActions();
       document.getElementById('cb_mapview').checked = false;
       document.getElementById('cb_networkview').checked = true;
     } else {
-      drawGraph();
-      document.getElementById('cb_mapview').checked = false;
-      document.getElementById('cb_networkview').checked = true;
+      drawMap();
+      document.getElementById('cb_mapview').checked = true;
+      document.getElementById('cb_networkview').checked = false;
     }
 
     d3.selectAll('#cb_networkview').on('click', function() {
@@ -3103,3 +3103,108 @@ typesCheckboxActions();
         }
     });
 
+function drawMap() {
+  var width = 960,
+    height = 500;
+
+var projection = d3.geo.mercator()
+    .scale((width + 1) / 2 / Math.PI)
+    .translate([width / 2, height / 2])
+    .precision(.1);
+
+  var svg = d3.select(".content").append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("id", "map");
+
+  var path = d3.geo.path()
+      .projection(projection);
+
+  var g = svg.append("g");
+
+  // load and display the World
+  d3.json("../data/world-110m.json", function(error, topology) {
+
+    // load and display the cities
+    var locations = {};
+
+    d3.json("../data/civicgeo.json", function (error, json) {
+      console.log("asdasd")
+      console.log(error)
+      if (error) return console.warn(error);
+      data = json;
+
+      data.nodes.forEach(function (d) {
+        if (d.coordinates == null)
+          return
+        d.coordinates.forEach(function (coordinate) {
+          
+          key = coordinate[0] + ":" + coordinate[1]
+          if (key in locations) {
+            locations[key]++;
+          }
+          else {
+            locations[key] = 1
+          }
+        });
+      });
+
+      
+      var maxVal = 0
+      locationData = [];
+      for (var loc in locations) {
+        var d = {};
+        coor = loc.split(":");
+        d.val = locations[loc];
+        d.lat = coor[0];
+        d.lon = coor[1];
+        locationData[locationData.length] = d;
+
+        if (d.val > maxVal) {
+          maxVal = d.val;
+        }
+      }
+      
+      radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
+      g.selectAll("circle")
+           .data(locationData)
+           .enter()
+           .append("circle")
+           .attr("cx", function (d) {
+             return projection([d.lon, d.lat])[0];
+           })
+           .attr("cy", function (d) {
+             return projection([d.lon, d.lat])[1];
+           })
+           .attr("r", function (d) {
+             return radiusScale(d.val);
+           })
+           .style("fill", "green");
+    });
+
+
+    g.selectAll("path")
+          .data(topojson.feature(topology, topology.objects.countries)
+              .features)
+        .enter()
+          .append("path")
+          .attr("d", path)
+  });
+
+  // zoom and pan
+  var zoom = d3.behavior.zoom()
+      .on("zoom",function() {
+          g.attr("transform","translate("+ 
+              d3.event.translate.join(",")+")scale("+d3.event.scale+")");
+          g.selectAll("circle")
+              .attr("d", path.projection(projection));
+          g.selectAll("path")  
+              .attr("d", path.projection(projection)); 
+
+    });
+
+  svg.call(zoom);
+
+  d3.select(self.frameElement).style("height", height + "px");
+
+}
