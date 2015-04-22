@@ -3099,9 +3099,9 @@ function drawMap() {
       document.getElementById('cb_mapview').checked = false;
       document.getElementById('cb_networkview').checked = true;
     } else {
-      drawGraph();
-      document.getElementById('cb_mapview').checked = false;
-      document.getElementById('cb_networkview').checked = true;
+      drawMap();
+      document.getElementById('cb_mapview').checked = true;
+      document.getElementById('cb_networkview').checked = false;
     }
 
     d3.selectAll('#cb_networkview').on('click', function() {
@@ -3128,13 +3128,14 @@ function loadD3Layer() {
     
     //Create a data layer onto the map.
     d3Layer = d3MapTools.addLayer({
-        loaded: function (svg, projection) {
+      loaded: function (svg, projection) {
 
           // var width = 960,
           //   height = 500;
-          // var projection1 = d3.geo.albers()
+
+          // var projection = d3.geo.albers()
           //   .scale(1000)
-          //   .translate([width / 2 , height / 2 + 220]);
+          //   .translate([width / 2 , height / 2]);
           // console.log(projection);
 
           // var path = d3.geo.path();
@@ -3151,45 +3152,54 @@ function loadD3Layer() {
           //   .on('click', function (feature) {
           //       alert('Clicked on state id: ' + feature.id);
           //   });
-
+        var locations = {};
           // });
         d3.json("data/us.json", function(error, us) {
           if (error) return console.error(error);
 
-          // var zoom = d3.behavior.zoom()
-          //   .on("zoom",function() {
-          //       g.attr("transform","translate("+ 
-          //           d3.event.translate.join(",")+")scale("+d3.event.scale+")");
-          //       g.selectAll("circle")  
-          //           .attr("d", projection); 
-          // });
+          
+          // var zoomListener = d3.behavior.zoom()
+          //   .scaleExtent([0.1, 3])
+          //   .on("zoom", zoomHandler);
 
+          // // function for handling zoom event
+          // function zoomHandler() {
+          //   console.log('zoomed', d3.event);
+          //   // vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+          // }
 
            svg.attr('id', 'layer')
               .selectAll('path')
               .data(topojson.feature(us, us.objects.states).features)
-            .enter().append('path')
-              .attr('class', 'states')
-              .attr('d', projection)
+              .enter()
+              .append('path')
               .attr('opacity', 0.7);
 
-          // svg.append("path")
-          //   .datum(topojson.feature(us, us.objects.nation))
-          //   .attr("class", "land")
-          //   .attr("d", path);
-
-          // Append to svg here.
           svg
-          .append('g')
-          .selectAll('circle')
-          .data(topojson.feature(us, us.objects.states).features)
-          .enter()
-          .append('circle')
-          .attr("transform", function(d) { return "translate(" + projection.centroid(d) + ")"; })
-          .attr('r', 5)
-          .style('fill', 'green');
+            .selectAll('#layer')
+            .data(topojson.feature(us, us.objects.states).features.splice(0, 1))
+            .enter()
+            .append('circle')
+            .attr('transform', function(d) {
+              return "translate(" + projection.centroid(d) + ")";
+            })
+            .attr('r', 5)
+            .style('fill', 'green');
+          
+          
+
+          var zoom = d3.behavior.zoom()
+            .on("zoom", function() {
+              console.log('zoomed', d3.event);
+              var cy = Number(svg.selectAll('circle').attr('cy'));
+              var cx = Number(svg.selectAll('circle').attr('cx'));
+              // svg.selectAll('circle').attr('cy', String(cy + d3.event.translate[1]));
+              // svg.selectAll('circle').attr('cx', String(cx + d3.event.translate[0]));
+            });
+          
+          svg.call(zoom);
+
         });
-        
 
         }
     });
