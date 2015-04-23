@@ -2,48 +2,49 @@ var nodeInit;
 var fundLink;
 var fundingConnections;
 var porucsLink;
-  function get_url_params() {
+
+function get_url_params() {
     // This function is anonymous, is executed immediately and 
     // the return value is assigned to QueryString!
     var query_string = {};
     var query = window.location.search.substring(1);
     var vars = query.split("&");
-    for (var i=0;i<vars.length;i++) {
-      var pair = vars[i].split("=");
-          // If first entry with this name
-      if (typeof query_string[pair[0]] === "undefined") {
-        query_string[pair[0]] = pair[1];
-          // If second entry with this name
-      } else if (typeof query_string[pair[0]] === "string") {
-        var arr = [ query_string[pair[0]], pair[1] ];
-        query_string[pair[0]] = arr;
-          // If third or later entry with this name
-      } else {
-        query_string[pair[0]].push(pair[1]);
-      }
-    } 
-      return query_string;
-  }
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        // If first entry with this name
+        if (typeof query_string[pair[0]] === "undefined") {
+            query_string[pair[0]] = pair[1];
+            // If second entry with this name
+        } else if (typeof query_string[pair[0]] === "string") {
+            var arr = [query_string[pair[0]], pair[1]];
+            query_string[pair[0]] = arr;
+            // If third or later entry with this name
+        } else {
+            query_string[pair[0]].push(pair[1]);
+        }
+    }
+    return query_string;
+}
 
-  var current_view = get_url_params()['view'];
+var current_view = get_url_params()['view'];
 
-    d3.selection.prototype.moveToFront = function() {
-        return this.each(function() {
-            this.parentNode.appendChild(this);
-        });
-    };
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function() {
+        this.parentNode.appendChild(this);
+    });
+};
 
-    d3.selection.prototype.moveToBack = function() {
-        return this.each(function() {
-            var firstChild = this.parentNode.firstChild;
-            if (firstChild) {
-                this.parentNode.insertBefore(this, firstChild);
-            }
-        });
-    };
+d3.selection.prototype.moveToBack = function() {
+    return this.each(function() {
+        var firstChild = this.parentNode.firstChild;
+        if (firstChild) {
+            this.parentNode.insertBefore(this, firstChild);
+        }
+    });
+};
 
 
-    function drawGraph() {
+function drawGraph() {
         function wrap(text, width) {
             text.each(function() {
                 var text = d3.select(this),
@@ -499,8 +500,8 @@ var porucsLink;
 
 
                 d3.selectAll('#editCurrentInfo').on('click', function() {
-                    prefillCurrent(d);
-                })
+                        prefillCurrent(d);
+                    })
                     .on('mouseover', function() {
                         d3.select(this).style('cursor', 'pointer');
                         return d3.select('#editBox').style("visibility", "visible");
@@ -2099,8 +2100,8 @@ var porucsLink;
                         .on('click', null);
 
                     node.filter(function(n, i) {
-                        return nodeInit[0][i].style.opacity == 1;
-                    })
+                            return nodeInit[0][i].style.opacity == 1;
+                        })
                         .on('mouseover', handleClickNodeHover);
                 }
             }
@@ -2277,17 +2278,17 @@ var porucsLink;
                 d3.select(this).style("stroke", "black").on('mouseout', null);
 
                 node.filter(function(singleNode) {
-                    if (singleNode !== d) {
-                        return singleNode;
-                    }
-                }).style("stroke", "white")
+                        if (singleNode !== d) {
+                            return singleNode;
+                        }
+                    }).style("stroke", "white")
                     .on('mouseover', null)
                     .on('mouseout', null)
                     .on('click', null);
 
                 node.filter(function(l) {
-                    return (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborData.indexOf(l.index) > -1 || l === d);
-                }).on('mouseover', handleClickNodeHover)
+                        return (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborData.indexOf(l.index) > -1 || l === d);
+                    }).on('mouseover', handleClickNodeHover)
                     .on('click', sinclick);
 
             }
@@ -2451,8 +2452,8 @@ var porucsLink;
 
 
                 node.filter(function(l) {
-                    return (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborData.indexOf(l.index) > -1 || l === d);
-                }).on('mouseover', handleClickNodeHover)
+                        return (neighborFund.indexOf(l.index) > -1 || neighborInvest.indexOf(l.index) > -1 || neighborPorucs.indexOf(l.index) > -1 || neighborData.indexOf(l.index) > -1 || l === d);
+                    }).on('mouseover', handleClickNodeHover)
                     .on('click', function(l) {});
 
             }
@@ -2523,8 +2524,8 @@ var porucsLink;
 
                 if (_.isEmpty(centeredNode)) {
                     fundLink.attr("x1", function(d) {
-                        return d.source.x;
-                    })
+                            return d.source.x;
+                        })
                         .attr("y1", function(d) {
                             return d.source.y;
                         })
@@ -2536,8 +2537,8 @@ var porucsLink;
                         });
 
                     investLink.attr("x1", function(d) {
-                        return d.source.x;
-                    })
+                            return d.source.x;
+                        })
                         .attr("y1", function(d) {
                             return d.source.y;
                         })
@@ -2549,8 +2550,8 @@ var porucsLink;
                         });
 
                     porucsLink.attr("x1", function(d) {
-                        return d.source.x;
-                    })
+                            return d.source.x;
+                        })
                         .attr("y1", function(d) {
                             return d.source.y;
                         })
@@ -2562,8 +2563,8 @@ var porucsLink;
                         });
 
                     dataLink.attr("x1", function(d) {
-                        return d.source.x;
-                    })
+                            return d.source.x;
+                        })
                         .attr("y1", function(d) {
                             return d.source.y;
                         })
@@ -2575,8 +2576,8 @@ var porucsLink;
                         });
 
                     node.attr("cx", function(d) {
-                        return d.x = d.x;
-                    })
+                            return d.x = d.x;
+                        })
                         .attr("cy", function(d) {
                             return d.y = d.y;
                         });
@@ -2586,12 +2587,12 @@ var porucsLink;
 
                 } else {
                     fundLink.attr("x1", function(d) {
-                        if (d.source === centeredNode) {
-                            d.source.x = centeredNode.x;
+                            if (d.source === centeredNode) {
+                                d.source.x = centeredNode.x;
 
-                            return d.source.x;
-                        } else return d.source.x;
-                    })
+                                return d.source.x;
+                            } else return d.source.x;
+                        })
                         .attr("y1", function(d) {
                             if (d.source === centeredNode) {
                                 d.source.y = centeredNode.y;
@@ -2615,12 +2616,12 @@ var porucsLink;
                         });
 
                     investLink.attr("x1", function(d) {
-                        if (d.source === centeredNode) {
-                            d.source.x = centeredNode.x;
+                            if (d.source === centeredNode) {
+                                d.source.x = centeredNode.x;
 
-                            return d.source.x;
-                        } else return d.source.x;
-                    })
+                                return d.source.x;
+                            } else return d.source.x;
+                        })
                         .attr("y1", function(d) {
                             if (d.source === centeredNode) {
                                 d.source.y = centeredNode.y;
@@ -2644,12 +2645,12 @@ var porucsLink;
                         });
 
                     porucsLink.attr("x1", function(d) {
-                        if (d.source === centeredNode) {
-                            d.source.x = centeredNode.x;
+                            if (d.source === centeredNode) {
+                                d.source.x = centeredNode.x;
 
-                            return d.source.x;
-                        } else return d.source.x;
-                    })
+                                return d.source.x;
+                            } else return d.source.x;
+                        })
                         .attr("y1", function(d) {
                             if (d.source === centeredNode) {
                                 d.source.y = centeredNode.y;
@@ -2673,12 +2674,12 @@ var porucsLink;
                         });
 
                     dataLink.attr("x1", function(d) {
-                        if (d.source === centeredNode) {
-                            d.source.x = centeredNode.x;
+                            if (d.source === centeredNode) {
+                                d.source.x = centeredNode.x;
 
-                            return d.source.x;
-                        } else return d.source.x;
-                    })
+                                return d.source.x;
+                            } else return d.source.x;
+                        })
                         .attr("y1", function(d) {
                             if (d.source === centeredNode) {
                                 d.source.y = centeredNode.y;
@@ -2702,11 +2703,11 @@ var porucsLink;
                         });
 
                     node.attr("cx", function(d, i) {
-                        if ((d3.select(node)[0][0].data())[i].name === centeredNode.name) {
-                            d.x = centeredNode.x;
-                            return d.x;
-                        } else return d.x = d.x;
-                    })
+                            if ((d3.select(node)[0][0].data())[i].name === centeredNode.name) {
+                                d.x = centeredNode.x;
+                                return d.x;
+                            } else return d.x = d.x;
+                        })
                         .attr("cy", function(d, i) {
                             if ((d3.select(node)[0][0].data())[i].name === centeredNode.name) {
                                 d.y = centeredNode.y;
@@ -2729,164 +2730,169 @@ var porucsLink;
 
 
 
-var determineVisibleNodes = function() {
-  //  Construct associative array of the visible nodes' indices (keys) and corresponding objects (values).
-  var visibleNodes = {};
-  for (var x = 0; x < nodeInit[0].length; x++) {
-    if (nodeInit[0][x].style.visibility === "visible") {
-      visibleNodes[nodeInit[0][x].__data__.ID] = nodeInit[0][x];
-    }
-  }
-  return visibleNodes;
-};
+            var determineVisibleNodes = function() {
+                //  Construct associative array of the visible nodes' indices (keys) and corresponding objects (values).
+                var visibleNodes = {};
+                for (var x = 0; x < nodeInit[0].length; x++) {
+                    if (nodeInit[0][x].style.visibility === "visible") {
+                        visibleNodes[nodeInit[0][x].__data__.ID] = nodeInit[0][x];
+                    }
+                }
+                return visibleNodes;
+            };
 
-/***
+            /***
 
-  For the "Connections" checkboxes
+              For the "Connections" checkboxes
 
-***/
-var connectionsCheckboxActions = function(){
+            ***/
+            var connectionsCheckboxActions = function() {
 
-  var connectionClasses = ['.invest', '.fund', '.porucs', '.data'];
+                var connectionClasses = ['.invest', '.fund', '.porucs', '.data'];
 
-  d3.selectAll('.group-items.connections input')[0].forEach(function(d, i){
-    d3.selectAll('#' + d.id).on('click', (function(d, i){
-      return function(){
-        // d3.selectAll('#cb_fund')[0][0].checked
-        var visibleNodes = determineVisibleNodes();
-        $('#' + d.id).is(':checked') ? revealConnections(connectionClasses[i], visibleNodes) : hideConnections(connectionClasses[i]); 
-        shouldCheckboxRemainUnchecked(connectionClasses[i], visibleNodes);
-      };
-    })(d, i));
-  });
-};
+                d3.selectAll('.group-items.connections input')[0].forEach(function(d, i) {
+                    d3.selectAll('#' + d.id).on('click', (function(d, i) {
+                        return function() {
+                            // d3.selectAll('#cb_fund')[0][0].checked
+                            var visibleNodes = determineVisibleNodes();
+                            $('#' + d.id).is(':checked') ? revealConnections(connectionClasses[i], visibleNodes) : hideConnections(connectionClasses[i]);
+                            shouldCheckboxRemainUnchecked(connectionClasses[i], visibleNodes);
+                        };
+                    })(d, i));
+                });
+            };
 
-// Only reveal the connections with both source and target nodes visible.
-var revealConnections = function(selector, visibleNodes){
-  // drawFundLink();
-  d3.selectAll(selector).style("visibility", function(l) {
-    if(l.source.index in visibleNodes && l.target.index in visibleNodes && this.style.visibility === "hidden") {
-      return "visible";
-    } else
-      return "hidden";
-  });
-};
+            // Only reveal the connections with both source and target nodes visible.
+            var revealConnections = function(selector, visibleNodes) {
+                // drawFundLink();
+                d3.selectAll(selector).style("visibility", function(l) {
+                    if (l.source.index in visibleNodes && l.target.index in visibleNodes && this.style.visibility === "hidden") {
+                        return "visible";
+                    } else
+                        return "hidden";
+                });
+            };
 
-//  
-var hideConnections = function(selector){
-  d3.selectAll(selector).style("visibility", function(l) {
-    return "hidden";
-  });
-};  
+            //  
+            var hideConnections = function(selector) {
+                d3.selectAll(selector).style("visibility", function(l) {
+                    return "hidden";
+                });
+            };
 
-// If none of the type's nodes are visible, then the connections should not be visible as well (no nodes = no connections).
-var shouldCheckboxRemainUnchecked = function(selector, visibleNodes){
-  if(visibleNodes.length === 0 || ($('#cb_individ').is('checked') && $('#cb_forpro').is('checked') && $('#cb_nonpro').is('checked') && $('#cb_gov').is('checked'))){
-    $(selector).attr('checked', false);
-  }
-}
-
-
-connectionsCheckboxActions();
-
-/***
-
-  For the "Types" checkboxes
-
-***/
-var typesCheckboxActions = function(){
-  d3.selectAll('#cb_forpro, #cb_nonpro, #cb_gov, #cb_individ').on('click', function() {
-    $('#cb_forpro').is(':checked') ? nodeVisibility('For-Profit', 'visible') : nodeVisibility('For-Profit', 'hidden');
-    $('#cb_nonpro').is(':checked') ? nodeVisibility('Non-Profit', 'visible') : nodeVisibility('Non-Profit', 'hidden');
-    $('#cb_gov').is(':checked') ? nodeVisibility('Government', 'visible') : nodeVisibility('Government', 'hidden');
-    $('#cb_individ').is(':checked') ? nodeVisibility('Individual', 'visible') : nodeVisibility('Individual', 'hidden');
-
-    var visibleNodes = determineVisibleNodes();
-
-    toggleLinks(visibleNodes);
-  });
-};
-
-//  Initialize the display accordingly...
-var nodeVisibility = function(type, visibility){
-  d3.selectAll(".node").filter(function(d) {
-    if (d.type === type) return this;
-  }).style("visibility", visibility);
-};
-
-var setVisibility = function(link, linkData, visibleNodes, connectionType){
-  if(linkData.source.ID in visibleNodes && linkData.target.ID in visibleNodes)
-  {
-    switch(connectionType){
-      case "Funding":
-        ($('#cb_fund').is(':checked'))? d3.select(link).style('visibility', 'visible') : d3.select(link).style('visibility', 'hidden');
-        break;
-      case "Investment":
-        ($('#cb_invest').is(':checked'))? d3.select(link).style('visibility', 'visible') : d3.select(link).style('visibility', 'hidden');
-        break;
-      case "Collaboration":
-        ($('#cb_porucs').is(':checked'))? d3.select(link).style('visibility', 'visible') : d3.select(link).style('visibility', 'hidden');
-        break;
-      case "Data":
-        ($('#cb_data').is(':checked'))? d3.select(link).style('visibility', 'visible') : d3.select(link).style('visibility', 'hidden');
-        break;
-      default:
-        break;
-    }
-  }
-  else
-  {   
-    d3.select(link).style('visibility', 'hidden');
-  }
-};
-
-//  For each rendered node, if the node is a for-profit, then for each connection type, determine if the node is a source or target of the connection, add the connection to the array.
-var toggleLinks = function(visibleNodes){
-
-  //  Finding links with nodes of a certain type.
-  fundLink.filter(function(link){
-    setVisibility(this, this.__data__, visibleNodes, "Funding");
-  });
-  investLink.filter(function(link){
-    setVisibility(this, this.__data__, visibleNodes, "Investment");
-  });
-  porucsLink.filter(function(link){
-    setVisibility(this, this.__data__, visibleNodes, "Collaboration");
-  });
-  dataLink.filter(function(link){
-    setVisibility(this, this.__data__, visibleNodes, "Data");
-  });
-
-  // porucsLink.filter(function(d){console.log(d3.select(this).style('visibility', 'hidden'))})
-
-  // Time to reflect these changes accordingly with the connection checkboxes to ensure consistency.
-  reflectConnectionChanges();    
-};
-
-var reflectConnectionChanges = function(){
-  var visibleFundingConnections = fundLink.filter(function(link){ return d3.select(this).style('visibility') === 'visible'; });
-  var visibleInvestmentConnections = investLink.filter(function(link){ return d3.select(this).style('visibility') === 'visible'; });
-  var visibleCollaborationsConnections = porucsLink.filter(function(link){ return d3.select(this).style('visibility') === 'visible'; });
-  var visibleDataConnections = dataLink.filter(function(link){ return d3.select(this).style('visibility') === 'visible'; });
-
-  if(visibleFundingConnections[0].length === 0){
-    $('#cb_fund').attr('checked', false);
-  }
-  if(visibleInvestmentConnections[0].length === 0){
-    $('#cb_invest').attr('checked', false);
-  }
-  if(visibleCollaborationsConnections[0].length === 0){
-    $('#cb_porucs').attr('checked', false);
-  }
-  if(visibleDataConnections[0].length === 0){
-    $('#cb_data').attr('checked', false);
-  }
-};
-
-typesCheckboxActions();
+            // If none of the type's nodes are visible, then the connections should not be visible as well (no nodes = no connections).
+            var shouldCheckboxRemainUnchecked = function(selector, visibleNodes) {
+                if (visibleNodes.length === 0 || ($('#cb_individ').is('checked') && $('#cb_forpro').is('checked') && $('#cb_nonpro').is('checked') && $('#cb_gov').is('checked'))) {
+                    $(selector).attr('checked', false);
+                }
+            }
 
 
-          
+            connectionsCheckboxActions();
+
+            /***
+
+              For the "Types" checkboxes
+
+            ***/
+            var typesCheckboxActions = function() {
+                d3.selectAll('#cb_forpro, #cb_nonpro, #cb_gov, #cb_individ').on('click', function() {
+                    $('#cb_forpro').is(':checked') ? nodeVisibility('For-Profit', 'visible') : nodeVisibility('For-Profit', 'hidden');
+                    $('#cb_nonpro').is(':checked') ? nodeVisibility('Non-Profit', 'visible') : nodeVisibility('Non-Profit', 'hidden');
+                    $('#cb_gov').is(':checked') ? nodeVisibility('Government', 'visible') : nodeVisibility('Government', 'hidden');
+                    $('#cb_individ').is(':checked') ? nodeVisibility('Individual', 'visible') : nodeVisibility('Individual', 'hidden');
+
+                    var visibleNodes = determineVisibleNodes();
+
+                    toggleLinks(visibleNodes);
+                });
+            };
+
+            //  Initialize the display accordingly...
+            var nodeVisibility = function(type, visibility) {
+                d3.selectAll(".node").filter(function(d) {
+                    if (d.type === type) return this;
+                }).style("visibility", visibility);
+            };
+
+            var setVisibility = function(link, linkData, visibleNodes, connectionType) {
+                if (linkData.source.ID in visibleNodes && linkData.target.ID in visibleNodes) {
+                    switch (connectionType) {
+                        case "Funding":
+                            ($('#cb_fund').is(':checked')) ? d3.select(link).style('visibility', 'visible'): d3.select(link).style('visibility', 'hidden');
+                            break;
+                        case "Investment":
+                            ($('#cb_invest').is(':checked')) ? d3.select(link).style('visibility', 'visible'): d3.select(link).style('visibility', 'hidden');
+                            break;
+                        case "Collaboration":
+                            ($('#cb_porucs').is(':checked')) ? d3.select(link).style('visibility', 'visible'): d3.select(link).style('visibility', 'hidden');
+                            break;
+                        case "Data":
+                            ($('#cb_data').is(':checked')) ? d3.select(link).style('visibility', 'visible'): d3.select(link).style('visibility', 'hidden');
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    d3.select(link).style('visibility', 'hidden');
+                }
+            };
+
+            //  For each rendered node, if the node is a for-profit, then for each connection type, determine if the node is a source or target of the connection, add the connection to the array.
+            var toggleLinks = function(visibleNodes) {
+
+                //  Finding links with nodes of a certain type.
+                fundLink.filter(function(link) {
+                    setVisibility(this, this.__data__, visibleNodes, "Funding");
+                });
+                investLink.filter(function(link) {
+                    setVisibility(this, this.__data__, visibleNodes, "Investment");
+                });
+                porucsLink.filter(function(link) {
+                    setVisibility(this, this.__data__, visibleNodes, "Collaboration");
+                });
+                dataLink.filter(function(link) {
+                    setVisibility(this, this.__data__, visibleNodes, "Data");
+                });
+
+                // porucsLink.filter(function(d){console.log(d3.select(this).style('visibility', 'hidden'))})
+
+                // Time to reflect these changes accordingly with the connection checkboxes to ensure consistency.
+                reflectConnectionChanges();
+            };
+
+            var reflectConnectionChanges = function() {
+                var visibleFundingConnections = fundLink.filter(function(link) {
+                    return d3.select(this).style('visibility') === 'visible';
+                });
+                var visibleInvestmentConnections = investLink.filter(function(link) {
+                    return d3.select(this).style('visibility') === 'visible';
+                });
+                var visibleCollaborationsConnections = porucsLink.filter(function(link) {
+                    return d3.select(this).style('visibility') === 'visible';
+                });
+                var visibleDataConnections = dataLink.filter(function(link) {
+                    return d3.select(this).style('visibility') === 'visible';
+                });
+
+                if (visibleFundingConnections[0].length === 0) {
+                    $('#cb_fund').attr('checked', false);
+                }
+                if (visibleInvestmentConnections[0].length === 0) {
+                    $('#cb_invest').attr('checked', false);
+                }
+                if (visibleCollaborationsConnections[0].length === 0) {
+                    $('#cb_porucs').attr('checked', false);
+                }
+                if (visibleDataConnections[0].length === 0) {
+                    $('#cb_data').attr('checked', false);
+                }
+            };
+
+            typesCheckboxActions();
+
+
+
 
 
 
@@ -2982,231 +2988,230 @@ typesCheckboxActions();
     }
     // drawGraph();
 
-    // function drawMap() {
-    //   var width = 960,
-    //     height = 500;
+// function drawMap() {
+//   var width = 960,
+//     height = 500;
 
 
-    // var projection = d3.geo.albers()
-    //     .scale(1000)
-    //     .translate([width / 2 - 40, height / 2 + 30]);
+// var projection = d3.geo.albers()
+//     .scale(1000)
+//     .translate([width / 2 - 40, height / 2 + 30]);
 
-    // var path = d3.geo.path()
-    //     .projection(projection);
+// var path = d3.geo.path()
+//     .projection(projection);
 
-    // var svg = d3.select(".content").append("svg")
-    //     .attr("width", width)
-    //     .attr("height", height)
-    //     .attr("id", "map");
+// var svg = d3.select(".content").append("svg")
+//     .attr("width", width)
+//     .attr("height", height)
+//     .attr("id", "map");
 
-    // d3.json("../data/us.json", function (error, us) {
-    //   svg.insert("path", ".graticule")
-    //       .datum(topojson.feature(us, us.objects.land))
-    //       .attr("class", "land")
-    //       .attr("d", path);
+// d3.json("../data/us.json", function (error, us) {
+//   svg.insert("path", ".graticule")
+//       .datum(topojson.feature(us, us.objects.land))
+//       .attr("class", "land")
+//       .attr("d", path);
 
-    //   svg.insert("path", ".graticule")
-    //       .datum(topojson.mesh(us, us.objects.states, function (a, b) { return a !== b; }))
-    //       .attr("class", "state-boundary")
-    //       .attr("d", path);
+//   svg.insert("path", ".graticule")
+//       .datum(topojson.mesh(us, us.objects.states, function (a, b) { return a !== b; }))
+//       .attr("class", "state-boundary")
+//       .attr("d", path);
 
 
-    //   var locations = {};
+//   var locations = {};
 
-    //   d3.json("../data/civicgeo.json", function (error, json) {
-    //     console.log("asdasd")
-    //     console.log(error)
-    //     if (error) return console.warn(error);
-    //     data = json;
+//   d3.json("../data/civicgeo.json", function (error, json) {
+//     console.log("asdasd")
+//     console.log(error)
+//     if (error) return console.warn(error);
+//     data = json;
 
-    //     data.nodes.forEach(function (d) {
-    //       if (d.coordinates == null)
-    //         return
-    //       d.coordinates.forEach(function (coordinate) {
-            
-    //         key = coordinate[0] + ":" + coordinate[1]
-    //         if (key in locations) {
-    //           locations[key]++;
-    //         }
-    //         else {
-    //           locations[key] = 1
-    //         }
-    //       });
-    //     });
+//     data.nodes.forEach(function (d) {
+//       if (d.coordinates == null)
+//         return
+//       d.coordinates.forEach(function (coordinate) {
 
-        
-    //     var maxVal = 0
-    //     locationData = [];
-    //     for (var loc in locations) {
-    //       var d = {};
-    //       coor = loc.split(":");
-    //       d.val = locations[loc];
-    //       d.lat = coor[0];
-    //       d.lon = coor[1];
-    //       locationData[locationData.length] = d;
+//         key = coordinate[0] + ":" + coordinate[1]
+//         if (key in locations) {
+//           locations[key]++;
+//         }
+//         else {
+//           locations[key] = 1
+//         }
+//       });
+//     });
 
-    //       if (d.val > maxVal) {
-    //         maxVal = d.val;
-    //       }
-    //     }
-        
-    //     radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
-    //     svg.selectAll("circle")
-    //          .data(locationData)
-    //          .enter()
-    //          .append("circle")
-    //          .attr("cx", function (d) {
-    //            return projection([d.lon, d.lat])[0];
-    //          })
-    //          .attr("cy", function (d) {
-    //            return projection([d.lon, d.lat])[1];
-    //          })
-    //          .attr("r", function (d) {
-    //            return radiusScale(d.val);
-    //          })
-    //          .style("fill", "red");
-    //   });
-    // });
 
-    // d3.select(self.frameElement).style("height", height + "px");
+//     var maxVal = 0
+//     locationData = [];
+//     for (var loc in locations) {
+//       var d = {};
+//       coor = loc.split(":");
+//       d.val = locations[loc];
+//       d.lat = coor[0];
+//       d.lon = coor[1];
+//       locationData[locationData.length] = d;
 
-    // }
+//       if (d.val > maxVal) {
+//         maxVal = d.val;
+//       }
+//     }
 
-    if (current_view == 'map') {
-      drawMap();
-      document.getElementById('cb_mapview').checked = true;
-      document.getElementById('cb_networkview').checked = false;
-    } else if (current_view == 'network') {
-      drawGraph();
-      document.getElementById('cb_mapview').checked = false;
-      document.getElementById('cb_networkview').checked = true;
-    } else {
-      drawMap();
-      document.getElementById('cb_mapview').checked = true;
-      document.getElementById('cb_networkview').checked = false;
+//     radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
+//     svg.selectAll("circle")
+//          .data(locationData)
+//          .enter()
+//          .append("circle")
+//          .attr("cx", function (d) {
+//            return projection([d.lon, d.lat])[0];
+//          })
+//          .attr("cy", function (d) {
+//            return projection([d.lon, d.lat])[1];
+//          })
+//          .attr("r", function (d) {
+//            return radiusScale(d.val);
+//          })
+//          .style("fill", "red");
+//   });
+// });
+
+// d3.select(self.frameElement).style("height", height + "px");
+
+// }
+
+if (current_view == 'map') {
+    drawMap();
+    document.getElementById('cb_mapview').checked = true;
+    document.getElementById('cb_networkview').checked = false;
+} else if (current_view == 'network') {
+    drawGraph();
+    document.getElementById('cb_mapview').checked = false;
+    document.getElementById('cb_networkview').checked = true;
+} else {
+    drawMap();
+    document.getElementById('cb_mapview').checked = true;
+    document.getElementById('cb_networkview').checked = false;
+}
+
+d3.selectAll('#cb_networkview').on('click', function() {
+    if (document.getElementById('cb_networkview').checked) {
+        drawGraph();
+        var map = document.getElementById('map');
+        map.parentNode.removeChild(map);
+        console.log("asd");
     }
+});
 
-    d3.selectAll('#cb_networkview').on('click', function() {
-        if (document.getElementById('cb_networkview').checked) {
-            drawGraph();
-            var map = document.getElementById('map');
-            map.parentNode.removeChild(map);
-            console.log("asd");
-        }
-    });
-
-    d3.selectAll('#cb_mapview').on('click', function() {
-        if (document.getElementById('cb_mapview').checked) {
-            var network = document.getElementById('network');
-            network.parentNode.removeChild(network);
-            drawMap();
-        }
-    });
+d3.selectAll('#cb_mapview').on('click', function() {
+    if (document.getElementById('cb_mapview').checked) {
+        var network = document.getElementById('network');
+        network.parentNode.removeChild(network);
+        drawMap();
+    }
+});
 
 function drawMap() {
-  var width = 960,
-    height = 500;
+    var width = 960,
+        height = 500;
 
-var projection = d3.geo.mercator()
-    .center([-98, 30])
-    .scale(400)
-    .translate([width / 2, height / 2])
-    .precision(.1);
+    var projection = d3.geo.mercator()
+        .center([-98, 30])
+        .scale(400)
+        .translate([width / 2, height / 2])
+        .precision(.1);
 
-  var svg = d3.select(".content").append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("id", "map");
+    var svg = d3.select(".content").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("id", "map");
 
-  var path = d3.geo.path()
-      .projection(projection);
+    var path = d3.geo.path()
+        .projection(projection);
 
-  var g = svg.append("g");
+    var g = svg.append("g");
 
-  // load and display the World
-  d3.json("../data/world-110m.json", function(error, topology) {
+    // load and display the World
+    d3.json("../data/world-110m.json", function(error, topology) {
 
-    // load and display the cities
-    var locations = {};
+        // load and display the cities
+        var locations = {};
 
-    d3.json("../data/civicgeo.json", function (error, json) {
-      console.log("asdasd")
-      console.log(error)
-      if (error) return console.warn(error);
-      data = json;
-      console.log(data)
-      data.nodes.forEach(function (d) {
-        if (d.coordinates == null)
-          return
-        d.coordinates.forEach(function (coordinate) {
-          
-          key = coordinate[0] + ":" + coordinate[1]
-          if (key in locations) {
-            locations[key]++;
-          }
-          else {
-            locations[key] = 1
-          }
+        d3.json("../data/civicgeo.json", function(error, json) {
+            console.log("asdasd")
+            console.log(error)
+            if (error) return console.warn(error);
+            data = json;
+            console.log(data)
+            data.nodes.forEach(function(d) {
+                if (d.coordinates == null)
+                    return
+                d.coordinates.forEach(function(coordinate) {
+
+                    key = coordinate[0] + ":" + coordinate[1]
+                    if (key in locations) {
+                        locations[key]++;
+                    } else {
+                        locations[key] = 1
+                    }
+                });
+            });
+
+
+            var maxVal = 0
+            locationData = [];
+            for (var loc in locations) {
+                var d = {};
+                coor = loc.split(":");
+                d.val = locations[loc];
+                d.lat = coor[0];
+                d.lon = coor[1];
+                locationData[locationData.length] = d;
+
+                if (d.val > maxVal) {
+                    maxVal = d.val;
+                }
+            }
+
+            radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
+            g.selectAll("g")
+                .data(locationData)
+                .enter()
+                .append("circle")
+                .attr("opacity", 0.7)
+                .attr("cx", function(d) {
+                    return projection([d.lon, d.lat])[0];
+                })
+                .attr("cy", function(d) {
+                    return projection([d.lon, d.lat])[1];
+                })
+                .attr("r", function(d) {
+                    return radiusScale(d.val);
+                })
+                .style("fill", "green");
         });
-      });
 
-      
-      var maxVal = 0
-      locationData = [];
-      for (var loc in locations) {
-        var d = {};
-        coor = loc.split(":");
-        d.val = locations[loc];
-        d.lat = coor[0];
-        d.lon = coor[1];
-        locationData[locationData.length] = d;
 
-        if (d.val > maxVal) {
-          maxVal = d.val;
-        }
-      }
-      
-      radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
-      g.selectAll("g")
-           .data(locationData)
-           .enter()
-           .append("circle")
-           .attr("opacity", 0.7)
-           .attr("cx", function (d) {
-             return projection([d.lon, d.lat])[0];
-           })
-           .attr("cy", function (d) {
-             return projection([d.lon, d.lat])[1];
-           })
-           .attr("r", function (d) {
-             return radiusScale(d.val);
-           })
-           .style("fill", "green");
+        g.selectAll("path")
+            .data(topojson.feature(topology, topology.objects.countries).features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .style("fill", "grey")
     });
 
-    
-    g.selectAll("path")
-      .data(topojson.feature(topology, topology.objects.countries).features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .style("fill", "grey")
-  });
+    // zoom and pan
+    var zoom = d3.behavior.zoom()
+        .on("zoom", function() {
+            g.attr("transform", "translate(" +
+                d3.event.translate.join(",") + ")scale(" + d3.event.scale + ")");
+            g.selectAll("circle")
+                .attr("d", path.projection(projection));
+            g.selectAll("path")
+                .attr("d", path.projection(projection));
 
-  // zoom and pan
-  var zoom = d3.behavior.zoom()
-      .on("zoom",function() {
-          g.attr("transform","translate("+ 
-              d3.event.translate.join(",")+")scale("+d3.event.scale+")");
-          g.selectAll("circle")
-              .attr("d", path.projection(projection));
-          g.selectAll("path")  
-              .attr("d", path.projection(projection)); 
+        });
 
-    });
+    svg.call(zoom);
 
-  svg.call(zoom);
-
-  d3.select(self.frameElement).style("height", height + "px");
+    d3.select(self.frameElement).style("height", height + "px");
 
 }
