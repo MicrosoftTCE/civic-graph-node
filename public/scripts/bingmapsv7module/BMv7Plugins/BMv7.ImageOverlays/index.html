@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+    <script type="text/javascript">
+        var map;
+
+        function GetMap() {
+            // Initialize the map
+            map = new Microsoft.Maps.Map(document.getElementById("myMap"),
+            {
+                credentials: "YOUR_BING_MAPS_KEY",
+                center: new Microsoft.Maps.Location(40.25, -123.25),
+                zoom: 7
+            });
+
+            //Register and load the Image Overlay Module
+            Microsoft.Maps.registerModule("ImageOverlayModule", "scripts/ImageOverlayModule.js");
+            Microsoft.Maps.loadModule("ImageOverlayModule", { callback: function () {
+                var imageRect = Microsoft.Maps.LocationRect.fromCorners(new Microsoft.Maps.Location(40.5, -123.5), new Microsoft.Maps.Location(40, -123));
+                var imgPin = ImageOverlay(map, 'images/topographicMap.gif', imageRect);
+                imgPin.SetOpacity(0.5);
+                map.entities.push(imgPin);
+	        } 
+	        });
+        }
+    </script>
+</head>
+<body onload="GetMap();">
+    <div id='myMap' style="position:relative;width:800px;height:600px;"></div>
+</body>
+</html>

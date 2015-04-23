@@ -1,0 +1,257 @@
+﻿<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			BODY { font-family:Arial; font-size:12px }
+			.PropertyTable {border: 1px solid #c0c0c0; border-collapse: collapse; border-spacing: 0px;}
+			.PropertyTable td, th {border: 1px solid #c0c0c0; border-collapse: collapse; border-spacing: 0px; padding: 2px;}
+			.PropertyTable th {color: #fff; background-color: #000; text-align: left;}
+		</style>
+		<script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+		<script type="text/javascript">
+			var map;
+			var myToolbox = null;
+
+			function load() {
+				//Create Map
+				var center = new Microsoft.Maps.Location(41.8756, -87.9956);
+				var points = [];
+
+				map = new Microsoft.Maps.Map(document.getElementById("mapDiv"), {
+				    credentials: 'YOUR_BING_MAPS_KEY',
+					center: center,
+					mapTypeId: Microsoft.Maps.MapTypeId.road,
+					zoom: 9
+				});
+
+				// Register and load a new module
+				Microsoft.Maps.registerModule("ShapeToolboxModule", "scripts/ShapeToolboxModule.js");
+				Microsoft.Maps.loadModule("ShapeToolboxModule", { callback: function () {
+				    myToolbox = new ShapeToolboxModule(map);
+
+                    //Option code to display the current version of the module
+				    document.getElementById('loadedMessage').innerHTML = 'Shape Toolbox Module Loaded (version ' + myToolbox.version() + ')';
+				}});
+			}
+		</script>
+	</head>
+	<body onload="load();">
+		<h3>Bing Maps AJAX Control v7 Dynamic Module - Draw Shape Module</h3>
+		<div style="position:relative; width:600px;">
+			The Draw Shape module allows you to add shape drawing functionality to any map.  Click on the either button below to show or hide the drawing tool bar on the current map.<br />
+			<br />
+			Select the desired shape to add to the map.  When drawing a given shape, simply click on the appropriate location on the map to draw the shape.  (there is no need to hold down the left mouse button). Once completed, press the escape button or double click to exit drawing mode.<br />
+			<br />
+			To edit a given shape, just click on the shape and drag handles will be displayed. Press Delete to delete the selected shape. Press escape to exit edit mode.  (push pins can just be dragged)<br />
+			<br />
+			<span id="loadedMessage"></span><br />
+			<br />
+		</div>
+		<div id='mapDiv' style="position:relative; width:600px; height:400px;"></div>
+		<input type="button" id="cmdShow" value="Show Tool Bar" onclick="myToolbox.show();" style="width:300px;" />
+		<input type="button" id="cmdHide" value="Hide Tool Bar" onclick="myToolbox.hide();" style="width:300px;" /><br />
+		<br />
+		<strong>Usage:</strong><br />
+		<br />
+		<strong>To implement the module:
+		</strong>
+		<pre>
+		// Register and load a new module
+		Microsoft.Maps.registerModule("DrawShapeModule", "your-path-to/ShapeToolboxModule.js");
+		Microsoft.Maps.loadModule("DrawShapeModule", { callback: myModuleLoaded });
+		</pre>
+		<strong>Call back function to initialize:</strong><br />
+		<pre>
+		function myModuleLoaded() {
+			//Create new instance of module
+			myToolbox = new ShapeToolboxModule(map);
+		}
+		</pre>
+		<strong>Display toolbar:</strong><br />
+		<pre>
+		myToolbox.show();
+		</pre>
+		<strong>Hide toolbar:</strong><br />
+		<pre>
+		myToolbox.hide();
+		</pre>
+        <strong>Set Options:</strong><br />
+		<pre>
+        myToolbox.setOptions({
+            shapeStrokeThickness : 5
+        });
+		</pre>
+		<strong>Options:</strong><br />
+		<br />
+		<table class="PropertyTable">
+		<tr>
+			<th>Property</th>
+			<th>Default</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td>targetLayer</td>
+			<td>map.entities</td>
+			<td>Default layer to add shapes</td>
+		</tr>
+		<tr>
+			<td>maskStrokeColor</td>
+			<td>Microsoft.Maps.Color(200, 100, 100, 100)</td>
+			<td>Line color of shape mask</td>
+		</tr>
+		<tr>
+			<td>maskFillColor</td>
+			<td>Microsoft.Maps.Color(000, 000, 000, 000)</td>
+			<td>fill color of shape mask (polygon only)</td>
+		</tr>
+		<tr>
+			<td>maskStrokeThickness</td>
+			<td>2</td>
+			<td>line width of shape mask</td>
+		</tr>
+		<tr>
+			<td>maskStrokeDashArray</td>
+			<td>2 2</td>
+			<td>dash pattern of shape mask</td>
+		</tr>
+		<tr>
+			<td>shapeStrokeColor</td>
+			<td>Microsoft.Maps.Color(200, 0, 0, 200)</td>
+			<td>Line color of shape</td>
+		</tr>
+		<tr>
+			<td>shapeStrokeThickness</td>
+			<td>2</td>
+			<td>line width of shape</td>
+		</tr>
+		<tr>
+			<td>shapeFillColor</td>
+			<td>Microsoft.Maps.Color(100, 000, 100, 000)</td>
+			<td>fill color of shape (polygon only)</td>
+		</tr>
+		<tr>
+			<td>toolBarPolygonIcon</td>
+			<td>images/polygonIcon.png</td>
+			<td>Icon for polygon</td>
+		</tr>
+		<tr>
+			<td>toolBarPolygonHoverIcon</td>
+			<td>images/polygonHoverIcon.png</td>
+			<td>Hover icon for polygon</td>
+		</tr>
+		<tr>
+			<td>toolBarPolygonActiveIcon</td>
+			<td>images/polygonActiveIcon.png</td>
+			<td>Active icon for polygon</td>
+		</tr>
+		<tr>
+			<td>toolBarPolylineIcon</td>
+			<td>images/polylineIcon.png</td>
+			<td>Icon for polyline</td>
+		</tr>
+		<tr>
+			<td>toolBarPolylineHoverIcon</td>
+			<td>images/polylineHoverIcon.png</td>
+			<td>Hover icon for polyline</td>
+		</tr>
+		<tr>
+			<td>toolBarPolylineActiveIcon</td>
+			<td>images/polylineActiveIcon.png</td>
+			<td>Active icon for polyline</td>
+		</tr>
+		<tr>
+			<td>toolBarPushPinIcon</td>
+			<td>images/pushpinIcon.png</td>
+			<td>Icon for push pin</td>
+		</tr>
+		<tr>
+			<td>toolBarPushPinHoverIcon</td>
+			<td>images/pushpinHoverIcon.png</td>
+			<td>Hover icon for push pin</td>
+		</tr>
+		<tr>
+			<td>toolBarPushPinActiveIcon</td>
+			<td>images/pushpinActiveIcon.png</td>
+			<td>Active icon for push pin</td>
+		</tr>
+		<tr>
+			<td>toolBarRectangleIcon</td>
+			<td>images/rectangleIcon.png</td>
+			<td>Icon for rectangle</td>
+		</tr>
+		<tr>
+			<td>toolBarRectangleHoverIcon</td>
+			<td>images/rectangleHoverIcon.png</td>
+			<td>Hover icon for rectangle</td>
+		</tr>
+		<tr>
+			<td>toolbarRectangleActiveIcon</td>
+			<td>images/rectangleActiveIcon.png</td>
+			<td>Active icon for rectangle</td>
+		</tr>
+		<tr>
+			<td>toolbarCircleIcon</td>
+			<td>images/circleIcon.png</td>
+			<td>Icon for circle</td>
+		</tr>
+		<tr>
+			<td>toolbarCircleHoverIcon</td>
+			<td>images/circleHoverIcon.png</td>
+			<td>Hover icon for circle</td>
+		</tr>
+		<tr>
+			<td>toolbarCircleActiveIcon</td>
+			<td>images/circleActiveIcon.png</td>
+			<td>Active icon for circle</td>
+		</tr>
+		<tr>
+			<td>DragHandleImage</td>
+			<td>images/DragHandleWhite.gif</td>
+			<td>Image for default drag handle</td>
+		</tr>
+		<tr>
+			<td>DragHandleImageActive</td>
+			<td>images/DragHandleGreen.gif</td>
+			<td>Image for active drag handle</td>
+		</tr>
+		<tr>
+			<td>DragHandleImageHeight</td>
+			<td>10</td>
+			<td>Height for default and active drag handle image</td>
+		</tr>
+		<tr>
+			<td>DragHandleImageWidth</td>
+			<td>10</td>
+			<td>Width for default and active drag handle image</td>
+		</tr>
+		<tr>
+			<td>DragHandleImageAnchor</td>
+			<td>Microsoft.Maps.Point(5, 5)</td>
+			<td>Anchor Point for drag handle image</td>
+		</tr>
+		<tr>
+			<td>shapeMaskStrokeColor</td>
+			<td>Microsoft.Maps.Color(200, 100, 100, 100)</td>
+			<td>Line color of shape mask</td>
+		</tr>
+		<tr>
+			<td>shapeMaskFillColor</td>
+			<td>Microsoft.Maps.Color(000, 000, 000, 000)</td>
+			<td>fill color of shape mask (polygon only)</td>
+		</tr>
+		<tr>
+			<td>shapeMaskStrokeThickness</td>
+			<td>2</td>
+			<td>line width of shape mask</td>
+		</tr>
+		<tr>
+			<td>shapeMaskStrokeDashArray</td>
+			<td>2 2</td>
+			<td>dash pattern of shape mask</td>
+		</tr>
+	</table>
+	</body>
+</html>

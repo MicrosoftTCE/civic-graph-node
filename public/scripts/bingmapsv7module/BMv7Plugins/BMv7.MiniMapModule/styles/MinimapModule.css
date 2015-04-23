@@ -1,0 +1,38 @@
+/* style for the container determines the size and location of the minimap */
+.minimap-container
+{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    z-index: 90;
+    width: 150px;
+    height: 150px;
+    border: 1px solid black;
+}
+
+.minimap-glyph
+{
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #FFF;
+    cursor: pointer;
+    padding: 0px 5px;
+}
+
+/* upper right corner of the map */
+.minimap-glyph.minimap-glyph-show
+{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 100;
+}
+
+/* lower left corner with a z-index to make it show above the minimap */
+.minimap-glyph.minimap-glyph-hide
+{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    z-index: 100;
+}

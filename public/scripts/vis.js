@@ -3108,7 +3108,8 @@ function drawMap() {
     height = 500;
 
 var projection = d3.geo.mercator()
-    .scale((width + 1) / 2 / Math.PI)
+    .center([-98, 30])
+    .scale(400)
     .translate([width / 2, height / 2])
     .precision(.1);
 
@@ -3133,7 +3134,7 @@ var projection = d3.geo.mercator()
       console.log(error)
       if (error) return console.warn(error);
       data = json;
-
+      console.log(data)
       data.nodes.forEach(function (d) {
         if (d.coordinates == null)
           return
@@ -3166,10 +3167,11 @@ var projection = d3.geo.mercator()
       }
       
       radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
-      g.selectAll("circle")
+      g.selectAll("g")
            .data(locationData)
            .enter()
            .append("circle")
+           .attr("opacity", 0.7)
            .attr("cx", function (d) {
              return projection([d.lon, d.lat])[0];
            })
@@ -3182,13 +3184,13 @@ var projection = d3.geo.mercator()
            .style("fill", "green");
     });
 
-
+    
     g.selectAll("path")
-          .data(topojson.feature(topology, topology.objects.countries)
-              .features)
-        .enter()
-          .append("path")
-          .attr("d", path)
+      .data(topojson.feature(topology, topology.objects.countries).features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .style("fill", "grey")
   });
 
   // zoom and pan

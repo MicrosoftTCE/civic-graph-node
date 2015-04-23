@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+    <title>Custom Infoboxes</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <!-- Add a reference to the Bing Maps Control -->
+    <script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+    
+    <!-- jQuery reference. Used to ensure cross browser support.  -->
+    <script type="text/javascript" src="scripts/jquery.min.js"></script>
+
+	<script type="text/javascript">
+        var map, customInfobox;
+
+        function GetMap() {
+            map = new Microsoft.Maps.Map(document.getElementById("myMap"), { credentials: "Your_Bing_Maps_Key" });
+
+	        //Register and load the Custom Infobox Module
+            Microsoft.Maps.registerModule("CustomInfoboxModule", "scripts/V7CustomInfobox.js");
+	        Microsoft.Maps.loadModule("CustomInfoboxModule", { callback: function () {
+	            //Create an instance of the custom infobox control
+	            customInfobox = new CustomInfobox(map);
+	        }
+	        });
+        }
+
+	    function displayInfobox() {
+	        customInfobox.show(map.getCenter(), "<b>Hello World</b>");
+	    }
+    </script>
+</head>
+<body onload="GetMap();">
+    <div id='myMap' style="position:relative; width:600px; height:500px;"></div><br />
+    <input type="button" value="Show Infobox" onclick="displayInfobox()" />
+</body>
+</html>

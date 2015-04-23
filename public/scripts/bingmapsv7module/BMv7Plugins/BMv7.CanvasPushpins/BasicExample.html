@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+      <script type="text/javascript">
+          var map, canvasLayer;
+
+          function GetMap() {
+              // Initialize the map
+              map = new Microsoft.Maps.Map(document.getElementById("myMap"),
+              {
+                  credentials: "YOUR_BING_MAPS_KEY",
+                  zoom:8
+              });
+
+              //Register and load the Canvas Pushpin Module
+              Microsoft.Maps.registerModule("CanvasPushpinModule", "scripts/CanvasPushpinModule.js");
+              Microsoft.Maps.loadModule("CanvasPushpinModule", {
+                  callback: function () {
+                      //Create Canvas Entity Collection
+                      canvasLayer = new CanvasLayer(map);
+                      map.entities.push(canvasLayer);
+
+                      //Create the canvas pushpins
+                      createCanvasPins();
+              }});
+          }
+
+          function createCanvasPins() {
+              var pin, img;
+
+              for (var i = 0; i < 100; i++) {
+
+                  //Create a canvas pushpin at a random location
+                  pin = new CanvasPushpin(new Microsoft.Maps.Location(Math.random() * 180 - 90, Math.random() * 360 - 180), function (pin, context) {
+                      img = new Image();
+                      img.onload = function () {
+                          if (context) {
+                              context.width = img.width;
+                              context.height = img.height;
+                              context.drawImage(img, 0, 0);
+                          }
+                      };
+                      img.src = 'images/green_pin.png';
+                  });
+
+                  //Add the pushpin to the Canvas Entity Collection
+                  canvasLayer.push(pin);
+              }
+          }
+      </script>
+    <style>
+        /* Bug fix for mouse events on Polylines, Polygons and custom HTML pushpins in IE11 */
+        .MicrosoftMapDrawing, .MapPushpinBase {
+            pointer-events: auto !important;
+        }
+    </style>
+   </head>
+   <body onload="GetMap();">
+	    <div id='myMap' style="position:relative;width:800px;height:600px;"></div>
+   </body>
+</html>

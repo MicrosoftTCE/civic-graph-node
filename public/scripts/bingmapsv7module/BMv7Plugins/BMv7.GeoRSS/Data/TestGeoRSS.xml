@@ -1,0 +1,124 @@
+<?xml version = "1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" xmlns:mappoint="http://virtualearth.msn.com/apis/annotate#">
+<channel>
+	<title>Test GeoRSS File</title>
+	<link></link>
+	<description></description>
+	<language></language>
+	<webMaster></webMaster>
+	<copyright></copyright>
+	<pubDate></pubDate>
+	<item>
+		<title>Test Pushpin 1</title>
+		<description>Pushpin using standard icon and geo:lat/geo:lon</description>
+		<geo:lat>45</geo:lat>
+		<geo:long>-100</geo:long>
+	</item>
+	<item>
+		<title>Test Pushpin 2</title>
+		<description>Pushpin using standard icon and georss:point</description>
+		<georss:point>
+      <geo:lat>55.701</geo:lat>
+      <geo:long>12.552</geo:long>
+    </georss:point>
+	</item>
+  <item>
+    <title>Test Pushpin 2</title>
+    <description>Pushpin using standard icon and geo:point</description>
+    <geo:point>50 -100</geo:point>
+  </item>
+	<item>
+		<title>Test Pushpin 3</title>
+		<description>Pushpin using a custom icon</description>
+		<link></link>
+		<geo:lat>45</geo:lat>
+		<geo:long>-90</geo:long>
+	</item>
+	<item>
+		<title>Test Pushpin 4</title>
+		<description>Pushpin using standard icon and gml:Point</description>
+		<link></link>
+    <georss:where>
+			<gml:Point>
+				<gml:pos>40.533203 -105.0712</gml:pos>
+			</gml:Point>
+    </georss:where>
+	</item>
+	<item>
+		<title>Test LineString 1</title>
+		<description>A LineString using geo:line</description>
+		<link></link>
+    <georss:line>46.28548 -122.25302 46.28489 -122.25492 46.28322 -122.25774 46.28298 -122.25908 46.28337 -122.26040 46.28524 -122.26272 46.285882 -122.26596 46.28652 -122.26736 46.28662 -122.26912 46.28847 -122.27216 46.28963 -122.27268 46.28915 -122.27066 46.28975 -122.26916 46.29141 -122.267146</georss:line>
+	</item>
+	<item>
+		<title>Test LineString 2</title>
+		<description>A LineString using GML</description>
+		<link></link>
+		<georss:where>
+			<gml:LineString>
+				<gml:posList dimension="2">
+					14.35954 100.57967
+					14.35871 100.57337
+					14.35606 100.56853
+					14.35732 100.56655
+					14.3587 100.56718
+					14.35872 100.56793
+					14.34787 100.5845
+					14.34366 100.58004
+					14.34441 100.57907
+					14.34335 100.58421
+					14.34438 100.59112
+					14.34555 100.5932
+					14.34314 100.56124
+					14.33927 100.55005
+					14.34373 100.54235
+					14.35002 100.54576
+					14.34616 100.54153
+					14.34314 100.54193
+					14.35007 100.54269
+				</gml:posList>
+			</gml:LineString>
+		</georss:where>
+	</item>
+	<item>
+		<title>Test Polygon 1</title>
+		<description></description>
+		<link></link>
+    <georss:polygon>46.31409 -122.22616 46.31113 -122.22968 46.31083 -122.23320 46.29802 -122.25877 46.29245 -122.26641 46.29286 -122.26392 46.28746 -122.26744 46.28741 -122.26006 46.29049 -122.25955 46.29120 -122.25620 46.28924 -122.255430 46.30271 -122.23251 46.31284 -122.22315 46.31409 -122.22616</georss:polygon>
+	</item>
+	<item>
+		<title>Test Polygon 2</title>
+		<description>Polygon using gml:Polygon (exterior ring only)</description>
+		<link></link>
+		<gml:Polygon>
+		   <gml:exterior>
+			 <gml:LinearRing>
+			   <gml:posList>
+				 -71.106216 42.366661
+				 -71.105576 42.367104
+				 -76.104378 42.367134
+				 -71.103729 44.366249
+				 -71.098793 42.363331
+				 -71.101028 42.362541
+				 -76.106865 44.366123
+				 -71.106216 42.366661
+			   </gml:posList>
+			 </gml:LinearRing>
+		   </gml:exterior>
+		 </gml:Polygon>
+	</item>
+  <item>
+    <title>Test Pushpin 4</title>
+    <description>Pushpin using standard icon and gml:Point</description>
+    <link></link>
+    <gml:Point>
+      <gml:coordinates>45.67, 88.56</gml:coordinates>
+    </gml:Point>
+  </item>
+  <item>
+    <georss:circle>42.943 -71.032 500</georss:circle>
+  </item>
+</channel>
+</rss>
+
+

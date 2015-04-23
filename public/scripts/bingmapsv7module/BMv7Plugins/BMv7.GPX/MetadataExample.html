@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+   <head>
+      <title>GPX Parser</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+      <script type="text/javascript">
+          var map, dataLayer;
+
+          function GetMap() {
+              // Initialize the map
+              map = new Microsoft.Maps.Map(document.getElementById("myMap"), { credentials: "Your_Bing_Maps_Key" });
+
+              dataLayer = new Microsoft.Maps.EntityCollection();
+              map.entities.push(dataLayer);
+
+              //Register and load the GPX Parser Module
+              Microsoft.Maps.registerModule("GPXParserModule", "scripts/GPXParserModule.js");
+              Microsoft.Maps.loadModule("GPXParserModule");
+          }
+
+          function LoadGPX(url) {
+              //Clear data on map
+              dataLayer.clear();
+
+              //Parse GPX file
+              new GPXParser().Parse(url, GPXCallback);
+          }
+
+          function GPXCallback(items) {
+              //Add items to the map
+              dataLayer.push(items);
+
+              //Add click event to all shapes.
+              var len = items.getLength();
+
+              for (var i = 0; i < len; i++) {
+                  Microsoft.Maps.Events.addHandler(items.get(i), 'click', function (e) {
+                      viewMetadata("LocationInfo", e.target.Metadata);
+                  });
+              }
+
+              //Load layer metadata
+              viewMetadata("LayerInfo", items.Metadata);
+
+              //Set the map view
+              if (items.Metadata != null && items.Metadata.LocationRect != null) {
+                  map.setView({ bounds: items.Metadata.LocationRect });
+              }
+          }
+
+          function viewMetadata(div, metadata) {
+              document.getElementById(div).innerHTML = "Name: " + metadata.name + "<br/>Description:<br/>" + metadata.desc;
+          }
+      </script>
+   </head>
+   <body onload="GetMap();">
+        <div style="float:left;width:600px;">
+            <div id='myMap' style="position:relative;width:600px;height:500px;"></div>
+            <input type="button" value="Local file (GPX file with Photos)" onclick="LoadGPX('/Data/abridge.xml')"/>
+            <input type="button" value="Local file (UK tourist locations)" onclick="LoadGPX('/Data/Tourist_locations_UK-England.xml')"/>
+            <input type="button" value="Local file (Route 66 Attractions)" onclick="LoadGPX('/Data/Route66Attractions.xml')"/>
+            <input type="button" value="External file (Fells Loop)" onclick="LoadGPX('/FileProxy.ashx?url=http://www.topografix.com/fells_loop.gpx')"/>
+        </div>
+        <div style="float:left;width:300px;margin:0 0 0 10px;">
+            <b>Layer Info</b><br />
+            <div id='LayerInfo'></div><br />
+            <b>Location Info</b><br />
+            <div id="LocationInfo"></div>
+        </div>
+   </body>
+</html>

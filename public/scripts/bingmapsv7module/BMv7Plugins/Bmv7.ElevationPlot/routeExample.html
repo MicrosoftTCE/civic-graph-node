@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>Route Elevation profile example</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+  <!-- required scripts and css -->
+  <!--[if lt IE 9]><script type="text/javascript" src="scripts/excanvas.min.js"></script><![endif]-->
+  <script type="text/javascript" src="scripts/jquery.min.js"></script>
+  <script type="text/javascript" src="scripts/jquery.jqplot.min.js"></script>
+  <script type="text/javascript" src="scripts/jqplot.cursor.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="styles/jquery.jqplot.min.css" />
+
+  <script type="text/javascript">
+      var map, sessionKey, plot, directionsManager;
+
+      function GetMap() {
+          map = new Microsoft.Maps.Map(document.getElementById("myMap"),
+              {
+                  credentials: "Your_Bing_Maps_Key",
+              });
+
+          //Register and load the ElevationPlot Module
+          Microsoft.Maps.registerModule("ElevationPlotModule", "scripts/elevationplot.js");
+          Microsoft.Maps.loadModule("ElevationPlotModule", {
+              callback: function () {
+                  plot = new ElevationPlot(map, 'chartdiv', {mode:1}); //use mode 1 to plot based on distance
+              }
+          });
+
+          //Load the Directions Module
+          Microsoft.Maps.loadModule('Microsoft.Maps.Directions', {
+              callback: function () {
+                  // Initialize the DirectionsManager
+                  directionsManager = new Microsoft.Maps.Directions.DirectionsManager(map);
+
+                  // Specify a handler for when an error occurs
+                  Microsoft.Maps.Events.addHandler(directionsManager, 'directionsError', function (e) {
+                      alert(e.message);
+                  });
+
+                  // Specify a handler for when the directions have updated.
+                  Microsoft.Maps.Events.addHandler(directionsManager, 'directionsUpdated', GenerateProfile);
+              }
+          });  
+      }
+
+      function GetDirections() {
+          //Clear any previous route data
+          directionsManager.resetDirections();
+
+          // Create start and end waypoints
+          var start = new Microsoft.Maps.Directions.Waypoint({ address: document.getElementById('fromLocation').value });
+          var end = new Microsoft.Maps.Directions.Waypoint({ address: document.getElementById('toLocation').value });
+
+          //Add waypoints to directions manager
+          directionsManager.addWaypoint(start);
+          directionsManager.addWaypoint(end);
+
+          // Calculate directions, which displays a route on the map
+          directionsManager.calculateDirections();
+      }
+
+      function GenerateProfile(e) {
+          //For this application we will only support a single route leg.
+          var leg = e.route[0].routeLegs[0].subLegs[0];
+
+          var subLegs, subRegions, regionIdx = 0, pointCnt;
+
+          //Loop through the decoded regions of the route path to find which region has less than a 400 coordinates. 
+          //Note that the decoded regions are a set of indices of the route path coordinates that are used for reducing 
+          //the resolution of the route path line at different zoom levels. We can make use of this on long routes that 
+          //have more than 400 coordinates.
+          for (var i = 0; i < leg.routePath.decodedRegions.length; i++) {
+              pointCnt = 0;
+              regionIdx = i;
+              subRegions = leg.routePath.decodedRegions[i];
+
+              for (var j = 0; j < subRegions.length; j++) {
+                  pointCnt += subRegions[j].indexes.length;
+              }
+
+              if (pointCnt < 400) {
+                  break;
+              }
+          }
+
+          var region = leg.routePath.decodedRegions[regionIdx];
+          var points = [], lat, lon;
+
+          //Loop through the region data and create an array of points.
+          for (var j = 0; j < region.length; j++) {
+              for (var k = 0; k < region[j].indexes.length; k++) {
+                  regionIdx = region[j].indexes[k];
+
+                  //get rid of floating point digits as we only need 5 decimal places 
+                  lat = Math.round(leg.routePath.decodedLatitudes[regionIdx] * 100000) / 100000;
+                  lon = Math.round(leg.routePath.decodedLongitudes[regionIdx] * 100000) / 100000;
+
+                  points.push(new Microsoft.Maps.Location(lat, lon));
+              }
+          }
+          plot.SetPoints(points);
+      }
+  </script>
+</head>
+<body onload="GetMap();">
+    From: <input type="text" id="fromLocation" />
+    To: <input type="text" id="toLocation" />
+    <input type="button" onclick="GetDirections()" value="Get Directions"/><br /><br />
+	<div id='myMap' style='position:relative;width:800px;height:400px;'></div><br/>
+	<div id='chartdiv' style='width:800px;height:200px;'></div>
+</body>
+</html>
