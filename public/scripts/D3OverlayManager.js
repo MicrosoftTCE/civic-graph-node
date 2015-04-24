@@ -127,7 +127,7 @@ var D3OverlayManager = function (map) {
                 id: _idCnt,
                 options: options
             };
-
+            
         function _initLayer() {
             if (_d3Container) {
                 layerInfo.svg = d3.select(_d3Container).append('svg')

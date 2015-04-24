@@ -3109,31 +3109,46 @@ function drawMap() {
             drawGraph();
             var map = document.getElementById('map');
             map.parentNode.removeChild(map);
-            console.log("asd");
         }
     });
 
     d3.selectAll('#cb_mapview').on('click', function() {
         if (document.getElementById('cb_mapview').checked) {
+            console.log("asd");
             var network = document.getElementById('network');
             network.parentNode.removeChild(network);
             drawMap();
         }
     });
 
+
 function loadD3Layer() {
     //Create an instance of the D3 Overlay Manager
     // console.log(map);
     d3MapTools = new D3OverlayManager(map);
+
     
     //Create a data layer onto the map.
     d3Layer = d3MapTools.addLayer({
       loaded: function (svg, projection) {
 
-        var g = svg.append("g");
 
+        var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([0, 0])
+            .html(function(d){
+                if (d.val !== 1){
+                    return d.val + " Entities";
+                }
+                else
+                    return d.val + " Entity"
+        });
+
+        svg.call(tip);
 
         var locations = {};
+
+
 
         d3.json("data/world-110m.json", function(error, topology) {
           if (error) return console.error(error);
@@ -3142,7 +3157,7 @@ function loadD3Layer() {
 
             if (error) return console.warn(error);
             data = json;
-
+            console.log(data);
             data.nodes.forEach(function (d) {
               if (d.coordinates == null)
                 return
@@ -3161,12 +3176,13 @@ function loadD3Layer() {
             var maxVal = 0
             locationData = [];
             for (var loc in locations) {
-              var d = {};
-              coor = loc.split(":");
-              d.val = locations[loc];
-              d.lat = coor[0];
-              d.lon = coor[1];
-              locationData[locationData.length] = d;
+                console.log(loc);
+                var d = {};
+                coor = loc.split(":");
+                d.val = locations[loc];
+                d.lat = coor[0];
+                d.lon = coor[1];
+                locationData[locationData.length] = d;
 
               if (d.val > maxVal) {
                 maxVal = d.val;
@@ -3174,26 +3190,22 @@ function loadD3Layer() {
             }
 
             // console.log(locationData);
-            radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 13]);
+            radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 23]);
+            console.log(maxVal)
             svg.selectAll("circle")
                  .data(locationData)
                  .enter()
                  .append("circle")
                  .attr("transform", function(d) {
-                    console.log(d, "d fromcircle");
                     return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
                  })
-                 // .attr("cx", function (d) {
-                 //  //console.log('projection ', projection([d.lon],d.lat)[0]);
-                 //   return projection([d.lon, d.lat])[0];
-                 // })
-                 // .attr("cy", function (d) {
-                 //   return projection([d.lon, d.lat])[1];
-                 // })
                  .attr("r", function(d){
                     return radiusScale(d.val);
                 })
-                 .style("fill", "green");
+                .style("fill", "green")
+                .attr("opacity", 0.8)
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide)
           });
 
 
@@ -3203,7 +3215,11 @@ function loadD3Layer() {
               .enter()
                 .append("path")
                 .attr("d", projection)
-                .attr("opacity", 0.1);
+                .attr("opacity", 0.2);
+
+
+
+            // svg.call(tip);
 
             // d3.json("data/us.json", function(error, us) {
             //     svg.selectAll("circle")
