@@ -1,0 +1,8 @@
+*\bin
+*\obj
+
+*.suo
+*\Backup
+*\_UpgradeReport_Files
+*\UpgradeLog.XML
+*\UpgradeLog.htm

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:georss="http://www.georss.org/georss" version="2.0">
+  <channel>
+    <title>Microsoft London</title>
+    <link>http://www.bing.com/maps</link>
+    <description />
+    <language>en-gb</language>
+    <item>
+      <title>Microsoft</title>
+      <link>http://www.bing.com/maps/?cid=42E1F70205EC8A96!14501</link>
+      <description>Cardinal Place, 100 Victoria Street, London, SW1E 5JL</description>
+      <guid isPermaLink="false">e7aea3b0d2e1c7b8</guid>
+      <pubDate>Fri May 27 22:37:13 UTC 0100 2011</pubDate>
+      <georss:polygon>51.49673999638715 -0.14145107778161137 51.496997150067386 -0.1394555142745313 51.49772184808794 -0.1397022775039014 51.497568226428456 -0.1408288052901563 51.49676003438838 -0.1414403489455518 51.49673999638715 -0.14145107778161137</georss:polygon>
+    </item>
+    <item>
+      <title>Victoria</title>
+      <link>http://www.bing.com/maps/?cid=42E1F70205EC8A96!14501</link>
+      <description>Underground Station</description>
+      <guid isPermaLink="false">b03dc79bd7bdb81e</guid>
+      <pubDate>Fri May 27 22:37:39 UTC 0100 2011</pubDate>
+      <georss:point>51.49644610469038 -0.14391334565724278</georss:point>
+    </item>
+    <item>
+      <title>Walk from Victoria to Cardinal Place</title>
+      <link>http://www.bing.com/maps/?cid=42E1F70205EC8A96!14501</link>
+      <description>180m</description>
+      <guid isPermaLink="false">bf8ee4e437813477</guid>
+      <pubDate>Fri May 27 22:38:24 UTC 0100 2011</pubDate>
+      <georss:line>51.496643145923684 -0.14391334565724278 51.496506219055234 -0.14225574048603917 51.49657969206017 -0.1415208152159586 51.4967199583771 -0.14146180661763097</georss:line>
+    </item>
+  </channel>
+</rss>

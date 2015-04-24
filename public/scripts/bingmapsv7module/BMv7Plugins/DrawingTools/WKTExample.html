@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Drawing Tools Sample</title>
+
+    <!-- Bing Map Control references -->
+    <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+    <!-- Our Bing Maps JavaScript Code -->
+    <link href="js/DrawingToolsModule/DrawingToolsModule.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript">
+        function GetMap() {
+            map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
+                credentials: "Ah_C8OJJu8wnNX50rGHf8_OYKonuhZ-CfLQ-kXS-4tI-QsTN9pkLPPfgZgKigwa8",
+                zoom: 2
+            });
+
+            Microsoft.Maps.registerModule("WKTModule", "js/WKTModule.min.js");
+            Microsoft.Maps.loadModule("WKTModule");
+
+            //Register and load the Drawing Tools Module
+            Microsoft.Maps.registerModule("DrawingToolsModule", "js/DrawingToolsModule/DrawingToolsModule.js");
+
+            Microsoft.Maps.loadModule("DrawingToolsModule", {
+                callback: function () {
+                    var drawingTools = new DrawingTools.DrawingManager(map, {
+                        toolbarContainer: document.getElementById('toolbarContainer'),
+                        events: {
+                            drawingEnded: function (s) {
+                                var wkt = WKTModule.Write(s);
+                                document.getElementById('wktOutput').value = wkt;
+                            },
+                            drawingChanged: function (s) {
+                                var wkt = WKTModule.Write(s);
+                                document.getElementById('wktOutput').value = wkt;
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+</head>
+<body onload="GetMap()">
+    <div style="position:relative;width:800px;height:600px;float:left;">
+        <div id="myMap" style="position:relative; width:800px;height:600px;"></div>
+        <div id="toolbarContainer" style="position:absolute;right:2px;top:2px;"></div>
+    </div>
+
+    <fieldset style="float:left;width:600px;margin-left:10px;">
+        <legend>Generated Well Known Text</legend>
+        <textarea id="wktOutput" cols="65" rows="10"></textarea>
+    </fieldset>
+</body>
+</html>

@@ -3,7 +3,7 @@
 var request = require('request');
 var fs = require('fs');
 var async = require('async');
-var file = '/routes/data.json';
+var file = __dirname + '/routes/data.json';
 
 fs.readFile(file, 'utf8', function (err,data) {
     if (err) {
@@ -19,7 +19,7 @@ fs.readFile(file, 'utf8', function (err,data) {
 });
 
 // This is an async file read
-fs.readFile('/public/data/civic.json', 'utf-8', function (err, data) {
+fs.readFile(__dirname + '/public/data/civic.json', 'utf-8', function (err, data) {
   if (err) throw err;
   // Make sure there's data before we post it
   if(data) {
@@ -32,7 +32,7 @@ fs.readFile('/public/data/civic.json', 'utf-8', function (err, data) {
         if(d.location !== null && d.location !== "Unknown" && d.location !== "null")
         {
           var locations = d.location.split("; ");
-          console.log(locations);
+          console.log(locations, 'jfssdnojln');
           for(var i = 0; i < locations.length; i++){
              request({
                 url: "http://www.datasciencetoolkit.org/street2coordinates/",
@@ -62,7 +62,7 @@ fs.readFile('/public/data/civic.json', 'utf-8', function (err, data) {
     });
 
     async.parallel(asyncTasks, function(){
-      fs.writeFile('/public/data/civicgeo.json', JSON.stringify(data), function (err, data) {
+      fs.writeFile(__dirname + '/public/data/civicgeo.json', JSON.stringify(data), function (err, data) {
         // console.log(data.nodes);
         if(err) throw err;
         else console.log("Saved!");

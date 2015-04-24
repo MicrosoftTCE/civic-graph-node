@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+    <title>Client Side Clustering Test App</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+    <!-- Add a reference to the Bing Maps Control -->
+    <script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+	
+    <!-- This is a reference to a class for generating test data. Not needed in production apps. -->
+    <script type="text/javascript" src="scripts/TestDataGenerator.js"></script>
+	
+    <script type="text/javascript">
+	    var greenLayer, redLayer, map;
+
+	    function GetMap() {
+	        map = new Microsoft.Maps.Map(document.getElementById("myMap"),
+                         { credentials: "Your_Bing_Maps_Key" });
+
+	        //Register and load the Client Side Clustering Module
+	        Microsoft.Maps.registerModule("PointBasedClusteringModule", "scripts/PointBasedClustering.js");
+	        Microsoft.Maps.loadModule("PointBasedClusteringModule", { callback: function () {
+	                //create green layer
+	                greenLayer = new PointBasedClusteredEntityCollection(map, {
+	                    singlePinCallback: createGreenPin,
+	                    clusteredPinCallback: createGreenClusteredPin,
+	                    callback: CreateGreenDataList
+	                });
+
+	                //create red layer
+	                redLayer = new PointBasedClusteredEntityCollection(map, {
+	                    singlePinCallback: createRedPin,
+	                    clusteredPinCallback: createRedClusteredPin
+	                });
+
+                    //Add infobox layer that is above the clustered layers.
+	                var infoboxLayer = new Microsoft.Maps.EntityCollection();
+	                infobox = new Microsoft.Maps.Infobox(new Microsoft.Maps.Location(0, 0), { visible: false, offset: new Microsoft.Maps.Point(0, 15) });
+	                infoboxLayer.push(infobox);
+	                map.entities.push(infoboxLayer);
+	            }
+	        });
+
+	        //Define custom properties for the pushpin class (this is needed for the infobox and not the clustering) 
+	        Microsoft.Maps.Pushpin.prototype.title = null;
+	        Microsoft.Maps.Pushpin.prototype.description = null;
+	    }
+
+	    /* Shape Creating functions */
+	    function createGreenPin(data, clusterInfo) {
+	        var pin = new Microsoft.Maps.Pushpin(clusterInfo.center, {
+	            icon: 'images/greenDot.gif',
+	            anchor: new Microsoft.Maps.Point(8, 8),
+	            width: 19,
+	            height: 19
+	        });
+
+	        pin.title = "Single Green Location";
+	        pin.description = "Name: " + data.Name;
+
+	        //Add handler for the pushpin click event.
+	        Microsoft.Maps.Events.addHandler(pin, 'click', displayEventInfo);
+
+	        return pin;
+	    }
+
+	    function createGreenClusteredPin(clusterInfo) {
+	        var pin = new Microsoft.Maps.Pushpin(clusterInfo.center, {
+	            icon: 'images/greenCircle.gif',
+	            anchor: new Microsoft.Maps.Point(8, 8),
+	            width: 16, 
+                height: 16 }); 
+
+	        pin.title = "Green Cluster";
+	        pin.description = "Cluster Index: " + clusterInfo.index + " Cluster Size: " + clusterInfo.dataIndices.length + " Zoom in for more details.";
+
+	        //Add handler for the pushpin click event.
+	        Microsoft.Maps.Events.addHandler(pin, 'click', displayEventInfo);
+
+	        return pin;
+	    }
+
+	    function createRedPin(data, clusterInfo) {
+	        var pin = new Microsoft.Maps.Pushpin(clusterInfo.center, {
+	            icon: 'images/redDot.gif',
+	            anchor: new Microsoft.Maps.Point(8, 8),
+	            width: 19,
+	            height: 19});
+
+	        pin.title = "Single Red Location";
+	        pin.description = "Name: " + data.Name;
+
+	        //Add handler for the pushpin click event.
+	        Microsoft.Maps.Events.addHandler(pin, 'click', displayEventInfo);
+
+	        return pin;
+	    }
+
+	    function createRedClusteredPin(clusterInfo) {
+	        var pin = new Microsoft.Maps.Pushpin(clusterInfo.center, { 
+                icon: 'images/redCircle.gif',
+	            anchor: new Microsoft.Maps.Point(8, 8),
+	            width: 16, 
+                height: 16 });
+
+	        pin.title = 'Red Cluster';
+	        pin.description = "Cluster Index: " + clusterInfo.index + " Cluster Size: " + clusterInfo.dataIndices.length + " Zoom in for more details.";
+
+	        //Add handler for the pushpin click event.
+	        Microsoft.Maps.Events.addHandler(pin, 'click', displayEventInfo);
+
+	        return pin;
+	    }
+
+	    /* Data Request Handlers */
+	    function RequestData(elementId, callback) {
+	        var size = parseInt(document.getElementById(elementId).value);
+	        TestDataGenerator.GenerateData(size, callback);
+	    }
+
+	    function RequestGreenDataCallback(response) {
+	        if (response != null) {
+	            greenLayer.SetData(response);
+	        }
+	    }
+
+	    function RequestRedDataCallback(response) {
+	        if (response != null) {
+	            redLayer.SetData(response);
+	        }
+	    }
+
+	    /* Data list creater */
+	    function CreateGreenDataList() {
+	        if (greenLayer != null) {
+	            infobox.setOptions({ visible: false });
+
+	            var data = greenLayer.GetDisplayedData();
+	            var output = [];
+
+	            for (var i = 0; i < data.length; i++) {
+	                output.push("<a href='javascript:void(0);' onclick='ShowInfoboxByClusterIndex(", data[i]._clusterIndex, ",greenLayer);'>");
+	                output.push(data[i].Name, "</a><br/>");
+	            }
+
+	            document.getElementById('greenDataOutput').innerHTML = output.join('');
+	        }
+	    }
+
+	    /* Data selected, show infobox */
+
+	    function ShowInfoboxByClusterIndex(index, layer) {
+	        var pin = layer.GetPinByClusterIndex(index);
+	        ShowInfobox(pin);
+	    }
+
+	    /* Layer Options Examples */
+
+	    function ChangeClusterRadius(sizeID, layer) {
+	        var size = parseInt(document.getElementById(sizeID).value);
+	        layer.SetOptions({ clusterRadius: size });
+	    }
+
+	    function displayEventInfo(e) {
+	        if (e.targetType == "pushpin") {
+	            ShowInfobox(e.target);
+	        }
+	    }
+
+	    function ShowInfobox(pin) {
+	        infobox.setLocation(pin.getLocation());
+
+	        infobox.setOptions({
+	            title: pin.title,
+	            description: pin.description,
+	            visible: true
+	        });
+	    }
+    </script>
+</head>
+<body onload="GetMap();">
+    <div id='myMap' style="position:relative; width:600px; height:400px;"></div>
+    <br />
+    <div style='width:400px;border-right:solid 1px #000;float:left;padding:5px'>
+        Green Data<br /><br />
+        Data Size: <input type="text" id="greenDataSize" />
+        <input type="button" value="Get Data" onclick="RequestData('greenDataSize',RequestGreenDataCallback);" /><br /><br />
+        Cluster Radius: 
+        <input type="text" id="greenGridSize" size="3" value="45" />
+        <input type="button" value="Update" onclick="ChangeClusterRadius('greenGridSize',greenLayer);" />
+        <br />
+        <input type="button" value="Bring to Front" onclick="greenLayer.BringLayerToFront();" />
+        <div id="greenDataOutput" style="max-height:250px;overflow-y:scroll;"></div>
+    </div>
+    <div style='width:400px;float:left;padding:5px'>
+        Red Data<br /><br />
+        Data Size: <input type="text" id="redDataSize" />
+        <input type="button" value="Get Data" onclick="RequestData('redDataSize',RequestRedDataCallback);" /><br /><br />
+        Cluster Radius: 
+        <input type="text" id="redGridSize" size="3" value="45" />
+        <input type="button" value="Update" onclick="ChangeClusterRadius('redGridSize',redLayer);" />
+        <br />
+        <input type="button" value="Bring to Front" onclick="redLayer.BringLayerToFront();" />
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>Bing Maps UTFGrid Module - Demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+
+<div id='mapDiv' style="width:100%; height: 100%"></div>
+
+<script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+
+<script type="text/javascript">
+
+    $(function () {
+        var MM = Microsoft.Maps;
+        var map = new MM.Map(document.getElementById("mapDiv"), {
+            center: new MM.Location(39, 0),
+            zoom: 3,
+            credentials: "YOUR_BING_MAPS_KEY"});
+
+        MM.registerModule("UtfGridModule", "js/UtfGridModule.js");
+        MM.loadModule("UtfGridModule", {
+            callback: function () {
+
+                var utfGrid = new UtfGrid(map, 'Tiles/World/{z}/{x}/{y}.grid.json', {
+                    maxZoomLevel: 4,
+
+                    mouseclickCallback: function(result) {
+                        if (result != undefined) {
+                            alert("You've clicked on " + result.NAME);
+                        }
+                    }
+                });
+
+                map.entities.push(utfGrid);
+            }
+        });
+
+        //var tileSource = new MM.TileSource({
+        //    uriConstructor: function getTilePath(tile) {
+        //        var x = tile.x;
+        //        var z = tile.levelOfDetail;
+        //        var y = tile.y;
+
+        //        return "Tiles/World_ajax/" + z + "/" + x + "/" + y + ".png";
+        //    }
+        //});
+        //var tileLayer = new MM.TileLayer({ mercator: tileSource, opacity: 1 });
+        //map.entities.push(tileLayer);
+    });
+
+</script>
+</body>
+</html>

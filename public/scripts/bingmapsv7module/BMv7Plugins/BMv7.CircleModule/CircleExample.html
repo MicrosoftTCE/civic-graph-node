@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+      <script type="text/javascript">
+          var map, circle;
+
+          function GetMap() {
+              // Initialize the map
+              map = new Microsoft.Maps.Map(document.getElementById("myMap"),
+              {
+                  credentials: "YOUR_BING_MAPS_KEY"
+              });
+
+              //Register and load the Circle Module
+              Microsoft.Maps.registerModule("CircleModule", "scripts/CircleModule.js");
+              Microsoft.Maps.loadModule("CircleModule", {
+                  callback: function () {
+                      //Create circle
+                      circle = new BM.Circle(map.getCenter(), 1000, 'km', {
+                                    fillColor: new Microsoft.Maps.Color(100,0,0,255), 
+                                    strokeColor: new Microsoft.Maps.Color(200,0,255,0),
+                                    strokeThickness: 5
+                                });
+
+                      map.entities.push(circle);
+                  } 
+              });
+          }
+
+          function createCanvasPins() {
+          }
+      </script>
+   </head>
+   <body onload="GetMap();">
+	    <div id='myMap' style="position:relative;width:800px;height:600px;"></div><br />
+
+        <fieldset style="float:left;width:200px;">
+            <legend>Set Center</legend>
+            <input type="button" value="Map Center" onclick="circle.setCenter(map.getCenter());" />
+        </fieldset>
+
+        <fieldset style="float:left;width:200px;">
+            <legend>Set Radius</legend>
+            <input type="button" value="100" onclick="circle.setRadius(100);" /><br />
+            <input type="button" value="500" onclick="circle.setRadius(500);" /><br />
+            <input type="button" value="1000" onclick="circle.setRadius(1000);" /><br />
+            <input type="button" value="1500" onclick="circle.setRadius(1500);" /><br />
+            <input type="button" value="2000" onclick="circle.setRadius(2000);" />
+        </fieldset>
+
+        <fieldset style="float:left;width:200px;">
+            <legend>Set Polygon Options</legend>
+            <input type="button" value="Fill Red" onclick="circle.setOptions({fillColor: new Microsoft.Maps.Color(100,255,0,0)});" /><br />
+            <input type="button" value="Fill Green" onclick="circle.setOptions({fillColor: new Microsoft.Maps.Color(100,0,255,0)});" /><br />
+            <input type="button" value="Fill Blue" onclick="circle.setOptions({fillColor: new Microsoft.Maps.Color(100,0,0,255)});" /><br />
+            <input type="button" value="Color Stroke Red" onclick="circle.setOptions({strokeColor: new Microsoft.Maps.Color(200,255,0,0)});" /><br />
+            <input type="button" value="Color Stroke Green" onclick="circle.setOptions({strokeColor: new Microsoft.Maps.Color(200,0,255,0)});" /><br />
+            <input type="button" value="Color Stroke Blue" onclick="circle.setOptions({strokeColor: new Microsoft.Maps.Color(200,0,0,255)});" /><br />
+            <input type="button" value="Stroke Width 1" onclick="circle.setOptions({strokeThickness: 1});" /><br />
+            <input type="button" value="Stroke Width 3" onclick="circle.setOptions({strokeThickness: 3});" /><br />
+            <input type="button" value="Stroke Width 5" onclick="circle.setOptions({strokeThickness: 5});" />
+        </fieldset>
+   </body>
+</html>

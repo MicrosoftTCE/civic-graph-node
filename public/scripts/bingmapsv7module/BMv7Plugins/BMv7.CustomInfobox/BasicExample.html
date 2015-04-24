@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+    <title>Custom Infoboxes</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <!-- Add a reference to the Bing Maps Control -->
+    <script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+    
+    <!-- jQuery reference. Used to ensure cross browser support.  -->
+    <script type="text/javascript" src="scripts/jquery.min.js"></script>
+
+	<script type="text/javascript">
+	    var map, customInfobox;
+
+	    function GetMap() {
+	        map = new Microsoft.Maps.Map(document.getElementById("myMap"), { credentials: "Your_Bing_Maps_Key" });
+
+	        //Register and load the Custom Infobox Module
+	        Microsoft.Maps.registerModule("CustomInfoboxModule", "scripts/V7CustomInfobox.js");
+	        Microsoft.Maps.loadModule("CustomInfoboxModule", { callback: function () {
+	                //Create an instance of the custom infobox control
+	                customInfobox = new CustomInfobox(map);
+	            }
+	        });
+
+	        //Define custom properties for the pushpin class.
+	        //This is an example of one way to assign metadata to a shape.
+	        Microsoft.Maps.Pushpin.prototype.title = null;
+	        Microsoft.Maps.Pushpin.prototype.description = null;
+
+	        // Retrieve the location of the map center 
+	        var center = map.getCenter();
+
+	        // Add a pin to the center of the map
+	        var pin = new Microsoft.Maps.Pushpin(center);
+
+	        //Add some mock info about the pin
+	        pin.title = "Pin 1";
+	        pin.description = "This is the infobox for Pin 1.<br/><span style='color:red;'>Here is some custom HTML</span>";
+
+	        // Add a handler for the pushpin click event.
+	        Microsoft.Maps.Events.addHandler(pin, 'click', displayInfobox);
+
+	        // Add the pushpin and info box to the map
+	        map.entities.push(pin);
+	    }
+
+	    function displayInfobox(e) {
+            var latlong = e.target.getLocation();
+
+            //Define the layout contents in the infobox
+	        var html = ["<div style='padding:10px'>"];
+	        html.push("<b>", e.target.title, "</b><br/>");
+            html.push(e.target.description, "<br/>");
+	        html.push("</div>");
+
+            //Display Infobox
+            customInfobox.show(latlong, html.join(''));
+	    }
+
+    </script>
+</head>
+<body onload="GetMap();">
+    <div id='myMap' style="position:relative;width:600px;height:500px;"></div>
+</body>
+</html>

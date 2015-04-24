@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+    <title>Restricted View Module</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <!-- Add a reference to the Bing Maps Control -->
+    <script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+    
+    <!-- Add a reference to JQuery -->
+    <script type="text/javascript" src="scripts/jquery.min.js"></script>
+
+	<script type="text/javascript">
+	    var map;
+
+	    function GetMap() {
+	        map = new Microsoft.Maps.Map(document.getElementById("myMap"), { credentials: "Your_Bing_Maps_Key" });
+
+            var boundingRect = Microsoft.Maps.LocationRect.fromEdges(59, -9, 50, 2);
+
+	        //Register and load the Persistence Module
+	        Microsoft.Maps.registerModule("RestrictedViewModule", "scripts/RestrictedView.js");
+	        Microsoft.Maps.loadModule("RestrictedViewModule", { callback: function () {
+	            new RestrictedView(map, boundingRect, { min: 6, max: 9 });
+	        }});
+
+	        //Draw bounding rectangle
+	        map.entities.push(new Microsoft.Maps.Polyline([
+                new Microsoft.Maps.Location(59, -9), 
+                new Microsoft.Maps.Location(59, 2),
+                new Microsoft.Maps.Location(50, 2),
+                new Microsoft.Maps.Location(50, -9),
+                new Microsoft.Maps.Location(59, -9) ]));
+	    }
+    </script>
+</head>
+<body onload="GetMap();">
+    <div id='myMap' style="position:relative; width:600px; height:500px;"></div>
+</body>
+</html>

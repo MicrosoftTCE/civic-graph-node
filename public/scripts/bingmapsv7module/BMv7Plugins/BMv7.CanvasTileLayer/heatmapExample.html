@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>Bing Maps Canvas Layer - Heatmap Demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body onload="loadMap();">
+
+<div id='mapDiv' style="width:100%; height: 100%;"></div>
+
+<script type="text/javascript" src="js/jscache.min.js"></script>
+<script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+<script type="text/javascript" src="data/sampleData.js"></script>
+<script type="text/javascript">
+
+
+    function loadMap()
+    {
+        var MM = Microsoft.Maps;
+        var map = new MM.Map(document.getElementById("mapDiv"), {
+            center: new MM.Location(39.5, -8),
+            mapTypeId: MM.MapTypeId.aerial,
+            labelOverlay: MM.LabelOverlay.hidden,
+            zoom: 7,
+            credentials:"YOUR CREDENTIALS"});
+
+
+        MM.registerModule("CanvasTileLayerModule", "js/CanvasTileLayerModule.min.js");
+        MM.loadModule("CanvasTileLayerModule", {
+            callback: function () {
+                new CanvasTileLayer(map, {
+                    cacheTiles: true,
+                    drawTile: drawTile,
+                    debugMode: false
+                });
+            }});
+    }
+
+    /*
+     * All the heatmap code in this demo was taken from the Bing Maps Heatmap module, by Alastair Aitchison
+     * (http://bingmapsv7modules.codeplex.com/wikipage?title=Client Side Heatmap)
+     */
+    function drawTile(context, tile) {
+
+        var shadow = 'rgba(0, 0, 0, ' + heatMapOptions.intensity + ')';
+
+        var radiusInPixel;
+
+        // Calculate the pixel radius of each heatpoint at the current map zoom
+        if (heatMapOptions.unit == "pixels") {
+            radiusInPixel = heatMapOptions.radius;
+        } else {
+            radiusInPixel = heatMapOptions.radius / tile.metersPerPixel;
+        }
+
+
+        for (var i = 0; i < sampleData.length; i++) {
+
+            var canvasPixel = tile.getLocationPixelOffset(sampleData[i]);
+            var x = canvasPixel.x;
+            var y = canvasPixel.y;
+
+            if(canvasPixel.x < -256 || canvasPixel.x > 512 || canvasPixel.y < -256 || canvasPixel.y > 512) {
+                continue;
+            }
+
+            // Create radial gradient centred on this point
+            var grd = context.createRadialGradient(x, y, 0, x, y, radiusInPixel);
+            grd.addColorStop(0.0, shadow);
+            grd.addColorStop(1.0, 'transparent');
+
+            // Draw the heatpoint onto the canvas
+            context.fillStyle = grd;
+            context.fillRect(x - radiusInPixel, y - radiusInPixel, 2 * radiusInPixel, 2 * radiusInPixel);
+
+        }
+
+        var dat = context.getImageData(0, 0, 256, 256);
+        var pix = dat.data; // pix is a CanvasPixelArray containing height x width x 4 bytes of data (RGBA)
+        for (var p = 0, len = pix.length; p < len; ) {
+            var a = pix[p + 3] * 4; // get the alpha of this pixel
+            if (a != 0) { // If there is any data to plot
+                pix[p] = temperatureMap[a]; // set the red value of the gradient that corresponds to this alpha
+                pix[p + 1] = temperatureMap[a + 1]; //set the green value based on alpha
+                pix[p + 2] = temperatureMap[a + 2]; //set the blue value based on alpha
+            }
+            p += 4; // Move on to the next pixel
+        }
+        context.putImageData(dat, 0, 0);
+
+    }
+
+    // Set default options
+    var heatMapOptions = {
+        // Opacity at the centre of each heat point
+        intensity: 0.5,
+
+        // Affected radius of each heat point
+        radius: 40,
+
+        // Whether the radius is an absolute pixel value or meters
+        unit: 'pixels',
+
+        // Colour temperature gradient of the map
+        colourgradient: {
+            "0.00": 'rgba(255,0,255,20)',  // Magenta
+            "0.25": 'rgba(0,0,255,40)',    // Blue
+            "0.50": 'rgba(0,255,0,80)',    // Green
+            "0.75": 'rgba(255,255,0,120)', // Yellow
+            "1.00": 'rgba(255,0,0,150)'    // Red
+        }
+    };
+
+    // Create a colour gradient from the supplied colour stops
+    var temperatureMap = createColourGradient(heatMapOptions.colourgradient);
+
+    // Creates a colour gradient from supplied colour stops on initialisation
+    function createColourGradient(colourstops) {
+        var context = document.createElement('canvas').getContext('2d');
+        var grd = context.createLinearGradient(0, 0, 256, 0);
+        for (var c in colourstops) {
+            grd.addColorStop(c, colourstops[c]);
+        }
+        context.fillStyle = grd;
+        context.fillRect(0, 0, 256, 1);
+        return context.getImageData(0, 0, 256, 1).data;
+    }
+
+
+
+</script>
+</body>
+</html>

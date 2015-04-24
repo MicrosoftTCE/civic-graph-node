@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Countries</title>
+
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="http://d3js.org/topojson.v1.min.js"></script>
+
+    <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+    <style type="text/css">
+        .country {
+            fill: rgba(255, 106, 0, 0.7);
+            stroke: #fff;
+            stroke-width: 1px;
+            stroke-linejoin: round;
+        }
+
+            .country:hover {
+                fill: rgba(255, 0, 0, 0.5);
+            }
+    </style>
+</head>
+<body onload="getMap()">
+    <div id="myMap"></div>
+
+    <script type="text/javascript">
+        var map, d3MapTools, countryLayer;
+
+        function getMap() {
+            map = new Microsoft.Maps.Map(document.getElementById('myMap'), {
+                credentials: 'YOUR_BING_MAPS_KEY'
+            });
+
+            //Register and load the D3 Overlay Module
+            Microsoft.Maps.registerModule("D3OverlayModule", "scripts/D3OverlayManager.js");
+            Microsoft.Maps.loadModule("D3OverlayModule", {
+                callback: loadStates
+            });
+        }
+
+        function loadStates() {
+            d3MapTools = new D3OverlayManager(map);
+            countryLayer = d3MapTools.addLayer({
+                loaded: function (svg, projection) {
+                    d3.json('data/Countries.js', function (error, topology) {
+                        var topoData = topojson.feature(topology, topology.objects.countries).features;
+
+                        svg.selectAll('path')
+                            .data(topoData)
+                            .enter().append('path')
+                            .attr('class', 'country')
+                            .attr('d', projection)
+                        .on('click', function (feature) {
+                            alert('Clicked on : ' + feature.properties.name);
+                        });
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>

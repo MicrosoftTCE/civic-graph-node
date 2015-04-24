@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Drawing Tools Sample</title>
+
+    <!-- Bing Map Control references -->
+    <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+    <!-- Our Bing Maps JavaScript Code -->
+    <link href="js/DrawingToolsModule/DrawingToolsModule.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript">
+        function GetMap() {
+            map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
+                credentials: "YOUR_BING_MAPS_KEY",
+                zoom: 2
+            });
+
+            //Register and load the Drawing Tools Module
+            Microsoft.Maps.registerModule("DrawingToolsModule", "js/DrawingToolsModule/DrawingToolsModule.js");
+
+            Microsoft.Maps.loadModule("DrawingToolsModule", {
+                callback: function () {
+                    var drawingTools = new DrawingTools.DrawingManager(map, {
+                        toolbarContainer: document.getElementById('toolbarContainer')
+                    });
+                }
+            });
+        }
+    </script>
+</head>
+<body onload="GetMap()">
+    <div style="position:relative;width:800px;height:600px;float:left;">
+        <div id="myMap" style="position:relative; width:800px;height:600px;"></div>
+        <div id="toolbarContainer" style="position:absolute;right:2px;top:2px;"></div>
+    </div>
+
+    <fieldset style="width:600px;float:left;margin-left:10px;">
+        <legend>Basic Example</legend>
+        Select a drawing mode and use the mouse to draw shapes on the map. To stop drawing either press 
+        the selected drawing mode button again to toggle the mode off, select a different drawing mode, or 
+        press ESC. To delete shapes press the eraser button and then click on a shape to delete it. To edit a 
+        shape press the pencil button and then either select a shape to see the points that can be editted, or 
+        simply click press and drag pushpins. Also, when a shape is selected you can also change it's color and 
+        line styles.
+    </fieldset>
+</body>
+</html>

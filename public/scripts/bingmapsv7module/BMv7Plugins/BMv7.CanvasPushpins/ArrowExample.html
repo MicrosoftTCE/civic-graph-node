@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+      <script type="text/javascript">
+          var map, canvasLayer;
+
+          function GetMap() {
+              // Initialize the map
+              map = new Microsoft.Maps.Map(document.getElementById("myMap"),
+              {
+                  credentials: "YOUR_BING_MAPS_KEY"
+              });
+
+              //Register and load the Canvas Pushpin Module
+              Microsoft.Maps.registerModule("CanvasPushpinModule", "scripts/CanvasPushpinModule.js");
+              Microsoft.Maps.loadModule("CanvasPushpinModule", {
+                 callback: function () {
+                      //Create Canavas Entity Collection
+                      canvasLayer = new CanvasLayer(map);
+                      map.entities.push(canvasLayer);
+
+                      //Create the canvas pushpins
+                      createCanvasPins();
+              }});
+          }
+
+        function createCanvasPins() {
+            var pin, img;
+
+            for (var i = 0; i < 100; i++) {
+
+                //Create a canvas pushpin at a random location
+                pin = new CanvasPushpin(new Microsoft.Maps.Location(Math.random() * 180 - 90, Math.random() * 360 - 180), function (pin, context) {
+                    img = new Image();
+                    img.onload = function () {
+                        if (context) {
+                            //Calculate the new dimensions of the the canvas after the image is rotated
+                            var dx = Math.abs(Math.cos(pin.Metadata.heading * Math.PI / 180));
+                            var dy = Math.abs(Math.sin(pin.Metadata.heading * Math.PI / 180));                              
+                            var width = Math.round(img.width * dx + img.height * dy);
+                            var height = Math.round(img.width * dy + img.height * dx);
+
+                            //Set the dimensions of the canvas
+                            context.width = width;
+                            context.height = height;
+
+                            //Offset the canvas such that we will rotate around the center of our arrow
+                            context.translate(width * 0.5, height * 0.5);
+
+                            //Rotate the canvas by the desired heading
+                            context.rotate(pin.Metadata.heading * Math.PI / 180);
+
+                            //Return the canvas offset back to it's original position
+                            context.translate(-img.width * 0.5, -img.height * 0.5);
+
+                            //Draw the arrow image
+                            context.drawImage(img, 0, 0);
+                        }
+                    };
+                    img.src = 'images/redArrow.png';
+                });
+
+                //Give the pushpin a random heading
+                pin.Metadata = {
+                    heading: Math.random() * 360
+                };
+
+                canvasLayer.push(pin);
+            }
+        }          
+      </script>
+    <style>
+        /* Bug fix for mouse events on Polylines, Polygons and custom HTML pushpins in IE11 */
+        .MicrosoftMapDrawing, .MapPushpinBase {
+            pointer-events: auto !important;
+        }
+    </style>
+   </head>
+   <body onload="GetMap();">
+	    <div id='myMap' style="position:relative;width:800px;height:600px;"></div>
+   </body>
+</html>

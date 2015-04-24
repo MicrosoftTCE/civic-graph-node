@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>Bing Maps UTFGrid Module - Demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+
+<div id='mapDiv' style="width:100%; height: 100%"></div>
+
+<div id="countryInfo"
+     style=" width:300px; height:60px; background-color:#4c83aa; margin-top:20px; opacity: 0.85; margin-left: -150px; position: absolute; left:50%; text-align: center; padding-top:5px"></div>
+
+<script id="countryTemplate" type="text/html">
+    <div style="font-size: 1.5em; margin-bottom:5px;">{{ NAME }}</div>
+    <div>Population: {{ POP_EST }}</div>
+</script>
+
+<script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="js/underscore-min.js"></script>
+
+<script type="text/javascript">
+
+    $(function () {
+
+        initTemplatingEngine();
+
+        var MM = Microsoft.Maps;
+        var map = new MM.Map(document.getElementById("mapDiv"), {
+            center: new MM.Location(39, 0),
+            zoom: 3,
+            credentials: "YOUR_BING_MAPS_KEY"
+        });
+
+        //Just including 4 levels of utfgrids on this demo (to keep it small),
+        // hence hiding the message div outside this range
+        MM.Events.addHandler(map, 'targetviewchanged', function () {
+
+            if (map.getTargetZoom() > 4) {
+                $("#countryInfo").hide();
+            }
+            else {
+                $("#countryInfo").show();
+            }
+        });
+
+        MM.registerModule("UtfGridModule", "js/UtfGridModule.js");
+        MM.loadModule("UtfGridModule", {
+            callback: function () {
+                var utfGrid = new UtfGrid(map, 'Tiles/World_ajax/{z}/{x}/{y}.grid.json', {
+                    maxZoomLevel: 4,
+                    jsonp: false,
+
+                    mouseoverCallback: function (result) {
+                        if (result == undefined) {
+                            $("#countryInfo").html('');
+                            map.getRootElement().style.cursor = "default";
+                        }
+                        else {
+                            var template = _.template($("#countryTemplate").html());
+                            $("#countryInfo").html(template(result));
+                            map.getRootElement().style.cursor = "crosshair";
+                        }
+                    },
+                    mouseclickCallback: function(result) {
+                        if (result != undefined) {
+                            alert("You've clicked on " + result.NAME);
+                        }
+                    }
+
+                });
+
+                map.entities.push(utfGrid);
+            }});
+    });
+
+    function initTemplatingEngine() {
+        _.templateSettings = {
+            evaluate: /\{\[([\s\S]+?)\]\}/g,
+            interpolate: /\{\{(.+?)\}\}/g
+        };
+    }
+
+
+</script>
+</body>
+</html>

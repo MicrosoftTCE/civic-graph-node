@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>Client Side Heat Map</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+  <!-- Use the excanvas control to add support for the HTML5 canvas element in IE7 and IE8 -->
+  <!--[if lt IE 9]><script type="text/javascript" src="scripts/excanvas.min.js"></script><![endif]-->
+
+  <!-- include some data from which to create the heatmap -->
+  <script type="text/javascript" src="data/norfolkcrimedata.js"></script>
+  <script type="text/javascript">
+    var map;
+    var heatmapLayer;
+
+    function GetMap() {
+      map = new Microsoft.Maps.Map(document.getElementById("divMap"),
+           { credentials: "YOUR_BING_MAPS_KEY",
+             center: new Microsoft.Maps.Location(52.6, 1.25),
+             mapTypeId: Microsoft.Maps.MapTypeId.aerial,
+             labelOverlay: Microsoft.Maps.LabelOverlay.hidden,
+             zoom: 12
+            });
+
+      // Register and load the Client Side HeatMap Module
+      Microsoft.Maps.registerModule("HeatMapModule", "script/heatmap.js");
+      Microsoft.Maps.loadModule("HeatMapModule", { callback: function() {
+        // Create a basic heatmap from an array of locations
+        heatmapLayer = new HeatMapLayer(map, CrimeData);
+      }});
+    }
+  </script>
+</head>
+<body onload="GetMap();">
+<p>This page demonstrates a basic Bing Maps heatmap layer displaying
+the location of crimes incidents by Norfolk constabulary in December 2010, as reported on http://www.police.uk/data.</p>
+  <div id="divMap" style="position:relative; width:640px; height:480px;"></div><br />
+  <input type="button" onclick="heatmapLayer.Remove();" value="remove" />
+</body>
+</html>

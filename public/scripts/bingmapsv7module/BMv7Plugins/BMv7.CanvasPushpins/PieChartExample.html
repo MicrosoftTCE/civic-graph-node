@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+      <script type="text/javascript">
+          var map, canvasLayer;
+
+          function GetMap() {
+              // Initialize the map
+              map = new Microsoft.Maps.Map(document.getElementById("myMap"),
+              {
+                  credentials: "YOUR_BING_MAPS_KEY"
+              });
+
+              //Register and load the Canvas Pushpin Module
+              Microsoft.Maps.registerModule("CanvasPushpinModule", "scripts/CanvasPushpinModule.js");
+              Microsoft.Maps.loadModule("CanvasPushpinModule", {
+                  callback: function () {
+                      //Create Canavas Entity Collection
+                      canvasLayer = new CanvasLayer(map);
+                      map.entities.push(canvasLayer);
+
+                      //Create the canvas pushpins
+                      createCanvasPins();
+                  }
+              });
+          }
+          
+            function createCanvasPins() {
+                var pin;
+
+                //Define a color for each type of data
+                var colorMap = ['red', 'blue', 'green', 'yellow'];
+
+                for (var i = 0; i < 25; i++) {
+
+                    //Create a canvas pushpin at a random location
+                    pin = new CanvasPushpin(new Microsoft.Maps.Location(Math.random() * 180 - 90, Math.random() * 360 - 180), function (pin, context) {
+                        //Calculate the number of slices each pie we can support
+                        var max = Math.min(pin.Metadata.data.length, colorMap.length);
+
+                        //Calculate the total of the data in the pie chart
+                        var total = 0;
+                        for (var i = 0; i < max; i++) {
+                            total += pin.Metadata.data[i];
+                        }
+
+                        //Draw the pie chart
+                        createPieChart(context, total, pin.Metadata.data, colorMap);
+                    });
+
+                    //Give the pushpin some data
+                    pin.Metadata = {
+                        data: generateRandomData()
+                    };
+
+                    //Add the pushpin to the Canvas Entity Collection
+                    canvasLayer.push(pin);
+                }
+            }
+
+            function createPieChart(context, total, data, colorMap) {
+                var radius = 12.5,
+                    center = { x: 12.5, y: 12.5 },
+                    lastPosition = 0;
+
+                context.width = 25;
+                context.height = 25;
+
+                for (var i = 0; i < data.length; i++) {
+                    context.fillStyle = colorMap[i];
+                    context.beginPath();
+                    context.moveTo(center.x, center.y);
+                    context.arc(center.x, center.y, radius, lastPosition, lastPosition + (Math.PI * 2 * (data[i] / total)), false);
+                    context.lineTo(center.x, center.y);
+                    context.fill();
+                    lastPosition += Math.PI * 2 * (data[i] / total);
+                }
+            }
+
+            function generateRandomData() {
+                return [Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100];
+            }
+      </script>
+    <style>
+        /* Bug fix for mouse events on Polylines, Polygons and custom HTML pushpins in IE11 */
+        .MicrosoftMapDrawing, .MapPushpinBase {
+            pointer-events: auto !important;
+        }
+    </style>
+   </head>
+   <body onload="GetMap();">
+	    <div id='myMap' style="position:relative;width:800px;height:600px;"></div>
+   </body>
+</html>

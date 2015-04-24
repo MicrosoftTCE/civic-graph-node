@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+    <title>Custom Tile Layer Module</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <!-- Add a reference to the Bing Maps Control -->
+    <script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+
+	<script type="text/javascript">
+	    var map;
+	    var customTileLayer;
+	    function GetMap() {
+	        map = new Microsoft.Maps.Map(document.getElementById("myMap"), { credentials: "Your_Bing_Maps_Key" });
+
+	        //Register and load the Tile Source Module
+	        Microsoft.Maps.registerModule("CustomTileLayerModule", "scripts/CustomTileLayer.js");
+	        Microsoft.Maps.loadModule("CustomTileLayerModule", {
+	            callback: function () {
+	                // create a new OSMTileSource object passing in the map, a templated tile source url, a boolean to set the base layer visibilty and a TileLayerOptions object
+	                // which will be set as the options for the custom tile layer.
+	                //TileLayerOptions: http://msdn.microsoft.com/en-us/library/gg427613.aspx
+	                customTileLayer = new CustomTileLayer(map, "http://tile.openstreetmap.org/{{levelOfDetail}}/{{tileX}}/{{tileY}}.png", true, { opacity: 1 });
+	            }
+	        });
+	    }
+
+	    function ChangeMapTiles() {
+            // setting the tile url template to a different loction causes all further tiles to be loaded from the new location
+	        customTileLayer.setTileUrlTemplate("http://b.tiles.mapbox.com/v3/gilesc50.map-h4lnv9g2/{{levelOfDetail}}/{{tileX}}/{{tileY}}.png");
+	    }
+    </script>
+</head>
+<body onload="GetMap();">
+    <div id='myMap' style="position:relative; width:600px; height:500px;"></div>
+    <button onclick="ChangeMapTiles();">Change Tiles</button>
+</body>
+</html>
