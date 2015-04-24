@@ -3215,7 +3215,7 @@ function loadD3Layer() {
               .enter()
                 .append("path")
                 .attr("d", projection)
-                .attr("opacity", 0.2);
+                .attr("opacity", 0);
 
 
 
