@@ -3171,12 +3171,16 @@ function drawMap() {
                 }
             }
 
-            radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
-            g.selectAll("g")
+            radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 13]);
+
+            var nodes = g.selectAll("g circleText")
                 .data(locationData)
-                .enter()
-                .append("circle")
-                .attr("opacity", 0.7)
+
+            var blocks = nodes.enter()
+                .append("g")
+
+            var circle = blocks.append("circle")
+                .attr("opacity", 0.3)
                 .attr("cx", function(d) {
                     return projection([d.lon, d.lat])[0];
                 })
@@ -3184,9 +3188,25 @@ function drawMap() {
                     return projection([d.lon, d.lat])[1];
                 })
                 .attr("r", function(d) {
-                    return radiusScale(d.val);
+                    return radiusScale(d.val) * 2;
                 })
-                .style("fill", "green");
+                .style("fill", "green")
+
+            blocks.append("text")
+                .attr("x",  function(d) {
+                    return projection([d.lon, d.lat])[0];
+                })
+                .attr("y",  function(d) {
+                    return projection([d.lon, d.lat])[1] + 4;
+                })
+                .text(function(d) {
+                  return d.val
+                })
+                .style()
+
+            
+        //         .on("mouseover", tip.show)
+        //         .on("mouseout", tip.hide);
         });
 
 
