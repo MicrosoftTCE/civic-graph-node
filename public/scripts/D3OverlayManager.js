@@ -78,11 +78,15 @@ var D3OverlayManager = function (map) {
 
                         //Update data to align with projection
                         _layers[i].svg.selectAll('path').attr("d", _d3Projection);
+                        if (_layers[i].options && _layers[i].options.viewChanged) {
+                            _layers[i].options.viewChanged(_layers[i].svg, _d3Projection);
+                        }
                     }
                 }               
 
                 _center = map.getCenter();
                 _zoom = map.getZoom();
+
             });
         } else {
             //Map not fully loaded yet, try again in 100ms

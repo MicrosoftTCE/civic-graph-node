@@ -3128,44 +3128,13 @@ function loadD3Layer() {
     
     //Create a data layer onto the map.
     d3Layer = d3MapTools.addLayer({
-      loaded: function (svg) {
-        var width = 960,
-          height = 500;
-
-        var projection = d3.geo.mercator()
-            .center([40, -80 ])
-            .scale(2000)
-            .rotate([-180,0]);
-
-        var path = d3.geo.path()
-            .projection(projection);
+      loaded: function (svg, projection) {
 
         var g = svg.append("g");
 
-          // var width = 960,
-          //   height = 500;
 
-          // var projection = d3.geo.albers()
-          //   .scale(1000)
-          //   .translate([width / 2 , height / 2]);
-          // console.log(projection);
-
-          // var path = d3.geo.path();
-        
-            //Add code for rendering data using d3
-          // d3.json('data/us.json', function (error, topology) {
-          //   var topoData = topojson.feature(topology, topology.objects.states).features;
-
-          //   svg.selectAll('path')
-          //       .data(topoData)
-          //     .enter().append('path')
-          //       .attr('class', 'states')
-          //       .attr('d', projection)
-          //   .on('click', function (feature) {
-          //       alert('Clicked on state id: ' + feature.id);
-          //   });
         var locations = {};
-          // });
+
         d3.json("data/world-110m.json", function(error, topology) {
           if (error) return console.error(error);
 
@@ -3204,19 +3173,26 @@ function loadD3Layer() {
               }
             }
 
-            // radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
-            g.selectAll("circle")
+            // console.log(locationData);
+            radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 13]);
+            svg.selectAll("circle")
                  .data(locationData)
                  .enter()
                  .append("circle")
-                 .attr("cx", function (d) {
-                  //console.log('projection ', projection([d.lon],d.lat)[0]);
-                   return projection([d.lon, d.lat])[0];
+                 .attr("transform", function(d) {
+                    console.log(d, "d fromcircle");
+                    return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
                  })
-                 .attr("cy", function (d) {
-                   return projection([d.lon, d.lat])[1];
-                 })
-                 .attr("r", 5)
+                 // .attr("cx", function (d) {
+                 //  //console.log('projection ', projection([d.lon],d.lat)[0]);
+                 //   return projection([d.lon, d.lat])[0];
+                 // })
+                 // .attr("cy", function (d) {
+                 //   return projection([d.lon, d.lat])[1];
+                 // })
+                 .attr("r", function(d){
+                    return radiusScale(d.val);
+                })
                  .style("fill", "green");
           });
 
@@ -3226,51 +3202,35 @@ function loadD3Layer() {
                     .features)
               .enter()
                 .append("path")
-                .attr("d", path)
-                .attr("opacity", 0.5)
+                .attr("d", projection)
+                .attr("opacity", 0.1);
+
+            // d3.json("data/us.json", function(error, us) {
+            //     svg.selectAll("circle")
+            //         .data(topojson.feature(us, us.objects.states).features)
+            //         .enter()
+            //         .append("circle")
+            //         .attr("r", 5)
+            //         .attr("transform", function(d) {
+            //             console.log(d, "from topojson");
+            //             return "translate(" + projection.centroid(d) + ")" ;
+            //         });
+            // });
         });
+        
 
-            //zoom and pan
-        var zoom = d3.behavior.zoom()
-            .on("zoom",function() {
-                g.attr("transform","translate("+ 
-                    d3.event.translate.join(",")+")scale("+d3.event.scale+")");
-                g.selectAll("circle")
-                    .attr("d", path.projection(projection));
-                g.selectAll("path")  
-                    .attr("d", path.projection(projection)); 
+        },
 
-          });
+       viewChanged: function(svg, projection) {
 
-        svg.call(zoom);
 
-          // svg
-          //   .selectAll('#layer')
-          //   .data(topojson.feature(us, us.objects.countries).features.splice(0, 1))
-          //   .enter()
-          //   .append('circle')
-          //   .attr('transform', function(d) {
-          //     return "translate(" + projection.centroid(d) + ")";
-          //   })
-          //   .attr('r', 5)
-          //   .style('fill', 'green');
-          
-          
+             svg.selectAll("circle")
+                .attr("transform", function(d) {
+                    return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
+                });
 
-          // var zoom = d3.behavior.zoom()
-          //   .on("zoom", function() {
-          //     console.log('zoomed', d3.event);
-          //     var cy = Number(svg.selectAll('circle').attr('cy'));
-          //     var cx = Number(svg.selectAll('circle').attr('cx'));
-          //     // svg.selectAll('circle').attr('cy', String(cy + d3.event.translate[1]));
-          //     // svg.selectAll('circle').attr('cx', String(cx + d3.event.translate[0]));
-          //   });
-          
-          // svg.call(zoom);
+       } 
 
-        // });
-
-        }
     });
 }
 
