@@ -13,6 +13,14 @@ var connection = mysql.createConnection({
   database: 'cdb_c7da98943c'
 });
 
+// var connection = mysql.createConnection({
+//   port: 3306,
+//   host: '127.0.0.1',
+//   user: 'root',
+//   password: 'MicrosoftNY',
+//   database: 'civicteA9MEi6nPl'
+// });
+
 //  Testbench Time: 4.31 min.
 
  connection.connect();
@@ -20,7 +28,7 @@ var connection = mysql.createConnection({
 var start = new Date().getTime();
 
 var done = function() {
-    var file = 'civic.json';
+    var file = 'public/data/civic.json';
     fs.writeFile(file, JSON.stringify(content), function(err) {
         if (err) {
             console.log(err);
@@ -41,9 +49,45 @@ var done = function() {
 
   var content= {
         nodes: [], data_connections: [], funding_connections: [], investment_connections: [], collaboration_connections: []
-    }; 
+    };
 
   var asyncTasks = [];
+
+    asyncTasks.push(function(callback) {
+      connection.query('SELECT Entities.ID as Id, Entities.Name AS Name, Cities.City_Name AS City, Cities.Country_Name as Country, Cities.Country_Code as CountryCode, Cities.State_Name as State, Cities.State_Code as StateCode FROM Entities JOIN Cities ON Entities.Location REGEXP CONCAT(Cities.City_Name, \',[ ]?\', Cities.State_Code)', function(err, result){
+        if (err) throw err;
+        var createDictionary = function (d, doneCallback) {
+          if(!(d.Name in locationsDict))
+            locationsDict[d.Name] = {location:[]};
+            var locationArray = locationsDict[d.Name]['location'];
+            var city = d.City ? d.City : '';
+            var State = d.State ? d.State : d.StateCode;
+
+            if(!d.Country) {
+              var Country ='';
+              locationString = city.concat(',' + ' ' + State + ' ' + Country);
+            } else {
+              var Country = d.Country || d.CountryCode;
+              locationString = city.concat(',' + ' ' + State + ','+ ' ' + Country);
+            }
+
+            function isInArray(value, array) {
+              return array.indexOf(value) > -1;
+            }
+
+            if(!(isInArray(locationString, locationArray))) {
+              locationArray.push(locationString);
+            }
+          return doneCallback(null, "Completed Iteration");
+        };
+
+        var locationsDict = {};
+
+        async.map(result, createDictionary, function(err, reult) {
+          callback(null, locationsDict);
+        });
+      });
+    });
 
     //  Generating all of the node based data with revenue and expense data and ????????????node being rendered???????????...
     //  Must construct a dictionary of {name:[list of financial data]}
@@ -53,7 +97,7 @@ var done = function() {
 
         var createDictionary = function (d, doneCallback) {
           if(!(d.name in operationsDict))
-            //  Must create a new name key within the dictionary            
+            //  Must create a new name key within the dictionary
             operationsDict[d.name] = {revenue:[], expenses:[]};
           switch(d.finance)
           {
@@ -61,7 +105,7 @@ var done = function() {
               operationsDict[d.name]['revenue'].push({amount: d.amount, year: d.year});
               break;
             case "Expenses":
-              operationsDict[d.name]['expenses'].push({amount: d.amount, year: d.year});  
+              operationsDict[d.name]['expenses'].push({amount: d.amount, year: d.year});
               break;
             default:
               break;
@@ -94,12 +138,12 @@ var done = function() {
     //  Generating all of the connection based data...
     //  Must construct a dictionary of {source_name:[list of connections]}
     asyncTasks.push(function(callback){
-      connection.query('SELECT e1.name as name1, b.entity1id, e2.name as name2, b.entity2id, b.connection, b.connectionyear, b.amount, b.render FROM cdb_c7da98943c.bridges b LEFT JOIN cdb_c7da98943c.entities e1 on e1.ID = b.Entity1ID LEFT JOIN cdb_c7da98943c.entities e2 on e2.ID = b.Entity2ID;', function(err, result){
+      connection.query('SELECT e1.name as name1, b.entity1id, e2.name as name2, b.entity2id, b.connection, b.connectionyear, b.amount, b.render FROM civicteA9MEi6nPl.bridges b LEFT JOIN civicteA9MEi6nPl.entities e1 on e1.ID = b.Entity1ID LEFT JOIN civicteA9MEi6nPl.entities e2 on e2.ID = b.Entity2ID;', function(err, result){
         if (err) throw err;
 
         var createDictionary = function (d, doneCallback) {
           if(!(d.name1 in connectionsDict))
-            //  Must create a new name key within the dictionary            
+            //  Must create a new name key within the dictionary
             connectionsDict[d.name1] = {funding_received:[], funding_given:[], investments_received:[], investments_made:[], data:[], collaborations:[]};
           if(d.render == 1)
             switch(d.connection)
@@ -120,7 +164,7 @@ var done = function() {
                 connectionsDict[d.name1]['data'].push({entity: d.name2});
                 break;
               case "Collaboration":
-                connectionsDict[d.name1]['collaborations'].push({entity: d.name2});  
+                connectionsDict[d.name1]['collaborations'].push({entity: d.name2});
                 break;
               default:
                 break;
@@ -195,7 +239,7 @@ var done = function() {
               }
               return booleanCallback(true);
             }, function(filteredData){
-              console.log(filteredData.length);
+              // console.log(filteredData.length);
               contentCallback(null, "Finished processing content.");
               // results now equals an array of the existing files
             }
@@ -216,22 +260,31 @@ var done = function() {
     });
 
     async.parallel(asyncTasks, function(err, results){
-      var operationsDict = results[0];
-      var entitiesDump = results[1];
-      var connectionsDict = results[2];
+      var locationsDict = results[0];
+      var operationsDict = results[1];
+      var entitiesDump = results[2];
+      var connectionsDict = results[3];
+      // console.log(locationsDict, 'locationsDict');
 
-      console.log(JSON.stringify(connectionsDict));
+      // console.log(JSON.stringify(connectionsDict));
 
       var generateNodeData = function(d, completeCallback){
         var object = {ID: null, type: null, categories: null, name: null, nickname: null, location: null, url: null, employees: null, key_people: null, twitter_handle: null, followers: null, relations: null, influence: null, funding_received: [], funding_given: [], investments_received: [], investments_made: [], collaborations: [], data: [], revenue: [], expenses: []};
 
-        
+
         object['ID'] = d.ID;
         object['type'] = d.Type;
         (d.Categories !== null) ? object['categories'] = (d.Categories).split(", "): object['categories'] = null;
         object['name'] = d.Name;
         object['nickname'] = d.Nickname;
-        object['location'] = d.Location;
+
+        if(d.Name in locationsDict) {
+          var newLocationArray = locationsDict[d.Name].location;
+          object['location'] =   [];
+          for(var i = 0; i < newLocationArray.length; i++){
+            object['location'].push({location: newLocationArray[i]});
+          }
+        }
 
         (d.Website !== null) ? object['url'] = d.Website: object['url'] = null;
         (d.Employees !== null) ? object['employees'] = d.Employees: object['employees'] = null;
@@ -244,12 +297,12 @@ var done = function() {
           {
             object['key_people'].push({name: people[i]});
           }
-          
-        } 
+
+        }
         else
         {
           object['key_people'] = null;
-        }                  
+        }
 
         (d.TwitterHandle !== null) ? object['twitter_handle'] = d.TwitterHandle: object['twitter_handle'] = null;
         (d.Followers !== null) ? object['followers'] = d.Followers: object['followers'] = null;
@@ -262,11 +315,11 @@ var done = function() {
           {
             object['relations'].push({entity: relations[i]});
           }
-        } 
+        }
         else
         {
           object['relations'] = null;
-        }    
+        }
 
         (d.Influence !== null) ? object['influence'] = d.Influence: object['influence'] = null;
 
