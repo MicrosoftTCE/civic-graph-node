@@ -6,8 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-
-var app = express();
+ 
+var app = express(); 
 
 // var port = process.env.PORT || 3000;
 
