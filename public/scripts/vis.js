@@ -541,45 +541,35 @@ var porucsLink;
                 //
 
 
-                    if (d.location !== null) {
-                        s += '<br/>' + '<h6> ' + 'Location:  ' + '</h6>';
+
+                if (d.location !== null) {
+                    s += '<br/>' + '<h6> ' + 'Location:  ' + '</h6>';
+                    var locationArray= d.location;
+
+                    if (locationArray.length > 1) {
                         var locationArr = [];
-                        var newLocationArray = [];
-                        console.log(newLocationArray, 'yeueueuueu');
+                        s += '<br/> <h5><ul>';
+                        locationArray.forEach(function(loc) {
+                            locationArr.push(loc.location);
 
-                        if ((d.location).indexOf("; ") !== -1) {
-                            d3.xhr("/cities", function(error, cities){
-                                var cities = JSON.parse(cities.response);
-                                s += '<br/> <h5><ul>';
-                                for(var i=0; i<cities.length; i++) {
-                                    locationArr = (d.location).split("; ");
-                                    var splitCity = cities[i].split(",");
-                                    console.log(locationArr, 'locationString');
-                                    if(locationArr[0] == splitCity[0]) {
-                                        console.log('called here');
-                                        newLocation1 = cities[i];
-                                        newLocationArray.push(newLocation1);
-                                    }
-                                    if(locationArr[1] === cities[i]){
-                                        newLocation2 = cities[i];
-                                        newLocationArray.push(newLocation2);
-                                        console.log(newLocationArray, 'somehrjjnnn');
-                                    }
-
-                                }
-                                for (var count = 0; count < newLocationArray.length; count++) {
-                                    s += '<li style="display:block;">' + '<h5><a class="click-location" style="cursor:pointer;">' + newLocationArray[count] + '</h5></a>' + '</li>';
-                                }
-                            });
-                        } else {
-                            s += '<h5><ul>'
-                            s += '<li style="display:inline-block;">' + '<h5><a class="click-location" style="cursor:pointer;">' + d.location + '</h5></a>' + '</li>';
+                        });
+                        for (var count = 0; count < locationArr.length; count++) {
+                            s += '<li style="display:block;">' + '<h5><a class="click-location" style="cursor:pointer;">' + locationArr[count] + '</h5></a>' + '</li>';
                         }
-                        s += '</h5></ul><br/>';
-
-                    } else {
-                        s += '<br/>' + '<h6> ' + 'Location:  ' + '</h6>' + ' <h5>' + 'N/A' + '</h5>' + '<br/>';
                     }
+                    else {
+                        locationArray.forEach(function(loc) {
+                            locString = loc.location;
+
+                            s += '<h5><ul>'
+                            s += '<li style="display:inline-block;">' + '<h5><a class="click-location" style="cursor:pointer;">' + locString + '</h5></a>' + '</li>';
+                        });
+                    }
+                    s += '</h5></ul><br/>';
+
+                } else {
+                    s += '<br/>' + '<h6> ' + 'Location:  ' + '</h6>' + ' <h5>' + 'N/A' + '</h5>' + '<br/>';
+                }
 
 
                 if (d.type !== 'Individual') {
@@ -798,10 +788,12 @@ var porucsLink;
                 });
 
                 document.getElementById("location").addEventListener("input", function() {
+                    //on select of a location, add another input field for the user.
                     add_input_locations(0);
                 });
 
-                // Todo: add location to support multiples fields
+
+                //To split the location string into different fields(city, state and country field)
                 $( ".webform-content" ).on( "input", ".locations", function() {
                     var string = $(this).val();
                     var splitString = string.split(",");
@@ -809,13 +801,19 @@ var porucsLink;
                     input1 = $(this).siblings("#state");
                     input2 = $(this).siblings("#country");
 
+                    //make an ajax call to get the state and country code on select of a location.
                     d3.xhr("/cities", function(error, cities){
                         var cities = JSON.parse(cities.response);
                         for (var i in cities) {
                             var city = cities[i];
                             if(city.City_Name == splitString[0]) {
-                              input1.val(city.State_Code);
-                              input2.val(city.Country_Code);
+                                if(splitString.length === 2) {
+                                    input1.val(city.State_Code);
+                                }
+                                if(splitString.length === 3) {
+                                    input1.val(city.State_Code);
+                                    input2.val(city.Country_Code);
+                                }
                             }
                         }
                     });
@@ -1361,13 +1359,13 @@ var porucsLink;
 
             function add_input_locations(counterJ) {
                 if ($('#location-' + counterJ + ' input[name="location"]').val() !== "") {
-                    d3.select('#location-' + counterJ + ' input[name="location"]').on('keyup', function (){
+                    d3.select('#location-' + counterJ + ' input[name="location"]').on('input', function (){
                         preFillLocation(this.value);
                     });
                     counterJ++;
 
                     $("#location-" + (counterJ - 1)).after('<div id="location-' + counterJ + '" class="input-control text" data-role="input-control"><input type="text" name="location" id="location" class="locations" placeholder="City" list="list-location" style="width:50%;"/><input type="text" id="state" placeholder="State" style="width:22%;"/><input type="text" id="country" placeholder="Country" style="width:28%;"/></div>');
-                    d3.select("#location-" + counterJ +  " input[name='location']").on("keyup", function() {
+                    d3.select("#location-" + counterJ +  " input[name='location']").on("input", function() {
                         add_input_locations(counterJ);
                     });
                 }
@@ -2073,43 +2071,30 @@ var porucsLink;
             function searchAutoComplete() {
                 var s = "";
 
-                d3.xhr("/cities", function(error, cities){
-                    filteredNodes.forEach(function(d) {
-                        name = d.name.toLowerCase();
-                        nickname = d.nickname.toLowerCase();
-                        var splitLocations = (d.location).split("; ");
+                filteredNodes.forEach(function(d) {
+                    name = d.name.toLowerCase();
+                    nickname = d.nickname.toLowerCase();
+                    var splitLocations = d.location;
 
-                        if (!(name in entitiesHash)) {
-                            entitiesHash[name] = d;
-                            sortedNamesList.push(d.name);
-                        }
+                    if (!(name in entitiesHash)) {
+                        entitiesHash[name] = d;
+                        sortedNamesList.push(d.name);
+                    }
 
-                        if (!(nickname in entitiesHash)) {
-                            entitiesHash[nickname] = d;
-                            sortedNamesList.push(d.nickname);
-                        }
+                    if (!(nickname in entitiesHash)) {
+                        entitiesHash[nickname] = d;
+                        sortedNamesList.push(d.nickname);
+                    }
+
+                    if(splitLocations) {
                         splitLocations.forEach(function(l) {
-                        locations = JSON.parse(cities.response);
-
-                        for(var i=0; i<locations.length; i++) {
-                            var location = locations[i];
-                            var cityName = location.City_Name || '-';
-                            var stateName = location.State_Name || location.State_Code;
-                            var countryName = location.Country_Name || location.Country_Code;
-                            locationString = cityName.concat(',' + ' ' + stateName).concat(' ,' + ' ' + countryName);
-                            if(!(isInArray(locationString, sortedLocationsList))) {
-                                sortedLocationsList.push(locationString);
-                            }
-                        }
-
-                        function isInArray(value, array) {
-                          return array.indexOf(value) > -1;
-                        }
-
-                        //     // (!(locationString in sortedLocationsList)) ? (locationsHash[lwcLocation] = [], locationsHash[lwcLocation].push(d), sortedLocationsList.push(locationString)) : (locationsHash[lwcLocation].push(d));
+                            var location = l.location;
+                            var lwcLocation = location.toLowerCase();
+                            (!(lwcLocation in locationsHash)) ? (locationsHash[lwcLocation] = [], locationsHash[lwcLocation].push(d), sortedLocationsList.push(location)) : (locationsHash[lwcLocation].push(d));
                         });
-                    });
+                    }
                 });
+
 
                 // entitiesHash = _.sortBy(entitiesHash, function(value, key, object){
                 //   return key;
@@ -2120,32 +2105,33 @@ var porucsLink;
                     return names.toLowerCase();
                 });
 
-                setTimeout(function(){
-                    sortedLocationsList = _.sortBy(sortedLocationsList, function(locations) {
-                        return locations.toLowerCase();
-                    });
+                sortedLocationsList = _.sortBy(sortedLocationsList, function(locations) {
+                    return locations.toLowerCase();
+                });
 
-                    sortedSearchList = _.sortBy(sortedNamesList.concat(sortedLocationsList), function(keys) {
-                        return keys;
-                    });
+                sortedSearchList = _.sortBy(sortedNamesList.concat(sortedLocationsList), function(keys) {
+                    return keys;
+                });
 
-                    for (var count = 0; count < sortedSearchList.length; count++) {
-                        s += '<option value="' + sortedSearchList[count] + '">';
-                    }
+                for (var count = 0; count < sortedSearchList.length; count++) {
+                    s += '<option value="' + sortedSearchList[count] + '">';
+                }
 
-                    d3.select('.filter-name-location datalist')
-                        .html(s);
+                // d3.select('.filter-name-location datalist')
+                //     .html(s);
 
-                }, 1000);
 
 
             }
 
-            d3.selectAll('#search-text').on('keydown', function() {
-                if (d3.event.keyCode === 13) {
-                    handleQuery(this.value);
+            //filter the sortedSearchList on keyup
+            $('#search-text').autocomplete({
+                lookup: sortedSearchList,
+                appendTo: $('.filter-name-location'),
+                onSelect: function (suggestion) {
+                    handleQuery(suggestion.value);
                 }
-            }).on('keyup', function() {
+            }).on('keyup', function(){
                 handleQuery(this.value);
             });
 
@@ -2167,25 +2153,62 @@ var porucsLink;
 
                 if (query in locationsHash) {
                     fundLink.style("opacity", function(l) {
-                        return ((l.source).location.toLowerCase() === query && (l.target).location.toLowerCase() === query) ? 1 : 0.05;
+                        var locationSource = l.source.location;
+                        var locationTarget = l.target.location;
+                        if(locationSource && locationTarget){
+                            for(var i =0; i < locationSource.length; i++){
+                                for(var j=0; j<locationTarget.length; j++){
+                                    return (locationSource[i].location.toLowerCase() === query && locationTarget[j].location.toLowerCase() === query) ? 1 : 0.05;
+                                }
+                            }
+                        }
                     });
 
                     investLink.style("opacity", function(l) {
-                        return ((l.source).location.toLowerCase() === query && (l.target).location.toLowerCase() === query) ? 1 : 0.05;
+                        var locationSource = l.source.location;
+                        var locationTarget = l.target.location;
+                        if(locationSource && locationTarget){
+                            for(var i =0; i<locationSource.length; i++){
+                                for(var j=0; j<locationTarget.length; j++){
+                                    return (locationSource[i].location.toLowerCase() === query && locationTarget[j].location.toLowerCase() === query) ? 1 : 0.05;
+                                }
+                            }
+                        }
                     });
 
                     porucsLink.style("opacity", function(l) {
-                        return ((l.source).location.toLowerCase() === query && (l.target).location.toLowerCase() === query) ? 1 : 0.05;
+                        var locationSource = l.source.location;
+                        var locationTarget = l.target.location;
+                        if(locationSource && locationTarget){
+                            for(var i =0; i<locationSource.length; i++){
+                                for(var j=0; j<locationTarget.length; j++){
+                                    return (locationSource[i].location.toLowerCase() === query && locationTarget[j].location.toLowerCase() === query) ? 1 : 0.05;
+                                }
+                            }
+                        }
                     });
 
                     dataLink.style("opacity", function(l) {
-                        return ((l.source).location.toLowerCase() === query && (l.target).location.toLowerCase() === query) ? 1 : 0.05;
+                        var locationSource = l.source.location;
+                        var locationTarget = l.target.location;
+                        if(locationSource && locationTarget){
+                            for(var i =0; i<locationSource.length; i++){
+                                for(var j=0; j<locationTarget.length; j++){
+                                    return (locationSource[i].location.toLowerCase() === query && locationTarget[j].location.toLowerCase() === query) ? 1 : 0.05;
+                                }
+                            }
+                        }
                     });
 
                     d3.selectAll('circle').style("stroke", "white");
 
                     d3.selectAll('.node').style('opacity', function(n) {
-                        return (n.location.toLowerCase().indexOf(query) === -1) ? 0.05 : 1;
+                        var locationSource = n.location;
+                        if(locationSource){
+                            for(var i =0; i<locationSource.length; i++){
+                                return (locationSource[i].location.toLowerCase().indexOf(query) === -1) ? 0.05 : 1;
+                            }
+                        }
                     }).select('text').style('opacity', 1);
 
                     node.on('mouseout', null)
@@ -2200,10 +2223,7 @@ var porucsLink;
             }
 
             dataListSortedNames = generateNamesDataList(sortedNamesList);
-            setTimeout(function(){
-                console.log(sortedLocationsList, 'inheeerrr');
-                dataListSortedLocations = generateNamesDataList(sortedLocationsList);
-            }, 2000);
+            dataListSortedLocations = generateNamesDataList(sortedLocationsList);
 
             function generateNamesDataList(sortedList) {
                 var datalist = "";
@@ -3110,8 +3130,6 @@ typesCheckboxActions();
       var locations = {};
 
       d3.json("../data/civicgeo.json", function (error, json) {
-        console.log("asdasd")
-        console.log(error)
         if (error) return console.warn(error);
         data = json;
 
