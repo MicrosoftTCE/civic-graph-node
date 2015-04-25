@@ -66,7 +66,7 @@ body {
 }
 .navstyle {
   /*width: 30%;*/
-  
+
   font-weight: 100;
   margin: 0 auto;
   float: left;
@@ -164,7 +164,7 @@ label h3 {
 }
 #info {
   /*padding-top: 20px;*/
-  
+
   padding-bottom: 20px;
   padding-right: 10px;
   padding-left: 10px;
@@ -172,7 +172,7 @@ label h3 {
 .main-nav {
   position: fixed;
   /*top: 6%;*/
-  
+
   top: 60px;
   width: 17%;
   height: 100%;
@@ -314,13 +314,13 @@ li {
   padding-bottom: 20px;
   padding-right: 10px;
   padding-left: 10px;*/
-  
+
   z-index: 999;
   display: inline-block;
   float: right;
   width: 25%;
   /*background-color: #f9fafa !important;*/
-  
+
   text-align: center;
   margin-top: 2%;
   margin-right: 2%;
@@ -331,7 +331,7 @@ li {
   font-family: 'Segoe UI_', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
   font-size: 18px;
   /*font-weight: bold;*/
-  
+
   font-weight: normal;
   line-height: 2.0rem;
   color: #2e92cf;
@@ -468,7 +468,7 @@ button#submit-B {
     width:15px;
     height:15px;
   }*/
-  
+
   .metro .navigation-bar {
     position: fixed;
     z-index: 999;
@@ -500,13 +500,13 @@ button#submit-B {
     padding-top:5px;
     /*padding-right:20px;
   }*/
-  
+
   #logo {
     padding-right: 20px;
   }
   .main-nav {
     /*top:11%; */
-    
+
     top: 65px;
     position: fixed;
     width: 18%;
@@ -567,3 +567,31 @@ button#submit-B {
   fill: none;
   stroke: #000;
 }
+
+.autocomplete-suggestions {
+  border: 1px solid #999;
+  background: #FFF;
+  overflow: auto;
+  width: 350px !important;
+}
+
+.autocomplete-suggestion {
+  padding: 10px 5px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.autocomplete-suggestion:hover {
+  background-color: #269FD9;
+}
+.metro strong {
+  font-weight: normal;
+  font-family: 'Segoe UI_', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
+}
+
+.filter-name-location {
+  position: relative;
+}
+
+
+
