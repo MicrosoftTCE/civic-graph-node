@@ -787,10 +787,6 @@ function drawGraph() {
                 d3.select('datalist#list-location').html(dataListSortedLocations);
                 d3.select('input#location').on('keyup', function() {
                     preFillLocation(this.value);
-                });
-
-                document.getElementById("location").addEventListener("input", function() {
-                    //on select of a location, add another input field for the user.
                     add_input_locations(0);
                 });
 
@@ -1361,13 +1357,13 @@ function drawGraph() {
 
             function add_input_locations(counterJ) {
                 if ($('#location-' + counterJ + ' input[name="location"]').val() !== "") {
-                    d3.select('#location-' + counterJ + ' input[name="location"]').on('input', function (){
+                    d3.select('#location-' + counterJ + ' input[name="location"]').on('keyup', function (){
                         preFillLocation(this.value);
                     });
                     counterJ++;
 
                     $("#location-" + (counterJ - 1)).after('<div id="location-' + counterJ + '" class="input-control text" data-role="input-control"><input type="text" name="location" id="location" class="locations" placeholder="City" list="list-location" style="width:50%;"/><input type="text" id="state" placeholder="State" style="width:22%;"/><input type="text" id="country" placeholder="Country" style="width:28%;"/></div>');
-                    d3.select("#location-" + counterJ +  " input[name='location']").on("input", function() {
+                    d3.select("#location-" + counterJ +  " input[name='location']").on("keyup", function() {
                         add_input_locations(counterJ);
                     });
                 }
