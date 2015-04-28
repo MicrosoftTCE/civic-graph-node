@@ -1,7 +1,7 @@
 var mysql = require('mysql');
 
 var db_config = require('./configuration/credentials.js');
-var connection = mysql.createConnection(db_config.cred.localhost);
+var connection = mysql.createConnection(db_config.cred.cleardb);
 connection.connect();
 
 (function() {

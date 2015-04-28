@@ -567,6 +567,7 @@ button#submit-B {
   fill: none;
   stroke: #000;
 }
+<<<<<<< HEAD
 
 .autocomplete-suggestions {
   border: 1px solid #999;
@@ -593,5 +594,11 @@ button#submit-B {
   position: relative;
 }
 
-
-
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}

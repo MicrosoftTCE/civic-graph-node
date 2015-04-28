@@ -3130,179 +3130,158 @@ function drawGraph() {
 
         });
     }
-    // drawGraph();
 
-// function drawMap() {
-//   var width = 960,
-//     height = 500;
-
-
-// var projection = d3.geo.albers()
-//     .scale(1000)
-//     .translate([width / 2 - 40, height / 2 + 30]);
-
-// var path = d3.geo.path()
-//     .projection(projection);
-
-// var svg = d3.select(".content").append("svg")
-//     .attr("width", width)
-//     .attr("height", height)
-//     .attr("id", "map");
-
-// d3.json("../data/us.json", function (error, us) {
-//   svg.insert("path", ".graticule")
-//       .datum(topojson.feature(us, us.objects.land))
-//       .attr("class", "land")
-//       .attr("d", path);
-
-//   svg.insert("path", ".graticule")
-//       .datum(topojson.mesh(us, us.objects.states, function (a, b) { return a !== b; }))
-//       .attr("class", "state-boundary")
-//       .attr("d", path);
-
-
-//   var locations = {};
-
-//   d3.json("../data/civicgeo.json", function (error, json) {
-//     console.log("asdasd")
-//     console.log(error)
-//     if (error) return console.warn(error);
-//     data = json;
-
-//     data.nodes.forEach(function (d) {
-//       if (d.coordinates == null)
-//         return
-//       d.coordinates.forEach(function (coordinate) {
-
-//         key = coordinate[0] + ":" + coordinate[1]
-//         if (key in locations) {
-//           locations[key]++;
-//         }
-//         else {
-//           locations[key] = 1
-//         }
-//       });
-//     });
-
-
-//     var maxVal = 0
-//     locationData = [];
-//     for (var loc in locations) {
-//       var d = {};
-//       coor = loc.split(":");
-//       d.val = locations[loc];
-//       d.lat = coor[0];
-//       d.lon = coor[1];
-//       locationData[locationData.length] = d;
-
-//       if (d.val > maxVal) {
-//         maxVal = d.val;
-//       }
-//     }
-
-//     radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 10]);
-//     svg.selectAll("circle")
-//          .data(locationData)
-//          .enter()
-//          .append("circle")
-//          .attr("cx", function (d) {
-//            return projection([d.lon, d.lat])[0];
-//          })
-//          .attr("cy", function (d) {
-//            return projection([d.lon, d.lat])[1];
-//          })
-//          .attr("r", function (d) {
-//            return radiusScale(d.val);
-//          })
-//          .style("fill", "red");
-//   });
-// });
-
-// d3.select(self.frameElement).style("height", height + "px");
-
-// }
-
-if (current_view == 'map') {
-    drawMap();
-    document.getElementById('cb_mapview').checked = true;
-    document.getElementById('cb_networkview').checked = false;
-} else if (current_view == 'network') {
-    drawGraph();
-    document.getElementById('cb_mapview').checked = false;
-    document.getElementById('cb_networkview').checked = true;
-} else {
-    drawGraph();
-    document.getElementById('cb_mapview').checked = false;
-    document.getElementById('cb_networkview').checked = true;
-}
-
-d3.selectAll('#cb_networkview').on('click', function() {
-    if (document.getElementById('cb_networkview').checked) {
-        drawGraph();
-        var map = document.getElementById('map');
-        map.parentNode.removeChild(map);
-        console.log("asd");
-    }
-});
-
-d3.selectAll('#cb_mapview').on('click', function() {
-    if (document.getElementById('cb_mapview').checked) {
-        var network = document.getElementById('network');
-        network.parentNode.removeChild(network);
-        drawMap();
-    }
-});
+var d3MapTools, d3Layer;
 
 function drawMap() {
-    var width = 960,
-        height = 500;
+  var width = 960,
+    height = 500;
 
-    var projection = d3.geo.mercator()
-        .center([-98, 30])
-        .scale(400)
-        .translate([width / 2, height / 2])
-        .precision(.1);
+  var wmap = d3.select(".content").append("div")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "map");
 
-    var svg = d3.select(".content").append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("id", "map");
 
-    var path = d3.geo.path()
-        .projection(projection);
+  map = new Microsoft.Maps.Map(document.getElementById('map'), {
+    credentials: 'Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M',
+    center: new Microsoft.Maps.Location(40, -80),
+    zoom: 4
+  });
 
-    var g = svg.append("g");
+  Microsoft.Maps.registerModule("D3OverlayModule", "scripts/D3OverlayManager.js");
+  Microsoft.Maps.loadModule("D3OverlayModule", {
+      callback: loadD3Layer
+  });
 
-    // load and display the World
-    d3.json("../data/world-110m.json", function(error, topology) {
 
-        // load and display the cities
+
+    d3.select(self.frameElement).style("height", height + "px");
+
+}
+
+    if (current_view == 'map') {
+      drawMap();
+      document.getElementById('cb_mapview').checked = true;
+      document.getElementById('cb_networkview').checked = false;
+    } else if (current_view == 'network') {
+      drawGraph();
+      document.getElementById('cb_mapview').checked = false;
+      document.getElementById('cb_networkview').checked = true;
+    } else {
+      drawGraph();
+      document.getElementById('cb_mapview').checked = false;
+      document.getElementById('cb_networkview').checked = true;
+    }
+
+    d3.selectAll('#cb_networkview').on('click', function() {
+        if (document.getElementById('cb_networkview').checked) {
+            drawGraph();
+            var map = document.getElementById('map');
+            map.parentNode.removeChild(map);
+        }
+    });
+
+    d3.selectAll('#cb_mapview').on('click', function() {
+        if (document.getElementById('cb_mapview').checked) {
+            console.log("asd");
+            var network = document.getElementById('network');
+            network.parentNode.removeChild(network);
+            drawMap();
+        }
+    });
+
+
+function loadD3Layer() {
+    //Create an instance of the D3 Overlay Manager
+    // console.log(map);
+    d3MapTools = new D3OverlayManager(map);
+
+    
+    //Create a data layer onto the map.
+    d3Layer = d3MapTools.addLayer({
+      loaded: function (svg, projection) {
+
+
+        var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([0, 0])
+            .html(function(d){
+                if (d.val !== 1){
+                    return d.val + " Entities";
+                }
+                else
+                    return d.val + " Entity"
+        });
+
+        svg.call(tip);
+
+        // var g = svg.append("g");
+
         var locations = {};
 
-        d3.json("../data/civicgeo.json", function(error, json) {
-            console.log("asdasd")
-            console.log(error)
+        var links = [];
+
+        d3.json("data/world-110m.json", function(error, topology) {
+          if (error) return console.error(error);
+
+          d3.json("data/civicgeo.json", function(error, json) {
+
             if (error) return console.warn(error);
             data = json;
-            console.log(data)
-            data.nodes.forEach(function(d) {
-                if (d.coordinates == null)
-                    return
-                d.coordinates.forEach(function(coordinate) {
-
-                    key = coordinate[0] + ":" + coordinate[1]
-                    if (key in locations) {
-                        locations[key]++;
-                    } else {
-                        locations[key] = 1;
-                    }
+            console.log(data);
+            data.funding_connections.forEach(function(d) {
+                var nodeA, nodeB;
+                nodeA = _.find(data.nodes, function(x) {
+                    return x.ID === d.source;
                 });
+                nodeB = _.find(data.nodes, function(y) {
+                    return y.ID === d.target;
+                });
+                if (nodeA.coordinates == null || nodeB.coordinates == null) 
+                    return
+                else {    
+                    links.push({
+                        type: "LineString",
+                        title: nodeA.location + " " + nodeB.location,
+                        coordinates: [
+                            [nodeA.coordinates[0][1], nodeA.coordinates[0][0]],
+                            [nodeB.coordinates[0][1], nodeB.coordinates[0][0]]
+                        ]
+                    });
+                }
             });
 
 
-            var maxVal = 0;
+            // linksList = links;
+            console.log(links, "links");
+            // svg.selectAll(".arc")
+            //     .data(links, function(d){
+            //         console.log(d, "the d");
+            //     })
+            //     .enter()
+            //     .append("path")
+            //     .attr("class", "arc")
+            //     .attr("d", projection);
             locationData = [];
+            data.nodes.forEach(function (d) {
+              if (d.coordinates == null)
+                return
+              d.coordinates.forEach(function (coordinate) {
+                
+                key = coordinate[0] + ":" + coordinate[1]
+                if (key in locations) {
+                  locations[key]++;
+                }
+                else {
+                  locations[key] = 1
+                }
+              });
+            });
+
+            var maxVal = 0;
             for (var loc in locations) {
+                console.log(loc);
                 var d = {};
                 coor = loc.split(":");
                 d.val = locations[loc];
@@ -3310,72 +3289,127 @@ function drawMap() {
                 d.lon = coor[1];
                 locationData[locationData.length] = d;
 
-                if (d.val > maxVal) {
-                    maxVal = d.val;
-                }
+              if (d.val > maxVal) {
+                maxVal = d.val;
+              }
             }
 
-            radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 13]);
+            // console.log(locationData);
+            radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 23]);
 
-            var nodes = g.selectAll("g circleText")
-                .data(locationData);
+          svg.selectAll(".topology")
+                .data(topojson.feature(topology, topology.objects.countries).features)
+                .enter()
+                .append("path")
+                .attr("d", projection)
+                .attr("opacity", 0)
+                .attr("class", "topology");
 
-            var blocks = nodes.enter()
-                .append("g");
+            // console.log(maxVal)
+            svg.selectAll("circle")
+                 .data(locationData)
+                 .enter()
+                 .append("circle")
+                 .attr("transform", function(d) {
+                    return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
+                 })
+                 .attr("r", function(d){
+                    return radiusScale(d.val);
+                })
+                .style({
+                    fill: "green",
+                    stroke: "yellow"
+                })
+                .attr("opacity", 0.8)
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide)
 
-            var circle = blocks.append("circle")
-                .attr("opacity", 0.3)
-                .attr("cx", function(d) {
-                    return projection([d.lon, d.lat])[0];
-                })
-                .attr("cy", function(d) {
-                    return projection([d.lon, d.lat])[1];
-                })
-                .attr("r", function(d) {
-                    return radiusScale(d.val) * 2;
-                })
-                .style("fill", "green");
+             svg.selectAll(".routes")
+                .data(links)
+                .enter()
+                .append("path")
+                .attr("class", "routes")
+                .attr("d", projection)
+                .attr("fill-opacity", 0)
+                .style("stroke", "#0000ff")
+                .style("stroke-width", function(d) {
 
-            blocks.append("text")
-                .attr("x",  function(d) {
-                    return projection([d.lon, d.lat])[0];
                 })
-                .attr("y",  function(d) {
-                    return projection([d.lon, d.lat])[1] + 4;
-                })
+                .append("title")
+                .attr("text-anchor", "middle")
                 .text(function(d) {
-                  return d.val;
-                })
-                .style();
+                    return d.title;
+                });
+            // svg.append("path")
+            //     .datum({type: "LineString", coordinates: [[-80.37849, 34.87483],[-122.438474, 23.49844]]})
+            //     .attr("class", "route")
+            //     .attr("d", projection);
 
 
-        //         .on("mouseover", tip.show)
-        //         .on("mouseout", tip.hide);
+            // links.forEach(function(d) {
+            //     svg.append("path")
+            //         .datum(d)
+            //         .attr("class", "routes")
+            //         .attr("d", projection);
+            // });
+          });
+
+
+
+
+            // svg.append("path");
+            // setTimeout(function() {
+            //     // console.log(links);
+            //     svg.data(links);
+            // }, 2000);
+
+            // svg.attr("class", "route")
+            //     .attr("d", projection)
+            //     .style({
+            //         stroke: "#0000ff"
+            //         // "stroke-width": "2px"
+            //     });
+
+            // setTimeout(function(){
+            //     console.log(links, "links");
+            // }, 2000);
+            
+               // .style({
+               //  stroke: '#0000ff',
+               //  'stroke-width': '2px'
+               //  });
+
+            // console.log(links, "links");
+            
+
+            // svg.call(tip);
+
+            // d3.json("data/us.json", function(error, us) {
+            //     svg.selectAll("circle")
+            //         .data(topojson.feature(us, us.objects.states).features)
+            //         .enter()
+            //         .append("circle")
+            //         .attr("r", 5)
+            //         .attr("transform", function(d) {
+            //             console.log(d, "from topojson");
+            //             return "translate(" + projection.centroid(d) + ")" ;
+            //         });
+            // });
         });
+        
+
+        },
+
+       viewChanged: function(svg, projection) {
 
 
-        g.selectAll("path")
-            .data(topojson.feature(topology, topology.objects.countries).features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .style("fill", "grey");
+             svg.selectAll("circle")
+                .attr("transform", function(d) {
+                    return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
+                });
+
+       } 
+
     });
-
-    // zoom and pan
-    var zoom = d3.behavior.zoom()
-        .on("zoom", function() {
-            g.attr("transform", "translate(" +
-                d3.event.translate.join(",") + ")scale(" + d3.event.scale + ")");
-            g.selectAll("circle")
-                .attr("d", path.projection(projection));
-            g.selectAll("path")
-                .attr("d", path.projection(projection));
-
-        });
-
-    svg.call(zoom);
-
-    d3.select(self.frameElement).style("height", height + "px");
-
 }
+

@@ -24,11 +24,11 @@ fs.readFile(__dirname + '/public/data/civic.json', 'utf-8', function (err, data)
   // Make sure there's data before we post it
   if(data) {
     data = JSON.parse(data);
-    // console.log(data);
+    // console.log(data.nodes);
     var asyncTasks = [];
     asyncTasks.push(function(callback){
       data.nodes.forEach(function(d, x){
-        (data.nodes[x])['coordinates'] = null;
+        // (data.nodes[x])['coordinates'] = null;
         if(d.location !== null && d.location !== "Unknown" && d.location !== "null")
         {
           var locations = d.location.split("; ");
