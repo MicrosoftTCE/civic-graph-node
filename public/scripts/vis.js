@@ -3146,9 +3146,11 @@ function loadD3Layer() {
 
         svg.call(tip);
 
+        // var g = svg.append("g");
+
         var locations = {};
 
-
+        var links = [];
 
         d3.json("data/world-110m.json", function(error, topology) {
           if (error) return console.error(error);
@@ -3158,6 +3160,40 @@ function loadD3Layer() {
             if (error) return console.warn(error);
             data = json;
             console.log(data);
+            data.funding_connections.forEach(function(d) {
+                var nodeA, nodeB;
+                nodeA = _.find(data.nodes, function(x) {
+                    return x.ID === d.source;
+                });
+                nodeB = _.find(data.nodes, function(y) {
+                    return y.ID === d.target;
+                });
+                if (nodeA.coordinates == null || nodeB.coordinates == null) 
+                    return
+                else {    
+                    links.push({
+                        type: "LineString",
+                        title: nodeA.location + " " + nodeB.location,
+                        coordinates: [
+                            [nodeA.coordinates[0][1], nodeA.coordinates[0][0]],
+                            [nodeB.coordinates[0][1], nodeB.coordinates[0][0]]
+                        ]
+                    });
+                }
+            });
+
+
+            // linksList = links;
+            console.log(links, "links");
+            // svg.selectAll(".arc")
+            //     .data(links, function(d){
+            //         console.log(d, "the d");
+            //     })
+            //     .enter()
+            //     .append("path")
+            //     .attr("class", "arc")
+            //     .attr("d", projection);
+            locationData = [];
             data.nodes.forEach(function (d) {
               if (d.coordinates == null)
                 return
@@ -3173,8 +3209,7 @@ function loadD3Layer() {
               });
             });
 
-            var maxVal = 0
-            locationData = [];
+            var maxVal = 0;
             for (var loc in locations) {
                 console.log(loc);
                 var d = {};
@@ -3191,7 +3226,16 @@ function loadD3Layer() {
 
             // console.log(locationData);
             radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 23]);
-            console.log(maxVal)
+
+          svg.selectAll(".topology")
+                .data(topojson.feature(topology, topology.objects.countries).features)
+                .enter()
+                .append("path")
+                .attr("d", projection)
+                .attr("opacity", 0)
+                .attr("class", "topology");
+
+            // console.log(maxVal)
             svg.selectAll("circle")
                  .data(locationData)
                  .enter()
@@ -3202,22 +3246,71 @@ function loadD3Layer() {
                  .attr("r", function(d){
                     return radiusScale(d.val);
                 })
-                .style("fill", "green")
+                .style({
+                    fill: "green",
+                    stroke: "yellow"
+                })
                 .attr("opacity", 0.8)
                 .on('mouseover', tip.show)
                 .on('mouseout', tip.hide)
+
+             svg.selectAll(".routes")
+                .data(links)
+                .enter()
+                .append("path")
+                .attr("class", "routes")
+                .attr("d", projection)
+                .attr("fill-opacity", 0)
+                .style("stroke", "#0000ff")
+                .style("stroke-width", function(d) {
+
+                })
+                .append("title")
+                .attr("text-anchor", "middle")
+                .text(function(d) {
+                    return d.title;
+                });
+            // svg.append("path")
+            //     .datum({type: "LineString", coordinates: [[-80.37849, 34.87483],[-122.438474, 23.49844]]})
+            //     .attr("class", "route")
+            //     .attr("d", projection);
+
+
+            // links.forEach(function(d) {
+            //     svg.append("path")
+            //         .datum(d)
+            //         .attr("class", "routes")
+            //         .attr("d", projection);
+            // });
           });
 
 
-          svg.selectAll("path")
-                .data(topojson.feature(topology, topology.objects.countries)
-                    .features)
-              .enter()
-                .append("path")
-                .attr("d", projection)
-                .attr("opacity", 0);
 
 
+            // svg.append("path");
+            // setTimeout(function() {
+            //     // console.log(links);
+            //     svg.data(links);
+            // }, 2000);
+
+            // svg.attr("class", "route")
+            //     .attr("d", projection)
+            //     .style({
+            //         stroke: "#0000ff"
+            //         // "stroke-width": "2px"
+            //     });
+
+            // setTimeout(function(){
+            //     console.log(links, "links");
+            // }, 2000);
+            
+               // .style({
+               //  stroke: '#0000ff',
+               //  'stroke-width': '2px'
+               //  });
+
+            // console.log(links, "links");
+            
 
             // svg.call(tip);
 
@@ -3249,5 +3342,7 @@ function loadD3Layer() {
 
     });
 }
+
+
 
 
