@@ -957,13 +957,21 @@ function drawGraph() {
                     }
 
                     // Obtain the location
-                    var city = d3.select("input[id='location']")[0][0].value;
-                    var state = d3.select("input[id='state']")[0][0].value;
-                    var country = d3.select("input[id='country']")[0][0].value;
-                    if(city && state && country) {
-                        formObject.location = city + ',' + ' ' +  state + ',' + ' ' + country;
-                    } else {
-                        formObject.location = city + ',' + ' ' +  state;
+                    formObject.location = [];
+                    d3.selectAll('.locations').filter(function(d) {
+                        if (this.value !== "") {
+                            var city = this.value;
+                            var state = $(this).siblings("#state").val();
+                            var country = $(this).siblings("#country").val();
+                            if(city && state && country) {
+                                formObject.location.push(city + ',' + ' ' +  state + ',' + ' ' + country);
+                            } else {
+                                formObject.location.push(city + ',' + ' ' +  state);
+                            }
+                        }
+                    });
+                    if(formObject.location.length === 0) {
+                        formObject.location = null;
                     }
 
                     // Obtain the URL
@@ -1263,7 +1271,7 @@ function drawGraph() {
 
                     // Render form B.
 
-                    s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity"/></div><h3 class="form-header">Entity Type</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><div class="input-control text" data-role="input-control"><input type="text" name="location" id="location" placeholder="City"/></div>';
+                    s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity"/></div><h3 class="form-header">Entity Type</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><div id="location-0" class="input-control text" data-role="input-control"><input type="text" name="location" class="locations" id="location" placeholder="City" /></div>';
                     // d3.select("#expense").on("keyup", function() {
                     //     add_input_exp(counterE);
                     // });
@@ -1290,9 +1298,23 @@ function drawGraph() {
                     d3.selectAll('#name').text(function(d) {
                         this.value = formObject.name;
                     }).attr("disabled", true);
-                    d3.selectAll('#location').text(function(d) {
-                        this.value = formObject.location;
-                    }).attr("disabled", true).style("margin-top", "10px");
+
+                    if( formObject.location !== null) {
+                        var location = formObject.location;
+                        for(var i=0; i<location.length; i++) {
+                            $("#location-" + i).after('<div id="location-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="location" class="locations" id="location" placeholder="City" /></div>');
+                            d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
+                            d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
+                                this.value = location[i];
+                                this.disabled = true;
+                            });
+                        }
+
+                        d3.select('#location-' + location.length + ' input[name="location"]').on('keyup', function() {
+                            add_input_loc(location.length);
+                        }).style("margin-top", "10px");
+                    }
+
                     d3.selectAll('input[name="entitytype"]').filter(function(d, i) {
                         if (this.value === formObject.type)
                             this.checked = true;
@@ -1372,6 +1394,18 @@ function drawGraph() {
                     $("#location-" + (counterJ - 1)).after('<div id="location-' + counterJ + '" class="input-control text" data-role="input-control"><input type="text" name="location" id="location" class="locations" placeholder="City" list="list-location" style="width:50%;"/><input type="text" id="state" placeholder="State" style="width:22%;"/><input type="text" id="country" placeholder="Country" style="width:28%;"/></div>');
                     d3.select("#location-" + counterJ +  " input[name='location']").on("keyup", function() {
                         add_input_locations(counterJ);
+                    });
+                }
+            }
+
+            function add_input_loc(counterU) {
+                if ($('#location-' + counterU + ' input[name="location"]').val() !== "") {
+                    d3.select('#location-' + counterU + ' input[name="location"]').on('keyup', null);
+                    counterU++;
+
+                    $("#location-" + (counterU - 1)).after('<div id="location-' + counterU + '" class="input-control text" data-role="input-control"><input type="text" name="location" class="locations" id="location" placeholder="City" /></div>');
+                    d3.select("#location-" + counterU +  " input[name='location']").on("keyup", function() {
+                        add_input_loc(counterU);
                     });
                 }
             }
@@ -1636,32 +1670,42 @@ function drawGraph() {
                 d3.selectAll('#name').text(function(d) {
                     this.value = obj.name;
                 });
-                d3.selectAll('#location').text(function(d) {
-                    var location = obj.location;
-                    for(var i=0; i < location.length; i++){
-                        var string = location[i].location;
-                        var splitString = string.split(",");
-                        $(this).val(splitString[0]);
-                        input1 = $(this).siblings("#state");
-                        input2 = $(this).siblings("#country");
 
-                        d3.xhr("/cities", function(error, cities){
-                            var cities = JSON.parse(cities.response);
-                            for (var i in cities) {
-                                var city = cities[i];
-                                if(city.City_Name == splitString[0]) {
-                                    if(splitString.length === 2) {
-                                        input1.val(city.State_Code);
-                                    }
-                                    if(splitString.length === 3) {
-                                        input1.val(city.State_Code);
-                                        input2.val(city.Country_Code);
+                if(obj.location !== null) {
+                    var location = obj.location;
+                    for (var i = 0; i < location.length; i++) {
+                        $("#location-" + i).after('<div id="location-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="location" id="location" class="locations" placeholder="City" list="list-location" style="width:50%;"/><input type="text" id="state" placeholder="State" style="width:22%;"/><input type="text" id="country" placeholder="Country" style="width:28%;"/></div>');
+                        d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
+                        d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
+                            var string = location[i].location;
+                            var splitString = string.split(",");
+                            $(this).val(splitString[0]);
+                            input1 = $(this).siblings("#state");
+                            input2 = $(this).siblings("#country");
+
+                            d3.xhr("/cities", function(error, cities){
+                                var cities = JSON.parse(cities.response);
+                                for (var i in cities) {
+                                    var city = cities[i];
+                                    if(city.City_Name == splitString[0]) {
+                                        if(splitString.length === 2) {
+                                            input1.val(city.State_Code);
+                                        }
+                                        if(splitString.length === 3) {
+                                            input1.val(city.State_Code);
+                                            input2.val(city.Country_Code);
+                                        }
                                     }
                                 }
-                            }
+                            });
                         });
                     }
-                });
+
+                    d3.select('#location-' + location.length + ' input[name="location"]').on('keyup', function() {
+                        add_input_locaions(location.length);
+                    });
+                }
+
                 d3.selectAll('input[name="entitytype"]').filter(function(d, i) {
                     if (this.value === obj.type)
                         this.checked = true;
