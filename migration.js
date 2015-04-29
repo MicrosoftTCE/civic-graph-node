@@ -140,7 +140,7 @@ var populateCityTable = function(data, done) {
 	    console.log(query.sql);
 		});
 	}, function (err){
-		console.log('City is populated');
+		// console.log('City is populated');
 		done();
 	});
 };
@@ -211,6 +211,7 @@ var getCityCoordinates = function(loc, callback, errorCallback){
 		res.on('data', function(chunk) {
 			data += chunk;
 		}).on('end', function() {
+			console.log(data);
 			var location = JSON.parse(data);
 			if (location && location.resourceSets && location.resourceSets.length > 0 && location.resourceSets[0].resources && location.resourceSets[0].resources.length > 0) {
 					http.get('http://restcountries.eu/rest/v1/name/' + location.resourceSets[0].resources[0].address.countryRegion + '?fullText=true', function(res) {
