@@ -6,8 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
- 
-var app = express(); 
+
+var app = express();
 
 // var port = process.env.PORT || 3000;
 
@@ -79,7 +79,7 @@ app.get('/operations', operations.retrieve_operations);
 app.get('/operations/revenue/:year', operations.retrieve_revenue_year);
 app.get('/operations/expenses/:year', operations.retrieve_expenses_year);
 
-var cities = require('./routes/api/cities');
+var cities = require('./routes/api/geoloc');
 app.get('/cities', cities.retrieve_locations);
 
 var database = require('./routes/database');
