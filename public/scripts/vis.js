@@ -800,10 +800,10 @@ function drawGraph() {
                     input2 = $(this).siblings("#country");
 
                     //make an ajax call to get the state and country code on select of a location.
-                    d3.xhr("/cities", function(error, cities){
-                        var cities = JSON.parse(cities.response);
-                        for (var i in cities) {
-                            var city = cities[i];
+                    d3.json("/cities", function(error, cities){
+                        var cityNode = cities.nodes;
+                        for (var i =0; i <cityNode.length; i++) {
+                            var city = cityNode[i];
                             if(city.City_Name == splitString[0]) {
                                 if(splitString.length === 2) {
                                     input1.val(city.State_Code);
@@ -1302,12 +1302,20 @@ function drawGraph() {
                     if( formObject.location !== null) {
                         var location = formObject.location;
                         for(var i=0; i<location.length; i++) {
-                            $("#location-" + i).after('<div id="location-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="location" class="locations" id="location" placeholder="City" /></div>');
-                            d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
-                            d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
-                                this.value = location[i];
-                                this.disabled = true;
-                            });
+                            if(i === 0) {
+                                d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
+                                d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
+                                    this.value = location[i];
+                                    this.disabled = true;
+                                });
+                            } else {
+                                $("#location-" + (i-1)).after('<div id="location-' + i + '" class="input-control text" data-role="input-control"><input type="text" name="location" class="locations" id="location" placeholder="City" /></div>');
+                                d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
+                                d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
+                                    this.value = location[i];
+                                    this.disabled = true;
+                                });
+                            }
                         }
 
                         d3.select('#location-' + location.length + ' input[name="location"]').on('keyup', function() {
@@ -1672,21 +1680,21 @@ function drawGraph() {
                 });
 
                 if(obj.location !== null) {
-                    var location = obj.location;
-                    for (var i = 0; i < location.length; i++) {
-                        $("#location-" + i).after('<div id="location-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="location" id="location" class="locations" placeholder="City" list="list-location" style="width:50%;"/><input type="text" id="state" placeholder="State" style="width:22%;"/><input type="text" id="country" placeholder="Country" style="width:28%;"/></div>');
-                        d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
-                        d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
+                    d3.json("/cities", function(error, cities){
+                        var location = obj.location;
+                        var cityNodes = cities.nodes;
+                        for (var i = 0; i < location.length; i++) {
                             var string = location[i].location;
                             var splitString = string.split(",");
-                            $(this).val(splitString[0]);
-                            input1 = $(this).siblings("#state");
-                            input2 = $(this).siblings("#country");
+                            $("#location-" + i).after('<div id="location-' + (i + 1) + '" class="input-control text" data-role="input-control"><input type="text" name="location" id="location" class="locations" placeholder="City" list="list-location" style="width:50%;"/><input type="text" id="state" placeholder="State" style="width:22%;"/><input type="text" id="country" placeholder="Country" style="width:28%;"/></div>');
+                            d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
+                            d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
+                                $(this).val(splitString[0]);
+                                input1 = $(this).siblings("#state");
+                                input2 = $(this).siblings("#country");
 
-                            d3.xhr("/cities", function(error, cities){
-                                var cities = JSON.parse(cities.response);
-                                for (var i in cities) {
-                                    var city = cities[i];
+                                for (var j = 0; j < cityNodes.length; j++) {
+                                    var city = cityNodes[j];
                                     if(city.City_Name == splitString[0]) {
                                         if(splitString.length === 2) {
                                             input1.val(city.State_Code);
@@ -1698,8 +1706,8 @@ function drawGraph() {
                                     }
                                 }
                             });
-                        });
-                    }
+                        }
+                    });
 
                     d3.select('#location-' + location.length + ' input[name="location"]').on('keyup', function() {
                         add_input_locaions(location.length);
@@ -3241,7 +3249,7 @@ function loadD3Layer() {
     // console.log(map);
     d3MapTools = new D3OverlayManager(map);
 
-    
+
     //Create a data layer onto the map.
     d3Layer = d3MapTools.addLayer({
       loaded: function (svg, projection) {
@@ -3282,9 +3290,9 @@ function loadD3Layer() {
                 nodeB = _.find(data.nodes, function(y) {
                     return y.ID === d.target;
                 });
-                if (nodeA.coordinates == null || nodeB.coordinates == null) 
+                if (nodeA.coordinates == null || nodeB.coordinates == null)
                     return
-                else {    
+                else {
                     links.push({
                         type: "LineString",
                         title: nodeA.location + " " + nodeB.location,
@@ -3310,9 +3318,9 @@ function loadD3Layer() {
             locationData = [];
             data.nodes.forEach(function (d) {
               if (d.coordinates == null)
-                return
+                return;
               d.coordinates.forEach(function (coordinate) {
-                
+
                 key = coordinate[0] + ":" + coordinate[1]
                 if (key in locations) {
                   locations[key]++;
@@ -3417,14 +3425,14 @@ function loadD3Layer() {
             // setTimeout(function(){
             //     console.log(links, "links");
             // }, 2000);
-            
+
                // .style({
                //  stroke: '#0000ff',
                //  'stroke-width': '2px'
                //  });
 
             // console.log(links, "links");
-            
+
 
             // svg.call(tip);
 
@@ -3440,7 +3448,7 @@ function loadD3Layer() {
             //         });
             // });
         });
-        
+
 
         },
 
@@ -3452,7 +3460,7 @@ function loadD3Layer() {
                     return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
                 });
 
-       } 
+       }
 
     });
 }
