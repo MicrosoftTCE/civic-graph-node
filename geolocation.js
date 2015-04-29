@@ -3,22 +3,22 @@ var fs = require('fs');
 
 var startTime = new Date().getTime();
 
-// var connection = mysql.createConnection({
-//   connectionLimit: 40,
-//   port: 3306,
-//   host: 'au-cdbr-azure-east-a.cloudapp.net',
-//   user: 'b0c63aecaa6676',
-//   password: '8e008947',
-//   database: 'cdb_c7da98943c'
-// });
-
 var connection = mysql.createConnection({
+  connectionLimit: 40,
   port: 3306,
-  host: '127.0.0.1',
-  user: 'root',
-  password: 'MicrosoftNY',
-  database: 'civicteA9MEi6nPl'
+  host: 'au-cdbr-azure-east-a.cloudapp.net',
+  user: 'b0c63aecaa6676',
+  password: '8e008947',
+  database: 'cdb_c7da98943c'
 });
+
+// var connection = mysql.createConnection({
+//   port: 3306,
+//   host: '127.0.0.1',
+//   user: 'root',
+//   password: 'MicrosoftNY',
+//   database: 'civicteA9MEi6nPl'
+// });
 
 //  Testbench Time: 4.31 min.
 //
