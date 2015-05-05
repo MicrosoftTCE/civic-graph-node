@@ -3221,9 +3221,9 @@ function drawMap() {
       document.getElementById('cb_mapview').checked = false;
       document.getElementById('cb_networkview').checked = true;
     } else {
-      drawGraph();
-      document.getElementById('cb_mapview').checked = false;
-      document.getElementById('cb_networkview').checked = true;
+      drawMap();
+      document.getElementById('cb_mapview').checked = true;
+      document.getElementById('cb_networkview').checked = false;
     }
 
     d3.selectAll('#cb_networkview').on('click', function() {
@@ -3243,45 +3243,141 @@ function drawMap() {
         }
     });
 
+var d3Layers = {};
 
 function loadD3Layer() {
     //Create an instance of the D3 Overlay Manager
     // console.log(map);
     d3MapTools = new D3OverlayManager(map);
 
+    var radius = 80;
 
-    //Create a data layer onto the map.
-    d3Layer = d3MapTools.addLayer({
-      loaded: function (svg, projection) {
+    var cityData = [];
+    // cityData: {
+    //                 "NYC": {
+    //                     name: "NYC", // data.node
+    //                     lon: "-74.005973", // data.node.coordinates
+    //                     lat: "40.714269",  // data.node.coordinates
+    //                     categories: [{
+    //                         type: "For-Profit", //data.node (use _.js to filter by type)
+    //                         count: 10
+    //                     },
+    //                     {
+    //                         type: "Non-Profit", // 
+    //                         count: 5,
+    //                     },
+    //                     {
+    //                         type: "Individual", // 
+    //                         count: 20
+    //                     },
+    //                     {
+    //                         type: "Government", //
+    //                         count: 50
+    //                     }]
+    //                 }
+    //             }
 
+    var getAllData = function(mainObj) {
+        mainObj.forEach(function(array_items) {
+            if (array_items === mainObj.node) {
+                // some data manipulation
+                getCityData(array_items);
 
-        var tip = d3.tip()
-            .attr('class', 'd3-tip')
-            .offset([0, 0])
-            .html(function(d){
-                if (d.val !== 1){
-                    return d.val + " Entities";
-                }
-                else
-                    return d.val + " Entity"
+            }
+            else {
+                array_items.forEach(function(items) {
+                    // getCityConnections(items)
+                    getConnectionData(array_items);
+                });
+            }
         });
+    };
 
-        svg.call(tip);
+    var getCityData = function(ctyData) {
+        // var singleData = {};
+        // singleData.name
+    };
 
-        // var g = svg.append("g");
+    var getConnectionData = function(connData) {
 
-        var locations = {};
+        var nodeA, nodeB;
+        nodeA = _.find(connData.nodes, function(x) {
+            return x.ID === d.source;
+        });
+        nodeB = _.find(connData.nodes, function(y) {
+            return y.ID === d.target;
+        });
+        if (nodeA.coordinates == null || nodeB.coordinates == null) 
+            return
+        else {    
+            fundLinks.push({
+                type: "LineString",
+                title: nodeA.location + " " + nodeB.location,
+                coordinates: [
+                    [nodeA.coordinates[0][1], nodeA.coordinates[0][0]],
+                    [nodeB.coordinates[0][1], nodeB.coordinates[0][0]]
+                ]
+            });
+        }
+    }
 
-        var links = [];
+    // var color = d3.scale.category20();
 
-        d3.json("data/world-110m.json", function(error, topology) {
+    // var arc = d3.svg.arc()
+    //             .outerRadius(radius)
+    //             .innerRadius(radius - 30);
+
+    // // var pie = d3.layout.pie()
+    // //             .sort(null)
+    // //             .value(function(d) {
+    // //                 return d.data.count;
+    // //             });
+
+    var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([0, 0])
+        .html(function(d){
+            if (d.val !== 1){
+                return d.val + " Entities";
+            }
+            else
+                return d.val + " Entity"
+    });
+
+
+    var locations = {};
+
+    var fundLinks = [];
+    var collabLinks = [];
+    var dataLinks = [];
+    var invstLinks = [];
+
+
+    d3.json("data/world-110m.json", function(error, topology) {
           if (error) return console.error(error);
 
-          d3.json("data/civicgeo.json", function(error, json) {
+        d3.json("data/civicgeo.json", function(error, json) {
 
             if (error) return console.warn(error);
             data = json;
             console.log(data);
+
+            data.nodes.forEach(function(d) {
+                // var orgData = {}
+
+                // // console.log(d.type, "typo");
+                // switch d.type
+                //     case "For-Profit":
+                //     orgData.colour = "green";
+                //     orgData.count++;
+                //     break;
+
+                //     case "Non-Profit":
+                //     orgData.colour = "blue";
+                //     or
+
+            });
+
             data.funding_connections.forEach(function(d) {
                 var nodeA, nodeB;
                 nodeA = _.find(data.nodes, function(x) {
@@ -3292,8 +3388,8 @@ function loadD3Layer() {
                 });
                 if (nodeA.coordinates == null || nodeB.coordinates == null)
                     return
-                else {
-                    links.push({
+                else {    
+                    fundLinks.push({
                         type: "LineString",
                         title: nodeA.location + " " + nodeB.location,
                         coordinates: [
@@ -3304,17 +3400,72 @@ function loadD3Layer() {
                 }
             });
 
+            data.collaboration_connections.forEach(function(d) {
+                var nodeA, nodeB;
+                nodeA = _.find(data.nodes, function(x) {
+                    return x.ID === d.source;
+                });
+                nodeB = _.find(data.nodes, function(y) {
+                    return y.ID === d.target;
+                });
+                if (nodeA.coordinates == null || nodeB.coordinates == null) 
+                    return
+                else {    
+                    collabLinks.push({
+                        type: "LineString",
+                        title: nodeA.location + " " + nodeB.location,
+                        coordinates: [
+                            [nodeA.coordinates[0][1], nodeA.coordinates[0][0]],
+                            [nodeB.coordinates[0][1], nodeB.coordinates[0][0]]
+                        ]
+                    });
+                }
+            });
 
-            // linksList = links;
-            console.log(links, "links");
-            // svg.selectAll(".arc")
-            //     .data(links, function(d){
-            //         console.log(d, "the d");
-            //     })
-            //     .enter()
-            //     .append("path")
-            //     .attr("class", "arc")
-            //     .attr("d", projection);
+            data.investment_connections.forEach(function(d) {
+                var nodeA, nodeB;
+                nodeA = _.find(data.nodes, function(x) {
+                    return x.ID === d.source;
+                });
+                nodeB = _.find(data.nodes, function(y) {
+                    return y.ID === d.target;
+                });
+                if (nodeA.coordinates == null || nodeB.coordinates == null) 
+                    return
+                else {    
+                    invstLinks.push({
+                        type: "LineString",
+                        title: nodeA.location + " " + nodeB.location,
+                        coordinates: [
+                            [nodeA.coordinates[0][1], nodeA.coordinates[0][0]],
+                            [nodeB.coordinates[0][1], nodeB.coordinates[0][0]]
+                        ]
+                    });
+                }
+            });
+
+            data.data_connections.forEach(function(d) {
+                var nodeA, nodeB;
+                nodeA = _.find(data.nodes, function(x) {
+                    return x.ID === d.source;
+                });
+                nodeB = _.find(data.nodes, function(y) {
+                    return y.ID === d.target;
+                });
+                if (nodeA.coordinates == null || nodeB.coordinates == null) 
+                    return
+                else {    
+                    dataLinks.push({
+                        type: "LineString",
+                        title: nodeA.location + " " + nodeB.location,
+                        coordinates: [
+                            [nodeA.coordinates[0][1], nodeA.coordinates[0][0]],
+                            [nodeB.coordinates[0][1], nodeB.coordinates[0][0]]
+                        ]
+                    });
+                }
+            });
+
             locationData = [];
             data.nodes.forEach(function (d) {
               if (d.coordinates == null)
@@ -3346,121 +3497,290 @@ function loadD3Layer() {
               }
             }
 
-            // console.log(locationData);
-            radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 23]);
+            //Create a data layer onto the map.
+            d3Layers.d3Topology = d3MapTools.addLayer({
+              loaded: function (svg, projection) {
 
-          svg.selectAll(".topology")
-                .data(topojson.feature(topology, topology.objects.countries).features)
-                .enter()
-                .append("path")
-                .attr("d", projection)
-                .attr("opacity", 0)
-                .attr("class", "topology");
-
-            // console.log(maxVal)
-            svg.selectAll("circle")
-                 .data(locationData)
-                 .enter()
-                 .append("circle")
-                 .attr("transform", function(d) {
-                    return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
-                 })
-                 .attr("r", function(d){
-                    return radiusScale(d.val);
-                })
-                .style({
-                    fill: "green",
-                    stroke: "yellow"
-                })
-                .attr("opacity", 0.8)
-                .on('mouseover', tip.show)
-                .on('mouseout', tip.hide)
-
-             svg.selectAll(".routes")
-                .data(links)
-                .enter()
-                .append("path")
-                .attr("class", "routes")
-                .attr("d", projection)
-                .attr("fill-opacity", 0)
-                .style("stroke", "#0000ff")
-                .style("stroke-width", function(d) {
-
-                })
-                .append("title")
-                .attr("text-anchor", "middle")
-                .text(function(d) {
-                    return d.title;
-                });
-            // svg.append("path")
-            //     .datum({type: "LineString", coordinates: [[-80.37849, 34.87483],[-122.438474, 23.49844]]})
-            //     .attr("class", "route")
-            //     .attr("d", projection);
+                svg.selectAll(".topology")
+                    .data(topojson.feature(topology, topology.objects.countries).features)
+                    .enter()
+                    .append("path")
+                    .attr("d", projection)
+                    .attr("opacity", 0)
+                    .attr("class", "topology");
 
 
-            // links.forEach(function(d) {
-            //     svg.append("path")
-            //         .datum(d)
-            //         .attr("class", "routes")
-            //         .attr("d", projection);
-            // });
-          });
+                svg.selectAll(".routes")
+                    .data(fundLinks)
+                    .enter()
+                    .append("path")
+                    .attr("class", "routes")
+                    .attr("d", projection)
+                    .attr("fill-opacity", 0)
+                    .style("stroke", "#6f5da8")
+                    .style("stroke-width", function(d) {
+
+                    })
+                    .append("title")
+                    .attr("text-anchor", "middle")
+                    .text(function(d) {
+                        return d.title;
+                    });
+
+                svg.selectAll(".route")
+                    .data(collabLinks)
+                    .enter()
+                    .append("path")
+                    .attr("class", "route")
+                    .attr("d", projection)
+                    .attr("fill-opacity", 0)
+                    .style("stroke", "#ebe826")
+                    .style("stroke-width", function(d) {
+
+                    })
+                    .append("title")
+                    .attr("text-anchor", "middle")
+                    .text(function(d) {
+                        return d.title;
+                    });
+
+                svg.selectAll(".rout")
+                    .data(dataLinks)
+                    .enter()
+                    .append("path")
+                    .attr("class", "rout")
+                    .attr("d", projection)
+                    .attr("fill-opacity", 0)
+                    .style("stroke", "#bf4896")
+                    .style("stroke-width", function(d) {
+
+                    })
+                    .append("title")
+                    .attr("text-anchor", "middle")
+                    .text(function(d) {
+                        return d.title;
+                    });
+
+                svg.selectAll(".rou")
+                    .data(invstLinks)
+                    .enter()
+                    .append("path")
+                    .attr("class", "rou")
+                    .attr("d", projection)
+                    .attr("fill-opacity", 0)
+                    .style("stroke", "#267272")
+                    .style("stroke-width", function(d) {
+
+                    })
+                    .append("title")
+                    .attr("text-anchor", "middle")
+                    .text(function(d) {
+                        return d.title;
+                    });
+                },
+
+               viewChanged: function(svg, projection) {
+                    svg.attr("visibility", map.getTargetZoom() < 6 ? "visible":"hidden");
+               } 
+            
+            });
+
+            d3Layers.d3Circles = d3MapTools.addLayer({
+              loaded: function (svg, projection) {
+
+                svg.call(tip);
+                    // console.log(locationData);
+                radiusScale = d3.scale.linear().domain([0, maxVal]).range([3, 23]);
+
+                    // console.log(maxVal)
+                svg.selectAll("circle")
+                     .data(locationData)
+                     .enter()
+                     .append("circle")
+                     .attr("transform", function(d) {
+                        return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
+                     })
+                     .attr("r", function(d){
+                        return radiusScale(d.val);
+                    })
+                    .style({
+                        fill: "green",
+                        stroke: "yellow"
+                    })
+                    .attr("class", "pinpoint")
+                    .attr("opacity", 0.8)
+                    .on('mouseover', tip.show)
+                    .on('mouseout', tip.hide)
+
+                },
+
+               viewChanged: function(svg, projection) {
+
+
+                    svg.selectAll("circle")
+                        .attr("transform", function(d) {
+                            return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
+                        });
+
+                    svg.attr("visibility", map.getTargetZoom() < 6 ? "visible":"hidden");
+
+               }
+            });
+
+            d3Layers.d3Donuts = d3MapTools.addLayer({
+                cityData: {
+                    "San Francisco": {
+                        name: "San Francisco", // data.node
+                        lon: "-122.416743", // data.node.coordinates
+                        lat: "37.783333",  // data.node.coordinates
+                        categories: [{
+                            type: "For-Profit", //data.node (use _.js to filter by type)
+                            count: 10
+                        },
+                        {
+                            type: "Non-Profit", // 
+                            count: 50,
+                        },
+                        {
+                            type: "Individual", // 
+                            count: 12
+                        },
+                        {
+                            type: "Government", //
+                            count: 3
+                        }]
+                    },
+
+                    "NYC": {
+                        name: "NYC", // data.node
+                        lon: "-74.005973", // data.node.coordinates
+                        lat: "40.714269",  // data.node.coordinates
+                        categories: [{
+                            type: "For-Profit", //data.node (use _.js to filter by type)
+                            count: 10
+                        },
+                        {
+                            type: "Non-Profit", // 
+                            count: 5,
+                        },
+                        {
+                            type: "Individual", // 
+                            count: 20
+                        },
+                        {
+                            type: "Government", //
+                            count: 50
+                        }]
+                    }
+                },
+
+                radius: 60,
 
 
 
+                loaded: function(svg, projection) {
+                    var arc = d3.svg.arc()
+                                .innerRadius(this.radius - 20)
+                                .outerRadius(this.radius);
 
-            // svg.append("path");
-            // setTimeout(function() {
-            //     // console.log(links);
-            //     svg.data(links);
-            // }, 2000);
+                    var pie = d3.layout.pie()
+                                .value(function(d) { 
+                                    return d.count; 
+                                })
+                                .sort(null);
 
-            // svg.attr("class", "route")
-            //     .attr("d", projection)
-            //     .style({
-            //         stroke: "#0000ff"
-            //         // "stroke-width": "2px"
-            //     });
+                    svg.attr("visibility", "hidden");
 
-            // setTimeout(function(){
-            //     console.log(links, "links");
-            // }, 2000);
+                    var list = [];
+                    $.each(this.cityData, function(cityName, data){
+                        var totalCount = $.map(data.categories, function(cat){ return cat.count; })
+                            .reduce(function(a, b){ return a + b; });
 
-               // .style({
-               //  stroke: '#0000ff',
-               //  'stroke-width': '2px'
-               //  });
+                        var subtotal = 0;
+                        $.each(data.categories, function(index, category) {
+                            list.push({
+                                cityName: cityName,
+                                lat: data.lat,
+                                lon: data.lon,
+                                type: category.type,
+                                count: category.count,
+                                totalCount: totalCount,
+                                start: subtotal
+                            });
+                            subtotal += category.count;
+                        });
+                    });
 
-            // console.log(links, "links");
+                    // debugger;
+
+                    
+                    svg.selectAll(".arc")
+                        .data(list)
+                        .enter()
+                        .append("path")
+                        .attr("cityName", function(d) {
+                            return d.cityName;
+                        })
+                        .attr("class", "arc")
+                        .attr( "d", function(d) {
+                            var sliceAngle = 2 * Math.PI / d.totalCount;
+                            return arc({
+                              // outerRadius: sf * (1 + 2 * Math.log(1 + d.totalCount)),
+                              outerRadius: radius,
+                              innerRadius: radius - 40,
+                              startAngle: d.start * sliceAngle,
+                              endAngle: (d.start + d.count) * sliceAngle
+                            });
+                        })
+                        .attr("lat", function(d){ return d.lat;})
+                        .attr("lon", function(d){ return d.lon;})
+                        .attr("transform", function(d) {
+                            return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
+                        })
+                        .style("fill", function(d) {
+                            if (d.type === "For-Profit")
+                                return "green";
+                            if (d.type === "Non-Profit")
+                                return "blue";
+                            if (d.type === "Individual")
+                                return "orange";
+                            if (d.type === "Government")
+                                return "red";
+
+                            return "#FFFFFF";
+
+                        });
 
 
-            // svg.call(tip);
+                },
 
-            // d3.json("data/us.json", function(error, us) {
-            //     svg.selectAll("circle")
-            //         .data(topojson.feature(us, us.objects.states).features)
-            //         .enter()
-            //         .append("circle")
-            //         .attr("r", 5)
-            //         .attr("transform", function(d) {
-            //             console.log(d, "from topojson");
-            //             return "translate(" + projection.centroid(d) + ")" ;
-            //         });
-            // });
-        });
+                viewChanged: function(svg, projection) {
 
+                    var arc = d3.svg.arc()
+                                .innerRadius(this.radius - 20)
+                                .outerRadius(this.radius);
 
-        },
+                    svg.selectAll(".arc")
+                        .attr( "d", function(d) {
+                            var sliceAngle = 2 * Math.PI / d.totalCount;
+                            return arc({
+                              // outerRadius: sf * (1 + 2 * Math.log(1 + d.totalCount)),
+                              outerRadius: radius,
+                              innerRadius: radius - 40,
+                              startAngle: d.start * sliceAngle,
+                              endAngle: (d.start + d.count) * sliceAngle
+                            });
+                        })
+                        .attr("transform", function(d) {
+                            return "translate(" + projection.projection()([this.getAttribute("lon"), this.getAttribute("lat")]) + ")";
+                        });
 
-       viewChanged: function(svg, projection) {
+                    svg.attr("visibility", map.getTargetZoom() < 6 ? "hidden":"visible");
 
+                }
+            });
 
-             svg.selectAll("circle")
-                .attr("transform", function(d) {
-                    return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
-                });
-
-       }
+        });    
 
     });
 }

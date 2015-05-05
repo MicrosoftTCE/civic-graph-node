@@ -4,7 +4,7 @@ var http = require('http');
 
 var request = require('request');
 
-var file = __dirname + '/public/data/civic.json';
+var file = __dirname + '/civicold.json';
 
 var db_config = require('./configuration/credentials.js');
 var connection = mysql.createConnection(db_config.cred.localhost);
@@ -92,23 +92,25 @@ var populateCityTable = function(data, done) {
 		var EntityId = data.nodes[i].ID;
 
 		// for known locations
-		if (Locations !== 'Unknown'){
+		if (Locations !== null && Locations !== 'Unknown'){
+			console.log(Locations);
 
 			//parse by semicolon
-			var semicolonChecks = Locations.match(/([^;])+/g);
 
-			// console.log('Returned Array: ' + semicolonChecks);
+				var semicolonChecks = Locations.match(/([^;])+/g);
 
-			trimArrayString(semicolonChecks);
-			if (semicolonChecks.length > 1) {
-				while(semicolonChecks.length > 0) {
-				var commaSplit = semicolonChecks.splice(0, 1);
-				uniqueLocation.push(commaSplit);
+				// console.log('Returned Array: ' + semicolonChecks);
+
+				trimArrayString(semicolonChecks);
+				if (semicolonChecks.length > 1) {
+					while(semicolonChecks.length > 0) {
+					var commaSplit = semicolonChecks.splice(0, 1);
+					uniqueLocation.push(commaSplit);
+					}
 				}
-			}
-			else{
-				uniqueLocation.push(semicolonChecks);
-			}
+				else{
+					uniqueLocation.push(semicolonChecks);
+				}
 		}
 
 		// when location is unknown
@@ -119,6 +121,7 @@ var populateCityTable = function(data, done) {
 	}
 	uniqueLocation = uniqueLocation.unique()
 	removeDuplicateNewYork(uniqueLocation);
+	console.log(uniqueLocation);
 
 
 	async.forEach(uniqueLocation, function(semicolonCheck, callback){
@@ -132,7 +135,7 @@ var populateCityTable = function(data, done) {
 				City_Lat: !!splitResult.City_Lat ? splitResult.City_Lat : null,
 				City_Long: !!splitResult.City_Long ? splitResult.City_Long : null
 			};
-			// console.log(values);
+			console.log(values);
 			callback();
 			var query = connection.query('INSERT INTO Cities SET ?', values, function(err, result){
 				if (err) throw err;
