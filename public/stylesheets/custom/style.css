@@ -601,3 +601,19 @@ button#submit-B {
   color: #fff;
   border-radius: 2px;
 }
+
+.routes.funding_connections {
+  stroke: #6f5da8;
+} 
+
+.routes.investment_connections {
+  stroke: #267272;
+} 
+
+.routes.collaboration_connections {
+  stroke: #ebe826;
+}
+
+.routes.data_connections {
+  stroke: #bf4896;
+}

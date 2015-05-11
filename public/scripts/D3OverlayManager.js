@@ -134,7 +134,7 @@ var D3OverlayManager = function (map) {
                             .attr('width', _mapWidth)
                             .attr('height', _mapHeight);
 
-                layerInfo.svg[0][0].style.position = 'relative';
+                layerInfo.svg[0][0].style.position = 'absolute';
                 layerInfo.svg[0][0].style.left = -_mapWidth / 2 + 'px';
                 layerInfo.svg[0][0].style.top = -_mapHeight / 2 + 'px';
 

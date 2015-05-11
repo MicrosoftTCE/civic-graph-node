@@ -4,7 +4,7 @@ var http = require('http');
 
 var request = require('request');
 
-var file = __dirname + '/public/data/civic.json';
+var file = __dirname + '/civicold.json';
 
 var db_config = require('./configuration/credentials.js');
 var connection = mysql.createConnection(db_config.cred.localhost);
@@ -28,9 +28,9 @@ fs.readFile(file, 'utf8', function(err, data){
     function(callback){
       // do some more stuff ...
       console.log('second call');
-      populateLocationTable(function(){
-      	callback(null, 'two');
-      });
+      // populateLocationTable(function(){
+      // 	callback(null, 'two');
+      // });
     }
 	],
 	// optional callback
@@ -59,13 +59,13 @@ var trimArrayString = function(array) {
 	return array;
 }
 
-var removeDuplicateNewYork = function(item) {
-	for (var i = 0; i < item.length; i++) {
-		if(item[i].toString() ===  'New York, New York' || item[i].toString() === 'NY, NY' ) {
-			item.splice(i, 1);
-		}
-	}
-}
+var normalizeCity = function(item) {
+	if (item === "NY, NY" || item === "New York, New York")
+		return "New York, NY";
+	if (item === "London, London, United Kingdom" || item === "London, UK")
+		return "London, United Kingdom";
+	return item;
+};
 
 var populateLocationTable = function(done) {
 	var tmpData = {};
@@ -85,30 +85,32 @@ var populateLocationTable = function(done) {
 };
 
 var populateCityTable = function(data, done) {
-	var uniqueLocation = [];
+	var uniqueLocation = {};
 	unknownLocationsArray = [];
 	for(var i = 0; i < (data.nodes).length; i++) {
 		var Locations = data.nodes[i].location;
 		var EntityId = data.nodes[i].ID;
 
 		// for known locations
-		if (Locations !== 'Unknown'){
+		if (Locations !== null && Locations !== 'Unknown'){
+			console.log(Locations);
 
 			//parse by semicolon
-			var semicolonChecks = Locations.match(/([^;])+/g);
 
-			// console.log('Returned Array: ' + semicolonChecks);
+				var semicolonChecks = Locations.match(/([^;])+/g);
 
-			trimArrayString(semicolonChecks);
-			if (semicolonChecks.length > 1) {
-				while(semicolonChecks.length > 0) {
-				var commaSplit = semicolonChecks.splice(0, 1);
-				uniqueLocation.push(commaSplit);
-				}
-			}
-			else{
-				uniqueLocation.push(semicolonChecks);
-			}
+				// console.log('Returned Array: ' + semicolonChecks);
+
+				trimArrayString(semicolonChecks);
+				semicolonChecks.forEach(function(commaSplit) {
+					commaSplit = normalizeCity(commaSplit);
+						if (!(commaSplit in uniqueLocation)) {
+							uniqueLocation[commaSplit] = [];
+						}
+						
+					uniqueLocation[commaSplit].push(EntityId);
+				
+				});
 		}
 
 		// when location is unknown
@@ -117,12 +119,11 @@ var populateCityTable = function(data, done) {
 			unknownLocationsArray.push(unknownLocations);
 		}
 	}
-	uniqueLocation = uniqueLocation.unique()
-	removeDuplicateNewYork(uniqueLocation);
+	console.log(uniqueLocation);
 
 
-	async.forEach(uniqueLocation, function(semicolonCheck, callback){
-		splitLocation(semicolonCheck[0], function(splitResult) {
+	async.forEach(Object.keys(uniqueLocation), function(semicolonCheck, callback){
+		splitLocation(semicolonCheck, function(splitResult) {
 			var values = {
 				City_Name: !!splitResult.City_Name ? splitResult.City_Name : null,
 				State_Code: !!splitResult.State_Code && splitResult.State_Code.length < 5 ? splitResult.State_Code : null,
@@ -132,10 +133,17 @@ var populateCityTable = function(data, done) {
 				City_Lat: !!splitResult.City_Lat ? splitResult.City_Lat : null,
 				City_Long: !!splitResult.City_Long ? splitResult.City_Long : null
 			};
-			// console.log(values);
+			console.log(values);
 			callback();
 			var query = connection.query('INSERT INTO Cities SET ?', values, function(err, result){
 				if (err) throw err;
+				console.log(result, "this is the result");
+				var ctyId = result.insertId;
+				uniqueLocation[semicolonCheck].forEach(function(entId) {
+					connection.query('INSERT INTO Locations SET ?', {Entity_ID: entId, City_ID: ctyId}, function(err, result) {
+						if (err) throw err;
+					});
+				});
 	    });
 	    console.log(query.sql);
 		});

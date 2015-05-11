@@ -7,10 +7,10 @@ exports.cred = {
       database: 'civicteA9MEi6nPl'
     },
     'localhost' : {
-      port: 3306,
-      host: '127.0.0.1',
+      port: 8889,
+      host: 'localhost',
       user: 'root',
-      password: 'MicrosoftNY',
+      password: 'root',
       database: 'civicteA9MEi6nPl'
     }
 };

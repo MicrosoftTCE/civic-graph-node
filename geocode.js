@@ -5,21 +5,21 @@ var fs = require('fs');
 var async = require('async');
 var file = __dirname + '/routes/data.json';
 
-fs.readFile(file, 'utf8', function (err,data) {
-    if (err) {
-        console.log(err);
-    } else {
-        data = JSON.parse(data);
-        data.push({});
-        fs.writeFile(file, data, function (err) {
-          if (err) return console.log(err);
-          console.log('File saved.');
-        });
-    }
-});
+// fs.readFile(file, 'utf8', function (err,data) {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         data = JSON.parse(data);
+//         data.push({});
+//         fs.writeFile(file, data, function (err) {
+//           if (err) return console.log(err);
+//           console.log('File saved.');
+//         });
+//     }
+// });
 
 // This is an async file read
-fs.readFile(__dirname + '/public/data/civic.json', 'utf-8', function (err, data) {
+fs.readFile(__dirname + '/civicold.json', 'utf-8', function (err, data) {
   if (err) throw err;
   // Make sure there's data before we post it
   if(data) {
@@ -28,8 +28,9 @@ fs.readFile(__dirname + '/public/data/civic.json', 'utf-8', function (err, data)
     var asyncTasks = [];
     asyncTasks.push(function(callback){
       data.nodes.forEach(function(d, x){
+        console.log(x, "first x");
         // (data.nodes[x])['coordinates'] = null;
-        if(d.location !== null && d.location !== "Unknown" && d.location !== "null")
+        if(d.location !== null && d.location !== "Unknown" && d.location !== "null" && d.location !== undefined)
         {
           var locations = d.location.split("; ");
           console.log(locations, 'jfssdnojln');
@@ -39,14 +40,15 @@ fs.readFile(__dirname + '/public/data/civic.json', 'utf-8', function (err, data)
                 method: "POST",
                 json: true,   // <--Very important!!!
                 body: [locations[i]]
-              }, (function(i, x){
+              }, (function(j, x){
                 return function (error, response, body){
+                  console.log(x, "second x");
                   (data.nodes[x])['coordinates'] = [];
-                  if(body[locations[i]] == null)
+                  if(body[locations[j]] == null)
                     (data.nodes[x])['coordinates'] = null;
                   else{
-                    console.log([body[locations[i]].latitude, body[locations[i]].longitude]);
-                    (data.nodes[x])['coordinates'].push([body[locations[i]].latitude, body[locations[i]].longitude]);
+                    console.log([body[locations[j]].latitude, body[locations[j]].longitude]);
+                    (data.nodes[x])['coordinates'].push([body[locations[j]].latitude, body[locations[j]].longitude]);
                   } 
                     if(x === data.nodes.length - 1)
                     {
@@ -54,7 +56,7 @@ fs.readFile(__dirname + '/public/data/civic.json', 'utf-8', function (err, data)
                     }
                   
                 };
-              }(i, x))
+              })(i, x)
             );
           }
         }
@@ -62,7 +64,7 @@ fs.readFile(__dirname + '/public/data/civic.json', 'utf-8', function (err, data)
     });
 
     async.parallel(asyncTasks, function(){
-      fs.writeFile(__dirname + '/public/data/civicgeo.json', JSON.stringify(data), function (err, data) {
+      fs.writeFile(__dirname + '/civicgeo.json', JSON.stringify(data), function (err, data) {
         // console.log(data.nodes);
         if(err) throw err;
         else console.log("Saved!");
