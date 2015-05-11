@@ -3,14 +3,8 @@ var fs = require('fs');
 
 var startTime = new Date().getTime();
 
-var connection = mysql.createConnection({
-  connectionLimit: 40,
-  port: 3306,
-  host: 'au-cdbr-azure-east-a.cloudapp.net',
-  user: 'b0c63aecaa6676',
-  password: '8e008947',
-  database: 'cdb_c7da98943c'
-});
+var db_config = require('./configuration/credentials.js');
+var connection = mysql.createConnection(db_config.cred.localhost);
 
 // var connection = mysql.createConnection({
 //   port: 3306,
@@ -51,7 +45,7 @@ var content= {
   nodes: []
 };
 
-connection.query('SELECT * FROM Cities', function(err, rows){
+connection.query('SELECT City_ID, COUNT(Entities.ID) as entitycount, CONCAT(".", GROUP_CONCAT(Entity_ID SEPARATOR "."), ".") AS Entity_List, Entities.Type, Cities.City_Name, Cities.State_Code, Cities.Country_Code, Cities.City_Long, Cities.City_Lat FROM Entities JOIN Locations ON Locations.Entity_ID = Entities.ID JOIN Cities ON Locations.City_ID = Cities.ID GROUP BY City_ID, Entities.Type ORDER BY Cities.ID DESC, FIELD(Entities.Type, "For-Profit","Individual","Non-Profit","Government") ASC', function(err, rows){
   if (err) throw err;
   var object = rows;
   for (var i=0; i < object.length; i++) {

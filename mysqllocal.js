@@ -2,7 +2,7 @@
   var mysql = require('mysql');
   var fs = require('fs');
 
-  var file = __dirname + '/public/data/civic.json';
+  var file = __dirname + '/civicold.json';
 
   var db_config = require('./configuration/credentials.js');
   var connection = mysql.createConnection(db_config.cred.localhost);
