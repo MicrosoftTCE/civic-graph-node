@@ -3319,7 +3319,7 @@ function loadD3Layer() {
     var topology = topology;
     var connData = connData;
     var locData = locData;
-    console.log(connData);
+    // console.log(connData);
 
 
 
@@ -3337,7 +3337,7 @@ function loadD3Layer() {
       }
       totalEntityCount += d.entitycount;
     });
-    console.log(totalEntityCount, "totalEntityCount");
+    // console.log(totalEntityCount, "totalEntityCount");
 
     var maxVal = 0;
     // console.log(locations)
@@ -3409,7 +3409,7 @@ function loadD3Layer() {
             return 0;
         return d.length;
     }).reduce(function(a, b) { return a + b; }).value();
-    console.log(totalConnCount, "totalConnCount");
+    // console.log(totalConnCount, "totalConnCount");
 
     // console.log(Links, "before");
     Links = _.chain(Links)
@@ -3423,7 +3423,7 @@ function loadD3Layer() {
             return link;
         })
         .value();
-    console.log(Links, "after");
+    // console.log(Links, "after");
 
 
     d3Layers.d3Topology = d3MapTools.addLayer({
