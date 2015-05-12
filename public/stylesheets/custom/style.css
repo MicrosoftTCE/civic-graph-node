@@ -602,6 +602,10 @@ button#submit-B {
   border-radius: 2px;
 }
 
+.routes {
+  pointer-events: visible;
+}
+
 .routes.funding_connections {
   stroke: #6f5da8;
 } 
