@@ -3266,11 +3266,8 @@ function loadD3Layer() {
       .attr('class', 'd3-tip')
       .offset([0, 0])
       .html(function(d){
-          if (d.val !== 1){
-              return d.name + " " + d.val + " Entities";
-          }
-          else
-              return d.name + " " + d.val + " Entity"
+          return d.name + "<br/> " + d.val + (d.val > 1 ? " Entities, " : " Entity, ")  + "<br/>" + parseFloat((d.val/d.totalCount) * 100).toFixed(2) + "%";
+          
   });
 
 
@@ -3278,8 +3275,19 @@ function loadD3Layer() {
             .attr("class", "d3-tip")
             .offset([0, 0])
             .html(function(d) {
-                return d.cityName + ", " + d.type + "<br/>" + d.count + ", " + Math.round((d.count/d.totalCount) * 100) + "%";
-            })
+                return d.cityName + ", " + d.type + "<br/>" + d.count + (d.count > 1 ? " Entities, " : " Entity, ") + parseFloat((d.count/d.totalCount) * 100).toFixed(2) + "%";
+            });
+
+
+
+  var routeTip = d3.tip()
+                    .attr("class", "d3-tip")
+                    .offset([0, 0])
+                    .html(function(d) {
+                        console.log("i'm been called");
+                        return d.cityA + " - " + d.cityB + ", <br/>" + d.count + "connections, <br/>" +  parseFloat((d.count/d.totalCount) * 100).toFixed(2) + "% of total connections";
+
+                    });
 
 
   var locations = {};
@@ -3316,6 +3324,7 @@ function loadD3Layer() {
 
 
     locationData = [];
+    var totalEntityCount = null;
     locData.nodes.forEach(function (d) {
       if (d.City_Lat == null || d.City_Long == null)
         return;
@@ -3326,7 +3335,9 @@ function loadD3Layer() {
       else {
         locations[key] = d.entitycount
       }
+      totalEntityCount += d.entitycount;
     });
+    console.log(totalEntityCount, "totalEntityCount");
 
     var maxVal = 0;
     // console.log(locations)
@@ -3351,6 +3362,7 @@ function loadD3Layer() {
           return d.name = name;
         }
       });
+      d.totalCount = totalEntityCount;
       locationData[locationData.length] = d;
 
       if (d.val > maxVal) {
@@ -3380,31 +3392,35 @@ function loadD3Layer() {
           else {    
               Links.push({
                   type: "LineString",
-                  title: nodeA.location + " " + nodeB.location,
                   coordinates: [
                       [nodeA.City_Long, nodeA.City_Lat],
                       [nodeB.City_Long, nodeB.City_Lat]
                   ],
                   category: key,
-                  count: connData[key].length
+                  cityA: nodeA.City_Name,
+                  cityB: nodeB.City_Name
               });
           }
       });
     });
 
-    console.log(Links, "before");
+    var totalConnCount = _.chain(connData).map(function(d, i) {
+        if (i === "nodes")
+            return 0;
+        return d.length;
+    }).reduce(function(a, b) { return a + b; }).value();
+    console.log(totalConnCount, "totalConnCount");
+
+    // console.log(Links, "before");
     Links = _.chain(Links)
         .groupBy(function(d) {
             return d.category + d.coordinates.toString();
         })
         .map(function(subArray, key){
-            return {
-                count: subArray.length,
-                type: "LineString",
-                coordinates: subArray[0].coordinates,
-                title: subArray[0].title,
-                category: subArray[0].category
-            }
+            var link = subArray[0];
+            link.count = subArray.length;
+            link.totalCount = totalConnCount;
+            return link;
         })
         .value();
     console.log(Links, "after");
@@ -3414,7 +3430,6 @@ function loadD3Layer() {
       loaded: function (svg, projection) {
         // console.log(Links, " the links ");
 
-        strokeScale = d3.scale.log().domain([1, 100]).range([1, 15]);
 
         svg.selectAll(".topology")
             .data(topojson.feature(topology, topology.objects.countries).features)
@@ -3425,30 +3440,43 @@ function loadD3Layer() {
             .attr("class", "topology");
 
 
-        svg.selectAll(".routes")
-            .data(Links)
-            .enter()
-            .append("path")
-            .attr("class", function(d){
-              return "routes " + d.category;
-            })
-            .attr("d", projection)
-            .attr("fill-opacity", 0)
-            .style("stroke-width", function(d) {
-              return strokeScale(d.count) + "px";
-            })
-            .append("title")
-            .attr("text-anchor", "middle")
-            .text(function(d) {
-                return d.title;
-            });
 
         },
 
        viewChanged: function(svg, projection) {
-            svg.attr("visibility", map.getTargetZoom() < 7 ? "visible":"hidden");
        } 
     
+    });
+    
+    d3Layers.d3Routes = d3MapTools.addLayer({
+        loaded: function(svg, projection) {
+
+            svg.call(routeTip);
+
+            strokeScale = d3.scale.log().domain([1, 100]).range([3, 15]);
+            
+            svg.selectAll(".routes")
+                .data(Links)
+                .enter()
+                .append("path")
+                .attr("class", function(d){
+                  return "routes " + d.category;
+                })
+                .attr("d", projection)
+                .attr("fill-opacity", 0)
+                .style("stroke-width", function(d) {
+                  return strokeScale(d.count) + "px";
+                })
+                .on('mouseover', routeTip.show)
+                .on('mousemove', routeTip.show)
+                .on('mouseout', routeTip.hide);
+
+        },
+
+        viewChanged: function(svg, projection) {
+            svg.attr("visibility", map.getTargetZoom() < 10 ? "visible":"hidden");
+
+        }
     });
 
     d3Layers.d3Circles = d3MapTools.addLayer({
@@ -3470,8 +3498,8 @@ function loadD3Layer() {
                 return radiusScale(d.val);
             })
             .style({
-                fill: "green",
-                stroke: "yellow"
+                fill: "grey",
+                stroke: "black"
             })
             .attr("class", "pinpoint")
             .attr("opacity", 0.8)
@@ -3488,7 +3516,7 @@ function loadD3Layer() {
                     return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
                 });
 
-            svg.attr("visibility", map.getTargetZoom() < 7 ? "visible":"hidden");
+            svg.attr("visibility", map.getTargetZoom() < 10 ? "visible":"hidden");
 
        }
     });
@@ -3522,7 +3550,7 @@ function loadD3Layer() {
                     })
                     .value();
 
-                    console.log(totalCountList);
+                    // console.log(totalCountList);
 
                     var subtotal = 0;
                     var lasCityId = null;
@@ -3545,7 +3573,7 @@ function loadD3Layer() {
                         subtotal += node.entitycount;
                         lasCityId = node.City_ID;
                     });
-                    console.log(list);
+                    // console.log(list);
                     
                     svg.selectAll(".arc")
                         .data(list)
@@ -3596,11 +3624,11 @@ function loadD3Layer() {
                     svg.selectAll(".arc")
                         .attr( "d", function(d) {
                             var sliceAngle = 2 * Math.PI / d.totalCount;
-                            var outrad = 10 + (radius * Math.log(d.totalCount)/5 * map.getTargetZoom()/10);
+                            var outrad = 20 + (radius * Math.log(d.totalCount)/5 * map.getTargetZoom()/10);
                             return arc({
                               // outerRadius: sf * (1 + 2 * Math.log(1 + d.totalCount)),
                               outerRadius: outrad,
-                              innerRadius: outrad - (0.45 * outrad),
+                              innerRadius: outrad - (0.75 * outrad),
                               startAngle: d.start * sliceAngle,
                               endAngle: (d.start + d.count) * sliceAngle
                             });
@@ -3609,7 +3637,7 @@ function loadD3Layer() {
                             return "translate(" + projection.projection()([this.getAttribute("lon"), this.getAttribute("lat")]) + ")";
                         });
 
-                    svg.attr("visibility", map.getTargetZoom() < 7 ? "hidden":"visible");
+                    svg.attr("visibility", map.getTargetZoom() < 10 ? "hidden":"visible");
 
                 }
             });
