@@ -3193,9 +3193,9 @@ function drawGraph() {
       document.getElementById('cb_mapview').checked = false;
       document.getElementById('cb_networkview').checked = true;
     } else {
-      drawMap();
-      document.getElementById('cb_mapview').checked = true;
-      document.getElementById('cb_networkview').checked = false;
+      drawGraph();
+      document.getElementById('cb_mapview').checked = false;
+      document.getElementById('cb_networkview').checked = true;
     }
 
     d3.selectAll('#cb_networkview').on('click', function() {
