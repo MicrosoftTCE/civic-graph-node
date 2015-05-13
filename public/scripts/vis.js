@@ -3249,8 +3249,11 @@ function drawMap() {
 
 
     d3.select(self.frameElement).style("height", height + "px");
+    
 
 }
+
+
 var d3Layers = {};
 
 function loadD3Layer() {
@@ -3285,7 +3288,7 @@ function loadD3Layer() {
                     .offset([0, 0])
                     .html(function(d) {
                         console.log("i'm been called");
-                        return d.cityA + " - " + d.cityB + ", <br/>" + d.count + "connections, <br/>" +  parseFloat((d.count/d.totalCount) * 100).toFixed(2) + "% of total connections";
+                        return d.cityA + " - " + d.cityB + ", <br/>" + d.count + " connections, <br/>" +  parseFloat((d.count/d.totalCount) * 100).toFixed(2) + "% of total connections";
 
                     });
 
@@ -3464,6 +3467,7 @@ function loadD3Layer() {
                 })
                 .attr("d", projection)
                 .attr("fill-opacity", 0)
+                .attr("visibility", "visible")
                 .style("stroke-width", function(d) {
                   return strokeScale(d.count) + "px";
                 })
@@ -3471,55 +3475,87 @@ function loadD3Layer() {
                 .on('mousemove', routeTip.show)
                 .on('mouseout', routeTip.hide);
 
+
+            svg.call(tip);
+            // console.log(locationData);
+            radiusScale = d3.scale.linear().domain([0, maxVal]).range([5, 55]);
+
+            // console.log(maxVal)
+            svg.selectAll("circle")
+                 .data(locationData)
+                 .enter()
+                 .append("circle")
+                 .attr("transform", function(d) {
+                    return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
+                 })
+                 .attr("r", function(d){
+                    return radiusScale(d.val);
+                })
+                .style({
+                    fill: "grey",
+                    stroke: "black"
+                })
+                .attr("class", "pinpoint")
+                .attr("opacity", 0.8)
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide)
+
         },
 
         viewChanged: function(svg, projection) {
             svg.attr("visibility", map.getTargetZoom() < 10 ? "visible":"hidden");
 
-        }
-    });
-
-    d3Layers.d3Circles = d3MapTools.addLayer({
-      loaded: function (svg, projection) {
-
-        svg.call(tip);
-            // console.log(locationData);
-        radiusScale = d3.scale.linear().domain([0, maxVal]).range([5, 55]);
-
-            // console.log(maxVal)
-        svg.selectAll("circle")
-             .data(locationData)
-             .enter()
-             .append("circle")
-             .attr("transform", function(d) {
-                return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
-             })
-             .attr("r", function(d){
-                return radiusScale(d.val);
-            })
-            .style({
-                fill: "grey",
-                stroke: "black"
-            })
-            .attr("class", "pinpoint")
-            .attr("opacity", 0.8)
-            .on('mouseover', tip.show)
-            .on('mouseout', tip.hide)
-
-        },
-
-       viewChanged: function(svg, projection) {
-
-
-            svg.selectAll("circle")
+             svg.selectAll("circle")
                 .attr("transform", function(d) {
                     return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
                 });
 
             svg.attr("visibility", map.getTargetZoom() < 10 ? "visible":"hidden");
 
-       }
+        }
     });
+
+    // d3Layers.d3Circles = d3MapTools.addLayer({
+    //   loaded: function (svg, projection) {
+
+    //     svg.call(tip);
+    //         // console.log(locationData);
+    //     radiusScale = d3.scale.linear().domain([0, maxVal]).range([5, 55]);
+
+    //         // console.log(maxVal)
+    //     svg.selectAll("circle")
+    //          .data(locationData)
+    //          .enter()
+    //          .append("circle")
+    //          .attr("transform", function(d) {
+    //             return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
+    //          })
+    //          .attr("r", function(d){
+    //             return radiusScale(d.val);
+    //         })
+    //         .style({
+    //             fill: "grey",
+    //             stroke: "black"
+    //         })
+    //         .attr("class", "pinpoint")
+    //         .attr("opacity", 0.8)
+    //         .on('mouseover', tip.show)
+    //         .on('mouseout', tip.hide)
+
+    //     },
+
+    //    viewChanged: function(svg, projection) {
+
+
+    //         svg.selectAll("circle")
+    //             .attr("transform", function(d) {
+    //                 return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
+    //             });
+
+    //         svg.attr("visibility", map.getTargetZoom() < 10 ? "visible":"hidden");
+
+    //    }
+    // });
 
             d3Layers.d3Donuts = d3MapTools.addLayer({
                 
@@ -3643,6 +3679,11 @@ function loadD3Layer() {
             });
     };
 
-
+    setTimeout(function() {
+        console.log("triggering viewchanged");
+        Microsoft.Maps.Events.invoke(map, 'viewchangeend');
+    }, 1000);
 }
+
+
 
