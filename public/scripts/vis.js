@@ -3308,10 +3308,11 @@ function loadD3Layer() {
       .defer(d3.json, "data/world-110m.json")
       .defer(d3.json, "data/civicgeo.json")
       .defer(d3.json, "data/civicgeoloc.json")
+      .defer(d3.json, "data/demo.json")
       .await(analyze);
 
 
-  function analyze(error, topology, connData, locData) {
+  function analyze(error, topology, connData, locData, demoData) {
 
 
     if (error) {
@@ -3322,6 +3323,7 @@ function loadD3Layer() {
     var topology = topology;
     var connData = connData;
     var locData = locData;
+    console.log(demoData);
     // console.log(connData);
 
 
@@ -3352,14 +3354,19 @@ function loadD3Layer() {
       d.lat = coor[0];
       d.lon = coor[1];
       locData.nodes.forEach(function(place) {
-        var name;
+        var name = "Unknown";
         if (place.City_Lat == d.lat && place.City_Long == d.lon) {
           if (place.City_Name != null && place.State_Code != null) {
-            name = place.City_Name + ", " + place.State_Code;
+            name = place.City_Name + ", " + place.State_Code + ", " + place.Country_Name;
+            return d.name = name;
+          }
+          else if(place.City_Name != null && place.Country_Name != (null || "United States")) {
+            name = place.City_Name + ", " + place.Country_Name;
             return d.name = name;
           }
           else {
-            // name = place.Co
+            name = place.Country_Name;
+            return d.name = name
           }
           // console.log("place: " + name);
           return d.name = name;
@@ -3428,6 +3435,17 @@ function loadD3Layer() {
         .value();
     // console.log(Links, "after");
 
+    demoData.stationBeanList.forEach(function(station) {
+        if (station.availableDocks <= 10) {
+            station.category = "Non-Profit";
+        }
+        else if(station.category <= 25) {
+            station.category = "Government";
+        }
+        else
+            station.category = "For-Profit";
+    });
+
 
     d3Layers.d3Topology = d3MapTools.addLayer({
       loaded: function (svg, projection) {
@@ -3457,7 +3475,7 @@ function loadD3Layer() {
             svg.call(routeTip);
 
             strokeScale = d3.scale.log().domain([1, 100]).range([3, 15]);
-            
+
             svg.selectAll(".routes")
                 .data(Links)
                 .enter()
@@ -3467,6 +3485,7 @@ function loadD3Layer() {
                 })
                 .attr("d", projection)
                 .attr("fill-opacity", 0)
+                .attr("opacity", 0)
                 .attr("visibility", "visible")
                 .style("stroke-width", function(d) {
                   return strokeScale(d.count) + "px";
@@ -3481,7 +3500,7 @@ function loadD3Layer() {
             radiusScale = d3.scale.linear().domain([0, maxVal]).range([5, 55]);
 
             // console.log(maxVal)
-            svg.selectAll("circle")
+            svg.selectAll(".pinpoint")
                  .data(locationData)
                  .enter()
                  .append("circle")
@@ -3493,10 +3512,11 @@ function loadD3Layer() {
                 })
                 .style({
                     fill: "grey",
-                    stroke: "black"
+                    stroke: "black",
                 })
                 .attr("class", "pinpoint")
-                .attr("opacity", 0.8)
+                .attr("opacity", 0)
+                .attr("stroke-opacity", 0)
                 .on('mouseover', tip.show)
                 .on('mouseout', tip.hide)
 
@@ -3673,16 +3693,69 @@ function loadD3Layer() {
                             return "translate(" + projection.projection()([this.getAttribute("lon"), this.getAttribute("lat")]) + ")";
                         });
 
-                    svg.attr("visibility", map.getTargetZoom() < 10 ? "hidden":"visible");
+                    svg.attr("visibility", map.getTargetZoom() < 10 || map.getTargetZoom() > 13 ? "hidden" : "visible");
 
                 }
             });
+
+
+        d3Layers.d3Entities = d3MapTools.addLayer({
+            loaded: function(svg, projection) {
+
+                // svg.call(tip);
+                // console.log(locationData);
+                radiusScale = d3.scale.linear().domain([0, 65]).range([5, 55]);
+
+                // console.log(maxVal)
+
+                svg.attr("visibility", "hidden");
+
+                svg.selectAll(".entities")
+                     .data(demoData.stationBeanList)
+                     .enter()
+                     .append("circle")
+                     .attr("transform", function(d) {
+                        return "translate(" + projection.projection()([d.longitude, d.latitude]) + ")";
+                     })
+                     .attr("r", function(d){
+                        return radiusScale(d.availableDocks);
+                    })
+                    .style({
+                        stroke: "black"
+                    })
+                    .attr("class", function(d) {
+                        return "entities " + d.category;
+                    })
+                    .attr("opacity", 0);
+
+            },
+
+            viewChanged: function(svg, projection) {
+
+                 svg.selectAll(".entities")
+                    .attr("transform", function(d) {
+                        return "translate(" + projection.projection()([d.longitude, d.latitude]) + ")" ;
+                    });
+
+                svg.attr("visibility", map.getTargetZoom() < 14 ? "hidden":"visible");
+
+            }
+        });
     };
 
     setTimeout(function() {
         console.log("triggering viewchanged");
         Microsoft.Maps.Events.invoke(map, 'viewchangeend');
-    }, 1000);
+        var t = d3Layers.d3Routes.svg.transition().duration(1000);
+
+        t.selectAll(".pinpoint")
+                .attr("opacity", 0.8)
+                .attr("stroke-opacity", 1);
+
+        t.transition().selectAll(".routes")
+                .attr("opacity", 1);
+
+    }, 1500);
 }
 
 
