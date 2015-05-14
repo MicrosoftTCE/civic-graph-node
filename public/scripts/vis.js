@@ -3724,8 +3724,7 @@ function loadD3Layer() {
                     })
                     .attr("class", function(d) {
                         return "entities " + d.category;
-                    })
-                    .attr("opacity", 0);
+                    });
 
             },
 
