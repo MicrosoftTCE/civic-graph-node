@@ -3287,7 +3287,6 @@ function loadD3Layer() {
                     .attr("class", "d3-tip")
                     .offset([0, 0])
                     .html(function(d) {
-                        console.log("i'm been called");
                         return d.cityA + " - " + d.cityB + ", <br/>" + d.count + " connections, <br/>" +  parseFloat((d.count/d.totalCount) * 100).toFixed(2) + "% of total connections";
 
                     });
