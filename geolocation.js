@@ -45,7 +45,7 @@ var content= {
   nodes: []
 };
 
-connection.query('SELECT City_ID, COUNT(Entities.ID) as entitycount, CONCAT(".", GROUP_CONCAT(Entity_ID SEPARATOR "."), ".") AS Entity_List, Entities.Type, Cities.City_Name, Cities.State_Code, Cities.Country_Code, Cities.City_Long, Cities.City_Lat FROM Entities JOIN Locations ON Locations.Entity_ID = Entities.ID JOIN Cities ON Locations.City_ID = Cities.ID GROUP BY City_ID, Entities.Type ORDER BY Cities.ID DESC, FIELD(Entities.Type, "For-Profit","Individual","Non-Profit","Government") ASC', function(err, rows){
+connection.query('SELECT City_ID, COUNT(Entities.ID) as entitycount, CONCAT(".", GROUP_CONCAT(Entity_ID SEPARATOR "."), ".") AS Entity_List, Entities.Type, Cities.City_Name, Cities.State_Code, Cities.Country_Code, Cities.Country_Name, Cities.City_Long, Cities.City_Lat FROM Entities JOIN Locations ON Locations.Entity_ID = Entities.ID JOIN Cities ON Locations.City_ID = Cities.ID GROUP BY City_ID, Entities.Type ORDER BY Cities.ID DESC, FIELD(Entities.Type, "For-Profit","Individual","Non-Profit","Government") ASC', function(err, rows){
   if (err) throw err;
   var object = rows;
   for (var i=0; i < object.length; i++) {

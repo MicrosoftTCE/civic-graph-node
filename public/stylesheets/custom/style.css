@@ -617,3 +617,16 @@ button#submit-B {
 .routes.data_connections {
   stroke: #bf4896;
 }
+
+.entities.For-Profit {
+  fill: #6f5da8;
+} 
+
+.entities.Non-Profit {
+  fill: #267272;
+} 
+
+.entities.Government {
+  fill: #ebe826;
+}
+
