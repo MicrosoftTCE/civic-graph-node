@@ -3322,7 +3322,7 @@ function loadD3Layer() {
     var topology = topology;
     var connData = connData;
     var locData = locData;
-    console.log(demoData);
+    console.log(locData);
     // console.log(connData);
 
 
@@ -3355,6 +3355,7 @@ function loadD3Layer() {
       locData.nodes.forEach(function(place) {
         var name = "Unknown";
         if (place.City_Lat == d.lat && place.City_Long == d.lon) {
+            d.id = place.City_ID;
           if (place.City_Name != null && place.State_Code != null) {
             name = place.City_Name + ", " + place.State_Code + ", " + place.Country_Name;
             return d.name = name;
@@ -3382,7 +3383,7 @@ function loadD3Layer() {
     // console.log(topology);
     // console.log(connData);
     // console.log(locData);
-    // console.log(locationData);
+    console.log(locationData);
 
     Object.keys(connData).forEach(function(key) {
       if (key === "nodes")
@@ -3407,7 +3408,9 @@ function loadD3Layer() {
                   ],
                   category: key,
                   cityA: nodeA.City_Name,
-                  cityB: nodeB.City_Name
+                  cityB: nodeB.City_Name,
+                  id_A: nodeA.City_ID,
+                  id_B: nodeB.City_ID
               });
           }
       });
@@ -3432,7 +3435,7 @@ function loadD3Layer() {
             return link;
         })
         .value();
-    // console.log(Links, "after");
+    console.log(Links, "after");
 
     demoData.stationBeanList.forEach(function(station) {
         if (station.availableDocks <= 10) {
@@ -3469,13 +3472,78 @@ function loadD3Layer() {
     });
     
     d3Layers.d3Routes = d3MapTools.addLayer({
+
+        pinpoints: null, 
+        routes: null,
+        thisClick: false,
+
+        opacityLevel: function(a, b) {
+            var bool = true;
+            if (a.id === b.id) return false;
+            Links.forEach(function(link) {
+                if((link.id_A === a.id && link.id_B === b.id) || (link.id_A === b.id && link.id_B === a.id)) {
+                    bool = false;
+                }
+            });
+            return bool;
+        },
+
+        highlight:  function(a) {
+            tip.show(a);
+            d3Layers.d3Routes.svg.selectAll(".pinpoint")
+                .classed("hidden", function(b) {
+                    return d3Layers.d3Routes.options.opacityLevel(a, b);
+            });
+            d3Layers.d3Routes.svg.selectAll(".routes")
+                .classed("hidden", function(b) {
+                    return (b.id_A != a.id && b.id_B != a.id);
+            });
+        },
+
+        highlightHover: function(a) {
+            if (!d3Layers.d3Routes.options.thisClick) {
+                d3Layers.d3Routes.options.highlight(a);
+            }
+        },
+
+        highlightClick: function(a) {
+            d3Layers.d3Routes.options.thisClick = true;
+            d3Layers.d3Routes.options.highlight(a);
+        },
+
+        reset: function() {
+            d3Layers.d3Routes.svg.selectAll(".pinpoint")
+                    .classed("hidden", false);
+
+            d3Layers.d3Routes.svg.selectAll(".routes")
+                .classed("hidden", false);
+            tip.hide();
+        },
+
+        resetHover: function() {
+            if (!d3Layers.d3Routes.options.thisClick) {
+                d3Layers.d3Routes.options.reset();
+            }
+        },
+
+        resetClick: function() {
+            d3Layers.d3Routes.options.reset();
+            d3Layers.d3Routes.options.thisClick = false;
+        },
+
         loaded: function(svg, projection) {
 
             svg.call(routeTip);
 
             strokeScale = d3.scale.log().domain([1, 100]).range([3, 15]);
 
-            svg.selectAll(".routes")
+             svg.append("rect")
+                .attr("class", "rect")
+                .attr("width", "100%")
+                .attr("height", "100%")
+                .attr("opacity", 0);
+
+            this.routes = svg.selectAll(".routes")
                 .data(Links)
                 .enter()
                 .append("path")
@@ -3490,7 +3558,6 @@ function loadD3Layer() {
                   return strokeScale(d.count) + "px";
                 })
                 .on('mouseover', routeTip.show)
-                .on('mousemove', routeTip.show)
                 .on('mouseout', routeTip.hide);
 
 
@@ -3499,7 +3566,7 @@ function loadD3Layer() {
             radiusScale = d3.scale.linear().domain([0, maxVal]).range([5, 55]);
 
             // console.log(maxVal)
-            svg.selectAll(".pinpoint")
+            this.pinpoints = svg.selectAll(".pinpoint")
                  .data(locationData)
                  .enter()
                  .append("circle")
@@ -3516,15 +3583,20 @@ function loadD3Layer() {
                 .attr("class", "pinpoint")
                 .attr("opacity", 0)
                 .attr("stroke-opacity", 0)
-                .on('mouseover', tip.show)
-                .on('mouseout', tip.hide)
+                .on('mouseout', d3Layers.d3Routes.options.resetHover)
+                .on('mouseover', d3Layers.d3Routes.options.highlightHover)
+                .on("click", d3Layers.d3Routes.options.highlightClick);
+
+            svg.select(".rect").on("click", function() {
+                d3Layers.d3Routes.options.resetClick();
+            });
 
         },
 
         viewChanged: function(svg, projection) {
             svg.attr("visibility", map.getTargetZoom() < 10 ? "visible":"hidden");
 
-             svg.selectAll("circle")
+            svg.selectAll("circle")
                 .attr("transform", function(d) {
                     return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
                 });
@@ -3666,6 +3738,7 @@ function loadD3Layer() {
                             return "#FFFFFF";
 
                         })
+                        .style("stroke", "white")
                         .on('mouseover', donutTip.show)
                         .on('mouseout', donutTip.hide);
 
@@ -3703,7 +3776,7 @@ function loadD3Layer() {
 
                 // svg.call(tip);
                 // console.log(locationData);
-                radiusScale = d3.scale.linear().domain([0, 65]).range([5, 55]);
+                radiusScale = d3.scale.linear().domain([0, 65]).range([2, 10]);
 
                 // console.log(maxVal)
 
@@ -3753,7 +3826,7 @@ function loadD3Layer() {
         t.transition().selectAll(".routes")
                 .attr("opacity", 1);
 
-    }, 1500);
+    }, 2500);
 }
 
 

@@ -602,6 +602,18 @@ button#submit-B {
   border-radius: 2px;
 }
 
+/*.routes {
+  opacity: 1;
+}*/
+
+.pinpoint.hidden {
+  opacity: 0.1;
+}
+
+.routes.hidden {
+  opacity: 0.1;
+}
+
 .routes.funding_connections {
   stroke: #6f5da8;
 } 
