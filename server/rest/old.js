@@ -12,11 +12,10 @@ var config  = require('../../config');
 var pool    = mysql.createPool(config.db);
 var db      = wrap(pool);
 
-router.get('/', function(req, res) {
+router.get('/athena', function(req, res) {
   var entities, bridges;
 
-  var qry = select("id, name, nickname, followers, employees, entity_type")
-    .from("entities_view").where({render: 1}).toString()
+  var qry = select().from("entities").toString()
 
   db.query(qry)
     .then(function(results) {
@@ -40,25 +39,15 @@ router.get('/', function(req, res) {
     });
 });
 
-router.get('/:id', function(req, res) {
-  var qry = select("id, categories, website, twitter_handle, influence, relations, key_people")
-    .from("entities_view").where({id: req.params.id, render: 1}).toString()
+router.get('/entities/:name/categories', function(req, res) {
+  var qry = select("categories").from("entities_view")
+    .where({ name: req.params.name }).toString();
 
   db.query(qry).then(function(result) {
-    var out = result[0];
-
-    if (out.key_people) {
-      out.key_people = _.map(out.key_people.split("|"), function(p) {
-        return { name: p };
-      });
-    } else {
-      out.key_people = [];
-    }
-
-    res.json({ entity: out });
+    res.json(result[0]);
   })
   .catch(function(err) {
-    console.log("ERROR on /entities/" + req.params.id, err);
+    console.log("ERROR on /entities/" + req.params.name + '/categories', err);
     res.sendStatus(400);
   });
 })
