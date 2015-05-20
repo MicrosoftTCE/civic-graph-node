@@ -2,6 +2,8 @@ var express = require('express');
 var mysql   = require('mysql');
 var sql     = require('sql-bricks');
 
+var select = sql.select;
+
 var router  = express.Router();
 
 var config  = require('../../config');
@@ -16,7 +18,7 @@ router.get('/', function(req, res) {
         if (err) {
           res.sendStatus(400);
         } else {
-          res.json({ locations: results });
+          res.json({ cities: results });
         }
       })
     }
