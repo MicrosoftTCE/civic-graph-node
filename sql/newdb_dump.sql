@@ -17,12 +17,12 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `newdb`
+-- Database: `civic_dev`
 --
-DROP DATABASE `newdb`;
+DROP DATABASE IF EXISTS `civic_dev`;
 
-CREATE DATABASE `newdb` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `newdb`;
+CREATE DATABASE `civic_dev` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `civic_dev`;
 
 -- --------------------------------------------------------
 
