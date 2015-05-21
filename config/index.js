@@ -3,10 +3,13 @@ var _ = require('lodash');
 exports.db = {
   port: 3306,
   host: '127.0.0.1',
-  user: 'root',
-  password: 'MicrosoftNY',
-  database: 'newdb'
-};
+  user: process.env.DB_USER,
+  password: process.env.DB_PW,
+  database: 'civic_dev'
+}
+
+// export DB_USER=username
+// export DB_PW='password'
 
 exports.processResults = function(entities, bridges, operations, locations) {
   var out = {};
@@ -22,7 +25,7 @@ exports.processResults = function(entities, bridges, operations, locations) {
       location: [],
       loaded: false
     }, entity);
-  });
+  })
 
   _.each(bridges, function(bridge) {
 
@@ -56,7 +59,7 @@ exports.processResults = function(entities, bridges, operations, locations) {
           break;
       }
     } catch (err) {}
-  });
+  })
 
   _.each(operations, function(operation) {
 
@@ -73,13 +76,15 @@ exports.processResults = function(entities, bridges, operations, locations) {
         });
       }
     } catch (err) {}
-  });
+  })
 
   _.each(locations, function(location) {
     try {
-
+      var id = location.entity_id
+      delete location.entity_id
+      out[id].location.push(location)
     } catch (err) {}
-  });
+  })
 
   return { entities: out };
-};
+}
