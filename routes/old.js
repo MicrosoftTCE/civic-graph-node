@@ -8,7 +8,7 @@ var select = sql.select;
 
 var router  = express.Router();
 
-var config  = require('../../config');
+var config  = require('../config');
 var pool    = mysql.createPool(config.db);
 var db      = wrap(pool);
 

@@ -4,7 +4,7 @@
   "description": "A refactor of the civic graph app",
   "main": "index.js",
   "scripts": {
-    "start": "node ./server/index.js"
+    "start": "node ./index.js"
   },
   "repository": {
     "type": "git",
@@ -22,10 +22,12 @@
     "debug": "^2.2.0",
     "express": "^4.12.4",
     "geoip-lite": "^1.1.6",
+    "jade": "^1.9.2",
     "lodash": "^3.9.1",
     "morgan": "^1.5.3",
     "mysql": "^2.6.2",
     "mysql-wrap": "^0.4.0",
+    "serve-favicon": "^2.2.1",
     "sql-bricks": "^1.2.0",
     "static-favicon": "^2.0.0-alpha"
   }

@@ -8,7 +8,7 @@ var select = sql.select;
 
 var router  = express.Router();
 
-var config  = require('../../config');
+var config  = require('../config');
 var pool    = mysql.createPool(config.db);
 var db      = wrap(pool);
 
@@ -33,8 +33,7 @@ router.get('/', function(req, res) {
     })
     .then(function(results) {
       operations = results;
-      // SELECT id as id, CONCAT(city_name, (CASE WHEN state_name IS NOT NULL THEN CONCAT(', ',state_name) ELSE CASE WHEN state_code IS NOT NULL THEN CONCAT(', ', state_code) ELSE '' END END), (CASE WHEN country_name IS NOT NULL THEN CONCAT(', ', country_name) ELSE CASE WHEN country_code IS NOT NULL THEN CONCAT(', ', country_code) ELSE '' END END)) AS location FROM cities
-      qry = select().from("cities_view").toString()
+      qry = select().from("locations_with_city").toString()
 
       return db.query(qry)
     })

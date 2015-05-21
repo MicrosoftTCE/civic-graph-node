@@ -1,0 +1,22 @@
+doctype html
+html
+  head
+    title= title
+
+    link(rel='stylesheet', href='/styles/reset.css')
+    link(rel='stylesheet', href='/styles/normalize.css')
+    link(rel='stylesheet', href='/styles/metro-bootstrap.css')
+    link(rel='stylesheet', href='/styles/metro-bootstrap-responsive.css')
+    link(rel='stylesheet', href='/styles/iconFont.min.css')
+    link(rel='stylesheet', href='/styles/font-awesome/css/font-awesome.css')
+    link(rel='stylesheet', href='/styles/style.css')
+    link(rel='stylesheet', href='/styles/herograph.css')
+    link(rel='stylesheet', href='/styles/checkboxes.css')
+    link(rel='stylesheet', href='/styles/footer.css')
+    link(rel='stylesheet', href='/styles/left-nav.css')
+    link(rel='stylesheet', href='/styles/developer-style.css')
+
+  body.metro
+    include ./partials/nav-bar
+    #wrapper
+      block content
