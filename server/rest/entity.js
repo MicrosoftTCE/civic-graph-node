@@ -32,7 +32,14 @@ router.get('/', function(req, res) {
       return db.query(qry)
     })
     .then(function(results) {
-      res.json(config.processResults(entities, bridges, results));
+      operations = results;
+      // SELECT id as id, CONCAT(city_name, (CASE WHEN state_name IS NOT NULL THEN CONCAT(', ',state_name) ELSE CASE WHEN state_code IS NOT NULL THEN CONCAT(', ', state_code) ELSE '' END END), (CASE WHEN country_name IS NOT NULL THEN CONCAT(', ', country_name) ELSE CASE WHEN country_code IS NOT NULL THEN CONCAT(', ', country_code) ELSE '' END END)) AS location FROM cities
+      qry = select().from("cities_view").toString()
+
+      return db.query(qry)
+    })
+    .then(function(results) {
+      res.json(config.processResults(entities, bridges, operations, results));
     })
     .catch(function(err) {
       console.log("ERROR on /entities", err);

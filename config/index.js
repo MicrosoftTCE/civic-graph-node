@@ -2,13 +2,13 @@ var _ = require('lodash');
 
 exports.db = {
   port: 3306,
-  host: 'localhost',
-  user: process.env.DB_USER,
-  password: process.env.DB_PW,
-  database: 'civic_dev'
+  host: '127.0.0.1',
+  user: 'root',
+  password: 'MicrosoftNY',
+  database: 'newdb'
 }
 
-exports.processResults = function(entities, bridges, operations) {
+exports.processResults = function(entities, bridges, operations, locations) {
   var out = {};
 
   _.each(entities, function(entity) {
@@ -19,6 +19,7 @@ exports.processResults = function(entities, bridges, operations) {
       data: [],
       revenue: [],
       expenses: [],
+      location: [],
       loaded: false
     }, entity);
   })
@@ -73,6 +74,14 @@ exports.processResults = function(entities, bridges, operations) {
       }
     } catch (err) {}
   })
+
+  // _.each(locations, function(location) {
+  //   try {
+  //     out[location.entity_id].location.push({
+  //       location:
+  //     })
+  //   } catch (err) {}
+  // })
 
   return { entities: out };
 }
