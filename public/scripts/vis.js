@@ -3193,9 +3193,9 @@ function drawGraph() {
       document.getElementById('cb_mapview').checked = false;
       document.getElementById('cb_networkview').checked = true;
     } else {
-      drawGraph();
-      document.getElementById('cb_mapview').checked = false;
-      document.getElementById('cb_networkview').checked = true;
+      drawMap();
+      document.getElementById('cb_mapview').checked = true;
+      document.getElementById('cb_networkview').checked = false;
     }
 
     d3.selectAll('#cb_networkview').on('click', function() {
@@ -3233,11 +3233,10 @@ function drawMap() {
     .attr("height", height)
     .attr("id", "map");
 
-
   map = new Microsoft.Maps.Map(document.getElementById('map'), {
     credentials: 'Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M',
     center: new Microsoft.Maps.Location(40, -80),
-    zoom: 4,
+    zoom: 3,
     mapTypeId: Microsoft.Maps.MapTypeId.road
   });
 
@@ -3267,7 +3266,6 @@ function loadD3Layer() {
   
   var tip = d3.tip()
       .attr('class', 'd3-tip')
-      .offset([0, 0])
       .html(function(d){
           return d.name + "<br/> " + d.val + (d.val > 1 ? " Entities, " : " Entity, ")  + "<br/>" + parseFloat((d.val/d.totalCount) * 100).toFixed(2) + "%";
           
@@ -3290,8 +3288,10 @@ function loadD3Layer() {
                         return d.cityA + " - " + d.cityB + ", <br/>" + d.count + " connections, <br/>" +  parseFloat((d.count/d.totalCount) * 100).toFixed(2) + "% of total connections";
 
                     });
-
-
+  
+  var newTip = d3.helper.tooltip(function(d, i) {
+    return d.cityA + " - " + d.cityB + ", <br/>" + d.count + " connections, <br/>" +  parseFloat((d.count/d.totalCount) * 100).toFixed(2) + "% of total connections";
+  });
   var locations = {};
 
   var Links = [];
@@ -3475,7 +3475,8 @@ function loadD3Layer() {
 
         pinpoints: null, 
         routes: null,
-        thisClick: false,
+        clickFlag: false,
+        tipObj: null,
 
         opacityLevel: function(a, b) {
             var bool = true;
@@ -3501,13 +3502,14 @@ function loadD3Layer() {
         },
 
         highlightHover: function(a) {
-            if (!d3Layers.d3Routes.options.thisClick) {
+            if (!d3Layers.d3Routes.options.clickFlag) {
                 d3Layers.d3Routes.options.highlight(a);
             }
         },
 
         highlightClick: function(a) {
-            d3Layers.d3Routes.options.thisClick = true;
+            d3Layers.d3Routes.options.tipObj = a;
+            d3Layers.d3Routes.options.clickFlag = true;
             d3Layers.d3Routes.options.highlight(a);
         },
 
@@ -3521,19 +3523,20 @@ function loadD3Layer() {
         },
 
         resetHover: function() {
-            if (!d3Layers.d3Routes.options.thisClick) {
+            if (!d3Layers.d3Routes.options.clickFlag) {
                 d3Layers.d3Routes.options.reset();
             }
         },
 
         resetClick: function() {
             d3Layers.d3Routes.options.reset();
-            d3Layers.d3Routes.options.thisClick = false;
+            d3Layers.d3Routes.options.clickFlag = false;
+            d3Layers.d3Routes.options.tipObj = null;
         },
 
         loaded: function(svg, projection) {
 
-            svg.call(routeTip);
+            // svg.call(routeTip);
 
             strokeScale = d3.scale.log().domain([1, 100]).range([3, 15]);
 
@@ -3557,8 +3560,9 @@ function loadD3Layer() {
                 .style("stroke-width", function(d) {
                   return strokeScale(d.count) + "px";
                 })
-                .on('mouseover', routeTip.show)
-                .on('mouseout', routeTip.hide);
+                .call(newTip);
+                // .on('mouseover', routeTip.show)
+                // .on('mouseout', routeTip.hide);
 
 
             svg.call(tip);
@@ -3594,14 +3598,19 @@ function loadD3Layer() {
         },
 
         viewChanged: function(svg, projection) {
-            svg.attr("visibility", map.getTargetZoom() < 10 ? "visible":"hidden");
+            // svg.attr("visibility", map.getTargetZoom() < 10 ? "visible":"hidden");
 
             svg.selectAll("circle")
                 .attr("transform", function(d) {
                     return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
                 });
 
-            svg.attr("visibility", map.getTargetZoom() < 10 ? "visible":"hidden");
+            svg.attr("visibility", map.getTargetZoom() < 9 ? "visible":"hidden");
+
+            // svg.selectAll(".routes")
+            //     .attr("visibility", function(d) {
+            //         return this.getTotalLength() > 900 ? "hidden" : "visible";
+            //     });
 
         }
     });
@@ -3689,6 +3698,7 @@ function loadD3Layer() {
                             subtotal = 0;
                         }
                         list.push({
+                            Id: node.City_ID,
                             cityName: node.City_Name,
                             lat: node.City_Lat,
                             lon: node.City_Long,
@@ -3706,8 +3716,8 @@ function loadD3Layer() {
                         .data(list)
                         .enter()
                         .append("path")
-                        .attr("cityName", function(d) {
-                            return d.cityName;
+                        .attr("cityId", function(d) {
+                            return d.Id;
                         })
                         .attr("class", "arc")
                         .attr( "d", function(d) {
@@ -3739,8 +3749,16 @@ function loadD3Layer() {
 
                         })
                         .style("stroke", "white")
-                        .on('mouseover', donutTip.show)
-                        .on('mouseout', donutTip.hide);
+                        .on('mouseover', function(d) {
+                            donutTip.show(d);
+                            svg.selectAll(".arc").transition().attr("opacity", function(x) {
+                                return x.Id === d.Id ? 1 : 0.4;
+                            });
+                        })
+                        .on('mouseout', function(d){
+                            donutTip.hide();
+                            svg.selectAll(".arc").transition().attr("opacity", 1);
+                        });
 
 
                 },
@@ -3752,11 +3770,11 @@ function loadD3Layer() {
                     svg.selectAll(".arc")
                         .attr( "d", function(d) {
                             var sliceAngle = 2 * Math.PI / d.totalCount;
-                            var outrad = 20 + (radius * Math.log(d.totalCount)/5 * map.getTargetZoom()/10);
+                            var outrad = 17 + (radius * Math.log(d.totalCount)/5 * map.getTargetZoom()/10);
                             return arc({
                               // outerRadius: sf * (1 + 2 * Math.log(1 + d.totalCount)),
                               outerRadius: outrad,
-                              innerRadius: outrad - (0.75 * outrad),
+                              innerRadius: outrad - (0.4 * outrad),
                               startAngle: d.start * sliceAngle,
                               endAngle: (d.start + d.count) * sliceAngle
                             });
@@ -3765,7 +3783,7 @@ function loadD3Layer() {
                             return "translate(" + projection.projection()([this.getAttribute("lon"), this.getAttribute("lat")]) + ")";
                         });
 
-                    svg.attr("visibility", map.getTargetZoom() < 10 || map.getTargetZoom() > 13 ? "hidden" : "visible");
+                    svg.attr("visibility", map.getTargetZoom() < 9 || map.getTargetZoom() > 12 ? "hidden" : "visible");
 
                 }
             });
@@ -3808,7 +3826,7 @@ function loadD3Layer() {
                         return "translate(" + projection.projection()([d.longitude, d.latitude]) + ")" ;
                     });
 
-                svg.attr("visibility", map.getTargetZoom() < 14 ? "hidden":"visible");
+                svg.attr("visibility", map.getTargetZoom() < 13 ? "hidden":"visible");
 
             }
         });
@@ -3827,6 +3845,49 @@ function loadD3Layer() {
                 .attr("opacity", 1);
 
     }, 2500);
+
+        // console.log(currentZoom, "before");
+    Microsoft.Maps.Events.addHandler(map, "dblclick", function(e) {
+        // var zoomLevel = map.getTargetZoom();
+        console.log(map.getTargetZoom(), "b4");
+        console.log(e);
+        // console.log(zoomLevel, "before");
+        // var zoomLevel = map.getTargetZoom();
+        map.setView({zoom:map.getTargetZoom() + 1});
+        console.log(map.getTargetZoom(), "new");
+        // currentZoom = map.getTargetZoom();
+    });
+
+    map.getZoomRange = function () {
+      return {
+        max: 19,
+        min: 2
+      };
+    };
+
+    // Attach a handler to the event that gets fired whenever the map's view is about to change
+    Microsoft.Maps.Events.addHandler(map,'viewchangestart',restrictZoom);
+
+    // Forcibly set the zoom to our min/max whenever the view starts to change beyond them 
+    var restrictZoom = function () {
+      if (map.getZoom() <= map.getZoomRange().min) 
+      {
+        map.setView({
+          'zoom':       map.getZoomRange().min,
+          'animate':    false
+        });
+      }
+      else if (map.getZoom() >= map.getZoomRange().max) 
+      {
+        map.setView({
+          'zoom':       map.getZoomRange().max,
+          'animate':    false
+        });
+      }
+    };
+
+    // var viewBoundaries = Microsoft.Maps.LocationRect.fromLocations(new Microsoft.Maps.Location(47.618594, -122.347618), new Microsoft.Maps.Location(47.620700, -122.347584), new Microsoft.Maps.Location(47.622052, -122.345869));
+    // map.setView({ bounds: viewBoundaries});
 }
 
 

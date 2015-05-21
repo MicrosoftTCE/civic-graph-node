@@ -593,7 +593,7 @@ button#submit-B {
   position: relative;
 }
 
-.d3-tip {
+.d3-tip, div.tooltip {
   line-height: 1;
   font-weight: bold;
   padding: 12px;
