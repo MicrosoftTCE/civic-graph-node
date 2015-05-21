@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 20, 2015 at 12:43 PM
+-- Generation Time: May 21, 2015 at 10:42 AM
 -- Server version: 5.6.24
 -- PHP Version: 5.5.20
 
@@ -41,11 +41,6 @@ CREATE TABLE IF NOT EXISTS `bridges` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1770 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Truncate table before insert `bridges`
---
-
-TRUNCATE TABLE `bridges`;
 --
 -- Dumping data for table `bridges`
 --
@@ -1847,11 +1842,6 @@ CREATE TABLE IF NOT EXISTS `bridges_audit` (
   `render` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Truncate table before insert `bridges_audit`
---
-
-TRUNCATE TABLE `bridges_audit`;
 -- --------------------------------------------------------
 
 --
@@ -1885,11 +1875,6 @@ CREATE TABLE IF NOT EXISTS `cities` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Truncate table before insert `cities`
---
-
-TRUNCATE TABLE `cities`;
 --
 -- Dumping data for table `cities`
 --
@@ -2011,11 +1996,6 @@ CREATE TABLE IF NOT EXISTS `cities_audit` (
   `city_long` decimal(18,15) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Truncate table before insert `cities_audit`
---
-
-TRUNCATE TABLE `cities_audit`;
 -- --------------------------------------------------------
 
 --
@@ -2059,11 +2039,6 @@ CREATE TABLE IF NOT EXISTS `entities` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=940 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Truncate table before insert `entities`
---
-
-TRUNCATE TABLE `entities`;
 --
 -- Dumping data for table `entities`
 --
@@ -3049,11 +3024,6 @@ CREATE TABLE IF NOT EXISTS `entities_audit` (
   `render` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=4970 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Truncate table before insert `entities_audit`
---
-
-TRUNCATE TABLE `entities_audit`;
 --
 -- Dumping data for table `entities_audit`
 --
@@ -8094,11 +8064,6 @@ CREATE TABLE IF NOT EXISTS `locations` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1191 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Truncate table before insert `locations`
---
-
-TRUNCATE TABLE `locations`;
---
 -- Dumping data for table `locations`
 --
 
@@ -9318,11 +9283,6 @@ CREATE TABLE IF NOT EXISTS `locations_audit` (
   `address_long` decimal(18,15) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Truncate table before insert `locations_audit`
---
-
-TRUNCATE TABLE `locations_audit`;
 -- --------------------------------------------------------
 
 --
@@ -9340,6 +9300,18 @@ CREATE TABLE IF NOT EXISTS `locations_view` (
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `locations_with_city`
+--
+CREATE TABLE IF NOT EXISTS `locations_with_city` (
+`entity_id` int(11)
+,`city` varchar(255)
+,`state` varchar(255)
+,`country` varchar(255)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `operations`
 --
 
@@ -9352,11 +9324,6 @@ CREATE TABLE IF NOT EXISTS `operations` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=224 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Truncate table before insert `operations`
---
-
-TRUNCATE TABLE `operations`;
 --
 -- Dumping data for table `operations`
 --
@@ -9609,11 +9576,6 @@ CREATE TABLE IF NOT EXISTS `operations_audit` (
   `year` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Truncate table before insert `operations_audit`
---
-
-TRUNCATE TABLE `operations_audit`;
 -- --------------------------------------------------------
 
 --
@@ -9662,6 +9624,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `locations_view`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `locations_view` AS select `locations`.`id` AS `id`,`locations`.`entity_id` AS `entity_id`,`locations`.`city_id` AS `city_id`,`locations`.`address` AS `address`,`locations`.`address_lat` AS `address_lat`,`locations`.`address_long` AS `address_long` from `locations` where isnull(`locations`.`deleted_at`);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `locations_with_city`
+--
+DROP TABLE IF EXISTS `locations_with_city`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `locations_with_city` AS select distinct `l`.`entity_id` AS `entity_id`,`c`.`city_name` AS `city`,(case when isnull(`c`.`state_name`) then `c`.`state_code` else `c`.`state_name` end) AS `state`,(case when isnull(`c`.`country_name`) then `c`.`country_code` else `c`.`country_name` end) AS `country` from (`locations` `l` left join `cities` `c` on((`l`.`city_id` = `c`.`id`))) order by `l`.`entity_id`;
 
 -- --------------------------------------------------------
 
