@@ -4,7 +4,12 @@
   "description": "A refactor of the civic graph app",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index.js"
+    "start": "node ./index.js",
+    "build": "TARGET=build webpack",
+    "watch": "TARGET=dev webpack --devtool eval --progress --colors --watch --hot --content-base build",
+    "lint": "npm run lint-js && npm run lint-css",
+    "lint-js": "eslint . --ext .js --ext .jsx",
+    "lint-css": "csslint app/stylesheets --quiet"
   },
   "repository": {
     "type": "git",
@@ -19,7 +24,11 @@
   "dependencies": {
     "body-parser": "^1.12.4",
     "cookie-parser": "^1.3.5",
+    "d3": "^3.5.5",
+    "d3-geo-projection": "^0.2.15",
+    "d3-tip": "^0.6.7",
     "debug": "^2.2.0",
+    "devbridge-autocomplete": "^1.2.16",
     "express": "^4.12.4",
     "geoip-lite": "^1.1.6",
     "jade": "^1.9.2",
@@ -27,8 +36,32 @@
     "morgan": "^1.5.3",
     "mysql": "^2.6.2",
     "mysql-wrap": "^0.4.0",
+    "node-libs-browser": "^0.5.0",
+    "queue-async": "^1.0.7",
     "serve-favicon": "^2.2.1",
     "sql-bricks": "^1.2.0",
-    "static-favicon": "^2.0.0-alpha"
+    "static-favicon": "^2.0.0-alpha",
+    "topojson": "^1.6.19",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "css-loader": "^0.13.1",
+    "csslint": "^0.10.0",
+    "eslint": "^0.21.2",
+    "eslint-loader": "^0.11.2",
+    "extract-text-webpack-plugin": "^0.8.0",
+    "file-loader": "^0.8.1",
+    "html-loader": "^0.3.0",
+    "jscs": "^1.13.1",
+    "jscs-loader": "^0.1.0",
+    "json-loader": "^0.5.1",
+    "json5": "^0.4.0",
+    "json5-loader": "^0.6.0",
+    "node-libs-browser": "^0.5.0",
+    "raw-loader": "^0.5.1",
+    "style-loader": "^0.12.2",
+    "url-loader": "^0.5.5",
+    "webpack": "^1.9.7",
+    "webpack-dev-server": "^1.8.2"
   }
 }
