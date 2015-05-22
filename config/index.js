@@ -87,4 +87,57 @@ exports.processResults = function(entities, bridges, operations, locations) {
   })
 
   return out;
-}
+};
+
+exports.processConnections = function(bridges) {
+  var fundingConnections = [];
+  var investmentConnections = [];
+  var collaborationConnections = [];
+  var dataConnections = [];
+
+  _.each(bridges, function(row) {
+    switch(row.connection) {
+      case 'Funding Received':
+        fundingConnections.push({
+          source: row.entity_2_id,
+          target: row.entity_1_id,
+          type: 'Received',
+          year: row.connection_year,
+          amount: row.amount,
+          render: row.render
+        })
+        break;
+      case 'Investment Received':
+        investmentConnections.push({
+          source: row.entity_2_id,
+          target: row.entity_1_id,
+          type: 'Received',
+          year: row.connection_year,
+          amount: row.amount,
+          render: row.render
+        })
+        break;
+      case 'Collaboration':
+        collaborationConnections.push({
+          source: row.entity_2_id,
+          target: row.entity_1_id,
+          render: row.render
+        })
+        break;
+      case 'Data':
+        dataConnections.push({
+          source: row.entity_2_id,
+          target: row.entity_1_id,
+          render: row.render
+        })
+        break;
+    }
+  })
+
+  return {
+    funding_connections: fundingConnections,
+    investment_connections: investmentConnections,
+    collaboration_connections: collaborationConnections,
+    data_connections: dataConnections
+  }
+};

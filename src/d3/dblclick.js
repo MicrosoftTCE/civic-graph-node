@@ -37,24 +37,19 @@ var dblclick = function(d) {
     .links(connections)
     .linkStrength(0)
     .charge(function(d) {
-      // if (d.employees !== null)
-      //   return -5 * empScale(parseInt(d.employees));
-      // else
-      //   return -50;
       if (d.render === 1) {
-        if (d.employees !== null)
+        if (d.employees !== null) {
           return -6 * empScale(d.employees);
-        else
+        } else {
           return -25;
-      } else
+        }
+      } else {
         return 0;
+      }
     })
     .linkDistance(50)
-
-  .on("tick", tick)
+    .on("tick", tick)
     .start();
-  // for (var i = 0; i < 1; ++i) {
-  //                    force.tick();
-  //                }
-  //                force.stop();
 }
+
+module.exports = dblclick;

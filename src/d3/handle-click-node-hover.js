@@ -28,7 +28,6 @@ var handleClickNodeHover = function(d) {
     .on('mouseout', function() {
       return d3.select('#editBox').style("visibility", "hidden");
     });
-
 }
 
 module.exports = handleClickNodeHover;

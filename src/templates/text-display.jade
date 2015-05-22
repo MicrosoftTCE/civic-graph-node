@@ -1,0 +1,160 @@
+div(style='height: 30px')
+  a(style='float: right')
+    i#editCurrentInfo.icon-pencil.on-left
+
+h1
+  a(href=url, target='_blank') #{name}
+
+div.category-label Type of entity:
+div.category-value #{type}
+
+div.category-label Location:
+if locations
+  ul
+    for loc in locations
+      li
+        div.category-value
+          a.click-location(style='cursor: pointer') #{location}
+else
+  div.category-value N/A
+
+if isOrganization
+  div.category-label Employees:
+  div.category-value #{numEmployees}
+
+div.category-label Twitter:
+div.category-value
+  if twitter_handle
+    a(href=twitterLink, target='_blank')
+      #{twitterHandle}
+  else
+    | N/A
+
+div.category-label Twitter Followers:
+div.category-value
+  if twitter_followers
+    #{twitter_followers}
+  else
+    | N/A
+
+if key_people
+  div.category-label Key People:
+  ul
+    for person in key_people
+      li
+        a(href='bingSearchUrl', target='_blank') #{person.name}
+
+if funding_received
+  div.category-label Received funding from:
+  ul
+    for fund in funding_received
+      li
+        div.category-value
+          a(href='bingSearchUrl', target='_blank') #{entity}:
+          if amount
+            strong(style='color: rgb(255,185,0)') unknown
+          else
+            strong(style='color: rgb(127,186,0)') #{amount}
+else
+  div.category-label No known funding received.
+
+if funding_given
+  div.category-label Gave funding to:
+  ul
+    for fund in funding_given
+      li
+        div.category-value
+          a(href='bingSearchUrl', target='_blank') #{entity}:
+          if amount
+            strong(style='color: rgb(255,185,0)') unknown
+          else
+            strong(style='color: rgb(127,186,0)') #{amount}
+else
+  div.category-label No known funding provided.
+
+if investments_received
+  div.category-label Received investments from:
+  ul
+    for investment in investments_received
+      li
+        div.category-value
+          a(href='bingSearchUrl', target='_blank') #{entity}:
+          if amount
+            strong(style='color: rgb(255,185,0)') unknown
+          else
+            strong(style='color: rgb(127,186,0)') #{amount}
+else
+  div.category-label No known investments received.
+
+if investments_made
+  div.category-label Invested in:
+  ul
+    for investment in investments_made
+      li
+        div.category-value
+          a(href='bingSearchUrl', target='_blank') #{entity}:
+          if amount
+            strong(style='color: rgb(255,185,0)') unknown
+          else
+            strong(style='color: rgb(127,186,0)') #{amount}
+else
+  div.category-label No known investments made.
+
+if collaborations
+  div.category-label Collaborated with:
+  ul
+    for collab in collaborations
+      li
+        a(href='bingSearchUrl', target='_blank') #{entity}
+else
+  div.category-label No known collaborations.
+
+if data
+  div.category-label Obtained data from:
+  ul
+    for datum in data
+      li
+        a(href='bingSearchUrl', target='_blank') #{entity}
+else
+  div.category-label No known external data usage.
+
+if revenue
+  div.category-label Revenue:
+  ul
+    for amt in revenue
+      li
+        if year
+          div.category-value #{year}:
+          if amount
+            strong(style='color: rgb(127,186,0)') #{amount}
+          else
+            strong(style='color: rgb(255,185,0)')) unknown
+        else
+          div.category-value Unknown Year:
+          if amount
+            strong(style='color: rgb(127,186,0)') #{amount}
+          else
+            strong(style='color: rgb(255,185,0)') unknown
+else
+  div.category-label No known revenue information.
+
+if expenses
+  div.category-label Expenses:
+  ul
+    for amt in expenses
+      li
+        if year
+          div.category-value #{year}:
+          if amount
+            strong(style='color: rgb(127,186,0)') #{amount}
+          else
+            strong(style='color: rgb(255,185,0)')) unknown
+        else
+          div.category-value Unknown Year:
+          if amount
+            strong(style='color: rgb(127,186,0)') #{amount}
+          else
+            strong(style='color: rgb(255,185,0)') unknown
+else
+  div.category-label No known expense information.
+
