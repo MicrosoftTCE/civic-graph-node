@@ -107,7 +107,7 @@ router.get('/entities/:name/relations', function (req, res) {
 router.get('/entities/:name/funding_received', function (req, res) {
   var qry = "SELECT e.name, b.amount, b.connection_year AS year " +
     "FROM bridges b LEFT JOIN entities e ON e.id = b.entity_2_id, " +
-    "(SELECT id FROM `entities` WHERE TRIM(name) = ?) t WHERE b.entity_1_id = t.id";
+    "(SELECT id FROM `entities` WHERE TRIM(name) = ?) t WHERE b.entity_1_id = t.id AND b.connection LIKE 'Funding%'";
 
   db.query(qry, [req.params.name])
     .then(function(result) {
@@ -121,19 +121,14 @@ router.get('/entities/:name/funding_received', function (req, res) {
 });
 
 router.get('/entities/:name/funding_given', function (req, res) {
-  var qry = select('id').from("bridges_view")
-    .where('connection', 'Funding Given').toString();
+  var qry = "SELECT e.name, b.amount, b.connection_year AS year " +
+    "FROM bridges b LEFT JOIN entities e ON e.id = b.entity_1_id, " +
+    "(SELECT id FROM `entities` WHERE TRIM(name) = ?) t WHERE b.entity_2_id = t.id AND b.connection LIKE 'Funding%'";
 
-  db.query(qry)
-    .then(function(entityIds) {
-      _.each(entityIds , function(entityId) {
-        qry = select().from("entities_view")
-          .where({id: entityId}).toString();
-      });
-      console.log(qry);
-      return db.qry(qry);
-    })
+
+  db.query(qry, [req.params.name])
     .then(function(result) {
+      console.log(result);
       res.json(result);
     })
     .catch(function(err) {
@@ -142,6 +137,83 @@ router.get('/entities/:name/funding_given', function (req, res) {
     });
 
 });
+
+router.get('/entities/:name/investments_received', function (req, res) {
+  var qry = "SELECT e.name, b.amount, b.connection_year AS year " +
+    "FROM bridges b LEFT JOIN entities e ON e.id = b.entity_2_id, " +
+    "(SELECT id FROM `entities` WHERE TRIM(name) = ?) t WHERE b.entity_1_id = t.id AND b.connection LIKE 'Investment%'";
+
+
+  db.query(qry, [req.params.name])
+    .then(function(result) {
+      console.log(result);
+      res.json(result);
+    })
+    .catch(function(err) {
+      console.log("ERROR on /entities/" + req.params.name + '/investments_received', err);
+      res.sendStatus(400);
+    });
+
+});
+
+router.get('/entities/:name/investments_made', function (req, res) {
+  var qry = "SELECT e.name, b.amount, b.connection_year AS year " +
+    "FROM bridges b LEFT JOIN entities e ON e.id = b.entity_1_id, " +
+    "(SELECT id FROM `entities` WHERE TRIM(name) = ?) t WHERE b.entity_2_id = t.id AND b.connection LIKE 'Investment%'";
+
+
+  db.query(qry, [req.params.name])
+    .then(function(result) {
+      console.log(result);
+      res.json(result);
+    })
+    .catch(function(err) {
+      console.log("ERROR on /entities/" + req.params.name + '/investments_made', err);
+      res.sendStatus(400);
+    });
+
+});
+
+router.get('/entities/:name/collaborations', function (req, res) {
+  var qry = "SELECT e.name, b.amount, b.connection_year AS year " +
+    "FROM bridges b LEFT JOIN entities e ON e.id = b.entity_2_id, " +
+    "(SELECT id FROM `entities` WHERE TRIM(name) = ?) t WHERE b.entity_1_id = t.id AND b.connection LIKE 'Collaborations%'";
+
+
+  db.query(qry, [req.params.name])
+    .then(function(result) {
+      console.log(result);
+      res.json(result);
+    })
+    .catch(function(err) {
+      console.log("ERROR on /entities/" + req.params.name + '/collaborations', err);
+      res.sendStatus(400);
+    });
+
+});
+
+router.get('/entities/:name/data', function (req, res) {
+  var qry = "SELECT e.name, b.amount, b.connection_year AS year " +
+    "FROM bridges b LEFT JOIN entities e ON e.id = b.entity_2_id, " +
+    "(SELECT id FROM `entities` WHERE TRIM(name) = ?) t WHERE b.entity_1_id = t.id AND b.connection LIKE 'Data%'";
+
+
+  db.query(qry, [req.params.name])
+    .then(function(result) {
+      console.log(result);
+      res.json(result);
+    })
+    .catch(function(err) {
+      console.log("ERROR on /entities/" + req.params.name + '/data', err);
+      res.sendStatus(400);
+    });
+
+});
+
+
+
+// app.get('/entities/:name/revenue', entities.retrieve_revenue);
+// app.get('/entities/:name/expenses', entities.retrieve_expenses);
 
 router.get('/operations', function (req, res) {
   var qry = select().from("operations_view").toString();
