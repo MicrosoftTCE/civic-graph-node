@@ -1,0 +1,134 @@
+h2#webform-head Information
+
+hr
+
+div.webform-content
+  div.input-control.text(data-role='input-control')
+    input#name(type='text', name='name', placeholder='Name of Entity')
+
+  h3.form-header Entity Type
+
+  div.webform-entities
+    div.input-control.radio.default-style.webform(data-role='input-control')
+      label
+        input#rb_forpro(
+          type='radio'
+          name='entitytype'
+          value='For-Profit'
+          checked='checked'
+        )
+        span.check
+        h4.webform-labels For-Profit
+
+    div.input-control.radio.default-style.webform(data-role='input-control')
+      label
+        input#rb_nonpro(
+          type='radio'
+          name='entitytype'
+          value='Non-Profit'
+        )
+        span.check
+        h4.webform-labels Non-Profit
+
+    div.input-control.radio.default-style.webform(data-role='input-control')
+      label
+        input#rb_gov(
+          type='radio'
+          name='entitytype'
+          value='Government'
+        )
+        span.check
+        h4.webform-labels Government
+
+    div.input-control.radio.default-style.webform(data-role='input-control')
+      label
+        input#rb_individs(
+          type='radio'
+          name='entitytype'
+          value='Individual'
+        )
+        span.check
+        h4.webform-labels Individual
+
+  div#location-0.input-control.text(data-role='input-control')
+    input#location.locations(type='text', name='location', placeholder='City')
+
+  hr
+
+  div.input-control.text(data-role='input-control')
+    input#nickname(type='text', name='nickname', placeholder='Nickname/Abbr.')
+
+  div.input-control.text(data-role='input-control')
+    input#twitterhandle(type='text', name='twitterhandle', placeholder='Twitter Handle')
+
+  h3.form-header(style='display: inline-block') Circle of Influence:
+
+  div.webform-influence
+    div.input-control.radio.default-style.webform(data-role='input-control')
+      label
+        input#rb_local(
+          type='radio'
+          name='influence-type'
+          value='Local Influence'
+          checked='checked'
+        )
+        span.check
+        h4.webform-labels Local Influence
+
+    div.input-control.radio.default-style.webform(data-role='input-control')
+      label
+        input#rb_global(
+          type='radio'
+          name='influence-type'
+          value='Global Influence'
+          checked='checked'
+        )
+        span.check
+        h4.webform-labels Global Influence
+
+  h3.form-header Collaboration
+
+  div#collaboration-0.input-control.text(data-role='input-control')
+    input.collaborator(
+      type='text'
+      name='collaboration'
+      placeholder='Collaborator'
+      list='collaborator-list'
+    )
+    datalist#collaborator-list
+
+  h3.form-header Revenue
+
+  div#revenue-0
+    div.revenue-input.input-control.text(data-role='input-control')
+      input.revenue_amt(
+        type='text'
+        name='revenue_amt'
+        placeholder='Amount'
+        style='display:inline-block; width: 57%'
+      )
+      input.revenue_year(
+        type='text'
+        name='revenue_year'
+        placeholder='Year'
+        style='display:inline-block; width: 20%'
+      )
+
+  h3.form-header Expenses
+
+  div#expense-0
+    div.expense-input.input-control.text(data-role='input-control')
+      input.expense_amt(
+        type='text'
+        name='expense_amt'
+        placeholder='Amount'
+        style='display:inline-block; width: 57%'
+      )
+      input.expense_year(
+        type='text'
+        name='expense_year'
+        placeholder='Year'
+        style='display:inline-block; width: 20%'
+      )
+
+  button#submit-B(type='button', href='javascript: check_empty()') Submit

@@ -341,121 +341,12 @@ function drawGraph() {
 
 
 
-    // Form B has the required items, which are already filled out, and the advanced items.
-    // This form takes the user directly to form C if the user submits the data via clicking the submit button.
-    function displayFormB() {
-      // Now we have a perfectly structured JSON object that contains the information given by the user and inputted into the webform.
-      // Send this object as a parameter to form B, and render form B accordingly.
+    // Form B has the required items, which are already filled out,
+    // and the advanced items. This form takes the user directly to form C
+    // if the user submits the data via clicking the submit button.
+    var displayFormB = require('./d3/display-form-b');
 
-      var formObject = processFormA();
-
-      if (formObject.location && formObject.name) {
-        // Reinitialize Form A items.
-
-        counterKey = 0;
-        counterK = 0;
-
-        counterFund = 0;
-        counterF = 0;
-
-        // Render form B.
-
-        s = '<h2 id="webform-head">Information</h2><hr/><div class="webform-content"><div class="input-control text" data-role="input-control"><input type="text" name="name" id="name" placeholder="Name of Entity"/></div><h3 class="form-header">Entity Type</h3><div class="webform-entities"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" checked="checked"/><span class="check"></span><h4 class="webform-labels">For-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit"/><span class="check"></span><h4 class="webform-labels">Non-Profit</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_gov" type="radio" name="entitytype" value="Government"/><span class="check"></span><h4 class="webform-labels">Government</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_individs" type="radio" name="entitytype" value="Individual"/><span class="check"></span><h4 class="webform-labels">Individual</h4></label></div></div><div id="location-0" class="input-control text" data-role="input-control"><input type="text" name="location" class="locations" id="location" placeholder="City" /></div>';
-        // d3.select("#expense").on("keyup", function() {
-        //     add_input_exp(counterE);
-        // });
-        //
-        // Time to render the nickname, twitter handle fields
-        // Also circle of influence, collaboration, revenue, revenue and grant...
-        s += '<hr/><div class = "input-control text" data-role="input-control"><input type="text" name="nickname" id="nickname" placeholder="Nickname/Abbr."/></div><div class = "input-control text" data-role="input-control"><input type="text" name="twitterhandle" id="twitterhandle" placeholder="Twitter Handle"/></div><h3 class="form-header" style="display:inline-block;">Circle of Influence: </h3><div class="webform-influence"><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_local" type="radio" name="influence-type" value="Local Influence" checked="checked"/><span class="check"></span><h4 class="webform-labels">Local Influence</h4></label></div><div data-role="input-control" class="input-control radio default-style webform"><label><input id="rb_global" type="radio" name="influence-type" value="Global Influence" checked="checked"/><span class="check"></span><h4 class="webform-labels">Global Influence</h4></label></div></div><h3 class="form-header">Collaboration</h3><div id="collaboration-0" class="input-control text" data-role="input-control"><input type="text" name="collaboration" class="collaborator" placeholder="Collaborator" list="collaborator-list"/><datalist id="collaborator-list"></datalist></div><h3 class="form-header">Revenue</h3><div id="revenue-0"><div class="revenue-input input-control text" data-role="input-control"><input type="text" name="revenue_amt" class="revenue_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/><input type="text" name="revenue_year" class="revenue_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><h3 class="form-header">Expenses</h3><div id="expense-0"><div class="expense-input input-control text" data-role="input-control"><input type="text" name="expense_amt" class="expense_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/><input type="text" name="expense_year" class="expense_year" placeholder="Year" style="display:inline-block; width: 20%;"/></div></div><button type="button" id="submit-B" href="javascript: check_empty()">Submit</button></div>';
-
-        // <h3 class="form-header">Grants</h3>\
-        // <div id="grant-0">\
-        // <div class="grant-input input-control text" data-role="input-control">\
-        // <input type="text" name="grant_amt" class="grant_amt" placeholder="Amount" style="display:inline-block; width: 57%;"/>\
-        // <input type="text" name="grant_year" class="grant_year" placeholder="Year" style="display:inline-block; width: 20%;"/>\
-        // </div>\
-        // </div>\
-
-        d3.select('#info')
-          .html(s);
-
-        addDataList('#collaboration-0 datalist');
-
-
-        // Time to prefill the form...
-        d3.selectAll('#name').text(function(d) {
-          this.value = formObject.name;
-        }).attr("disabled", true);
-
-        if( formObject.location !== null) {
-          var location = formObject.location;
-          for(var i=0; i<location.length; i++) {
-            if(i === 0) {
-              d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
-              d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
-                this.value = location[i];
-                this.disabled = true;
-              });
-            } else {
-              $("#location-" + (i-1)).after('<div id="location-' + i + '" class="input-control text" data-role="input-control"><input type="text" name="location" class="locations" id="location" placeholder="City" /></div>');
-              d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
-              d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
-                this.value = location[i];
-                this.disabled = true;
-              });
-            }
-          }
-
-          d3.select('#location-' + location.length + ' input[name="location"]').on('keyup', function() {
-            add_input_loc(location.length);
-          }).style("margin-top", "10px");
-        }
-
-        d3.selectAll('input[name="entitytype"]').filter(function(d, i) {
-          if (this.value === formObject.type)
-            this.checked = true;
-          else
-            this.checked = false;
-          this.disabled = true;
-        });
-
-        // Add action listeners
-        d3.selectAll('input[name="collaboration"]').on('keyup', function() {
-          add_input_collab(0);
-          preFillName(this.value, '#collaboration-0 input');
-        });
-        d3.selectAll('input[name="revenue_amt"]').on('keyup', function() {
-          add_input_rev(0);
-        });
-        d3.selectAll('input[name="expense_amt"]').on('keyup', function() {
-          add_input_exp(0);
-        });
-        // d3.selectAll('input[name="grant_amt"]').on('keyup', function() {
-        //   add_input_grant(0);
-        // });
-
-        d3.selectAll('#submit-B').on('click', function() {
-          displayFormCSendJSON(formObject);
-          // if(!_.isEmpty(sb))
-        });
-      } else { //  Error checking the form...
-        if (!formObject.name && !formObject.location) {
-          d3.select('#name').style("border-color", "#e51400");
-          d3.select('#location').style("border-color", "#e51400");
-        } else {
-          if (!formObject.name)
-            d3.select('#name').style("border-color", "#e51400");
-          else
-            d3.select('#location').style("border-color", "#e51400");
-        }
-      }
-
-    }
-
-    function addDataList(dataListSelector) {
-      d3.select(dataListSelector).html(dataListSortedNames);
-    }
+    var addDataList = require('./d3/add-data-list');
 
     function preFillName(input, inputSelector) {
       if (input.toLowerCase() in entitiesHash) {
