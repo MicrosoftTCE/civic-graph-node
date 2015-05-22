@@ -2,8 +2,9 @@ var d3 = require('d3');
 var _  = require('underscore');
 var $ = require('jquery');
 
+require('./scripts/mapcontrol');
+
 var utils = require('./utilities');
-var d3utils = require('./utilities/d3');
 
 require('./styles/reset.css');
 require('./styles/normalize.css');
@@ -36,11 +37,11 @@ d3.selection.prototype.moveToBack = function() {
 };
 
 function drawGraph() {
-  var wrap = d3utils.wrap;
-  var transformText = d3utils.transformText;
-  var translation = d3utils.translation;
-  var numCommas = d3utils.numCommas;
-  var weightSorter = d3utils.weightSorter;
+  var wrap = require('./d3/wrap');
+  var transformText = require('./d3/transform-text');
+  var translation = require('./d3/translation');
+  var numCommas = require('./d3/num-commas');
+  var weightSorter = require('./d3/weight-sorter');
 
   var width = 1000;
   var height = 1000;
@@ -118,12 +119,11 @@ function drawGraph() {
 
 
   d3.json("/athena", function(error, graph) {
-    console.log("error, graph", error, graph);
-    var allNodes                 = graph.nodes;
-    var fundingConnections       = graph.funding_connections;
-    var investmentConnections    = graph.investment_connections;
-    var collaborationConnections = graph.collaboration_connections;
-    var dataConnections          = graph.data_connections;
+    var allNodes                 = graph.entities;
+    var fundingConnections       = graph.funding_connections || []; // TODO: remove ||
+    var investmentConnections    = graph.investment_connections || [];
+    var collaborationConnections = graph.collaboration_connections || [];
+    var dataConnections          = graph.data_connections || [];
 
     var connections = fundingConnections
       .concat(investmentConnections)
@@ -147,7 +147,6 @@ function drawGraph() {
         }
       })
       .linkDistance(50)
-
 
     var drag = force.drag()
       .on("dragstart", drag)
@@ -323,334 +322,11 @@ function drawGraph() {
 
     // Must adjust the force parameters...
 
-    function dblclick(d) {
-      d3.select(this).classed("fixed", function(d) {
-        d.fixed = false;
-      });
-      d3.select(this).on('mousedown.drag', null);
-
-      var dblclickobject = (d3.select(this).data())[0];
-
-      var svgWidth = parseInt(svg.style("width").substring(0, ((svg.style("width")).length + 1) / 2));
-      var svgHeight = parseInt(svg.style("height").substring(0, ((svg.style("height")).length + 1) / 2));
-      var halfSVGWidth = parseInt(svgWidth / 2);
-      var halfSVGHeight = parseInt(svgHeight / 2);
-
-      multiplierX = svgWidth / width;
-      multiplierY = svgHeight / height;
-
-      scaledDX = multiplierX * d.x;
-      scaledDY = multiplierY * d.y;
-
-      centeredNode = jQuery.extend(true, {}, d);
-
-      // Half viewbox...
-      centeredNode.x = width / 2 - 10;
-      centeredNode.y = height / 2 - 60;
-
-      var force = d3.layout.force()
-        .nodes(allNodes)
-        .size([width, height])
-        .links(connections)
-        .linkStrength(0)
-        .charge(function(d) {
-          // if (d.employees !== null)
-          //   return -5 * empScale(parseInt(d.employees));
-          // else
-          //   return -50;
-          if (d.render === 1) {
-            if (d.employees !== null)
-              return -6 * empScale(d.employees);
-            else
-              return -25;
-          } else
-            return 0;
-        })
-        .linkDistance(50)
-
-      .on("tick", tick)
-        .start();
-      // for (var i = 0; i < 1; ++i) {
-      //                    force.tick();
-      //                }
-      //                force.stop();
-    }
-
-
-    function handleClickNodeHover(d) {
-      s = textDisplay(d);
-
-      webform = editDisplay(d);
-
-      // For editing the data displayed within the side panel.
-      d3.select('#edit')
-        .html(webform);
-
-      //  Printing to side panel within web application.
-      d3.select('#info')
-        .html(s)
-        .style('list-style', 'square');
-
-
-      d3.selectAll('#editCurrentInfo').on('click', function() {
-          prefillCurrent(d);
-        })
-        .on('mouseover', function() {
-          d3.select(this).style('cursor', 'pointer');
-          return d3.select('#editBox').style("visibility", "visible");
-        })
-        .on('mousemove', function() {
-          return d3.select('#editBox').style("top", (d3.event.pageY + 4) + "px").style("left", (d3.event.pageX + 16) + "px");
-        })
-        .on('mouseout', function() {
-          return d3.select('#editBox').style("visibility", "hidden");
-        });
-
-    }
-
-    function prefillCurrent(d) {
-      editForm();
-      preFillFormA(d);
-    }
-
-    function editDisplay(d) {
-      var webform = "";
-
-      webform += '<h1 id="edit-add-info">' + '<i class="icon-plus on-left"></i>' + 'Add Information' + '</h1>';
-
-      return webform;
-    }
-
-    function textDisplay(d) {
-      var s = "";
-
-      //  General Information
-      s += '<div style="height:30px"><a style="float:right;"><i id="editCurrentInfo" class="icon-pencil on-left"></i></a></div>';
-      s += '<h1>' + "<a href=" + '"' + d.url + '" target="_blank">' + d.name + '</a></h1>';
-      s += '<h6>' + 'Type of Entity: ' + '</h6>' + ' <h5>' + d.type + '</h5>';
-
-
-      //do it here
-      //
-
-
-
-      if (d.location !== null) {
-        s += '<br/>' + '<h6> ' + 'Location:  ' + '</h6>';
-        var locationArray= d.location;
-
-        if (locationArray.length > 1) {
-          var locationArr = [];
-          s += '<br/> <h5><ul>';
-          locationArray.forEach(function(loc) {
-            locationArr.push(loc.location);
-
-          });
-          for (var count = 0; count < locationArr.length; count++) {
-            s += '<li style="display:block;">' + '<h5><a class="click-location" style="cursor:pointer;">' + locationArr[count] + '</h5></a>' + '</li>';
-          }
-        }
-        else {
-          locationArray.forEach(function(loc) {
-            locString = loc.location;
-
-            s += '<h5><ul>'
-            s += '<li style="display:inline-block;">' + '<h5><a class="click-location" style="cursor:pointer;">' + locString + '</h5></a>' + '</li>';
-          });
-        }
-        s += '</h5></ul><br/>';
-
-      } else {
-        s += '<br/>' + '<h6> ' + 'Location:  ' + '</h6>' + ' <h5>' + 'N/A' + '</h5>' + '<br/>';
-      }
-
-
-      if (d.type !== 'Individual') {
-        if (d.employees !== null) {
-          s += '<h6>' + 'Employees: ' + '</h6> <h5>' + numCommas(d.employees.toString()) + '</h5><br/>';
-        } else {
-          s += '<h6>' + 'Employees: ' + '</h6> <h5>' + 'N/A' + '</h5><br/>';
-        }
-      }
-
-      if (d.twitter_handle === null) {
-        s += '<h6>' + 'Twitter:  ' + '</h6> <h5>' + 'N/A' + '</h5><br/>';
-        s += '<h6>' + 'Twitter Followers: ' + '</h6> <h5>' + 'N/A' + '</h5><br/>';
-      } else {
-        var twitterLink = (d.twitter_handle).replace('@', '');
-
-
-        twitterLink = 'https://twitter.com/' + twitterLink;
-        s += '<h6>' + 'Twitter:  ' + '</h6> <h5>' + "<a href=" + '"' + twitterLink + '" target="_blank">' + d.twitter_handle + '</h5></a><br/>';
-        if (d.followers !== null) {
-          s += '<h6>' + 'Twitter Followers:  ' + '</h6> <h5>' + numCommas(d.followers.toString()) + '</h5><br/>';
-        } else {
-          s += '<h6>' + 'Twitter Followers:  ' + '</h6> <h5>' + 'N/A' + '</h5><br/>';
-        }
-      }
-
-      //  KEY PEOPLE
-      if (d.key_people !== null) {
-        s += '<br/><h6>' + 'Key People:' + '</h6>' + '<ul><h5>';
-        for (var count = 0; count < d.key_people.length; count++) {
-          s += '<li>' + '<a href="http://www.bing.com/search?q=' + (d.key_people[count].name).replace(" ", "%20") + '%20' + (d.nickname).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.key_people[count].name + '</a>' + '</li>';
-        }
-        s += '</h5></ul>';
-      }
-
-      // //  FUNDING
-
-      if (d.funding_received === null) {
-        s += '<br/><h6>' + 'No known funding received.' + '</h6><br/>';
-      } else {
-        s += '<br/>' + '<h6>' + 'Received funding from:' + '</h6><ul>';
-        (d.funding_received).forEach(function(d) {
-          if (d.amount === 0 || d.amount === null) {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-          } else {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
-          }
-          if (d.year === null) {
-
-          } else {
-
-          }
-        });
-        s += '</ul>'
-      }
-
-      if (d.funding_given === null) {
-        s += '<br/><h6>' + 'No known funding provided.' + '</h6><br/>';
-      } else {
-        s += '<br/>' + '<h6>' + 'Gave funding to:' + '</h6><ul>';
-        (d.funding_given).forEach(function(d) {
-          if (d.amount === 0 || d.amount === null) {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-          } else {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
-          }
-          if (d.year === null) {
-
-          } else {
-
-          }
-        });
-        s += '</ul>'
-      }
-
-      if (d.investments_received === null) {
-        s += '<br/><h6>' + 'No known investments received.' + '</h6><br/>';
-      } else {
-        s += '<br/>' + '<h6>' + 'Received investments from:' + '</h6><ul>';
-        (d.investments_received).forEach(function(d) {
-          if (d.amount === 0 || d.amount === null) {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-          } else {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
-          }
-          if (d.year === null) {
-
-          } else {
-
-          }
-        });
-        s += '</ul>'
-      }
-
-      if (d.investments_made === null) {
-        s += '<br/><h6>' + 'No known investments made.' + '</h6><br/>';
-      } else {
-        s += '<br/>' + '<h6>' + 'Invested in:' + '</h6><ul>';
-        (d.investments_made).forEach(function(d) {
-          if (d.amount === 0 || d.amount === null) {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-          } else {
-            s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
-          }
-          if (d.year === null) {
-
-          } else {
-
-          }
-        });
-        s += '</ul>'
-      }
-
-      if (d.collaborations === null) {
-        s += '<br/><h6>' + 'No known collaborations.' + '</h6><br/>';
-      } else {
-        s += '<br/>' + '<h6>' + 'Collaborated with:' + '</h6><ul>';
-        (d.collaborations).forEach(function(d) {
-
-          s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + '</li>';
-
-        });
-        s += '</ul>'
-      }
-
-      if (d.data === null) {
-        s += '<br/><h6>' + 'No known external data usage.' + '</h6><br/>';
-      } else {
-        s += '<br/>' + '<h6>' + 'Obtained data from:' + '</h6><ul>';
-        (d.data).forEach(function(d) {
-
-          s += '<li><h5>' + '<a href="http://www.bing.com/search?q=' + (d.entity).replace(" ", "%20") + '&go=Submit&qs=bs&form=QBRE" target="_blank">' + d.entity + '</a></h5>' + '</li>';
-
-        });
-        s += '</ul>'
-      }
-
-
-      if (d.revenue === null) {
-        s += '<br/><h6>' + 'No known revenue information.' + '</h6><br/>';
-      } else {
-        s += '<br/>' + '<h6>' + 'Revenue:' + '</h6><ul>';
-        (d.revenue).forEach(function(d) {
-          if (d.amount === 0 || d.amount === null) {
-            if (d.year === null) {
-              s += '<li><h5>' + 'Unknown Year' + '</h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-            } else {
-              s += '<li><h5>' + d.year + '</h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-            }
-          } else {
-            if (d.year === null) {
-              s += '<li><h5>' + 'Unknown Year' + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
-            } else {
-              s += '<li><h5>' + d.year + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
-            }
-          }
-        });
-        s += '</ul>'
-      }
-
-      if (d.expenses === null) {
-        s += '<br/><h6>' + 'No known expenses information.' + '</h6><br/>';
-      } else {
-        s += '<br/>' + '<h6>' + 'Expenses:' + '</h6><ul>';
-        (d.expenses).forEach(function(d) {
-          if (d.amount === 0 || d.amount === null) {
-            if (d.year === null) {
-              s += '<li><h5>' + 'Unknown Year' + '</h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-            } else {
-              s += '<li><h5>' + d.year + '</h5>' + ': <strong style="color:rgb(255,185,0);">unknown</strong>' + '</li>';
-            }
-          } else {
-            if (d.year === null) {
-              s += '<li><h5>' + 'Unknown Year' + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
-            } else {
-              s += '<li><h5>' + d.year + '</h5>' + ': <strong style="color:rgb(127,186,0);">$' + numCommas(d.amount.toString()) + '</strong>' + '</li>';
-            }
-          }
-        });
-        s += '</ul>'
-      }
-
-      displayFormA(d);
-
-      return s;
-    }
-
-
+    var dblclick = require('./d3/dblclick');
+    var handleClickNodeHover = require('./d3/handle-click-node-hover');
+    var prefillCurrent = require('./d3/prefill-current');
+    var editDisplay = require('./d3/edit-display');
+    var textDisplay = require('./d3/text-display');
 
     // Form A has the required items + basic items
     // Also, the user has the options of going directly to form B or C

@@ -86,5 +86,5 @@ exports.processResults = function(entities, bridges, operations, locations) {
     } catch (err) {}
   })
 
-  return { entities: out };
+  return out;
 }

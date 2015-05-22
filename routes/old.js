@@ -20,18 +20,21 @@ router.get('/athena', function(req, res) {
   db.query(qry)
     .then(function(results) {
       entities = results;
+      console.log("entities", entities);
       qry = select().from("bridges_view").where({render: 1}).toString()
 
       return db.query(qry)
     })
     .then(function(results) {
       bridges = results;
+      console.log("bridges", bridges);
       qry = select().from("operations_view").toString()
 
       return db.query(qry)
     })
     .then(function(results) {
-      res.json(config.processResults(entities, bridges, results));
+      console.log("operations", results);
+      res.json({ entities: _.values(config.processResults(entities, bridges, results)) });
     })
     .catch(function(err) {
       console.log("ERROR on /entities", err);

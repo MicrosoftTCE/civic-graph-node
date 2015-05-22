@@ -1,2 +1,7 @@
 node_modules/
-build/
+public/*.js
+public/*.woff
+public/*.svg
+public/*.eot
+public/*.json
+public/*.ttf
