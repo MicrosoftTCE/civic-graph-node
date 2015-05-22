@@ -1,8 +1,9 @@
 var d3 = require('d3');
 var _  = require('underscore');
-
+var $ = require('jquery');
 
 var utils = require('./utilities');
+var d3utils = require('./utilities/d3');
 
 require('./styles/reset.css');
 require('./styles/normalize.css');
@@ -35,81 +36,25 @@ d3.selection.prototype.moveToBack = function() {
 };
 
 function drawGraph() {
-  function wrap(text, width) {
-    text.each(function() {
-      var text = d3.select(this),
-        words = text.text().split(/\s+/).reverse(),
-        word,
-        line = [],
-        lineNumber = 0,
-        lineHeight = 1.1, // ems
-        dy = parseFloat(text.attr("dy")),
-        data = d3.select(this)[0][0].__data__,
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", function() {
-          if (data.employees !== null)
-            return empScale(data.employees) + 10;
-          else
-            return 7 + 10;
-        }).attr("dy", dy + "em");
-
-      while (word = words.pop()) {
-        line.push(word);
-        tspan.text(line.join(" "));
-        if (tspan.node().getComputedTextLength() > width) {
-          line.pop();
-          tspan.text(line.join(" "));
-          line = [word];
-          lineNumber++;
-          tspan = text.append("tspan").attr("x", 0).attr("y", function() {
-            if (data.employees !== null)
-              return empScale(data.employees) + 5;
-            else
-              return 7 + 5;
-          }).attr("dy", lineNumber * lineHeight + dy + "em").text(word);
-        }
-      }
-    });
-  }
-
-  function transformText(d) {
-    return "translate(" + d.x + "," + d.y + ")";
-  }
-
-  function translation(x, y) {
-    return 'translate(' + x + ',' + y + ')';
-  }
-
-  function numCommas(numberStr) {
-    numberStr += '';
-    x = numberStr.split('.');
-    x1 = x[0];
-    x2 = x.length > 1 ? '.' + x[1] : '';
-    var rgx = /(\d+)(\d{3})/;
-
-    while (rgx.test(x1)) {
-      x1 = x1.replace(rgx, '$1' + ',' + '$2');
-    }
-
-    return x1 + x2;
-  }
-
-  function getSVG(svg) {
-    return svg;
-  }
+  var wrap = d3utils.wrap;
+  var transformText = d3utils.transformText;
+  var translation = d3utils.translation;
+  var numCommas = d3utils.numCommas;
+  var weightSorter = d3utils.weightSorter;
 
   var width = 1000;
   var height = 1000;
 
-  var filteredNodes,
-    forProfitNodes,
-    nonProfitNodes,
-    individualNodes,
-    governmentNodes;
+  var allNodes;
+  var forProfitNodes;
+  var nonProfitNodes;
+  var individualNodes;
+  var governmentNodes;
 
-  var fiveMostConnectedForProfit = {},
-    fiveMostConnectedNonProfit = {},
-    fiveMostConnectedIndividuals = {},
-    fiveMostConnectedGovernment = {};
+  var fiveMostConnectedForProfit = {};
+  var fiveMostConnectedNonProfit = {};
+  var fiveMostConnectedIndividuals = {};
+  var fiveMostConnectedGovernment = {};
 
   var clearResetFlag = 1;
 
@@ -120,8 +65,8 @@ function drawGraph() {
 
   var centeredNode = {};
 
-  var entitiesHash = {}; //lowercase
-  var locationsHash = {}; //Lowercase
+  var entitiesHash = {}; // lowercase
+  var locationsHash = {}; // Lowercase
 
   var sortedNamesList = []; // Presentation
   var sortedLocationsList = []; // Presentation
@@ -133,20 +78,28 @@ function drawGraph() {
   // var svg = d3.select(".content").append("svg").attr("id", "network").attr("height", height).attr("width", width).attr("viewBox", "0 0 800 800").attr("preserveAspectRatio", "xMidYMid");
   //.attr("viewBox", '0 0 800 800')
   var svg = d3.select('.content')
-    .append('svg').attr("xmlns", 'http://www.w3.org/2000/svg')
-    .attr("id", 'network').attr("height", height)
-    .attr("width", width).style("top", "-50px")
+    .append('svg')
+    .attr("xmlns", 'http://www.w3.org/2000/svg')
+    .attr("id", 'network')
+    .attr("height", height)
+    .attr("width", width)
+    .style("top", "-50px")
     .style("position", "relative");
+
   // d3.select("svg").on("dblclick.zoom", null);
-  d3.select('body > nav > nav > div').append('div').attr('id', 'editBox').append('p').text('Edit').style('color', '#2e92cf');
-
-
+  d3.select('body > nav > nav > div')
+    .append('div')
+    .attr('id', 'editBox')
+    .append('p')
+    .text('Edit')
+    .style('color', '#2e92cf');
 
   //  document.createElement('svg')
 
-  var aspect = width / height,
-    network = $('#network'),
-    container = network.parent();
+  var aspect = width / height;
+  var network = $('#network');
+  var container = network.parent();
+
   $(window).on('resize', function() {
     var targetWidth = container.width();
     network.attr("width", targetWidth);
@@ -155,7 +108,8 @@ function drawGraph() {
 
   var viewBoxParameters = '0 0 ' + width + ' ' + height;
 
-  svg.attr("viewBox", viewBoxParameters).attr("preserveAspectRatio", 'xMidYMid');
+  svg.attr("viewBox", viewBoxParameters)
+    .attr("preserveAspectRatio", 'xMidYMid');
 
   //  Static Scale
   //  Improve by dynamically obtaining min and max values
@@ -164,91 +118,33 @@ function drawGraph() {
 
 
   d3.json("/athena", function(error, graph) {
+    console.log("error, graph", error, graph);
+    var allNodes                 = graph.nodes;
+    var fundingConnections       = graph.funding_connections;
+    var investmentConnections    = graph.investment_connections;
+    var collaborationConnections = graph.collaboration_connections;
+    var dataConnections          = graph.data_connections;
 
-    //                 .attr("x", 10)
-    //                 .attr("y", 10)
-    //                 .attr("width", width / 2 - 10 - 20)
-    //                 .attr("height", height / 2 - 60 - 20)
-    //                 .style("fill", "rgb(242,80,34)")
-    //                 .style("opacity", 0.9)
-    //                 .style('pointer-events', 'none');
-
-    // d3.select("svg").append("rect")
-    //                 .attr("x", width / 2 - 10 + 10)
-    //                 .attr("y", 10)
-    //                 .attr("width", width / 2 - 10 - 20)
-    //                 .attr("height", height / 2 - 60 - 20)
-    //                 .style("fill", "rgb(127,186,0")
-    //                 .style("opacity", 0.9)
-    //                 .style('pointer-events', 'none');
-
-    // d3.select("svg").append("rect")
-    //                 .attr("x", 10)
-    //                 .attr("y", height / 2 - 60 + 10)
-    //                 .attr("width", width / 2 - 10 - 20)
-    //                 .attr("height", height / 2 - 60 - 20)
-    //                 .style("fill", "rgb(0,164,239)")
-    //                 .style("opacity", 0.9)
-    //                 .style('pointer-events', 'none');
-
-    // d3.select("svg").append("rect")
-    //                 .attr("x", width / 2 - 10 + 10)
-    //                 .attr("y", height / 2 - 60 + 10)
-    //                 .attr("width", width / 2 - 10 - 20)
-    //                 .attr("height", height / 2 - 60 - 20)
-    //                 .style("fill", "rgb(255,185,0)")
-    //                 .style("opacity", 0.9)
-    //                 .style('pointer-events', 'none');
-
-    var rawNodes = graph.nodes;  //intercept location.
-    var rawFundingConnections = graph.funding_connections;
-    var rawInvestmentConnections = graph.investment_connections;
-    var rawCollaborationConnections = graph.collaboration_connections;
-    var rawDataConnections = graph.data_connections;
-    var rawConnections = rawFundingConnections
-      .concat(rawInvestmentConnections)
-      .concat(rawCollaborationConnections)
-      .concat(rawDataConnections);
-
-    filteredNodes = (rawNodes).filter(function(d) {
-      return d.render === 1;
-    });
-    fundingConnections = (rawFundingConnections).filter(function(d) {
-      return d.render === 1;
-    });
-    investmentConnections = (rawInvestmentConnections).filter(function(d) {
-      return d.render === 1;
-    });
-    collaborationConnections = (rawCollaborationConnections).filter(function(d) {
-      return d.render === 1;
-    });
-    dataConnections = (rawDataConnections).filter(function(d) {
-      return d.render === 1;
-    });
-
-    var connectionLinks = fundingConnections
+    var connections = fundingConnections
       .concat(investmentConnections)
       .concat(collaborationConnections)
       .concat(dataConnections);
 
-
     var force = d3.layout.force()
-      .nodes(rawNodes)
+      .nodes(allNodes)
       .size([width, height])
-      .links(rawConnections)
+      .links(connections)
       .linkStrength(0)
       .charge(function(d) {
-        // if (d.employees !== null)
-        //   return -6 * empScale(d.employees);
-        // else
-        //   return -40;
         if (d.render === 1) {
-          if (d.employees !== null)
+          if (d.employees !== null) {
             return -6 * empScale(d.employees);
-          else
+          } else {
             return -25;
-        } else
+          }
+        } else {
           return 0;
+        }
       })
       .linkDistance(50)
 
@@ -263,7 +159,6 @@ function drawGraph() {
       .data(fundingConnections)
       .enter().append("line")
       .attr("class", "fund")
-      // .classed("visfund", true)
       .style("stroke", "rgb(111,93,168)")
       .style("stroke-width", "1")
       .style("opacity", "0.2")
@@ -274,7 +169,6 @@ function drawGraph() {
       .data(investmentConnections)
       .enter().append("line")
       .attr("class", "invest")
-      // .classed("visinvest", true)
       .style("stroke", "rgb(38,114,114)")
       .style("stroke-width", "1")
       .style("opacity", "0.2")
@@ -285,7 +179,6 @@ function drawGraph() {
       .data(collaborationConnections)
       .enter().append("line")
       .attr("class", "porucs")
-      // .classed("visporucs", true)
       .style("stroke", "rgb(235,232,38)")
       .style("stroke-width", "1")
       .style("opacity", "0.2")
@@ -296,14 +189,13 @@ function drawGraph() {
       .data(dataConnections)
       .enter().append("line")
       .attr("class", "data")
-      // .classed("visdata", true)
       .style("stroke", "rgb(191,72,150)")
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
 
     nodeInit = svg.selectAll(".node")
-      .data(filteredNodes)
+      .data(allNodes)
       .enter()
       .append("g")
       .attr("class", "node")
@@ -313,97 +205,112 @@ function drawGraph() {
 
     force.on("tick", tick)
       .start();
-    // data section
-    // combine collaboration and data
 
-    forProfitNodes = svg.selectAll('.node').filter(function(d) {
-      return d.type === "For-Profit";
-    }).sort(function(a, b) {
-      return a.weight - b.weight;
-    });
-    nonProfitNodes = svg.selectAll('.node').filter(function(d) {
-      return d.type === "Non-Profit";
-    }).sort(function(a, b) {
-      return a.weight - b.weight;
-    });
-    individualNodes = svg.selectAll('.node').filter(function(d) {
-      return d.type === "Individual";
-    }).sort(function(a, b) {
-      return a.weight - b.weight;
-    });
-    governmentNodes = svg.selectAll('.node').filter(function(d) {
-      return d.type === "Government";
-    }).sort(function(a, b) {
-      return a.weight - b.weight;
-    });
+    forProfitNodes = svg.selectAll('.node')
+      .filter(function(d) { return d.type === "For-Profit"; })
+      .sort(weightSorter);
+    nonProfitNodes = svg.selectAll('.node')
+      .filter(function(d) { return d.type === "Non-Profit"; })
+      .sort(weightSorter);
+    individualNodes = svg.selectAll('.node')
+      .filter(function(d) { return d.type === "Individual"; })
+      .sort(weightSorter);
+    governmentNodes = svg.selectAll('.node')
+      .filter(function(d) { return d.type === "Government"; })
+      .sort(weightSorter);
 
-    //  Select the nodes to choose for highlighting nickname on visualization (TOP 5)
+    // Select the nodes to choose for highlighting nickname
+    // on visualization (TOP 5)
     forProfitNodes.each(function(d, i) {
-      if (i >= forProfitNodes[0].length - 5) fiveMostConnectedForProfit[d.name] = d.weight;
+      if (i >= forProfitNodes[0].length - 5) {
+        fiveMostConnectedForProfit[d.name] = d.weight;
+      }
     });
     nonProfitNodes.each(function(d, i) {
-      if (i >= nonProfitNodes[0].length - 5) fiveMostConnectedNonProfit[d.name] = d.weight;
+      if (i >= nonProfitNodes[0].length - 5) {
+        fiveMostConnectedNonProfit[d.name] = d.weight;
+      }
     });
     individualNodes.each(function(d, i) {
-      if (i >= individualNodes[0].length - 5) fiveMostConnectedIndividuals[d.name] = d.weight;
+      if (i >= individualNodes[0].length - 5) {
+        fiveMostConnectedIndividuals[d.name] = d.weight;
+      }
     });
     governmentNodes.each(function(d, i) {
-      if (i >= governmentNodes[0].length - 5) fiveMostConnectedGovernment[d.name] = d.weight;
+      if (i >= governmentNodes[0].length - 5) {
+        fiveMostConnectedGovernment[d.name] = d.weight;
+      }
     });
-
 
     var textElement = svg.selectAll('.node')
       .append('text')
-      .text(function(d) {
-        return d.nickname;
-      })
+      .text(function(d) { return d.nickname; })
       .attr("x", 0)
       .attr("dy", "0.1em")
-      .attr("y", function(d) {
-        if (d.employees !== null)
-          return empScale(d.employees) + 10;
-        else
-          return 7 + 10;
-      }).style('opacity', function(d) {
-        var textOpacity;
-        if (d.type === "For-Profit")
-          textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
-        if (d.type === "Non-Profit")
-          textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
-        if (d.type === "Individual")
-          textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
-        if (d.type === "Government")
-          textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
-        return textOpacity;
-      }).style('font-size', '14px')
+      .attr("y",
+        function(d) {
+          if (d.employees !== null) {
+            return empScale(d.employees) + 10;
+          } else {
+            return 7 + 10;
+          }
+        })
+      .style('opacity',
+        function(d) {
+          var textOpacity;
+
+          if (d.type === "For-Profit") {
+            textOpacity =
+              (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
+          }
+
+          if (d.type === "Non-Profit") {
+            textOpacity =
+              (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
+          }
+
+          if (d.type === "Individual") {
+            textOpacity =
+              (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
+          }
+
+          if (d.type === "Government") {
+            textOpacity =
+              (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
+          }
+
+          return textOpacity;
+        })
+      .style('font-size', '14px')
       .style('color', '#FFFFFF')
       .style('pointer-events', 'none');
 
     var node = nodeInit.append("circle")
-      .attr("r", function(d) {
-        if (d.employees !== null)
-          return empScale(d.employees);
-        else
-          return "7";
-      })
-      .style("fill", function(d) {
-        if (d.type !== null) {
-          if (d.type === "Individual")
-            return "rgb(255,185,0)";
-          if (d.type === "Non-Profit")
-            return "rgb(0,164,239)";
-          if (d.type === "For-Profit")
-            return "rgb(127,186,0)";
-          if (d.type === "Government")
-            return "rgb(242,80,34)";
-        }
-      })
-      .attr("cx", function(d) {
-        return d.x;
-      })
-      .attr("cy", function(d) {
-        return d.y;
-      })
+      .attr("r",
+        function(d) {
+          if (d.employees !== null) {
+            return empScale(d.employees);
+          } else {
+            return "7";
+          }
+        })
+      .style("fill",
+        function(d) {
+          if (d.type !== null) {
+            if (d.type === "Individual") { return "rgb(255,185,0)"; }
+            if (d.type === "Non-Profit") { return "rgb(0,164,239)"; }
+            if (d.type === "For-Profit") { return "rgb(127,186,0)"; }
+            if (d.type === "Government") { return "rgb(242,80,34)"; }
+          }
+        })
+      .attr("cx",
+        function(d) {
+          return d.x;
+        })
+      .attr("cy",
+        function(d) {
+          return d.y;
+        })
       .style("stroke-width", '1.5px')
       .style("stroke", 'white')
       .on('mouseover', handleNodeHover)
@@ -412,15 +319,11 @@ function drawGraph() {
 
     textElement.call(wrap, 80);
 
-    while (force.alpha() > 0.025) {
-      force.tick();
-    }
-
+    while (force.alpha() > 0.025) { force.tick(); }
 
     // Must adjust the force parameters...
 
     function dblclick(d) {
-
       d3.select(this).classed("fixed", function(d) {
         d.fixed = false;
       });
@@ -446,9 +349,9 @@ function drawGraph() {
       centeredNode.y = height / 2 - 60;
 
       var force = d3.layout.force()
-        .nodes(rawNodes)
+        .nodes(allNodes)
         .size([width, height])
-        .links(rawConnections)
+        .links(connections)
         .linkStrength(0)
         .charge(function(d) {
           // if (d.employees !== null)
@@ -1567,7 +1470,7 @@ function drawGraph() {
       var nullFieldArr = [];
 
       //  We know which nodes have how null fields...
-      filteredNodes.forEach(function(d) {
+      allNodes.forEach(function(d) {
         var objValue = _.object(_.map(d, function(value, key) {
           if (value === null)
             nullFieldCount++;
@@ -1594,7 +1497,7 @@ function drawGraph() {
 
       nullFieldArr.forEach(function(d) {
         if (d.nullFields <= maxNullObj.nullFields && d.nullFields >= maxNullObj.nullFields - 7) {
-          var nodeObj = _.find(filteredNodes, function(e) {
+          var nodeObj = _.find(allNodes, function(e) {
             return d.name === e.name;
           });
           potentialSuggestions.push(nodeObj);
@@ -1969,25 +1872,25 @@ function drawGraph() {
       var governmentArray = [];
       var individualArray = [];
 
-      for (var x = 0; x < filteredNodes.length; x++) {
-        if (filteredNodes[x].type === "Individual") {
-          individualArray.push(filteredNodes[x].name);
-          individualObjects.push(filteredNodes[x]);
+      for (var x = 0; x < allNodes.length; x++) {
+        if (allNodes[x].type === "Individual") {
+          individualArray.push(allNodes[x].name);
+          individualObjects.push(allNodes[x]);
           countTypes[3]++;
         }
-        if (filteredNodes[x].type === "Non-Profit") {
-          nonProfitsArray.push(filteredNodes[x].name);
-          nonProfitObjects.push(filteredNodes[x]);
+        if (allNodes[x].type === "Non-Profit") {
+          nonProfitsArray.push(allNodes[x].name);
+          nonProfitObjects.push(allNodes[x]);
           countTypes[1]++;
         }
-        if (filteredNodes[x].type === "For-Profit") {
-          forProfitsArray.push(filteredNodes[x].name);
-          forProfitObjects.push(filteredNodes[x]);
+        if (allNodes[x].type === "For-Profit") {
+          forProfitsArray.push(allNodes[x].name);
+          forProfitObjects.push(allNodes[x]);
           countTypes[0]++;
         }
-        if (filteredNodes[x].type === "Government") {
-          governmentArray.push(filteredNodes[x].name);
-          governmentObjects.push(filteredNodes[x]);
+        if (allNodes[x].type === "Government") {
+          governmentArray.push(allNodes[x].name);
+          governmentObjects.push(allNodes[x]);
           countTypes[2]++;
         }
       }
@@ -2141,7 +2044,7 @@ function drawGraph() {
     function searchAutoComplete() {
       var s = "";
 
-      filteredNodes.forEach(function(d) {
+      allNodes.forEach(function(d) {
         name = d.name.toLowerCase();
         nickname = d.nickname.toLowerCase();
         var splitLocations = d.location;
@@ -2677,7 +2580,7 @@ function drawGraph() {
       var k = 8 * e.alpha;
 
       /* Four quandrant separation */
-      filteredNodes.forEach(function(o, i) {
+      allNodes.forEach(function(o, i) {
         if (o.type !== null) {
           if (o.type === "Individual") {
             //o.x += k;
@@ -3140,9 +3043,9 @@ function drawGraph() {
 
 
         var force = d3.layout.force()
-          .nodes(rawNodes)
+          .nodes(allNodes)
           .size([width, height])
-          .links(rawConnections)
+          .links(connections)
           .linkStrength(0)
           .charge(function(d) {
             // if (d.employees !== null)
@@ -3170,16 +3073,16 @@ function drawGraph() {
 
 if (current_view == 'map') {
   drawMap();
-  document.getElementById('cb_mapview').checked = true;
-  document.getElementById('cb_networkview').checked = false;
+  // document.getElementById('cb_mapview').checked = true;
+  // document.getElementById('cb_networkview').checked = false;
 } else if (current_view == 'network') {
   drawGraph();
-  document.getElementById('cb_mapview').checked = false;
-  document.getElementById('cb_networkview').checked = true;
+  // document.getElementById('cb_mapview').checked = false;
+  // document.getElementById('cb_networkview').checked = true;
 } else {
   drawGraph();
-  document.getElementById('cb_mapview').checked = false;
-  document.getElementById('cb_networkview').checked = true;
+  // document.getElementById('cb_mapview').checked = false;
+  // document.getElementById('cb_networkview').checked = true;
 }
 
 d3.selectAll('#cb_networkview').on('click', function() {
