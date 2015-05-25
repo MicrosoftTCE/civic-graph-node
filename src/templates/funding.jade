@@ -1,0 +1,22 @@
+#funding-#{idx}
+  .fund-input.input-control.text(data-role="input-control")
+    input.funder(
+      type="text"
+      name="fund"
+      placeholder="Funder"
+      style="display:inline-block; width:50%;"
+      list="funding-received-list"
+    )
+    datalist#funding-received-list
+    input.fund_amt(
+      type="text"
+      name="fund_amt"
+      placeholder="Amount"
+      style="display:inline-block; width: 27%;"
+    )
+    input.fund_year(
+      type="text"
+      name="fund_year"
+      placeholder="Year"
+      style="display:inline-block; width: 20%;"
+    )

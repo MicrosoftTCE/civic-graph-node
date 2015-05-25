@@ -1,13 +1,11 @@
 var d3 = require('d3');
-var template = require("jade!../templates/text-display.jade");
-
-console.log(template({}));
+var textDisplayTmpl = require("jade!../templates/text-display.jade");
 
 var textDisplay = function(d) {
 
   displayFormA(d);
 
-  return template(d);
+  return textDisplayTmpl(d);
 };
 
 module.exports = textDisplay;

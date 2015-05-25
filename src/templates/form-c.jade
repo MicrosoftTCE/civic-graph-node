@@ -1,0 +1,13 @@
+h2#webform-head Information
+hr
+.webform-content(style="text-align:center;")
+  p
+    | Thank you for contributing to Civic Graph! Refresh the page
+    | to view your changes (it might take a few moments).
+
+  p Would you like to add or edit more info?
+
+  ul#suggestions
+    for suggestion in suggestions
+      li
+        a(style="cursor:pointer;") #{name}

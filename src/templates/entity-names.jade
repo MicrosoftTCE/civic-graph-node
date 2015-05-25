@@ -1,0 +1,19 @@
+h3(style='padding-top:15px; color:rgb(127,186,0);') For-Profit (#{forProfits.length}):
+
+for forProfit in forProfits
+  a.for-profit-entity(style='font-size:16px; cursor:pointer;') #{forProfit}
+
+h3(style='padding-top:15px; color:rgb(0,164,239);') Non-Profit (#{nonProfits.length}):
+
+for nonProfit in nonProfits
+  a.non-profit-entity(style='font-size:16px; cursor:pointer;') #{nonProfit}
+
+h3(style='padding-top:15px; color:rgb(242,80,34);') Government (#{governments.length}):
+
+for government in governments
+  a.government-entity(style='font-size:16px; cursor:pointer;') #{government}
+
+h3(style='padding-top:15px; color:rgb(255,185,0);') Individual (#{individuals.length}):
+
+for individual in individuals
+  a.individual-entity(style='font-size:16px; cursor:pointer;') #{individual}

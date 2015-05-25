@@ -16,50 +16,20 @@ var displayFormB = function() {
     var counterF = 0;
 
     // Render form B.
-    var form = formB({});
+    var form = formB(formObject);
 
-    d3.select('#info')
-      .html(s);
+    d3.select('#info').html(form);
 
     addDataList('#collaboration-0 datalist');
 
-
-    // Time to prefill the form...
-    d3.selectAll('#name').text(function(d) {
-      this.value = formObject.name;
-    }).attr("disabled", true);
-
     if( formObject.location !== null) {
       var location = formObject.location;
-      for(var i=0; i<location.length; i++) {
-        if(i === 0) {
-          d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
-          d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
-            this.value = location[i];
-            this.disabled = true;
-          });
-        } else {
-          $("#location-" + (i-1)).after('<div id="location-' + i + '" class="input-control text" data-role="input-control"><input type="text" name="location" class="locations" id="location" placeholder="City" /></div>');
-          d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
-          d3.select('#location-' + i + ' input[name="location"]').text(function(e) {
-            this.value = location[i];
-            this.disabled = true;
-          });
-        }
-      }
 
-      d3.select('#location-' + location.length + ' input[name="location"]').on('keyup', function() {
-        add_input_loc(location.length);
-      }).style("margin-top", "10px");
+      d3.select('#location-' + formObject.location.length + ' input[name="location"]')
+        .on('keyup', function() {
+          add_input_loc(formObject.location.length);
+        })
     }
-
-    d3.selectAll('input[name="entitytype"]').filter(function(d, i) {
-      if (this.value === formObject.type)
-        this.checked = true;
-      else
-        this.checked = false;
-      this.disabled = true;
-    });
 
     // Add action listeners
     d3.selectAll('input[name="collaboration"]').on('keyup', function() {
@@ -72,9 +42,6 @@ var displayFormB = function() {
     d3.selectAll('input[name="expense_amt"]').on('keyup', function() {
       add_input_exp(0);
     });
-    // d3.selectAll('input[name="grant_amt"]').on('keyup', function() {
-    //   add_input_grant(0);
-    // });
 
     d3.selectAll('#submit-B').on('click', function() {
       displayFormCSendJSON(formObject);
@@ -85,10 +52,11 @@ var displayFormB = function() {
       d3.select('#name').style("border-color", "#e51400");
       d3.select('#location').style("border-color", "#e51400");
     } else {
-      if (!formObject.name)
+      if (!formObject.name) {
         d3.select('#name').style("border-color", "#e51400");
-      else
+      } else {
         d3.select('#location').style("border-color", "#e51400");
+      }
     }
   }
 };

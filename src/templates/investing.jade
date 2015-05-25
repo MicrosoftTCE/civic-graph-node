@@ -1,0 +1,22 @@
+#investing-#{idx}
+ .invest-input.input-control.text(data-role="input-control")
+    input.investor(
+      type="text"
+      name="invest"
+      placeholder="Investor"
+      style="display:inline-block; width:50%;"
+      list="investment-received-list"
+    )
+    datalist#investment-received-list
+    input.invest_amt(
+      type="text"
+      name="invest_amt"
+      placeholder="Amount"
+      style="display:inline-block; width: 27%;"
+    )
+    input.invest_year(
+      type="text"
+      name="invest_year"
+      placeholder="Year"
+      style="display:inline-block; width: 20%;"
+    )

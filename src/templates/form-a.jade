@@ -1,0 +1,312 @@
+h2#webform-head Information
+  |
+    hr
+    |
+    .webform-content
+      .input-control.text(data-role='input-control')
+        input#name(
+          list='list-name'
+          name='name'
+          placeholder='Name of Entity'
+          type='text'
+        )
+        datalist#list-name
+      |
+      h3.form-header What type of entity?
+      |
+      .webform-entities
+        .input-control.radio.default-style.webform(data-role='input-control')
+          label
+            input#rb_forpro(
+              checked='checked'
+              name='entityType'
+              type='radio'
+              value='For-Profit'
+            )
+            span.check
+            span.webform-labels For-Profit
+        |
+        .input-control.radio.default-style.webform(data-role='input-control')
+          label
+            input#rb_nonpro(
+              name='entityType'
+              type='radio'
+              value='Non-Profit'
+            )
+            span.check
+            span.webform-labels Non-Profit
+        |
+        .input-control.radio.default-style.webform(data-role='input-control')
+          label
+            input#rb_gov(
+              name='entityType'
+              type='radio'
+              value='Government'
+            )
+            span.check
+            span.webform-labels Government
+        |
+        .input-control.radio.default-style.webform(data-role='input-control')
+          label
+            input#rb_individs(
+              name='entityType'
+              type='radio'
+              value='Individual'
+            )
+            span.check
+            span.webform-labels Individual
+      |
+      h3.form-header What kind of work do they do?
+      |
+      span (Select All That Apply)
+      |
+      .webform-categories
+        .input-control.checkbox.webform(data-role='input-control')
+          label
+            input#cb_gen(
+              data-show='general'
+              name='gen'
+              type='checkbox'
+              value='General'
+            )
+            span.check
+            span.webform-labels General Civic Tech
+        |
+        .input-control.checkbox.webform(data-role='input-control')
+          label
+            input#cb_datat(
+              data-show='datalytics'
+              name='datat'
+              type='checkbox'
+              value='DataAnalytics'
+            )
+            span.check
+            span.webform-labels
+              | Data &amp;
+              | Analytics
+        |
+        .input-control.checkbox.webform(data-role='input-control')
+          label
+            input#cb_eced(
+              data-show='econedu'
+              name='eced'
+              type='checkbox'
+              value='EconGrowthEdu'
+            )
+            span.check
+            span.webform-labels
+              | Jobs &amp;
+              | Education
+        |
+        .input-control.checkbox.webform(data-role='input-control')
+          label
+            input#cb_src(
+              data-show='srcities'
+              name='srcities'
+              type='checkbox'
+              value='SRCities'
+            )
+            span.check
+            span.webform-labels Smart &amp; Resilient Cities
+        |
+        .input-control.checkbox.webform(data-role='input-control')
+          label
+            input#cb_socs(
+              data-show='socserv'
+              name='socserv'
+              type='checkbox'
+              value='SocialServ'
+            )
+            span.check
+            span.webform-labels Social Services
+        |
+        .input-control.checkbox.webform(data-role='input-control')
+          label
+            input#cb_govt(
+              data-show='govtech'
+              name='govtech'
+              type='checkbox'
+              value='GovTech'
+            )
+            span.check
+            span.webform-labels GovTech
+      |
+      #location-0
+        .input-control.text(data-role='input-control')
+          input#location.locations(
+            list='list-location'
+            name='location'
+            placeholder='City'
+            style='width:50%;'
+            type='text'
+          )
+          input#state(
+            placeholder='State'
+            style='width:22%;'
+            type='text'
+          )
+          input#country(
+            placeholder='Country'
+            style='width:28%;'
+            type='text'
+          )
+      |
+      datalist#list-location
+    |
+    .input-control.text(data-role='input-control')
+      input#website(
+        name='website'
+        placeholder='Website'
+        type='text'
+      )
+    |
+    h3.form-header(style='display:inline-block;')
+      | Number of
+      | Employees
+    |
+    .input-control.text(
+      data-role='input-control'
+      style='width:27% !important; display:inline-block; float:right; margin-top: 2%;'
+    )
+      input#employee(
+        maxlength='6'
+        name='employees'
+        style='width:100% !important;'
+        type='text'
+      )
+    |
+    h3.form-header Key People?
+    |
+    #key-people-0.input-control.text(data-role='input-control')
+      input.kpeople(
+        name='kpeople'
+        placeholder="Key Person\'s Name"
+        type='text'
+      )
+    |
+    h3.form-header Who funds them via grants?
+    |
+    #funding-0
+      .fund-input.input-control.text(data-role='input-control')
+        input.funder(
+          list='funding-received-list'
+          name='fund'
+          placeholder='Funder'
+          style='display:inline-block; width:50%;'
+          type='text'
+        )
+        datalist#funding-received-list
+        input.fund_amt(
+          name='fund_amt'
+          placeholder='Amount'
+          style='display:inline-block; width: 27%;'
+          type='text'
+        )
+        input.fund_year(
+          name='fund_year'
+          placeholder='Year'
+          style='display:inline-block; width: 20%;'
+          type='text'
+        )
+    |
+    h3.form-header Who invests in them via equity stakes (stock)?
+    |
+    #investing-0
+      .invest-input.input-control.text(data-role='input-control')
+        input.investor(
+          list='investment-received-list'
+          name='invest'
+          placeholder='Investor'
+          style='display:inline-block; width:50%;'
+          type='text'
+        )
+        datalist#investment-received-list
+        input.invest_amt(
+          name='invest_amt'
+          placeholder='Amount'
+          style='display:inline-block; width: 27%;'
+          type='text'
+        )
+        input.invest_year(
+          name='invest_year'
+          placeholder='Year'
+          style='display:inline-block; width: 20%;'
+          type='text'
+        )
+    |
+    h3.form-header Who do they fund via grants?
+    |
+    #fundinggiven-0
+      .fundgiven-input.input-control.text(data-role='input-control')
+        input.fundee(
+          list='funding-given-list'
+          name='fundgiven'
+          placeholder='Fundee'
+          style='display:inline-block; width:50%;'
+          type='text'
+        )
+        datalist#funding-given-list
+        input.fundgiven_amt(
+          name='fundgiven_amt'
+          placeholder='Amount'
+          style='display:inline-block; width: 27%;'
+          type='text'
+        )
+        input.fundgiven_year(
+          name='fundgiven_year'
+          placeholder='Year'
+          style='display:inline-block; width: 20%;'
+          type='text'
+        )
+    |
+    h3.form-header Who do they invest in via equity stakes (stock)?
+    |
+    #investmentmade-0
+      .investmade-input.input-control.text(data-role='input-control')
+        input.investee(
+          list='investment-made-list'
+          name='investmade'
+          placeholder='Investee'
+          style='display:inline-block; width:50%;'
+          type='text'
+        )
+        datalist#investment-made-list
+        input.investmade_amt(
+          name='investmade_amt'
+          placeholder='Amount'
+          style='display:inline-block; width: 27%;'
+          type='text'
+        )
+        input.investmade_year(
+          name='investmade_year'
+          placeholder='Year'
+          style='display:inline-block; width: 20%;'
+          type='text'
+        )
+    |
+    h3.form-header Who provides them with data?
+    |
+    #data-0.input-control.text(data-role='input-control')
+      input.data-entity(
+        list='data-received-list'
+        name='data'
+        placeholder='Data Resource'
+        type='text'
+      )
+      datalist#data-received-list
+    |
+    #nextPhase
+      button#submit-A(
+        href='javascript: check_empty()'
+        type='button'
+      ) Next
+    |
+    hr
+    |
+    .webform-footer
+      span
+        | Some entities lack adequate information. Would you like to
+        | help?
+      br
+      |
+      span#toFormC Click here!

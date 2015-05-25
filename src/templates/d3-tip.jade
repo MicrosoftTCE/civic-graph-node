@@ -1,0 +1,7 @@
+span
+  #{name}
+  br
+  #{val}
+  #{val > 1 ? "Entities," : "Entity,"}
+  br
+  #{parseFloat((val / totalCount) * 100).toFixed(2)}%

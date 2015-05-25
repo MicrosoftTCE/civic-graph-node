@@ -4,7 +4,13 @@ hr
 
 div.webform-content
   div.input-control.text(data-role='input-control')
-    input#name(type='text', name='name', placeholder='Name of Entity')
+    input#name(
+      type='text'
+      name='name'
+      placeholder='Name of Entity'
+      value=name
+      disabled=true
+    )
 
   h3.form-header Entity Type
 
@@ -15,7 +21,8 @@ div.webform-content
           type='radio'
           name='entitytype'
           value='For-Profit'
-          checked='checked'
+          checked=(type === 'For-Profit' && 'checked')
+          disabled=true
         )
         span.check
         h4.webform-labels For-Profit
@@ -26,6 +33,8 @@ div.webform-content
           type='radio'
           name='entitytype'
           value='Non-Profit'
+          checked=(type === 'Non-Profit' && 'checked')
+          disabled=true
         )
         span.check
         h4.webform-labels Non-Profit
@@ -36,6 +45,8 @@ div.webform-content
           type='radio'
           name='entitytype'
           value='Government'
+          checked=(type === 'Government' && 'checked')
+          disabled=true
         )
         span.check
         h4.webform-labels Government
@@ -46,12 +57,28 @@ div.webform-content
           type='radio'
           name='entitytype'
           value='Individual'
+          checked=(type === 'Individual' && 'checked')
+          disabled=true
         )
         span.check
         h4.webform-labels Individual
 
-  div#location-0.input-control.text(data-role='input-control')
-    input#location.locations(type='text', name='location', placeholder='City')
+  if (location)
+    for loc, idx in location
+      div#location-#{idx}.input-control.text(data-role='input-control')
+        input#location.locations(
+          type='text'
+          name='location'
+          placeholder='City'
+          value=loc
+          disabled=true
+        )
+
+  div#location-#{location ? location.length : 0}.input-control.text(data-role='input-control')
+    input#location.locations(
+      type='text'
+      name='location'
+      placeholder='City'
 
   hr
 

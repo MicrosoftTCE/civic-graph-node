@@ -1,0 +1,7 @@
+span
+  #{cityName},
+  #{type}
+  br
+  #{count}
+  #{count > 1 ? "Entities," : "Entity,"}
+  #{parseFloat((count / totalCount) * 100).toFixed(2)}%

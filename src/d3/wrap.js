@@ -9,15 +9,22 @@ var wrap = function(text, width) {
     var lineHeight = 1.1; // ems
     var lineNumber = 0;
     var text = d3.select(this);
-    var tspan = text.text(null).append("tspan").attr("x", 0)
-      .attr("y", function() {
-        if (data.employees !== null) {
-          return empScale(data.employees) + 10;
-        } else {
-          return 7 + 10;
+    var tspan = text
+      .text(null)
+      .append("tspan")
+      .attr("x", 0)
+      .attr(
+        "y",
+        function() {
+          if (data.employees !== null) {
+            return empScale(data.employees) + 10;
+          } else {
+            return 7 + 10;
+          }
         }
-      })
+      )
       .attr("dy", dy + "em");
+
     var word;
     var words = text.text().split(/\s+/).reverse();
 
@@ -29,14 +36,19 @@ var wrap = function(text, width) {
         tspan.text(line.join(" "));
         line = [word];
         lineNumber++;
-        tspan = text.append("tspan").attr("x", 0)
-          .attr("y", function() {
-            if (data.employees !== null) {
-              return empScale(data.employees) + 5;
-            } else {
-              return 7 + 5;
+        tspan = text
+          .append("tspan")
+          .attr("x", 0)
+          .attr(
+            "y",
+            function() {
+              if (data.employees !== null) {
+                return empScale(data.employees) + 5;
+              } else {
+                return 7 + 5;
+              }
             }
-          })
+          )
           .attr("dy", lineNumber * lineHeight + dy + "em")
           .text(word);
       }
