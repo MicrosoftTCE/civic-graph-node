@@ -65,7 +65,7 @@ div.webform-content
 
   if (location)
     for loc, idx in location
-      div#location-#{idx}.input-control.text(data-role='input-control')
+      div#location-idx.input-control.text(data-role='input-control')
         input#location.locations(
           type='text'
           name='location'
@@ -74,11 +74,13 @@ div.webform-content
           disabled=true
         )
 
-  div#location-#{location ? location.length : 0}.input-control.text(data-role='input-control')
+  - loc = location ? location.length : 0
+  div.input-control.text(id="location-" + loc, data-role='input-control')
     input#location.locations(
       type='text'
       name='location'
       placeholder='City'
+    )
 
   hr
 

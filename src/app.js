@@ -3,8 +3,6 @@ var _     = require('underscore');
 var $     = require('jquery');
 var utils = require('./utilities');
 
-require('./scripts/mapcontrol');
-
 require('./styles/reset.css');
 require('./styles/normalize.css');
 require('./styles/metro-bootstrap.css');

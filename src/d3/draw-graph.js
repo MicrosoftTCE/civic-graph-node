@@ -13,7 +13,10 @@ var investmentMadeTmpl     = require("jade!../templates/investment-made.jade");
 var investmentRecievedTmpl = require("jade!../templates/investment-received.jade");
 var entityNamesTmpl        = require("jade!../templates/entity-names.jade");
 
-function drawGraph() {
+var $ = require("jquery");
+var _ = require("lodash");
+
+var drawGraph = function () {
   var wrap = require('./wrap');
   var transformText = require('./transform-text');
   var translation = require('./translation');
@@ -91,6 +94,7 @@ function drawGraph() {
 
 
   d3.json("/athena", function(error, graph) {
+    console.log("graph.entities", graph.entities[0])
     var allNodes                 = graph.entities;
     var fundingConnections       = graph.funding_connections;
     var investmentConnections    = graph.investment_connections;
@@ -315,7 +319,6 @@ function drawGraph() {
     var dblclick = require('./dblclick');
     var handleClickNodeHover = require('./handle-click-node-hover');
     var prefillCurrent = require('./prefill-current');
-    var editDisplay = require('./edit-display');
     var textDisplay = require('./text-display');
     var editForm = require('./edit-form');
 
@@ -704,6 +707,7 @@ function drawGraph() {
                 d3.selectAll('.webform-categories h4')[0][i].textContent
               ) > -1
             );
+          }
         );
       }
 
@@ -1139,9 +1143,11 @@ function drawGraph() {
           sortedNamesList.push(d.nickname);
         }
 
-        if(splitLocations) {
+        if (splitLocations) {
+          console.log("splitLocations", splitLocations)
           splitLocations.forEach(function(l) {
-            var location = l.location;
+            console.log("l", l)
+            var location = l;
             var lwcLocation = location.toLowerCase();
             (!(lwcLocation in locationsHash)) ?
               (
@@ -1528,7 +1534,7 @@ function drawGraph() {
             neighborInvest.indexOf(l.index) > -1 ||
             neighborPorucs.indexOf(l.index) > -1 ||
             neighborData.indexOf(l.index) > -1 ||
-            l === d)
+            l === d
           );
         })
         .on('mouseover', handleClickNodeHover)
@@ -2384,3 +2390,6 @@ function drawGraph() {
       );
   });
 }
+
+module.exports = drawGraph;
+

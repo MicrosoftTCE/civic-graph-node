@@ -26,7 +26,6 @@ router.get('/athena', function(req, res) {
     })
     .then(function(results) {
       bridges = results;
-      console.log("bridges", bridges);
       qry = select().from("operations_view").toString()
 
       return db.query(qry)

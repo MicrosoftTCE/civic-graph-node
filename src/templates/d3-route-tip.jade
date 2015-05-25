@@ -1,7 +1,11 @@
 span
-  #{cityA} -
-  #{cityB},
+  #{cityA}
+  | -
+  #{cityB}
+  | ,
   br
-  #{count} connections,
+  #{count}
+  | connections,
   br
-  #{parseFloat((count /totalCount) * 100).toFixed(2)}% of total connections
+  #{parseFloat((count /totalCount) * 100).toFixed(2)}
+  | % of total connections

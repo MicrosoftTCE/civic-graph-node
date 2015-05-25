@@ -14,6 +14,20 @@ var common = {
   output: {
     path: path.resolve(ROOT_PATH, "public"),
     filename: "bundle.js",
+  },
+  module: {
+    loaders: [
+      { test: /\.css$/, loader: "style-loader!css-loader" },
+      { test: /\.json$/, loader: "json-loader" },
+      { test: /\.json5$/, loader: "json5-loader" },
+      { test: /\.txt$/, loader: "raw-loader" },
+      { test: /\.html$/, loader: "html-loader" },
+      { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url?limit=25000" },
+      { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
+      { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=application/octet-stream" },
+      { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file" },
+      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=image/svg+xml" }
+    ]
   }
 }
 
@@ -21,6 +35,19 @@ var mergeConfig = merge.bind(null, common)
 
 if (TARGET === "build") {
   module.exports = mergeConfig({
+    module: {
+      loaders: [
+        { test: /\.json$/, loader: "json-loader" },
+        { test: /\.json5$/, loader: "json5-loader" },
+        { test: /\.txt$/, loader: "raw-loader" },
+        { test: /\.html$/, loader: "html-loader" },
+        { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url?limit=25000" },
+        { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" },
+        { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=application/octet-stream" },
+        { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file" },
+        { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=image/svg+xml" }
+      ]
+    },
     plugins: [
       new ExtractTextPlugin("styles.css"),
       new webpack.DefinePlugin({
@@ -41,10 +68,7 @@ if (TARGET === "dev") {
   module.exports = mergeConfig({
     entry: ["webpack/hot/dev-server"],
     module: {
-      preLoaders: [
-      ],
       loaders: [
-        { test: /\.css$/, loader: "style!css" },
         { test: /\.json$/, loader: "json-loader" },
         { test: /\.json5$/, loader: "json5-loader" },
         { test: /\.txt$/, loader: "raw-loader" },

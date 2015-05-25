@@ -4,7 +4,7 @@
 * Author: Ricky Brundritt
 * Website: http://rbrundritt.wordpress.com
 * Date: Jan 22nd, 2015
-* 
+*
 *
 ***************************************************************/
 
@@ -31,7 +31,7 @@ var D3OverlayManager = function (map) {
             _d3Container.style.top = '0px';
             _d3Container.style.left = '0px';
             _mapDiv.childNodes[2].childNodes[1].appendChild(_d3Container);
-            
+
             _center = map.getCenter();
             _zoom = map.getZoom();
             _mapWidth = map.getWidth();
@@ -55,7 +55,7 @@ var D3OverlayManager = function (map) {
 
             Microsoft.Maps.Events.addHandler(map, 'viewchangeend', function () {
                 _d3Container.style.display = '';
-                
+
                 _d3Container.style.top ='0px';
                 _d3Container.style.left = '0px';
 
@@ -68,7 +68,7 @@ var D3OverlayManager = function (map) {
                     _mapHeight = map.getHeight();
                 }
 
-                for (var i = 0; i < _layers.length; i++) {                    
+                for (var i = 0; i < _layers.length; i++) {
                     if (_layers[i].svg) {
                         //Enusre layers are the same size as the map.
                         _layers[i].svg.attr("width", _mapWidth);
@@ -82,7 +82,7 @@ var D3OverlayManager = function (map) {
                             _layers[i].options.viewChanged(_layers[i].svg, _d3Projection);
                         }
                     }
-                }               
+                }
 
                 _center = map.getCenter();
                 _zoom = map.getZoom();
@@ -110,7 +110,7 @@ var D3OverlayManager = function (map) {
 
         return [pixel.x, pixel.y];
     }
-    
+
     /*******************
     * Public functions
     ********************/
@@ -127,7 +127,7 @@ var D3OverlayManager = function (map) {
                 id: _idCnt,
                 options: options
             };
-            
+
         function _initLayer() {
             if (_d3Container) {
                 layerInfo.svg = d3.select(_d3Container).append('svg')
@@ -153,7 +153,7 @@ var D3OverlayManager = function (map) {
 
         return layerInfo;
     };
-    
+
     this.removeLayer = function (layer) {
         for (var i = 0; i < _layers.length; i++) {
             if (_layers[i].id == layer.id) {
