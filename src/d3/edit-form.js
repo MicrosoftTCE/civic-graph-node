@@ -1,4 +1,5 @@
-var d3 = require('d3');
+var d3        = require('d3');
+var formATmpl = require("jade!../templates/form-a.jade");
 
 var editForm = function() {
   console.log("Running editForm");
@@ -9,7 +10,7 @@ var editForm = function() {
 
   node.on('mouseover', null);
 
-  sa = displayFormA();
+  sa = formATmpl();
 
   // Render the string into HTML
   d3.select('#info').html(sa);
@@ -28,7 +29,7 @@ var editForm = function() {
     function() {
       console.log("Running onKeyup for input#location");
       preFillLocation(this.value);
-      add_input_locations(0);
+      addInputLocations(0);
     });
 
   // To split the location string into
@@ -68,7 +69,7 @@ var editForm = function() {
   d3.select('#key-people-0 input[name="kpeople"]').on('keyup',
     function() {
       console.log("Running onKeyup on #key-people-0 input[name=kpeople]");
-      add_input_kp(0);
+      addInputKp(0);
     });
 
   addDataList('#funding-0 datalist');
@@ -76,7 +77,7 @@ var editForm = function() {
   d3.select('#funding-0 input[name="fund"]').on('keyup',
     function() {
       console.log("Running onKeyup on #funding-0 input[name=fund]");
-      add_input_fund(0);
+      addInputFund(0);
       preFillName(this.value, '#funding-0 input');
     });
 
@@ -85,7 +86,7 @@ var editForm = function() {
   d3.select('#investing-0 input[name="invest"]').on('keyup',
     function() {
       console.log("Running onKeyup on #investing-0 input[name=invest]");
-      add_input_invest(0);
+      addInputInvest(0);
       preFillName(this.value, '#investing-0 input');
     });
 
@@ -94,7 +95,7 @@ var editForm = function() {
   d3.select('#fundinggiven-0 input[name="fundgiven"]').on('keyup',
     function() {
       console.log("Running onKeyup on #fundinggiven-0 input[name=fundgiven]");
-      add_input_fund_given(0);
+      addInputFundGiven(0);
       preFillName(this.value, '#fundinggiven-0 input');
     });
 
@@ -103,7 +104,7 @@ var editForm = function() {
   d3.select('#investmentmade-0 input[name="investmade"]').on('keyup',
     function() {
       console.log("Running onKeyup on #investmentmade-0 input[name=investmade]");
-      add_input_invest_made(0);
+      addInputInvestMade(0);
       preFillName(this.value, '#investmentmade-0 input');
     });
 
@@ -112,7 +113,7 @@ var editForm = function() {
   d3.select('#data-0 input[name="data"]').on('keyup',
     function() {
       console.log("Running onKeyup on #data-0 input[name=data]");
-      add_input_data(0);
+      addInputData(0);
       preFillName(this.value, '#data-0 input');
     });
 

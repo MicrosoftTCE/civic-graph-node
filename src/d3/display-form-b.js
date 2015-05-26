@@ -31,7 +31,7 @@ var displayFormB = function() {
 
       d3.select('#location-' + formObject.location.length + ' input[name="location"]')
         .on('keyup', function() {
-          add_input_loc(formObject.location.length);
+          addInputLoc(formObject.location.length);
         })
     }
 
@@ -42,15 +42,15 @@ var displayFormB = function() {
     });
 
     d3.selectAll('input[name="revenue_amt"]').on('keyup', function() {
-      add_input_rev(0);
+      addInputRev(0);
     });
 
     d3.selectAll('input[name="expense_amt"]').on('keyup', function() {
-      add_input_exp(0);
+      addInputExp(0);
     });
 
     d3.selectAll('#submit-B').on('click', function() {
-      displayFormCSendJSON(formObject);
+      displayFormCSendJson(formObject);
     });
   } else { //  Error checking the form...
     if (!formObject.name && !formObject.location) {

@@ -30,6 +30,7 @@
     "debug": "^2.2.0",
     "devbridge-autocomplete": "^1.2.16",
     "express": "^4.12.4",
+    "fs": "0.0.2",
     "geoip-lite": "^1.1.6",
     "jade": "^1.9.2",
     "lodash": "^3.9.1",

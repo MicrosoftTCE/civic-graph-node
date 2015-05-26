@@ -1,16 +1,7 @@
-var formATmpl              = require("jade!../templates/form-a.jade");
-var editDisplayTmpl        = require("jade!../templates/edit-display.jade");
-var locTmpl                = require("jade!../templates/loc.jade");
-var locationTmpl           = require("jade!../templates/location.jade");
-var keyPeopleTmpl          = require("jade!../templates/key-people.jade");
 var investingTmpl          = require("jade!../templates/investing.jade");
-var fundingGivenTmpl       = require("jade!../templates/funding-given.jade");
-var dataTmpl               = require("jade!../templates/data.jade");
 var collaborationTmpl      = require("jade!../templates/collaboration.jade");
 var revenueTmpl            = require("jade!../templates/revenue.jade");
 var expensesTmpl           = require("jade!../templates/expenses.jade");
-var investmentMadeTmpl     = require("jade!../templates/investment-made.jade");
-var investmentRecievedTmpl = require("jade!../templates/investment-received.jade");
 var entityNamesTmpl        = require("jade!../templates/entity-names.jade");
 
 var $ = require("jquery");
@@ -24,6 +15,19 @@ var drawGraph = function () {
   var translation = require('./translation');
   var numCommas = require('./num-commas');
   var weightSorter = require('./weight-sorter');
+  var preFillName = require('./pre-fill-name');
+  var preParseForm = require('./pre-parse-form');
+  var preFillLocation = require('./pre-fill-location');
+  var iterateThroughObj = require('./iterate-through-obj');
+  var determineNullFields = require('./determine-null-fields');
+  var displayFormCSendJson = require('./display-form-c-send-json');
+  var searchAutoComplete = require('./search-auto-complete');
+  var handleQuery = require('./handle-query');
+  var generateNamesDataList = require('./generate-names-data-list');
+  var handleNodeHoverCb = require('./handle-node-hover-cb');
+  var sinclickCb = require('./sinclick-cb');
+  var offNodeCb = require('./off-node-cb');
+  var dragstart = require('./dragstart');
 
   var width = 1000;
   var height = 1000;
@@ -58,7 +62,8 @@ var drawGraph = function () {
   var dataListSortedNames;
   var dataListSortedLocations;
 
-  var svg = d3.select('.content')
+  var svg = d3
+    .select('.content')
     .append('svg')
     .attr("xmlns", 'http://www.w3.org/2000/svg')
     .attr("id", 'network')
@@ -67,27 +72,31 @@ var drawGraph = function () {
     .style("top", "-50px")
     .style("position", "relative");
 
-  d3.select('body > nav > nav > div')
+  d3
+    .select('body > nav > nav > div')
     .append('div')
     .attr('id', 'editBox')
     .append('p')
     .text('Edit')
-    .style('color', '#2e92cf');
+    .style('color', '#2e92cf'); // cyanish
 
   var aspect = width / height;
   var network = $('#network');
   var container = network.parent();
 
-  $(window).on('resize', function() {
-    console.log("Running window.onResize handler");
-    var targetWidth = container.width();
-    network.attr("width", targetWidth);
-    network.attr("height", Math.round(targetWidth / aspect));
-  }).trigger("resize");
+  $(window).on('resize',
+    function() {
+      console.log("Running window.onResize handler");
+      var targetWidth = container.width();
+      network.attr("width", targetWidth);
+      network.attr("height", Math.round(targetWidth / aspect));
+    }
+  ).trigger("resize");
 
   var viewBoxParameters = '0 0 ' + width + ' ' + height;
 
-  svg.attr("viewBox", viewBoxParameters)
+  svg
+    .attr("viewBox", viewBoxParameters)
     .attr("preserveAspectRatio", 'xMidYMid');
 
   //  Static Scale
@@ -98,6 +107,7 @@ var drawGraph = function () {
 
   d3.json("/athena", function(error, graph) {
     console.log("Running AJAX call to /athena");
+    console.log("graph", graph);
 
     var allNodes                 = graph.entities;
     var fundingConnections       = graph.funding_connections;
@@ -110,8 +120,13 @@ var drawGraph = function () {
       .concat(collaborationConnections)
       .concat(dataConnections);
 
-    console.log("allNodes =", allNodes);
-    console.log("connections =", connections);
+    console.log("allNodes =", allNodes.length);
+    console.log("fundingConnections =", fundingConnections.length);
+    console.log("investmentConnections =", investmentConnections.length);
+    console.log("collaborationConnections =", collaborationConnections.length);
+    console.log("dataConnections =", dataConnections.length);
+
+    console.log("connections =", connections.length);
 
     var force = d3
       .layout
@@ -148,7 +163,7 @@ var drawGraph = function () {
       .enter()
       .append("line")
       .attr("class", "fund")
-      .style("stroke", "rgb(111,93,168)")
+      .style("stroke", "rgb(111,93,168)") // lavender
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
@@ -161,7 +176,7 @@ var drawGraph = function () {
       .enter()
       .append("line")
       .attr("class", "invest")
-      .style("stroke", "rgb(38,114,114)")
+      .style("stroke", "rgb(38,114,114)") // teal
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
@@ -174,7 +189,7 @@ var drawGraph = function () {
       .enter()
       .append("line")
       .attr("class", "porucs")
-      .style("stroke", "rgb(235,232,38)")
+      .style("stroke", "rgb(235,232,38)") // yellow
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
@@ -187,7 +202,7 @@ var drawGraph = function () {
       .enter()
       .append("line")
       .attr("class", "data")
-      .style("stroke", "rgb(191,72,150)")
+      .style("stroke", "rgb(191,72,150)") // pink
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
@@ -337,9 +352,40 @@ var drawGraph = function () {
         })
       .style("stroke-width", '1.5px')
       .style("stroke", 'white')
-      .on('mouseover', handleNodeHover)
-      .on('mouseout', offNode)
-      .on('click', sinclick);
+      .on(
+        'mouseover',
+        handleNodeHoverCb(
+          fundLink,
+          investLink,
+          porucsLink,
+          dataLink,
+          fundingConnections,
+          investmentConnections,
+          collaborationConnections,
+          dataConnections
+        )
+      )
+      .on(
+        'mouseout',
+        offNodeCb(
+          fundLink,
+          investLink,
+          porucsLink,
+          dataLink,
+          fundingConnections,
+          investmentConnections,
+          collaborationConnections,
+          dataConnections,
+          graph
+        )
+      )
+      .on('click', sinclickCb(
+        fundLink,
+        investLink,
+        porucsLink,
+        dataLink,
+        graph
+      ));
     console.log("Set node =", node);
 
     textElement.call(wrap, 80);
@@ -354,7 +400,6 @@ var drawGraph = function () {
     var dblclick = require('./dblclick');
     var handleClickNodeHover = require('./handle-click-node-hover');
     var prefillCurrent = require('./prefill-current');
-    var textDisplay = require('./text-display');
     var editForm = require('./edit-form');
 
     // Form A has the required items + basic items
@@ -372,1044 +417,81 @@ var drawGraph = function () {
     var displayFormB = require('./display-form-b');
     var addDataList = require('./add-data-list');
 
-    function preFillName(input, inputSelector) {
-      console.log("Running preFillName with", input, inputSelector);
-
-      if (input.toLowerCase() in entitiesHash) {
-        d3.selectAll(inputSelector).text(function(d) {
-          this.value = entitiesHash[input].name;
-          // this.data('id') = entitiesHash[input].id;
-        });
-      }
-    }
-
-    function preParseForm(input) {
-      console.log("Running preParseForm with", input);
-
-      input = input.toLowerCase();
-      if (input in entitiesHash) {
-        editForm();
-        preFillFormA(entitiesHash[input]);
-      }
-    }
-
-    function preFillLocation(input) {
-      console.log("Running preFillLocation with", input);
-
-      if (input.toLowerCase() in locationsHash) {
-        d3.selectAll('#location').text(function(d) {
-          this.value = locationsHash[input][0].location;
-        });
-      }
-    }
-
-    function add_input_locations(counterJ) {
-      console.log("Running add_input_locations with counterJ = " + counterJ);
-
-      if ($('#location-' + counterJ + ' input[name="location"]').val() !== "") {
-        d3.select('#location-' + counterJ + ' input[name="location"]').on('keyup', function () {
-          console.log("Running onKeyup with counterJ = " + counterJ);
-          preFillLocation(this.value);
-        });
-
-        counterJ++;
-
-        $("#location-" + (counterJ - 1)).after(locationTmpl({ idx: counterJ }));
-        d3.select("#location-" + counterJ +  " input[name='location']").on("keyup", function() {
-          console.log("Running location onKeyup with counterJ = " + counterJ);
-          add_input_locations(counterJ);
-        });
-      }
-    }
-
-    function add_input_loc(counterU) {
-      console.log("Running add_input_loc with counterU = " + counterU);
-
-      if ($('#location-' + counterU + ' input[name="location"]').val() !== "") {
-        d3.select('#location-' + counterU + ' input[name="location"]').on('keyup', null);
-
-        counterU++;
-
-        $("#location-" + (counterU - 1)).after(locTmpl({ idx: counterU }));
-        d3.select("#location-" + counterU +  " input[name='location']").on("keyup", function() {
-          console.log("Running loc onKeyup with counterU = " + counterU);
-          add_input_loc(counterU);
-        });
-      }
-    }
-
-    function add_input_kp(counterK) {
-      console.log("Running add_input_kp with counterK = " + counterK);
-
-      if ($('#key-people-' + counterK + ' input[name="kpeople"]').val() !== "") {
-        d3.select('#key-people-' + counterK + ' input[name="kpeople"]').on('keyup', null);
-        counterK++; // counter -> 2
-
-
-        $("#key-people-" + (counterK - 1)).after(keyPeopleTmpl({ idx: counterK }));
-        d3.select("#key-people-" + counterK + " input[name='kpeople']").on("keyup", function() {
-          console.log("Running kp onKeyup with counterK = " + counterK);
-          add_input_kp(counterK);
-        });
-      }
-    }
-
-    function add_input_fund(counterF) {
-      console.log("Running add_input_fund with counterF = " + counterF);
-
-      if ($('#funding-' + counterF + ' input[name="fund"]').val() !== "") {
-        d3.select('#funding-' + counterF + ' input[name="fund"]').on('keyup', function() {
-          console.log("Running fund onKeyup with counterF = " + counterF);
-          preFillName(this.value, '#funding-' + (counterF - 1) + ' input[name="fund"]');
-        });
-        counterF++; // counter -> 2
-
-
-        $("#funding-" + (counterF - 1)).after(fundingTmpl({ idx: counterF }));
-        addDataList('#funding-' + counterF + ' datalist');
-        d3.select("#funding-" + counterF + " input[name='fund']").on("keyup", function() {
-          console.log("Running fund onKeyup with counterF = " + counterF);
-          add_input_fund(counterF);
-        });
-      }
-    }
-
-    function add_input_invest(counterI) {
-      console.log("Running add_input_invest with counterI = " + counterI);
-
-      if ($('#investing-' + counterI + ' input[name="invest"]').val() !== "") {
-        d3.select('#investing-' + counterI + ' input[name="invest"]').on('keyup', function() {
-          console.log("Running invest onKeyup with counterI = " + counterI);
-          preFillName(this.value, '#investing-' + (counterI - 1) + ' input[name="invest"]');
-        });
-        counterI++; // counter -> 2
-
-
-        $("#investing-" + (counterI - 1)).after(investingTmpl({ idx: counterI }));
-        addDataList('#investing-' + counterI + ' datalist');
-        d3.select("#investing-" + counterI + " input[name='invest']").on("keyup", function() {
-          console.log("Running invest onKeyup with counterI = " + counterI);
-          add_input_invest(counterI);
-        });
-      }
-    }
-
-    function add_input_fund_given(counterFG) {
-      console.log("Running add_input_fund_given with counterFG = " + counterFG);
-
-      if ($('#fundinggiven-' + counterFG + ' input[name="fundgiven"]').val() !== "") {
-        d3.select('#fundinggiven-' + counterFG + ' input[name="fundgiven"]').on('keyup', function() {
-          console.log("Running fund given onKeyup with counterFG = " + counterFG);
-          preFillName(this.value, '#fundinggiven-' + (counterFG - 1) + ' input[name="fundgiven"]');
-        });
-        counterFG++; // counter -> 2
-
-
-        $("#fundinggiven-" + (counterFG - 1)).after(fundingGivenTmpl({ idx: counterFG }));
-
-        addDataList('#fundinggiven-' + counterFG + ' datalist');
-
-        d3.select("#fundinggiven-" + counterFG + " input[name='fundgiven']").on("keyup", function() {
-          console.log("Running fund given onKeyup with counterFG = " + counterFG);
-          add_input_fund_given(counterFG);
-        });
-      }
-    }
-
-    function add_input_invest_made(counterIM) {
-      console.log("Running add_input_invest_made with counterIM = " + counterIM);
-
-      if ($('#investmentmade-' + counterIM + ' input[name="investmade"]').val() !== "") {
-        d3.select('#investmentmade-' + counterIM + ' input[name="investmade"]').on('keyup', function() {
-          console.log("Running fund made onKeyup with counterIM = " + counterIM);
-          preFillName(this.value, '#investmentmade-' + (counterIM - 1) + ' input[name="investmade"]');
-        });
-        counterIM++; // counter -> 2
-
-
-        $("#investmentmade-" + (counterIM - 1)).after(investmentMadeTmpl({ idx: counterIM }));
-
-        addDataList('#investmentmade-' + counterIM + ' datalist');
-
-        d3.select("#investmentmade-" + counterIM + " input[name='investmade']").on("keyup", function() {
-          console.log("Running fund made onKeyup with counterIM = " + counterIM);
-          add_input_invest_made(counterIM);
-        });
-      }
-    }
-
-    function add_input_data(counterD) {
-      console.log("Running add_input_data with counterD = " + counterD);
-
-      if ($('#data-' + counterD + ' input[name="data"]').val() !== "") {
-        d3.select('#data-' + counterD + ' input[name="data"]').on('keyup', function() {
-          console.log("Running data onKeyup with counterD = " + counterD);
-          preFillName(this.value, '#data-' + (counterD - 1) + ' input[name="data"]');
-        });
-        counterD++; // counter -> 2
-
-
-        $("#data-" + (counterD - 1)).after(dataTmpl({ idx: counterD }));
-
-        addDataList('#data-' + counterD + ' datalist');
-
-        d3.select("#data-" + counterD + " input[name='data']").on("keyup", function() {
-          console.log("Running data onKeyup with counterD = " + counterD);
-          add_input_data(counterD);
-        });
-      }
-    }
-
-    function add_input_collab(counterC) {
-      console.log("Running add_input_collab with counterC = " + counterC);
-
-      if ($('#collaboration-' + counterC + ' input[name="collaboration"]').val() !== "") {
-        d3.select('#collaboration-' + counterC + ' input[name="collaboration"]').on('keyup', function() {
-          console.log("Running collab onKeyup with counterC = " + counterC);
-          preFillName(this.value, '#collaboration-' + (counterC - 1) + ' input[name="collaboration"]');
-        });
-        counterC++; // counter -> 2
-
-
-        $("#collaboration-" + (counterC - 1)).after(collaborationTmpl({ idx: CounterC }));
-
-        addDataList('#collaboration-' + counterC + ' datalist');
-
-        d3.select("#collaboration-" + counterC + " input[name='collaboration']").on("keyup", function() {
-          console.log("Running collab onKeyup with counterC = " + counterC);
-          add_input_collab(counterC);
-
-        });
-      }
-    }
-
-    function add_input_rev(counterR) {
-      console.log("Running add_input_rev with counterR = " + counterR);
-
-      if ($('#revenue-' + counterR + ' input[name="revenue_amt"]').val() !== "") {
-        d3.select('#revenue-' + counterR + ' input[name="revenue_amt"]').on('keyup', null);
-        counterR++; // counter -> 2
-
-
-        $("#revenue-" + (counterR - 1)).after(revenueTmpl({ idx: counterR }));
-
-        d3.select("#revenue-" + counterR + " input[name=revenue_amt]").on("keyup", function() {
-          console.log("Running rev onKeyup with counterR = " + counterR);
-          add_input_rev(counterR);
-        });
-      }
-    }
-
-    function add_input_exp(counterE) {
-      console.log("Running add_input_exp with counterE = " + counterE);
-
-      if ($('#expense-' + counterE + ' input[name="expense_amt"]').val() !== "") {
-        d3.select('#expense-' + counterE + ' input[name="expense_amt"]').on('keyup', null);
-        counterE++; // counter -> 2
-
-
-        $("#expense-" + (counterE - 1)).after(expensesTmpl({ idx: counterE }));
-        d3.select("#expense-" + counterE + " input[name=expense_amt]").on("keyup", function() {
-          console.log("Running exp onKeyup with counterE = " + counterE);
-          add_input_exp(counterE);
-        });
-      }
-    }
-
-    function displayFormA() {
-      console.log("Running displayFormA");
-      return formATmpl();
-    }
-
-    function iterateThroughObj(obj) {
-      console.log("Running iterateThroughObj with obj =", obj);
-      var objValue = _.object(_.map(obj, function(value, key) {
-        return [key, value];
-      }));
-      console.log("Set objValue =", objValue);
-
-      return objValue;
-    }
-
-    function determineNullFields() {
-      console.log("Running determineNullFields");
-      var nullFieldCount = 0;
-      var nullFieldArr = [];
-
-      // We know which nodes have how many null fields...
-      allNodes.forEach(
-        function(d) {
-          var objValue = _.object(
-            _.map(
-              d,
-              function(value, key) {
-                if (value === null) { nullFieldCount++; }
-                return [key, value];
-              }
-            )
-          );
-
-          // Individuals do not have employees, people, rande, randeY
-          // Not a fair comparison of null fields.
-          if (d.type === 'Individual') { nullFieldCount -= 4; }
-
-          nullFieldArr.push({ name: d.name, nullFields: nullFieldCount });
-          nullFieldCount = 0;
-        }
-      );
-
-      console.log("Looped through allNodes to set nullFieldArr =", nullFieldArr);
-
-      //  Let's determine the nodes with the most null fields.
-      var maxNullObj = _.max(nullFieldArr, function(d) {
-        return d.nullFields
-      });
-
-      var potentialSuggestions = [];
-
-      nullFieldArr.forEach(function(d) {
-        if (
-          d.nullFields <= maxNullObj.nullFields &&
-          d.nullFields >= maxNullObj.nullFields - 7
-        ) {
-          var nodeObj = _.find(allNodes, function(e) {
-            return d.name === e.name;
-          });
-
-          potentialSuggestions.push(nodeObj);
-        }
-      });
-
-      console.log("Set potentialSuggestions =", potentialSuggestions);
-
-      var fiveSuggestions = [];
-
-      while (fiveSuggestions.length < 5) {
-        var indexValue = Math.floor(Math.random() * potentialSuggestions.length);
-
-        if (fiveSuggestions.indexOf(potentialSuggestions[indexValue]) !== -1) {
-          continue;
-        } else {
-          fiveSuggestions.push(potentialSuggestions[indexValue]);
-        }
-      }
-
-      console.log("set fiveSuggestions =", fiveSuggestions);
-
-      return fiveSuggestions;
-    }
-
-    function displayFormCSendJSON(obj) {
-      console.log("Running displayFormCSendJSON with obj =", obj);
-      var formObj = processFormB(obj);
-
-      displayFormC();
-
-      $.ajax({
-        type: 'POST',
-        data: $.param(formObj),
-        url: '/database/save',
-        crossDomain: true
-      }).done(function(returnData) {
-        console.log("Returning from AJAX POST to /database/save with returnData =", returnData);
-        // TODO: ???
-      });
-    }
-
-    function displayFormC() {
-      console.log("Running displayFormC");
-      var suggestions = determineNullFields();
-
-      // Render the string into HTML
-      d3.select('#info').html(formCTmpl({ suggestions: suggestions }));
-
-      d3.selectAll('#info ul a').on('click',
-        function(d, i) {
-          console.log("Running onClick on #info ul a with d, i =", d, i);
-          sinclick(suggestions[i]);
-          editForm();
-          preFillFormA(suggestions[i]);
-        }
-      );
-    }
-
-    // Prefilling the form for editing...
-    function preFillFormA(obj) {
-      console.log("Running preFillFormA with obj =", obj);
-      // Time to prefill the form...
-      d3.selectAll('#name').text(function(d) {
-        console.log("Setting #name to " + obj.name);
-        this.value = obj.name;
-      });
-
-      if(obj.location !== null) {
-        d3.json("/cities", function(error, cities) {
-          console.log("Returning from AJAX GET to /cities with error, cities =", error, cities);
-          var cityNodes = cities.nodes;
-          var location  = obj.location;
-          var len       = location.length;
-
-          for (var i = 0; i < len; i++) {
-            var string      = location[i].location;
-            var splitString = string.split(",");
-
-            $("#location-" + i) .after(locationTmpl({ idx: i }));
-
-            d3.select('#location-' + i + ' input[name="location"]').on('keyup', null);
-
-            d3.select('#location-' + i + ' input[name="location"]').text(
-              function(e) {
-                console.log("Settting #location-" + i + " input[name='location'] text with e =", e);
-                $(this).val(splitString[0]);
-
-                var input1 = $(this).siblings("#state");
-                var input2 = $(this).siblings("#country");
-                var len    = cityNodes.length;
-
-                for (var j = 0; j < len; j++) {
-                  var city = cityNodes[j];
-
-                  if(city.cityName == splitString[0]) {
-                    if(splitString.length === 2) {
-                      input1.val(city.stateCode);
-                    }
-
-                    if(splitString.length === 3) {
-                      input1.val(city.stateCode);
-                      input2.val(city.countryCode);
-                    }
-                  }
-                }
-              }
-            );
-          }
-        });
-
-        d3.select('#location-' + location.length + ' input[name="location"]')
-          .on(
-            'keyup',
-            function() {
-              console.log("Running location onKeyup on " + location + " and calling add_input_locations with length = " + location.length);
-              add_input_locaions(location.length);
-            }
-          );
-      }
-
-      d3.selectAll('input[name="entitytype"]').filter(
-        function(d, i) {
-          console.log("Running filter on input[name='entitytype'] with d, i", d, i);
-          this.checked = (this.value === obj.type);d = false;
-        }
-      );
-
-      if (obj.categories !== null) {
-        d3.selectAll('.webform-categories input').filter(
-          function(d, i) {
-            console.log("Running filter on .webform-categories input with d, i", d, i);
-            this.checked =  (
-              (obj.categories).indexOf(
-                d3.selectAll('.webform-categories h4')[0][i].textContent
-              ) > -1
-            );
-          }
-        );
-      }
-
-      d3.selectAll('#website').text(function(d) {
-        console.log("Running text on #website with d =", d);
-        console.log("Setting value = " + obj.url);
-        this.value = obj.url;
-      });
-
-      d3.selectAll('#employee').text(function(d) {
-        console.log("Running text on #employee with d=", d);
-        console.log("Setting value = " + obj.employees);
-        this.value = obj.employees;
-      });
-
-      if (obj.key_people !== null) {
-        var keypeople = obj.key_people;
-        var len       = keypeople.length;
-
-        for (var i = 0; i < len; i++) {
-          $("#key-people-" + i).after(keyPeopleTmpl({ idx: i }));
-
-          d3.select('#key-people-' + i + ' input[name="kpeople"]').on('keyup', null);
-
-          d3.select('#key-people-' + i + ' input[name="kpeople"]').text(
-            function(e) {
-              console.log("Running text on #key-people-" + i + " input[name=kpeople] with e =", e);
-              console.log("Setting value = " + keypeople[i].name);
-              this.value = keypeople[i].name;
-            }
-          );
-        }
-
-        d3.select('#key-people-' + keypeople.length + ' input[name="kpeople"]')
-          .on(
-            'keyup',
-            function() {
-              console.log("Running onKeyup on #key-people-" + keypeople.length + " input[name=kpeople]");
-              console.log("Calling add_input_kp with length = " + keypeople.length);
-              add_input_kp(keypeople.length);
-            }
-          );
-      }
-
-      if (obj.funding_received !== null) {
-        var fundingreceived = obj.funding_received;
-
-        fundingreceived.forEach(
-          function(d, i) {
-            console.log("Running fundingreceived forEach with d, i =", d, i);
-            $("#funding-" + i).after(fundingTmpl({ idx: i }));
-
-            addDataList('#funding-' + i + ' datalist');
-
-            d3.select('#funding-' + i + ' input[name="fund"]').on('keyup',
-              function() {
-                console.log("Running preFillName on #funding-" + i + " input[name=fund] with " + this.value);
-                preFillName(this.value, '#funding-' + i + ' input[name="fund"]');
-              }
-            );
-
-            d3.select('#funding-' + i + ' input[name="fund"]').text(
-              function(e) {
-                console.log("Running text on #funding-" + i + " input[name=fund] set value = " + d.entity);
-                this.value = d.entity;
-              }
-            );
-
-            d3.select('#funding-' + i + ' input[name="fund_amt"]').text(
-              function(e) {
-                console.log("Running text on #funding-" + i + " input[name=fund_amt] set value = " + d.amount);
-                this.value = d.amount;
-              }
-            );
-
-            d3.select('#funding-' + i + ' input[name="fund_year"]').text(
-              function(e) {
-                console.log("Running text on #funding-" + i + " input[name=fund_year] set value = " + d.year);
-                this.value = d.year;
-              }
-            );
-          }
-        );
-
-        d3.select("#funding-" + fundingreceived.length + " input[name='fund']")
-          .on(
-            "keyup",
-            function() {
-              console.log("Running onKeyup on #funding-" + fundingreceived.length + " input[name=fund]");
-              console.log("Calling add_input_fund with length");
-              add_input_fund(fundingreceived.length);
-            }
-          );
-      }
-
-      if (obj.funding_given !== null) {
-        var fundinggiven = obj.funding_given;
-
-        fundinggiven.forEach(
-          function(d, i) {
-            console.log("Running fundinggiven forEach with d, i =", d, i);
-            $("#fundinggiven-" + i).after(fundingGivenTmpl({ idx: i }));
-
-            addDataList('#fundinggiven-' + i + ' datalist');
-
-            d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').on('keyup', function() {
-              console.log("Running preFillName on #fundinggiven-" + i + " input[name=fundgiven] with " + this.value);
-              preFillName(this.value, '#fundinggiven-' + i + ' input[name="fundgiven"]');
-            });
-            d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').text(function(e) {
-              console.log("Running text on #fundinggiven-" + i + " input[name=fundgiven] set value = " + d.entity);
-              this.value = d.entity;
-            });
-            d3.select('#fundinggiven-' + i + ' input[name="fundgiven_amt"]').text(function(e) {
-              console.log("Running text on #fundinggiven-" + i + " input[name=fundgiven_amt] set value = " + d.amount);
-              this.value = d.amount;
-            });
-            d3.select('#fundinggiven-' + i + ' input[name="fundgiven_year"]').text(function(e) {
-              console.log("Running text on #fundinggiven-" + i + " input[name=fundgiven_year] set value = " + d.year);
-              this.value = d.year;
-            });
-          }
-        );
-
-        d3.select("#fundinggiven-" + fundinggiven.length + " input[name='fundgiven']")
-          .on(
-            "keyup",
-            function() {
-              console.log("Running onKeyup on #fundinggiven-" + fundinggiven.length + " input[name=fundgiven]");
-              console.log("Calling add_input_fund_given with length");
-              add_input_fund_given(fundinggiven.length);
-            }
-          );
-      }
-
-      if (obj.investments_received !== null) {
-        var investmentreceived = obj.investments_received;
-
-        investmentreceived.forEach(function(d, i) {
-          console.log("Running investmentreceived forEach with d, i =", d, i);
-          $("#investing-" + i).after(investmentRecievedTmpl({ idx: i }));
-
-          addDataList('#investing-' + i + ' datalist');
-
-          d3.select('#investing-' + i + ' input[name="invest"]').on('keyup',
-            function() {
-              console.log("Running preFillName on #investing-" + i + " input[name=invest] with " + this.value);
-              preFillName(this.value, '#investing-' + i + ' input[name="invest"]');
-            }
-          );
-
-          d3.select('#investing-' + i + ' input[name="invest"]').text(
-            function(e) {
-              console.log("Running text on #investing-" + i + " input[name=invest] set value = " + d.entity);
-              this.value = d.entity;
-            }
-          );
-
-          d3.select('#investing-' + i + ' input[name="invest_amt"]').text(
-            function(e) {
-              console.log("Running text on #investing-" + i + " input[name=invest_amt] set value = " + d.amount);
-              this.value = d.amount;
-            }
-          );
-
-          d3.select('#investing-' + i + ' input[name="invest_year"]').text(
-            function(e) {
-              console.log("Running text on #investing-" + i + " input[name=invest_year] set value = " + d.year);
-              this.value = d.year;
-            }
-          );
-        });
-
-        d3.select("#investing-" + investmentreceived.length + " input[name='invest']")
-          .on(
-            "keyup",
-            function() {
-              console.log("Running onKeyup on #investing-" + investmentreceived.length + " input[name=invest]");
-              console.log("Calling add_input_invest with length");
-              add_input_invest(investmentreceived.length);
-            }
-          );
-      }
-
-      if (obj.investments_made !== null) {
-        var investmentsmade = obj.investments_made;
-
-        investmentsmade.forEach(function(d, i) {
-          console.log("Running investmentsmade forEach with d, i =", d, i);
-          $("#investmentmade-" + i).after(investmentMadeTmpl({ idx: i }));
-
-          addDataList('#investmentmade-' + i + ' datalist');
-
-          d3.select('#investmentmade-' + i + ' input[name="investmade"]')
-            .on(
-              'keyup',
-              function() {
-                console.log("Running preFillName on #investing-" + i + " input[name=invest] with " + this.value);
-                preFillName(this.value, '#investmentmade-' + i + ' input[name="investmade"]');
-              }
-            );
-
-          d3.select('#investmentmade-' + i + ' input[name="investmade"]').text(
-            function(e) {
-              console.log("Running text on #investmentmade-" + i + " input[name=investmade] set value = " + d.entity);
-              this.value = d.entity;
-            }
-          );
-
-          d3.select('#investmentmade-' + i + ' input[name="investmade_amt"]').text(
-            function(e) {
-              console.log("Running text on #investmentmade-" + i + " input[name=investmade_amt] set value = " + d.amount);
-              this.value = d.amount;
-            }
-          );
-
-          d3.select('#investmentmade-' + i + ' input[name="investmade_year"]').text(
-            function(e) {
-              console.log("Running text on #investmentmade-" + i + " input[name=investmade_year] set value = " + d.year);
-              this.value = d.year;
-            }
-          );
-        });
-
-        d3.select("#investmentmade-" + investmentsmade.length + " input[name='investmade']")
-          .on(
-            "keyup",
-            function() {
-              console.log("Running onKeyup on #investmentmade-" + investmentsmade.length + " input[name=investmade]");
-              console.log("Calling add_input_invest_made with length");
-              add_input_invest_made(investmentsmade.length);
-            }
-          );
-      }
-
-      if (obj.data !== null) {
-        var dataProviders = obj.data;
-
-        dataProviders.forEach(function(d, i) {
-          console.log("Running dataProviders forEach with d, i =", d, i);
-          $("#data-" + i).after(dataTmpl({ idx: i }));
-
-          addDataList('#data-' + i + ' datalist');
-
-          d3.select('#data-' + i + ' input[name="data"]').on('keyup',
-            function() {
-              console.log("Running preFillName on #data-" + i + " input[name=data] with " + this.value);
-              preFillName(this.value, '#data-' + i + ' input[name="data"]');
-            }
-          );
-
-          d3.select('#data-' + i + ' input[name="data"]').text(
-            function(e) {
-              console.log("Running text on #data-" + i + " input[name=data] set value = " + d.entity);
-              this.value = d.entity;
-            }
-          );
-        });
-
-        d3.select("#data-" + dataProviders.length + " input[name='data']")
-          .on(
-            "keyup",
-            function() {
-              console.log("Running onKeyup on #data-" + dataProviders.length + " input[name=data]");
-              console.log("Calling add_input_data with length");
-              add_input_data(dataProviders.length);
-            }
-          );
-      }
-
-      d3.selectAll('#submit-A').on('click', function() {
-        console.log("Running onClick for #submit-A");
-        d3.select('#name').style("border-color", "#d9d9d9");
-        d3.select('#location').style("border-color", "#d9d9d9");
-        displayFormB();
-        preFillFormB(obj);
-      });
-    }
-
-    function preFillFormB(obj) {
-      console.log("Running preFillFormB with obj =", obj);
-
-      d3.selectAll('#nickname').text(function(d) {
-        console.log("Setting #nickname to ", obj.nickname);
-        this.value = obj.nickname;
-      });
-
-      d3.selectAll('#twitterhandle').text(function(d) {
-        console.log("Setting #twitterhandle to ", obj.twitter_handle);
-        this.value = obj.twitter_handle;
-      });
-
-      d3.selectAll('input[name="influence-type"]').filter(function(d, i) {
-        console.log("Calling filter on input[name=influence-type] with d, i =", d, i);
-        if (obj.influence === "local" && this.value === "Local Influence") {
-          this.checked = true;
-        } else if (obj.influence === "global" && this.value === "Global Influence") {
-          this.checked = true;
-        } else {
-          this.checked = false;
-        }
-      });
-
-      if (obj.collaborations !== null) {
-        var collaboration = obj.collaborations;
-
-        collaboration.forEach(function(d, i) {
-          console.log("Calling forEach on collaboration with d, i =", d, i);
-          $("#collaboration-" + i).after(collaborationTmpl({ idx: i }));
-
-          addDataList('#collaboration-' + i + ' datalist');
-
-          d3.select('#collaboration-' + i + ' input[name="collaboration"]').on('keyup', function() {
-            console.log("Calling onKeyup on #collaboration-" + i + " input[name=collaboration]");
-            preFillName(this.value, '#collaboration-' + i + ' input[name="collaboration"]');
-          });
-
-          d3.select('#collaboration-' + i + ' input[name="collaboration"]').text(function(e) {
-            console.log("Calling text on #collaboration-" + i + " input[name=collaboration] with e =", e);
-            console.log("Set value to " + d.entity);
-            this.value = d.entity;
-          });
-
-        });
-
-        d3.select('#collaboration-' + collaboration.length + ' input[name="collaboration"]').on('keyup', function() {
-          console.log("Calling onKeyup on #collaboration-" + collaboration.length + " input[name=collaboration]");
-          add_input_collab(collaboration.length);
-        });
-      }
-
-      if (obj.expenses !== null) {
-        var expenseValues = obj.expenses;
-
-        expenseValues.forEach(function(d, i) {
-          console.log("Calling forEach on expenseValues with d, i =", d, i);
-          $("#expense-" + i).after(expensesTmpl({ idx: i }));
-          d3.select('#expense-' + i + ' input[name="expense_amt"]').on('keyup', null);
-          d3.select('#expense-' + i + ' input[name="expense_amt"]').text(function(e) {
-            console.log("Set #expense-" + i + " input[name=expense_amt] = " + d.amount);
-            this.value = d.amount;
-          });
-          d3.select('#expense-' + i + ' input[name="expense_year"]').text(function(e) {
-            console.log("Set #expense-" + i + " input[name=expense_year] = " + d.year);
-            this.value = d.year;
-          });
-        });
-        d3.select('#expense-' + expenseValues.length + ' input[name="expense_amt"]').on('keyup', function() {
-          console.log("Calling onKeyp on #expense-" + expenseValues.length + " input[name=expense_amt]");
-          add_input_exp(expenseValues.length);
-        });
-      }
-
-      if (obj.revenue !== null) {
-        var revenueValues = obj.revenue;
-
-        revenueValues.forEach(function(d, i) {
-          console.log("Calling forEach on revenueValues with d, i =", d, i);
-          $("#revenue-" + i).after(revenueTmpl({ idx: i }));
-          d3.select('#revenue-' + i + ' input[name="revenue_amt"]').on('keyup', null);
-          d3.select('#revenue-' + i + ' input[name="revenue_amt"]').text(function(e) {
-            console.log("Set #revenue-" + i + " input[name=revenue_amt] = " + d.amount);
-            this.value = d.amount;
-          });
-          d3.select('#revenue-' + i + ' input[name="revenue_year"]').text(function(e) {
-            console.log("Set #revenue-" + i + " input[name=revenue_year] = " + d.year);
-            this.value = d.year;
-          });
-        });
-        d3.select('#revenue-' + revenueValues.length + ' input[name="revenue_amt"]').on('keyup', function() {
-          console.log("Calling onKeyp on #revenue-" + revenueValues.length + " input[name=revenue_amt]");
-          add_input_rev(revenueValues.length);
-        });
-      }
-    }
-
     var forProfitObjects = [];
     var nonProfitObjects = [];
     var governmentObjects = [];
     var individualObjects = [];
 
-    initialInfo();
+    initialInfo(allNodes);
 
-    // Initial display on sidebar
-    function initialInfo() {
-      console.log("Calling initialInfo");
-
-      var countTypes = [0, 0, 0, 0];
-
-      var forProfitsArray = [];
-      var nonProfitsArray = [];
-      var governmentArray = [];
-      var individualArray = [];
-
-      for (var x = 0; x < allNodes.length; x++) {
-        if (allNodes[x].type === "Individual") {
-          individualArray.push(allNodes[x].name);
-          individualObjects.push(allNodes[x]);
-          countTypes[3]++;
-        }
-        if (allNodes[x].type === "Non-Profit") {
-          nonProfitsArray.push(allNodes[x].name);
-          nonProfitObjects.push(allNodes[x]);
-          countTypes[1]++;
-        }
-        if (allNodes[x].type === "For-Profit") {
-          forProfitsArray.push(allNodes[x].name);
-          forProfitObjects.push(allNodes[x]);
-          countTypes[0]++;
-        }
-        if (allNodes[x].type === "Government") {
-          governmentArray.push(allNodes[x].name);
-          governmentObjects.push(allNodes[x]);
-          countTypes[2]++;
-        }
+    d3.selectAll('.for-profit-entity').on(
+      'click',
+      function(n, i) {
+        console.log("Running onClick for .for-profit-entity with n, i =", n, i);
+        sinclickCb(
+          fundLink,
+          investLink,
+          porucsLink,
+          dataLink,
+          graph
+        )(forProfitObjects[i]);
       }
-      console.log("Set forProfitsArray =", forProfitsArray);
-      console.log("Set nonProfitsArray =", nonProfitsArray);
-      console.log("Set governmentArray =", governmentArray);
-      console.log("Set individualArray =", individualArray);
+    );
 
-      //  Printing to side panel within web application.
-      console.log("Printing to the side panel")
-      d3
-        .select('#info')
-        .html("<h3 style='padding-bottom:10px;'>The Data</h3>")
-        .style('list-style', 'square');
+    d3.selectAll('.non-profit-entity').on(
+      'click',
+      function(n, i) {
+        console.log("Running onClick for .non-profit-entity with n, i =", n, i);
+        sinclickCb(
+          fundLink,
+          investLink,
+          porucsLink,
+          dataLink,
+          graph
+        )(nonProfitObjects[i]);
+      }
+    );
 
-      d3
-        .select('#info')
-        .append('div')
-        .attr('id', 'breakdown')
-        .style('width', '100%');
+    d3.selectAll('.individual-entity').on(
+      'click',
+      function(n, i) {
+        console.log("Running onClick for .Individuali-entity with n, i =", n, i);
+        sinclickCb(
+          fundLink,
+          investLink,
+          porucsLink,
+          dataLink,
+          graph
+        )(individualObjects[i]);
+      }
+    );
 
-      var x = d3
-        .scale
-        .linear()
-        .domain([0, d3.max(countTypes)])
-        .range([0, $('#breakdown').width()]);
-      console.log("Set x =", x);
-
-      var typesColor = 0;
-      var typesText = 0;
-
-      d3.select("#breakdown")
-        .selectAll("div")
-        .data(countTypes)
-        .enter().append("div")
-        .style("width", function(d) { return x(d) / 5 + "%"; })
-        .style("height", "20px")
-        .style("font", "8px sans-serif")
-        .style("background-color", function(d) {
-          if (typesColor === 0) {
-            typesColor++;
-            return "rgb(127,186,0)";
-          }
-          if (typesColor === 1) {
-            typesColor++;
-            return "rgb(0,164,239)";
-          }
-          if (typesColor === 2) {
-            typesColor++;
-            return "rgb(242,80,34)";
-          }
-          if (typesColor === 3) {
-            typesColor++;
-            return "rgb(255,185,0)";
-          }
-        })
-        .style("text-align", "right")
-        .style("padding", "3px")
-        .style("margin", "1px")
-        .style("color", "white")
-        .text(function(d) {
-          if (typesText >= 0 && typesText < 4) {
-            typesText++;
-            return;
-          }
-        });
-
-        console.log("Set typesColor =", typesColor);
-        console.log("Set typesText =", typesText);
-
-      d3.select('#info')
-        .append('text')
-        .style('padding-bottom', '20px')
-        .html(entityNamesTmpl({
-          forProfits: forProfitsArray,
-          nonProfits: nonProfitsArray,
-          governments: governmentArray,
-          individuals: individualArray
-        }));
-
-    }
-
-    d3.selectAll('.for-profit-entity').on('click', function(n, i) {
-      console.log("Running onClick for .for-profit-entity with n, i =", n, i);
-
-      sinclick(forProfitObjects[i]);
-
-    });
-
-    d3.selectAll('.non-profit-entity').on('click', function(n, i) {
-      console.log("Running onClick for .non-profit-entity with n, i =", n, i);
-
-      sinclick(nonProfitObjects[i]);
-
-    });
-
-    d3.selectAll('.individual-entity').on('click', function(n, i) {
-      console.log("Running onClick for .Individuali-entity with n, i =", n, i);
-
-      sinclick(individualObjects[i]);
-
-    });
-
-    d3.selectAll('.government-entity').on('click', function(n, i) {
-      console.log("Running onClick for .government-entity with n, i =", n, i);
-
-      sinclick(governmentObjects[i]);
-
-    });
+    d3.selectAll('.government-entity').on(
+      'click',
+      function(n, i) {
+        console.log("Running onClick for .government-entity with n, i =", n, i);
+        sinclickCb(
+          fundLink,
+          investLink,
+          porucsLink,
+          dataLink,
+          graph
+        )(governmentObjects[i]);
+      }
+    );
 
     //click-location works here...
-    d3.selectAll('.click-location').on('click', function(r) {
-      console.log("Running onClick for .click-location with r =", r);
-
-      handleQuery(this.innerHTML);
-    });
-
-    searchAutoComplete();
-
-    function searchAutoComplete() {
-      console.log("Running searchAutoComplete");
-      var s = "";
-
-      console.log("Running forEach on allNodes to splitLocations, sort, and create option tags.");
-      allNodes.forEach(function(d) {
-        name = d.name.toLowerCase();
-        nickname = d.nickname.toLowerCase();
-        var splitLocations = d.location;
-
-        if (!(name in entitiesHash)) {
-          entitiesHash[name] = d;
-          sortedNamesList.push(d.name);
-          // sortedNamesList.push({ id: d.id, name: d.name })
-        }
-
-        if (!(nickname in entitiesHash)) {
-          entitiesHash[nickname] = d;
-          sortedNamesList.push(d.nickname);
-        }
-
-        if (splitLocations) {
-          // console.log("splitLocations", splitLocations);
-          // console.log("Ain't no forEach here!");
-          // splitLocations.forEach(function(l) {
-          //   console.log("l", l)
-          //   var location = l;
-          //   var lwcLocation = location.toLowerCase();
-          //   (!(lwcLocation in locationsHash)) ?
-          //     (
-          //       locationsHash[lwcLocation] = [],
-          //       locationsHash[lwcLocation].push(d),
-          //       sortedLocationsList.push(location)
-          //     ) :
-          //     (locationsHash[lwcLocation].push(d));
-          // });
-        }
-      });
-
-      sortedNamesList = _.sortBy(sortedNamesList,
-        function(names) {
-          // console.log("Running sortBy on sortedNamesList with names =", names);
-          return names.toLowerCase();
-        }
-      );
-
-      sortedLocationsList = _.sortBy(sortedLocationsList,
-        function(locations) {
-          // console.log("Running sortBy on sortedLocationsList with locations =", locations);
-          return locations.toLowerCase();
-        }
-      );
-
-      sortedSearchList = _.sortBy(sortedNamesList.concat(sortedLocationsList),
-        function(keys) {
-          // console.log("Running sortBy on sortedNamesList.concat(sortedLocationsList) with keys =", keys);
-          return keys;
-        }
-      );
-
-      console.log("Setting option tags");
-      for (var count = 0; count < sortedSearchList.length; count++) {
-        s += '<option value="' + sortedSearchList[count] + '">';
+    d3.selectAll('.click-location').on(
+      'click',
+      function(r) {
+        console.log("Running onClick for .click-location with r =", r);
+        handleQuery(
+          this.innerHTML, fundLink, investLink, porucsLink, dataLink, graph
+        );
       }
-      console.log("s is now " + s);
-    }
+    );
+
+    searchAutoComplete(allNodes, entitiesHash, sortedNamesList, sortedLocationsList);
 
     try {
       //filter the sortedSearchList on keyup
@@ -1418,7 +500,9 @@ var drawGraph = function () {
         appendTo: $('.filter-name-location'),
         onSelect: function (suggestion) {
           console.log("Running autocomplete and calling handleQuery with value = " + suggestion.value);
-          handleQuery(suggestion.value);
+          handleQuery(
+            suggestion.value, fundLink, investLink, porucsLink, dataLink, graph
+          );
         }
       }).on('keyup', function() {
         handleQuery(this.value);
@@ -1427,681 +511,23 @@ var drawGraph = function () {
       console.log("autocomplete error: ", err);
     }
 
-
     d3.selectAll('option').on('keydown',
       function(n, i) {
         console.log("Running onKeydown handler on option with n, i =", n, i);
+
         if (d3.event.keyCode === 13) {
           var query = (d3.selectAll('option'))[0][i].value;
-          handleQuery(query);
+          handleQuery(
+            query, fundLink, investLink, porucsLink, dataLink, graph
+          );
         }
       }
     );
 
-    function handleQuery(query) {
-      console.log("Calling handleQuery with query = " + query);
-      query = query.toLowerCase();
-
-      if (query in entitiesHash) { sinclick(entitiesHash[query]); }
-
-      console.log("Chaging opacities on fundLinks, investLinks, etc.");
-      if (query in locationsHash) {
-        fundLink.style("opacity", function(l) {
-          var locationSource = l.source.location;
-          var locationTarget = l.target.location;
-          if(locationSource && locationTarget){
-            for(var i =0; i < locationSource.length; i++){
-              for(var j=0; j<locationTarget.length; j++){
-                return (
-                  locationSource[i].location.toLowerCase() === query &&
-                  locationTarget[j].location.toLowerCase() === query
-                ) ? 1 : 0.05;
-              }
-            }
-          }
-        });
-
-        investLink.style("opacity", function(l) {
-          var locationSource = l.source.location;
-          var locationTarget = l.target.location;
-          if(locationSource && locationTarget){
-            for(var i =0; i<locationSource.length; i++){
-              for(var j=0; j<locationTarget.length; j++){
-                return (
-                  locationSource[i].location.toLowerCase() === query &&
-                  locationTarget[j].location.toLowerCase() === query
-                ) ? 1 : 0.05;
-              }
-            }
-          }
-        });
-
-        porucsLink.style("opacity", function(l) {
-          var locationSource = l.source.location;
-          var locationTarget = l.target.location;
-          if(locationSource && locationTarget){
-            for(var i =0; i<locationSource.length; i++){
-              for(var j=0; j<locationTarget.length; j++){
-                return (
-                  locationSource[i].location.toLowerCase() === query &&
-                  locationTarget[j].location.toLowerCase() === query
-                ) ? 1 : 0.05;
-              }
-            }
-          }
-        });
-
-        dataLink.style("opacity", function(l) {
-          var locationSource = l.source.location;
-          var locationTarget = l.target.location;
-          if(locationSource && locationTarget){
-            for(var i =0; i<locationSource.length; i++){
-              for(var j=0; j<locationTarget.length; j++){
-                return (
-                  locationSource[i].location.toLowerCase() === query &&
-                  locationTarget[j].location.toLowerCase() === query
-                ) ? 1 : 0.05;
-              }
-            }
-          }
-        });
-
-        d3.selectAll('circle').style("stroke", "white");
-
-        d3.selectAll('.node').style('opacity', function(n) {
-          console.log("Setting opacity on n = ", n);
-          var locationSource = n.location;
-          if(locationSource){
-            for(var i =0; i<locationSource.length; i++){
-              return (
-                locationSource[i].location.toLowerCase().indexOf(query) === -1
-              ) ? 0.05 : 1;
-            }
-          }
-        }).select('text').style('opacity', 1);
-
-        node.on('mouseout', null)
-          .on('mouseover', null)
-          .on('click', null);
-
-        node
-          .filter(function(n, i) { return nodeInit[0][i].style.opacity == 1; })
-          .on('mouseover', handleClickNodeHover);
-      }
-    }
-
     dataListSortedNames = generateNamesDataList(sortedNamesList);
     dataListSortedLocations = generateNamesDataList(sortedLocationsList);
 
-    function generateNamesDataList(sortedList) {
-      console.log("Running generateNamesDataList with sortedList = ", sortedList);
-      var datalist = "";
 
-      for (var i = 0; i < sortedList.length; i++) {
-        datalist += '<option value="' + sortedList[i] + '">';
-      }
-
-      return datalist;
-    }
-
-    function handleNodeHover(d) {
-      console.log("Running handleNodeHover with d = ", d);
-      var s = textDisplay(d);
-
-      //  Printing to side panel within web application.
-      webform = editDisplayTmpl(d);
-
-      // For editing the data displayed within the side panel.
-      d3
-        .select('#edit')
-        .html(webform);
-
-      d3
-        .select('#info')
-        .html(s)
-        .style('list-style', 'square');
-
-      fundLink
-        .transition()
-        .duration(350)
-        .delay(0).style("opacity", function(l) {
-          return (d === l.source || d === l.target) ? 1 : 0.05;
-        });
-
-      investLink
-        .transition()
-        .duration(350)
-        .delay(0).style("opacity", function(l) {
-          return (d === l.source || d === l.target) ? 1 : 0.05;
-        });
-
-      porucsLink
-        .transition()
-        .duration(350)
-        .delay(0).style("opacity", function(l) {
-          return (d === l.source || d === l.target) ? 1 : 0.05;
-        });
-
-      dataLink
-        .transition()
-        .duration(350)
-        .delay(0).style("opacity", function(l) {
-          return (d === l.source || d === l.target) ? 1 : 0.05;
-        });
-
-      var isLinkTarget = function(link, node) {
-        return link.target.index === node.index;
-      }
-
-      var isLinkSource = function(link, node) {
-        return link.source.index === node.index;
-      }
-
-      var neighboringNodesIndices = {};
-
-      neighboringNodesIndices[d.ID] = 1;
-
-      fundingConnections.forEach(function(link) {
-        console.log("Running forEach on fundingConnections with link = ", link);
-        if (isLinkSource(link, d)) {
-          neighboringNodesIndices[link.target.index] = 1;
-        }
-
-        if (isLinkTarget(link, d)) {
-          neighboringNodesIndices[link.source.index] = 1;
-        }
-      });
-
-      investmentConnections.forEach(function(link) {
-        console.log("Running forEach on investmentConnections with link = ", link);
-        if (isLinkSource(link, d)) {
-          neighboringNodesIndices[link.target.index] = 1;
-        }
-
-        if (isLinkTarget(link, d)) {
-          neighboringNodesIndices[link.source.index] = 1;
-        }
-      });
-
-      collaborationConnections.forEach(function(link) {
-        console.log("Running forEach on collaborationConnections with link = ", link);
-        if (isLinkSource(link, d)) {
-          neighboringNodesIndices[link.target.index] = 1;
-        }
-
-        if (isLinkTarget(link, d)) {
-          neighboringNodesIndices[link.source.index] = 1;
-        }
-      });
-
-      dataConnections.forEach(function(link) {
-        console.log("Running forEach on dataConnections with link = ", link);
-        if (isLinkSource(link, d)) {
-          neighboringNodesIndices[link.target.index] = 1;
-        }
-
-        if (isLinkTarget(link, d)) {
-          neighboringNodesIndices[link.source.index] = 1;
-        }
-      });
-
-      d3.select(this).style("stroke", "rgba(0,0,0,0.6)");
-
-      svg
-        .selectAll('.node')
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style("opacity", function(n) {
-          if (n.ID in neighboringNodesIndices) {
-            return "1";
-          } else {
-            return "0.05";
-          }
-        }).select('text')
-        .style('opacity', 1);
-
-      d3
-        .select(this.parentNode)
-        .select("text")
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style("opacity", 1)
-        .style("font-weight", "bold");
-    }
-
-    function handleAdjNodeClick(d) {
-      console.log("Running handleAdjNodeClick with d =", d);
-      fundLink.style("opacity", function(l) {
-        if (d === l.source || d === l.target) {
-          return "1";
-        } else {
-          return "0.05";
-        }
-      });
-
-      investLink.style("opacity", function(l) {
-        if (d === l.source || d === l.target) {
-          return "1";
-        } else {
-          return "0.05";
-        }
-      });
-
-      porucsLink.style("opacity", function(l) {
-        if (d === l.source || d === l.target) {
-          return "1";
-        } else {
-          return "0.05";
-        }
-      });
-
-      dataLink.style("opacity", function(l) {
-        if (d === l.source || d === l.target) {
-          return "1";
-        } else {
-          return "0.05";
-        }
-      });
-
-      var isLinkTarget = function(link, node) {
-        console.log("Running isLinkTarget with link, node =", link, node);
-        return link.target.index === node.index;
-      }
-
-      var isLinkSource = function(link, node) {
-        console.log("Running isLinkSource with link, node =", link, node);
-        return link.source.index === node.index;
-      }
-
-      var neighboringNodesIndices = {};
-
-      neighboringNodesIndices[d.ID] = 1;
-
-      fundingConnections.forEach(function(link) {
-        console.log("Running forEach on fundingConnections with link = ", link);
-        if (isLinkSource(link, d)) {
-          neighboringNodesIndices[link.target.index] = 1;
-        }
-
-        if (isLinkTarget(link, d)) {
-          neighboringNodesIndices[link.source.index] = 1;
-        }
-      });
-
-      investmentConnections.forEach(function(link) {
-        console.log("Running forEach on investmentConnections with link = ", link);
-        if (isLinkSource(link, d)) {
-          neighboringNodesIndices[link.target.index] = 1;
-        }
-
-        if (isLinkTarget(link, d)) {
-          neighboringNodesIndices[link.source.index] = 1;
-        }
-      });
-
-      collaborationConnections.forEach(function(link) {
-        console.log("Running forEach on collaborationConnections with link = ", link);
-        if (isLinkSource(link, d)) {
-          neighboringNodesIndices[link.target.index] = 1;
-        }
-
-        if (isLinkTarget(link, d)) {
-          neighboringNodesIndices[link.source.index] = 1;
-        }
-      });
-
-      dataConnections.forEach(function(link) {
-        console.log("Running forEach on dataConnections with link = ", link);
-        if (isLinkSource(link, d)) {
-          neighboringNodesIndices[link.target.index] = 1;
-        }
-
-        if (isLinkTarget(link, d)) {
-          neighboringNodesIndices[link.source.index] = 1;
-        }
-      });
-
-      svg.selectAll('.node').style("opacity", function(n) {
-        console.log("Running opacity on .node with n = ", n);
-        if (n.ID in neighboringNodesIndices) {
-          return "1";
-        } else {
-          return "0.05";
-        }
-      });
-
-      d3
-        .select(this)
-        .style("stroke", "black")
-        .on('mouseout', null);
-
-      node.filter(function(singleNode) {
-        console.log("Running filter on node with singleNode = ", singleNode);
-          if (singleNode !== d) {
-            return singleNode;
-          }
-        })
-        .style("stroke", "white")
-        .on('mouseover', null)
-        .on('mouseout', null)
-        .on('click', null);
-
-      node
-        .filter(function(l) {
-          console.log("Running filter on node with l = ", l);
-          return (
-            neighborFund.indexOf(l.index) > -1 ||
-            neighborInvest.indexOf(l.index) > -1 ||
-            neighborPorucs.indexOf(l.index) > -1 ||
-            neighborData.indexOf(l.index) > -1 ||
-            l === d
-          );
-        })
-        .on('mouseover', handleClickNodeHover)
-        .on('click', sinclick);
-
-    }
-
-    function offNode() {
-      console.log("Running offNode");
-      node
-        .style("stroke", "white")
-        .on('mouseover', handleNodeHover)
-        .on('mouseout', offNode)
-        .on('click', sinclick);
-
-      fundLink
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style("stroke", "rgb(111,93,168)")
-        .style("opacity", "0.2")
-        .style("stroke-width", "1px");
-
-      investLink
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style("stroke", "rgb(38,114,114)")
-        .style("opacity", "0.2")
-        .style("stroke-width", "1px");
-
-      porucsLink
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style("stroke", "rgb(235,232,38)")
-        .style("opacity", "0.2")
-        .style("stroke-width", "1px");
-
-      dataLink
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style("stroke", "rgb(191,72,150)")
-        .style("opacity", "0.2")
-        .style("stroke-width", "1px");
-
-      d3
-        .selectAll('.node')
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style("opacity", "1");
-
-      d3
-        .selectAll('.node')
-        .selectAll('text')
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style(
-          'opacity',
-          function(d) {
-            console.log("Setting opacity on d = ", d);
-            var textOpacity;
-
-            if (d.type === "For-Profit") {
-              textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
-            }
-
-            if (d.type === "Non-Profit") {
-              textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
-            }
-
-            if (d.type === "Individual") {
-              textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
-            }
-
-            if (d.type === "Government") {
-              textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
-            }
-
-            return textOpacity;
-          }
-        )
-        .style('font-size', '14px')
-        .style('font-weight', 'normal');
-    }
-
-    function sinclick(d) {
-      console.log("Running sinclick with d = ", d);
-      var clearResetFlag = 0;
-
-      handleClickNodeHover(d);
-
-      fundLink
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style(
-          "opacity",
-          function(l) {
-            console.log("Setting opacity on fundLink l = ", l);
-            if (d === l.source || d === l.target) {
-              return "1";
-            } else {
-              return "0.05";
-            }
-          }
-        );
-
-      investLink
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style(
-          "opacity",
-          function(l) {
-            console.log("Setting opacity on investLink l = ", l);
-            if (d === l.source || d === l.target) {
-              return "1";
-            } else {
-              return "0.05";
-            }
-          }
-        );
-
-      porucsLink
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style(
-          "opacity",
-          function(l) {
-            console.log("Setting opacity on porucsLink l = ", l);
-            if (d === l.source || d === l.target) {
-              return "1";
-            } else {
-              return "0.05";
-            }
-          }
-        );
-
-      dataLink
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style(
-          "opacity",
-          function(l) {
-            console.log("Setting opacity on dataLink l = ", l);
-            if (d === l.source || d === l.target) {
-              return "1";
-            } else {
-              return "0.05";
-            }
-          }
-        );
-
-      node
-        .style(
-          "stroke",
-          function(singleNode) {
-            console.log("Setting stroke on singleNode = ", singleNode);
-            if (singleNode !== d) {
-              return "white";
-            } else {
-              return "black";
-            }
-          }
-        ).on('mouseout', null);
-
-      node
-        .filter(
-          function(singleNode) {
-            console.log("Running filter on node singleNode = ", singleNode);
-            if (singleNode !== d) { return singleNode; }
-          }
-        )
-        .on('mouseover', null);
-
-      var neighborFund = graph
-        .funding_connections
-        .filter(
-          function(link) {
-            console.log("Running filter on funding_connections link = ", link);
-            return link.source.index === d.index ||
-              link.target.index === d.index;
-          }
-        )
-        .map(
-          function(link) {
-            console.log("Mapping funding_connections link = ", link);
-            return link.source.index === d.index ?
-              link.target.index :
-              link.source.index;
-          }
-        );
-      console.log("Set neighborFund to ", neighborFund);
-
-      var neighborInvest = graph
-        .investment_connections
-        .filter(
-          function(link) {
-            console.log("Running filter on investment_connections link = ", link);
-            return link.source.index === d.index ||
-              link.target.index === d.index;
-          }
-        )
-        .map(
-          function(link) {
-            console.log("Mapping investment_connections link = ", link);
-            return link.source.index === d.index ?
-            link.target.index :
-            link.source.index;
-          }
-        );
-      console.log("Set neighborInvest to ", neighborInvest);
-
-      var neighborPorucs = graph
-        .collaboration_connections
-        .filter(
-          function(link) {
-            console.log("Running filter on collaboration_connections link = ", link);
-            return link.source.index === d.index ||
-            link.target.index === d.index;
-          }
-        )
-        .map(
-          function(link) {
-            console.log("Mapping collaboration_connections link = ", link);
-            return link.source.index === d.index ?
-            link.target.index :
-            link.source.index;
-          }
-        );
-      console.log("Set neighborPorucs to ", neighborPorucs);
-
-      var neighborData = graph
-        .data_connections
-        .filter(
-          function(link) {
-            console.log("Running filter on data_connections link = ", link);
-            return link.source.index === d.index ||
-            link.target.index === d.index;
-          }
-        )
-        .map(
-          function(link) {
-            console.log("Mapping data_connections link = ", link);
-            return link.source.index === d.index ? link.target.index : link.source.index;
-          }
-        );
-      console.log("Set neighborData to ", neighborData);
-
-      svg
-        .selectAll('.node')
-        .transition()
-        .duration(350)
-        .delay(0)
-        .style(
-          "opacity",
-          function(l) {
-            console.log("Setting opacity on .node to l = " + l);
-            return (
-              neighborFund.indexOf(l.index) > -1 ||
-              neighborInvest.indexOf(l.index) > -1 ||
-              neighborPorucs.indexOf(l.index) > -1 ||
-              neighborData.indexOf(l.index) > -1 || l === d
-            ) ? 1 : 0.05;
-          }
-        ).select('text').style('opacity', 1);
-
-
-      node
-        .filter(
-          function(l) {
-            console.log("Running filter on node with l = " + l);
-            return (
-              neighborFund.indexOf(l.index) > -1 ||
-              neighborInvest.indexOf(l.index) > -1 ||
-              neighborPorucs.indexOf(l.index) > -1 ||
-              neighborData.indexOf(l.index) > -1 || l === d
-            );
-          }
-        )
-        .on('mouseover', handleClickNodeHover)
-        .on('click', function(l) {});
-
-    }
-
-    function dragstart(d) {
-      console.log("Running dragstart with d = " + d);
-      d3
-        .select(this)
-        .classed(
-          "fixed",
-          function(d) { d.fixed = false; }
-        );
-
-      node
-        .on('mouseover', null)
-        .on('mouseout', null)
-        .on('click', null);
-    }
 
     function drag(d) {
       console.log("Running drag with d = " + d);
@@ -2121,9 +547,40 @@ var drawGraph = function () {
         );
 
       node
-        .on('mouseover', handleNodeHover)
-        .on('mouseout', offNode)
-        .on('click', sinclick);
+        .on(
+          'mouseover',
+          handleNodeHoverCb(
+            fundLink,
+            investLink,
+            porucsLink,
+            dataLink,
+            fundingConnections,
+            investmentConnections,
+            collaborationConnections,
+            dataConnections
+          )
+        )
+        .on(
+          'mouseout',
+          offNodeCb(
+            fundLink,
+            investLink,
+            porucsLink,
+            dataLink,
+            fundingConnections,
+            investmentConnections,
+            collaborationConnections,
+            dataConnections,
+            graph
+          )
+        )
+        .on('click', sinclickCb(
+          fundLink,
+          investLink,
+          porucsLink,
+          dataLink,
+          graph
+        ));
     }
 
     function tick(e) {
@@ -2646,12 +1103,23 @@ var drawGraph = function () {
         'click',
         function() {
           console.log("Running onClick handler for svg");
+
           var m = d3.mouse(this);
 
           if (clearResetFlag === 1) {
             d3.event.preventDefault();
 
-            offNode();
+            offNodeCb(
+              fundLink,
+              investLink,
+              porucsLink,
+              dataLink,
+              fundingConnections,
+              investmentConnections,
+              collaborationConnections,
+              dataConnections,
+              graph
+            )();
 
             d3.selectAll('g').classed(
               "fixed",

@@ -3,6 +3,13 @@ var _     = require('underscore');
 var $     = require('jquery');
 var utils = require('./utilities');
 
+// var fs = require('fs');
+// require('d3-geo-projection');
+require('topojson');
+require('devbridge-autocomplete');
+require('queue-async');
+require('d3-tip');
+
 require('./styles/reset.css');
 require('./styles/normalize.css');
 require('./styles/metro-bootstrap.css');
