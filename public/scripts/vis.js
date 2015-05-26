@@ -3477,6 +3477,7 @@ function loadD3Layer() {
         routes: null,
         clickFlag: false,
         tipObj: null,
+        ready: false,
 
         opacityLevel: function(a, b) {
             var bool = true;
@@ -3594,6 +3595,8 @@ function loadD3Layer() {
             svg.select(".rect").on("click", function() {
                 d3Layers.d3Routes.options.resetClick();
             });
+
+            d3Layers.d3Routes.options.ready = true;
 
         },
 
@@ -3832,19 +3835,26 @@ function loadD3Layer() {
         });
     };
 
-    setTimeout(function() {
-        console.log("triggering viewchanged");
-        Microsoft.Maps.Events.invoke(map, 'viewchangeend');
-        var t = d3Layers.d3Routes.svg.transition().duration(1000);
+    var loadAll = function() {
+        if(d3Layers && d3Layers.d3Routes && d3Layers.d3Routes.options && d3Layers.d3Routes.options.ready) {
 
-        t.selectAll(".pinpoint")
-                .attr("opacity", 0.8)
-                .attr("stroke-opacity", 1);
+            Microsoft.Maps.Events.invoke(map, 'viewchangeend');
+            var t = d3Layers.d3Routes.svg.transition().duration(1000);
 
-        t.transition().selectAll(".routes")
-                .attr("opacity", 1);
+            t.selectAll(".pinpoint")
+                    .attr("opacity", 0.8)
+                    .attr("stroke-opacity", 1);
 
-    }, 2500);
+            t.transition().selectAll(".routes")
+                    .attr("opacity", 1);
+        }
+        else {
+            console.log("not ready yet");
+            setTimeout(loadAll, 100);
+        }
+    }
+
+    loadAll();
 
         // console.log(currentZoom, "before");
     Microsoft.Maps.Events.addHandler(map, "dblclick", function(e) {
