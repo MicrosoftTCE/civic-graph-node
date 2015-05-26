@@ -2,7 +2,10 @@ var d3 = require('d3');
 var _  = require('underscore');
 
 var wrap = function(text, width) {
+  console.log("Running wrap with text, width =", text, width);
+
   text.each(function() {
+    console.log("Running each on text");
     var data = d3.select(this)[0][0].__data__;
     var dy = parseFloat(text.attr("dy"));
     var line = [];

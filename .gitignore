@@ -5,3 +5,4 @@ public/*.svg
 public/*.eot
 public/*.json
 public/*.ttf
+npm-debug.log

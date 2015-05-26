@@ -1,6 +1,8 @@
 var _ = require('underscore');
 
 exports.getQueryParams = function() {
+  console.log("Running getQueryParams");
+
   var qStr = {};
 
   var qry = window.location.search.substring(1);
@@ -25,5 +27,6 @@ exports.getQueryParams = function() {
     }
   })
 
+  console.log("And returning qStr = ", qStr);
   return qStr;
 };

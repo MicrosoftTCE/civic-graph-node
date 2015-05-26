@@ -17,12 +17,14 @@ require('./styles/left-nav.css');
 require('./styles/developer-style.css');
 
 d3.selection.prototype.moveToFront = function() {
+  console.log("Running moveToFront");
   return this.each(function() {
     this.parentNode.appendChild(this);
   });
 };
 
 d3.selection.prototype.moveToBack = function() {
+  console.log("Running moveToBack");
   return this.each(function() {
     var firstChild = this.parentNode.firstChild;
     if (firstChild) {
@@ -32,6 +34,7 @@ d3.selection.prototype.moveToBack = function() {
 };
 
 d3.selectAll('#cb_networkview').on('click', function() {
+  console.log("Running cb_networkview click handler");
   if (document.getElementById('cb_networkview').checked) {
     drawGraph();
     var map = document.getElementById('map');
@@ -40,6 +43,7 @@ d3.selectAll('#cb_networkview').on('click', function() {
 });
 
 d3.selectAll('#cb_mapview').on('click', function() {
+  console.log("Running cb_mapview click handler");
   if (document.getElementById('cb_mapview').checked) {
     console.log("asd");
     var network = document.getElementById('network');
@@ -59,12 +63,14 @@ var mapView     = document.getElementById('cb_mapview');
 var networkView = document.getElementById('cb_networkview');
 
 if (currentView == 'map') {
+  console.log("currentView == map; calling drawMap");
   drawMap();
   if (mapView && networkView) {
     mapView.checked = true;
     networkView.checked = false;
   }
 } else {
+  console.log("currentView == network; calling drawGraph");
   drawGraph();
   if (mapView && networkView) {
     mapView.checked = false;

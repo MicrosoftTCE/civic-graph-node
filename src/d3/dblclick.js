@@ -2,6 +2,7 @@ var d3 = require('d3');
 var _  = require('lodash');
 
 var dblclick = function(d) {
+  console.log("Running dblclick with d =", d);
   d3.select(this).classed("fixed", function(d) { d.fixed = false; });
 
   d3.select(this).on('mousedown.drag', null);

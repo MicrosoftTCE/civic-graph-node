@@ -1,6 +1,7 @@
 var d3 = require('d3');
 
 var handleClickNodeHover = function(d) {
+  console.log("Running handleClickNodeHover with d =", d);
   s = textDisplay(d);
 
   webform = editDisplay(d);
@@ -15,6 +16,7 @@ var handleClickNodeHover = function(d) {
     .style('list-style', 'square');
 
   d3.selectAll('#editCurrentInfo').on('click', function() {
+      console.log("Running onClick for #editCurrentInfo");
       prefillCurrent(d);
     })
     .on('mouseover', function() {

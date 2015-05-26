@@ -1,6 +1,7 @@
 var d3 = require('d3');
 
-var processFormB =function(formObject) {
+var processFormB = function(formObject) {
+  console.log("Running processFormB with formObject = ", formObject);
 
   // Set the entity name.
   formObject.nickname =
@@ -26,6 +27,7 @@ var processFormB =function(formObject) {
 
   d3.selectAll('.collaborator').filter(
     function(d) {
+      console.log("Running filter on .collaborator with d =", d);
       if (this.value) { formObject.collaborations.push(this.value); }
     });
 
@@ -38,6 +40,7 @@ var processFormB =function(formObject) {
 
   d3.selectAll('.revenue-input .revenue_amt').filter(
     function(d, i) {
+      console.log("Running filter on .revenue-input .revenue_amt with d, i =", d, i);
       if (this.value) {
         revenue_year = d3.selectAll('.revenue-input .revenue_year')[0][i].value;
 
@@ -63,6 +66,7 @@ var processFormB =function(formObject) {
 
   d3.selectAll('.expense-input .expense_amt').filter(
     function(d, i) {
+      console.log("Running filter on .expense-input .expense_amt with d, i =", d, i);
       if (this.value) {
         expense_year = d3.selectAll('.expense-input .expense_year')[0][i].value;
 

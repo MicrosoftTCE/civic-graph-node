@@ -17,6 +17,8 @@ var $ = require("jquery");
 var _ = require("lodash");
 
 var drawGraph = function () {
+  console.log("Running drawGraph");
+
   var wrap = require('./wrap');
   var transformText = require('./transform-text');
   var translation = require('./translation');
@@ -77,6 +79,7 @@ var drawGraph = function () {
   var container = network.parent();
 
   $(window).on('resize', function() {
+    console.log("Running window.onResize handler");
     var targetWidth = container.width();
     network.attr("width", targetWidth);
     network.attr("height", Math.round(targetWidth / aspect));
@@ -94,7 +97,8 @@ var drawGraph = function () {
 
 
   d3.json("/athena", function(error, graph) {
-    console.log("graph.entities", graph.entities[0])
+    console.log("Running AJAX call to /athena");
+
     var allNodes                 = graph.entities;
     var fundingConnections       = graph.funding_connections;
     var investmentConnections    = graph.investment_connections;
@@ -105,6 +109,9 @@ var drawGraph = function () {
       .concat(investmentConnections)
       .concat(collaborationConnections)
       .concat(dataConnections);
+
+    console.log("allNodes =", allNodes);
+    console.log("connections =", connections);
 
     var force = d3
       .layout
@@ -124,57 +131,67 @@ var drawGraph = function () {
           return 0;
         }
       })
-      .linkDistance(50)
+      .linkDistance(50);
+    console.log("Set force d3 layout =", force);
 
     var drag = force
       .drag()
       .on("dragstart", drag)
       .on("drag", drag)
       .on("dragend", dragend);
+    console.log("Set drag =", drag);
 
     //  FUNDINGS
     var fundLink = svg
       .selectAll(".fund")
       .data(fundingConnections)
-      .enter().append("line")
+      .enter()
+      .append("line")
       .attr("class", "fund")
       .style("stroke", "rgb(111,93,168)")
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
+    console.log("Set fundLink =", fundLink);
 
     //  INVESTMENTS
     var investLink = svg
       .selectAll(".invest")
       .data(investmentConnections)
-      .enter().append("line")
+      .enter()
+      .append("line")
       .attr("class", "invest")
       .style("stroke", "rgb(38,114,114)")
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
+    console.log("Set investLink =", investLink);
 
     //  COLLABORATIONS
     var porucsLink = svg
       .selectAll(".porucs")
       .data(collaborationConnections)
-      .enter().append("line")
+      .enter()
+      .append("line")
       .attr("class", "porucs")
       .style("stroke", "rgb(235,232,38)")
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
+    console.log("Set porucsLink =", porucsLink);
 
     //  data
     var dataLink = svg
       .selectAll(".data")
       .data(dataConnections)
-      .enter().append("line")
+      .enter()
+      .append("line")
       .attr("class", "data")
       .style("stroke", "rgb(191,72,150)")
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
+    console.log("Set dataLink =", dataLink);
 
     var nodeInit = svg
       .selectAll(".node")
@@ -185,7 +202,9 @@ var drawGraph = function () {
       .style("visibility", "visible")
       .on('dblclick', dblclick)
       .call(drag);
+    console.log("Set nodeInit =", nodeInit);
 
+    console.log("Running force.start()");
     force
       .on("tick", tick)
       .start();
@@ -194,18 +213,25 @@ var drawGraph = function () {
       .selectAll('.node')
       .filter(function(d) { return d.type === "For-Profit"; })
       .sort(weightSorter);
+    console.log("Set forProfitNodes =", forProfitNodes);
+
     nonProfitNodes = svg
       .selectAll('.node')
       .filter(function(d) { return d.type === "Non-Profit"; })
       .sort(weightSorter);
+    console.log("Set nonProfitNodes =", nonProfitNodes);
+
     individualNodes = svg
       .selectAll('.node')
       .filter(function(d) { return d.type === "Individual"; })
       .sort(weightSorter);
+    console.log("Set individualNodes =", individualNodes);
+
     governmentNodes = svg
       .selectAll('.node')
       .filter(function(d) { return d.type === "Government"; })
       .sort(weightSorter);
+    console.log("Set governmentNodes =", governmentNodes);
 
     // Select the nodes to choose for highlighting nickname
     // on visualization (TOP 5)
@@ -214,24 +240,28 @@ var drawGraph = function () {
         fiveMostConnectedForProfit[d.name] = d.weight;
       }
     });
+    console.log("Set fiveMostConnectedForProfit =", fiveMostConnectedForProfit);
 
     nonProfitNodes.each(function(d, i) {
       if (i >= nonProfitNodes[0].length - 5) {
         fiveMostConnectedNonProfit[d.name] = d.weight;
       }
     });
+    console.log("Set fiveMostConnectedNonProfit =", fiveMostConnectedNonProfit);
 
     individualNodes.each(function(d, i) {
       if (i >= individualNodes[0].length - 5) {
         fiveMostConnectedIndividuals[d.name] = d.weight;
       }
     });
+    console.log("Set fiveMostConnectedIndividuals =", fiveMostConnectedIndividuals);
 
     governmentNodes.each(function(d, i) {
       if (i >= governmentNodes[0].length - 5) {
         fiveMostConnectedGovernment[d.name] = d.weight;
       }
     });
+    console.log("Set fiveMostConnectedGovernment =", fiveMostConnectedGovernment);
 
     var textElement = svg
       .selectAll('.node')
@@ -276,6 +306,7 @@ var drawGraph = function () {
       .style('font-size', '14px')
       .style('color', '#FFFFFF')
       .style('pointer-events', 'none');
+    console.log("Set textElement =", textElement);
 
     var node = nodeInit
       .append("circle")
@@ -309,10 +340,14 @@ var drawGraph = function () {
       .on('mouseover', handleNodeHover)
       .on('mouseout', offNode)
       .on('click', sinclick);
+    console.log("Set node =", node);
 
     textElement.call(wrap, 80);
 
-    while (force.alpha() > 0.025) { force.tick(); }
+    while (force.alpha() > 0.025) {
+      // console.log("force.tick()");
+      force.tick();
+    }
 
     // Must adjust the force parameters...
 
@@ -338,6 +373,8 @@ var drawGraph = function () {
     var addDataList = require('./add-data-list');
 
     function preFillName(input, inputSelector) {
+      console.log("Running preFillName with", input, inputSelector);
+
       if (input.toLowerCase() in entitiesHash) {
         d3.selectAll(inputSelector).text(function(d) {
           this.value = entitiesHash[input].name;
@@ -347,6 +384,8 @@ var drawGraph = function () {
     }
 
     function preParseForm(input) {
+      console.log("Running preParseForm with", input);
+
       input = input.toLowerCase();
       if (input in entitiesHash) {
         editForm();
@@ -355,6 +394,8 @@ var drawGraph = function () {
     }
 
     function preFillLocation(input) {
+      console.log("Running preFillLocation with", input);
+
       if (input.toLowerCase() in locationsHash) {
         d3.selectAll('#location').text(function(d) {
           this.value = locationsHash[input][0].location;
@@ -363,8 +404,11 @@ var drawGraph = function () {
     }
 
     function add_input_locations(counterJ) {
+      console.log("Running add_input_locations with counterJ = " + counterJ);
+
       if ($('#location-' + counterJ + ' input[name="location"]').val() !== "") {
-        d3.select('#location-' + counterJ + ' input[name="location"]').on('keyup', function (){
+        d3.select('#location-' + counterJ + ' input[name="location"]').on('keyup', function () {
+          console.log("Running onKeyup with counterJ = " + counterJ);
           preFillLocation(this.value);
         });
 
@@ -372,12 +416,15 @@ var drawGraph = function () {
 
         $("#location-" + (counterJ - 1)).after(locationTmpl({ idx: counterJ }));
         d3.select("#location-" + counterJ +  " input[name='location']").on("keyup", function() {
+          console.log("Running location onKeyup with counterJ = " + counterJ);
           add_input_locations(counterJ);
         });
       }
     }
 
     function add_input_loc(counterU) {
+      console.log("Running add_input_loc with counterU = " + counterU);
+
       if ($('#location-' + counterU + ' input[name="location"]').val() !== "") {
         d3.select('#location-' + counterU + ' input[name="location"]').on('keyup', null);
 
@@ -385,12 +432,15 @@ var drawGraph = function () {
 
         $("#location-" + (counterU - 1)).after(locTmpl({ idx: counterU }));
         d3.select("#location-" + counterU +  " input[name='location']").on("keyup", function() {
+          console.log("Running loc onKeyup with counterU = " + counterU);
           add_input_loc(counterU);
         });
       }
     }
 
     function add_input_kp(counterK) {
+      console.log("Running add_input_kp with counterK = " + counterK);
+
       if ($('#key-people-' + counterK + ' input[name="kpeople"]').val() !== "") {
         d3.select('#key-people-' + counterK + ' input[name="kpeople"]').on('keyup', null);
         counterK++; // counter -> 2
@@ -398,14 +448,18 @@ var drawGraph = function () {
 
         $("#key-people-" + (counterK - 1)).after(keyPeopleTmpl({ idx: counterK }));
         d3.select("#key-people-" + counterK + " input[name='kpeople']").on("keyup", function() {
+          console.log("Running kp onKeyup with counterK = " + counterK);
           add_input_kp(counterK);
         });
       }
     }
 
     function add_input_fund(counterF) {
+      console.log("Running add_input_fund with counterF = " + counterF);
+
       if ($('#funding-' + counterF + ' input[name="fund"]').val() !== "") {
         d3.select('#funding-' + counterF + ' input[name="fund"]').on('keyup', function() {
+          console.log("Running fund onKeyup with counterF = " + counterF);
           preFillName(this.value, '#funding-' + (counterF - 1) + ' input[name="fund"]');
         });
         counterF++; // counter -> 2
@@ -414,14 +468,18 @@ var drawGraph = function () {
         $("#funding-" + (counterF - 1)).after(fundingTmpl({ idx: counterF }));
         addDataList('#funding-' + counterF + ' datalist');
         d3.select("#funding-" + counterF + " input[name='fund']").on("keyup", function() {
+          console.log("Running fund onKeyup with counterF = " + counterF);
           add_input_fund(counterF);
         });
       }
     }
 
     function add_input_invest(counterI) {
+      console.log("Running add_input_invest with counterI = " + counterI);
+
       if ($('#investing-' + counterI + ' input[name="invest"]').val() !== "") {
         d3.select('#investing-' + counterI + ' input[name="invest"]').on('keyup', function() {
+          console.log("Running invest onKeyup with counterI = " + counterI);
           preFillName(this.value, '#investing-' + (counterI - 1) + ' input[name="invest"]');
         });
         counterI++; // counter -> 2
@@ -430,14 +488,18 @@ var drawGraph = function () {
         $("#investing-" + (counterI - 1)).after(investingTmpl({ idx: counterI }));
         addDataList('#investing-' + counterI + ' datalist');
         d3.select("#investing-" + counterI + " input[name='invest']").on("keyup", function() {
+          console.log("Running invest onKeyup with counterI = " + counterI);
           add_input_invest(counterI);
         });
       }
     }
 
     function add_input_fund_given(counterFG) {
+      console.log("Running add_input_fund_given with counterFG = " + counterFG);
+
       if ($('#fundinggiven-' + counterFG + ' input[name="fundgiven"]').val() !== "") {
         d3.select('#fundinggiven-' + counterFG + ' input[name="fundgiven"]').on('keyup', function() {
+          console.log("Running fund given onKeyup with counterFG = " + counterFG);
           preFillName(this.value, '#fundinggiven-' + (counterFG - 1) + ' input[name="fundgiven"]');
         });
         counterFG++; // counter -> 2
@@ -448,14 +510,18 @@ var drawGraph = function () {
         addDataList('#fundinggiven-' + counterFG + ' datalist');
 
         d3.select("#fundinggiven-" + counterFG + " input[name='fundgiven']").on("keyup", function() {
+          console.log("Running fund given onKeyup with counterFG = " + counterFG);
           add_input_fund_given(counterFG);
         });
       }
     }
 
     function add_input_invest_made(counterIM) {
+      console.log("Running add_input_invest_made with counterIM = " + counterIM);
+
       if ($('#investmentmade-' + counterIM + ' input[name="investmade"]').val() !== "") {
         d3.select('#investmentmade-' + counterIM + ' input[name="investmade"]').on('keyup', function() {
+          console.log("Running fund made onKeyup with counterIM = " + counterIM);
           preFillName(this.value, '#investmentmade-' + (counterIM - 1) + ' input[name="investmade"]');
         });
         counterIM++; // counter -> 2
@@ -466,14 +532,18 @@ var drawGraph = function () {
         addDataList('#investmentmade-' + counterIM + ' datalist');
 
         d3.select("#investmentmade-" + counterIM + " input[name='investmade']").on("keyup", function() {
+          console.log("Running fund made onKeyup with counterIM = " + counterIM);
           add_input_invest_made(counterIM);
         });
       }
     }
 
     function add_input_data(counterD) {
+      console.log("Running add_input_data with counterD = " + counterD);
+
       if ($('#data-' + counterD + ' input[name="data"]').val() !== "") {
         d3.select('#data-' + counterD + ' input[name="data"]').on('keyup', function() {
+          console.log("Running data onKeyup with counterD = " + counterD);
           preFillName(this.value, '#data-' + (counterD - 1) + ' input[name="data"]');
         });
         counterD++; // counter -> 2
@@ -484,14 +554,18 @@ var drawGraph = function () {
         addDataList('#data-' + counterD + ' datalist');
 
         d3.select("#data-" + counterD + " input[name='data']").on("keyup", function() {
+          console.log("Running data onKeyup with counterD = " + counterD);
           add_input_data(counterD);
         });
       }
     }
 
     function add_input_collab(counterC) {
+      console.log("Running add_input_collab with counterC = " + counterC);
+
       if ($('#collaboration-' + counterC + ' input[name="collaboration"]').val() !== "") {
         d3.select('#collaboration-' + counterC + ' input[name="collaboration"]').on('keyup', function() {
+          console.log("Running collab onKeyup with counterC = " + counterC);
           preFillName(this.value, '#collaboration-' + (counterC - 1) + ' input[name="collaboration"]');
         });
         counterC++; // counter -> 2
@@ -502,6 +576,7 @@ var drawGraph = function () {
         addDataList('#collaboration-' + counterC + ' datalist');
 
         d3.select("#collaboration-" + counterC + " input[name='collaboration']").on("keyup", function() {
+          console.log("Running collab onKeyup with counterC = " + counterC);
           add_input_collab(counterC);
 
         });
@@ -509,6 +584,8 @@ var drawGraph = function () {
     }
 
     function add_input_rev(counterR) {
+      console.log("Running add_input_rev with counterR = " + counterR);
+
       if ($('#revenue-' + counterR + ' input[name="revenue_amt"]').val() !== "") {
         d3.select('#revenue-' + counterR + ' input[name="revenue_amt"]').on('keyup', null);
         counterR++; // counter -> 2
@@ -517,12 +594,15 @@ var drawGraph = function () {
         $("#revenue-" + (counterR - 1)).after(revenueTmpl({ idx: counterR }));
 
         d3.select("#revenue-" + counterR + " input[name=revenue_amt]").on("keyup", function() {
+          console.log("Running rev onKeyup with counterR = " + counterR);
           add_input_rev(counterR);
         });
       }
     }
 
     function add_input_exp(counterE) {
+      console.log("Running add_input_exp with counterE = " + counterE);
+
       if ($('#expense-' + counterE + ' input[name="expense_amt"]').val() !== "") {
         d3.select('#expense-' + counterE + ' input[name="expense_amt"]').on('keyup', null);
         counterE++; // counter -> 2
@@ -530,24 +610,29 @@ var drawGraph = function () {
 
         $("#expense-" + (counterE - 1)).after(expensesTmpl({ idx: counterE }));
         d3.select("#expense-" + counterE + " input[name=expense_amt]").on("keyup", function() {
+          console.log("Running exp onKeyup with counterE = " + counterE);
           add_input_exp(counterE);
         });
       }
     }
 
     function displayFormA() {
+      console.log("Running displayFormA");
       return formATmpl();
     }
 
     function iterateThroughObj(obj) {
+      console.log("Running iterateThroughObj with obj =", obj);
       var objValue = _.object(_.map(obj, function(value, key) {
         return [key, value];
       }));
+      console.log("Set objValue =", objValue);
 
       return objValue;
     }
 
     function determineNullFields() {
+      console.log("Running determineNullFields");
       var nullFieldCount = 0;
       var nullFieldArr = [];
 
@@ -573,6 +658,8 @@ var drawGraph = function () {
         }
       );
 
+      console.log("Looped through allNodes to set nullFieldArr =", nullFieldArr);
+
       //  Let's determine the nodes with the most null fields.
       var maxNullObj = _.max(nullFieldArr, function(d) {
         return d.nullFields
@@ -593,6 +680,8 @@ var drawGraph = function () {
         }
       });
 
+      console.log("Set potentialSuggestions =", potentialSuggestions);
+
       var fiveSuggestions = [];
 
       while (fiveSuggestions.length < 5) {
@@ -605,10 +694,13 @@ var drawGraph = function () {
         }
       }
 
+      console.log("set fiveSuggestions =", fiveSuggestions);
+
       return fiveSuggestions;
     }
 
     function displayFormCSendJSON(obj) {
+      console.log("Running displayFormCSendJSON with obj =", obj);
       var formObj = processFormB(obj);
 
       displayFormC();
@@ -619,11 +711,13 @@ var drawGraph = function () {
         url: '/database/save',
         crossDomain: true
       }).done(function(returnData) {
+        console.log("Returning from AJAX POST to /database/save with returnData =", returnData);
         // TODO: ???
       });
     }
 
     function displayFormC() {
+      console.log("Running displayFormC");
       var suggestions = determineNullFields();
 
       // Render the string into HTML
@@ -631,6 +725,7 @@ var drawGraph = function () {
 
       d3.selectAll('#info ul a').on('click',
         function(d, i) {
+          console.log("Running onClick on #info ul a with d, i =", d, i);
           sinclick(suggestions[i]);
           editForm();
           preFillFormA(suggestions[i]);
@@ -640,13 +735,16 @@ var drawGraph = function () {
 
     // Prefilling the form for editing...
     function preFillFormA(obj) {
+      console.log("Running preFillFormA with obj =", obj);
       // Time to prefill the form...
       d3.selectAll('#name').text(function(d) {
+        console.log("Setting #name to " + obj.name);
         this.value = obj.name;
       });
 
       if(obj.location !== null) {
-        d3.json("/cities", function(error, cities){
+        d3.json("/cities", function(error, cities) {
+          console.log("Returning from AJAX GET to /cities with error, cities =", error, cities);
           var cityNodes = cities.nodes;
           var location  = obj.location;
           var len       = location.length;
@@ -661,6 +759,7 @@ var drawGraph = function () {
 
             d3.select('#location-' + i + ' input[name="location"]').text(
               function(e) {
+                console.log("Settting #location-" + i + " input[name='location'] text with e =", e);
                 $(this).val(splitString[0]);
 
                 var input1 = $(this).siblings("#state");
@@ -689,12 +788,16 @@ var drawGraph = function () {
         d3.select('#location-' + location.length + ' input[name="location"]')
           .on(
             'keyup',
-            function() { add_input_locaions(location.length); }
+            function() {
+              console.log("Running location onKeyup on " + location + " and calling add_input_locations with length = " + location.length);
+              add_input_locaions(location.length);
+            }
           );
       }
 
       d3.selectAll('input[name="entitytype"]').filter(
         function(d, i) {
+          console.log("Running filter on input[name='entitytype'] with d, i", d, i);
           this.checked = (this.value === obj.type);d = false;
         }
       );
@@ -702,6 +805,7 @@ var drawGraph = function () {
       if (obj.categories !== null) {
         d3.selectAll('.webform-categories input').filter(
           function(d, i) {
+            console.log("Running filter on .webform-categories input with d, i", d, i);
             this.checked =  (
               (obj.categories).indexOf(
                 d3.selectAll('.webform-categories h4')[0][i].textContent
@@ -711,9 +815,17 @@ var drawGraph = function () {
         );
       }
 
-      d3.selectAll('#website').text(function(d) { this.value = obj.url; });
+      d3.selectAll('#website').text(function(d) {
+        console.log("Running text on #website with d =", d);
+        console.log("Setting value = " + obj.url);
+        this.value = obj.url;
+      });
 
-      d3.selectAll('#employee').text(function(d) { this.value = obj.employees; });
+      d3.selectAll('#employee').text(function(d) {
+        console.log("Running text on #employee with d=", d);
+        console.log("Setting value = " + obj.employees);
+        this.value = obj.employees;
+      });
 
       if (obj.key_people !== null) {
         var keypeople = obj.key_people;
@@ -725,14 +837,22 @@ var drawGraph = function () {
           d3.select('#key-people-' + i + ' input[name="kpeople"]').on('keyup', null);
 
           d3.select('#key-people-' + i + ' input[name="kpeople"]').text(
-            function(e) { this.value = keypeople[i].name; }
+            function(e) {
+              console.log("Running text on #key-people-" + i + " input[name=kpeople] with e =", e);
+              console.log("Setting value = " + keypeople[i].name);
+              this.value = keypeople[i].name;
+            }
           );
         }
 
         d3.select('#key-people-' + keypeople.length + ' input[name="kpeople"]')
           .on(
             'keyup',
-            function() { add_input_kp(keypeople.length); }
+            function() {
+              console.log("Running onKeyup on #key-people-" + keypeople.length + " input[name=kpeople]");
+              console.log("Calling add_input_kp with length = " + keypeople.length);
+              add_input_kp(keypeople.length);
+            }
           );
       }
 
@@ -741,26 +861,37 @@ var drawGraph = function () {
 
         fundingreceived.forEach(
           function(d, i) {
+            console.log("Running fundingreceived forEach with d, i =", d, i);
             $("#funding-" + i).after(fundingTmpl({ idx: i }));
 
             addDataList('#funding-' + i + ' datalist');
 
             d3.select('#funding-' + i + ' input[name="fund"]').on('keyup',
               function() {
+                console.log("Running preFillName on #funding-" + i + " input[name=fund] with " + this.value);
                 preFillName(this.value, '#funding-' + i + ' input[name="fund"]');
               }
             );
 
             d3.select('#funding-' + i + ' input[name="fund"]').text(
-              function(e) { this.value = d.entity; }
+              function(e) {
+                console.log("Running text on #funding-" + i + " input[name=fund] set value = " + d.entity);
+                this.value = d.entity;
+              }
             );
 
             d3.select('#funding-' + i + ' input[name="fund_amt"]').text(
-              function(e) { this.value = d.amount; }
+              function(e) {
+                console.log("Running text on #funding-" + i + " input[name=fund_amt] set value = " + d.amount);
+                this.value = d.amount;
+              }
             );
 
             d3.select('#funding-' + i + ' input[name="fund_year"]').text(
-              function(e) { this.value = d.year; }
+              function(e) {
+                console.log("Running text on #funding-" + i + " input[name=fund_year] set value = " + d.year);
+                this.value = d.year;
+              }
             );
           }
         );
@@ -768,7 +899,11 @@ var drawGraph = function () {
         d3.select("#funding-" + fundingreceived.length + " input[name='fund']")
           .on(
             "keyup",
-            function() { add_input_fund(fundingreceived.length); }
+            function() {
+              console.log("Running onKeyup on #funding-" + fundingreceived.length + " input[name=fund]");
+              console.log("Calling add_input_fund with length");
+              add_input_fund(fundingreceived.length);
+            }
           );
       }
 
@@ -777,20 +912,25 @@ var drawGraph = function () {
 
         fundinggiven.forEach(
           function(d, i) {
+            console.log("Running fundinggiven forEach with d, i =", d, i);
             $("#fundinggiven-" + i).after(fundingGivenTmpl({ idx: i }));
 
             addDataList('#fundinggiven-' + i + ' datalist');
 
             d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').on('keyup', function() {
+              console.log("Running preFillName on #fundinggiven-" + i + " input[name=fundgiven] with " + this.value);
               preFillName(this.value, '#fundinggiven-' + i + ' input[name="fundgiven"]');
             });
             d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').text(function(e) {
+              console.log("Running text on #fundinggiven-" + i + " input[name=fundgiven] set value = " + d.entity);
               this.value = d.entity;
             });
             d3.select('#fundinggiven-' + i + ' input[name="fundgiven_amt"]').text(function(e) {
+              console.log("Running text on #fundinggiven-" + i + " input[name=fundgiven_amt] set value = " + d.amount);
               this.value = d.amount;
             });
             d3.select('#fundinggiven-' + i + ' input[name="fundgiven_year"]').text(function(e) {
+              console.log("Running text on #fundinggiven-" + i + " input[name=fundgiven_year] set value = " + d.year);
               this.value = d.year;
             });
           }
@@ -799,7 +939,11 @@ var drawGraph = function () {
         d3.select("#fundinggiven-" + fundinggiven.length + " input[name='fundgiven']")
           .on(
             "keyup",
-            function() { add_input_fund_given(fundinggiven.length); }
+            function() {
+              console.log("Running onKeyup on #fundinggiven-" + fundinggiven.length + " input[name=fundgiven]");
+              console.log("Calling add_input_fund_given with length");
+              add_input_fund_given(fundinggiven.length);
+            }
           );
       }
 
@@ -807,33 +951,48 @@ var drawGraph = function () {
         var investmentreceived = obj.investments_received;
 
         investmentreceived.forEach(function(d, i) {
+          console.log("Running investmentreceived forEach with d, i =", d, i);
           $("#investing-" + i).after(investmentRecievedTmpl({ idx: i }));
 
           addDataList('#investing-' + i + ' datalist');
 
           d3.select('#investing-' + i + ' input[name="invest"]').on('keyup',
             function() {
+              console.log("Running preFillName on #investing-" + i + " input[name=invest] with " + this.value);
               preFillName(this.value, '#investing-' + i + ' input[name="invest"]');
             }
           );
 
           d3.select('#investing-' + i + ' input[name="invest"]').text(
-            function(e) { this.value = d.entity; }
+            function(e) {
+              console.log("Running text on #investing-" + i + " input[name=invest] set value = " + d.entity);
+              this.value = d.entity;
+            }
           );
 
           d3.select('#investing-' + i + ' input[name="invest_amt"]').text(
-            function(e) { this.value = d.amount; }
+            function(e) {
+              console.log("Running text on #investing-" + i + " input[name=invest_amt] set value = " + d.amount);
+              this.value = d.amount;
+            }
           );
 
           d3.select('#investing-' + i + ' input[name="invest_year"]').text(
-            function(e) { this.value = d.year; }
+            function(e) {
+              console.log("Running text on #investing-" + i + " input[name=invest_year] set value = " + d.year);
+              this.value = d.year;
+            }
           );
         });
 
         d3.select("#investing-" + investmentreceived.length + " input[name='invest']")
           .on(
             "keyup",
-            function() { add_input_invest(investmentreceived.length); }
+            function() {
+              console.log("Running onKeyup on #investing-" + investmentreceived.length + " input[name=invest]");
+              console.log("Calling add_input_invest with length");
+              add_input_invest(investmentreceived.length);
+            }
           );
       }
 
@@ -841,6 +1000,7 @@ var drawGraph = function () {
         var investmentsmade = obj.investments_made;
 
         investmentsmade.forEach(function(d, i) {
+          console.log("Running investmentsmade forEach with d, i =", d, i);
           $("#investmentmade-" + i).after(investmentMadeTmpl({ idx: i }));
 
           addDataList('#investmentmade-' + i + ' datalist');
@@ -849,27 +1009,41 @@ var drawGraph = function () {
             .on(
               'keyup',
               function() {
+                console.log("Running preFillName on #investing-" + i + " input[name=invest] with " + this.value);
                 preFillName(this.value, '#investmentmade-' + i + ' input[name="investmade"]');
               }
             );
 
           d3.select('#investmentmade-' + i + ' input[name="investmade"]').text(
-            function(e) { this.value = d.entity; }
+            function(e) {
+              console.log("Running text on #investmentmade-" + i + " input[name=investmade] set value = " + d.entity);
+              this.value = d.entity;
+            }
           );
 
           d3.select('#investmentmade-' + i + ' input[name="investmade_amt"]').text(
-            function(e) { this.value = d.amount; }
+            function(e) {
+              console.log("Running text on #investmentmade-" + i + " input[name=investmade_amt] set value = " + d.amount);
+              this.value = d.amount;
+            }
           );
 
           d3.select('#investmentmade-' + i + ' input[name="investmade_year"]').text(
-            function(e) { this.value = d.year; }
+            function(e) {
+              console.log("Running text on #investmentmade-" + i + " input[name=investmade_year] set value = " + d.year);
+              this.value = d.year;
+            }
           );
         });
 
         d3.select("#investmentmade-" + investmentsmade.length + " input[name='investmade']")
           .on(
             "keyup",
-            function() { add_input_invest_made(investmentsmade.length); }
+            function() {
+              console.log("Running onKeyup on #investmentmade-" + investmentsmade.length + " input[name=investmade]");
+              console.log("Calling add_input_invest_made with length");
+              add_input_invest_made(investmentsmade.length);
+            }
           );
       }
 
@@ -877,29 +1051,39 @@ var drawGraph = function () {
         var dataProviders = obj.data;
 
         dataProviders.forEach(function(d, i) {
+          console.log("Running dataProviders forEach with d, i =", d, i);
           $("#data-" + i).after(dataTmpl({ idx: i }));
 
           addDataList('#data-' + i + ' datalist');
 
           d3.select('#data-' + i + ' input[name="data"]').on('keyup',
             function() {
+              console.log("Running preFillName on #data-" + i + " input[name=data] with " + this.value);
               preFillName(this.value, '#data-' + i + ' input[name="data"]');
             }
           );
 
           d3.select('#data-' + i + ' input[name="data"]').text(
-            function(e) { this.value = d.entity; }
+            function(e) {
+              console.log("Running text on #data-" + i + " input[name=data] set value = " + d.entity);
+              this.value = d.entity;
+            }
           );
         });
 
         d3.select("#data-" + dataProviders.length + " input[name='data']")
           .on(
             "keyup",
-            function() { add_input_data(dataProviders.length); }
+            function() {
+              console.log("Running onKeyup on #data-" + dataProviders.length + " input[name=data]");
+              console.log("Calling add_input_data with length");
+              add_input_data(dataProviders.length);
+            }
           );
       }
 
       d3.selectAll('#submit-A').on('click', function() {
+        console.log("Running onClick for #submit-A");
         d3.select('#name').style("border-color", "#d9d9d9");
         d3.select('#location').style("border-color", "#d9d9d9");
         displayFormB();
@@ -908,42 +1092,53 @@ var drawGraph = function () {
     }
 
     function preFillFormB(obj) {
+      console.log("Running preFillFormB with obj =", obj);
+
       d3.selectAll('#nickname').text(function(d) {
+        console.log("Setting #nickname to ", obj.nickname);
         this.value = obj.nickname;
       });
 
       d3.selectAll('#twitterhandle').text(function(d) {
+        console.log("Setting #twitterhandle to ", obj.twitter_handle);
         this.value = obj.twitter_handle;
       });
 
       d3.selectAll('input[name="influence-type"]').filter(function(d, i) {
-        if (obj.influence === "local" && this.value === "Local Influence")
+        console.log("Calling filter on input[name=influence-type] with d, i =", d, i);
+        if (obj.influence === "local" && this.value === "Local Influence") {
           this.checked = true;
-        else if (obj.influence === "global" && this.value === "Global Influence")
+        } else if (obj.influence === "global" && this.value === "Global Influence") {
           this.checked = true;
-        else
+        } else {
           this.checked = false;
+        }
       });
 
       if (obj.collaborations !== null) {
         var collaboration = obj.collaborations;
 
         collaboration.forEach(function(d, i) {
+          console.log("Calling forEach on collaboration with d, i =", d, i);
           $("#collaboration-" + i).after(collaborationTmpl({ idx: i }));
 
           addDataList('#collaboration-' + i + ' datalist');
 
           d3.select('#collaboration-' + i + ' input[name="collaboration"]').on('keyup', function() {
+            console.log("Calling onKeyup on #collaboration-" + i + " input[name=collaboration]");
             preFillName(this.value, '#collaboration-' + i + ' input[name="collaboration"]');
           });
 
           d3.select('#collaboration-' + i + ' input[name="collaboration"]').text(function(e) {
+            console.log("Calling text on #collaboration-" + i + " input[name=collaboration] with e =", e);
+            console.log("Set value to " + d.entity);
             this.value = d.entity;
           });
 
         });
 
         d3.select('#collaboration-' + collaboration.length + ' input[name="collaboration"]').on('keyup', function() {
+          console.log("Calling onKeyup on #collaboration-" + collaboration.length + " input[name=collaboration]");
           add_input_collab(collaboration.length);
         });
       }
@@ -952,16 +1147,20 @@ var drawGraph = function () {
         var expenseValues = obj.expenses;
 
         expenseValues.forEach(function(d, i) {
+          console.log("Calling forEach on expenseValues with d, i =", d, i);
           $("#expense-" + i).after(expensesTmpl({ idx: i }));
           d3.select('#expense-' + i + ' input[name="expense_amt"]').on('keyup', null);
           d3.select('#expense-' + i + ' input[name="expense_amt"]').text(function(e) {
+            console.log("Set #expense-" + i + " input[name=expense_amt] = " + d.amount);
             this.value = d.amount;
           });
           d3.select('#expense-' + i + ' input[name="expense_year"]').text(function(e) {
+            console.log("Set #expense-" + i + " input[name=expense_year] = " + d.year);
             this.value = d.year;
           });
         });
         d3.select('#expense-' + expenseValues.length + ' input[name="expense_amt"]').on('keyup', function() {
+          console.log("Calling onKeyp on #expense-" + expenseValues.length + " input[name=expense_amt]");
           add_input_exp(expenseValues.length);
         });
       }
@@ -970,16 +1169,20 @@ var drawGraph = function () {
         var revenueValues = obj.revenue;
 
         revenueValues.forEach(function(d, i) {
+          console.log("Calling forEach on revenueValues with d, i =", d, i);
           $("#revenue-" + i).after(revenueTmpl({ idx: i }));
           d3.select('#revenue-' + i + ' input[name="revenue_amt"]').on('keyup', null);
           d3.select('#revenue-' + i + ' input[name="revenue_amt"]').text(function(e) {
+            console.log("Set #revenue-" + i + " input[name=revenue_amt] = " + d.amount);
             this.value = d.amount;
           });
           d3.select('#revenue-' + i + ' input[name="revenue_year"]').text(function(e) {
+            console.log("Set #revenue-" + i + " input[name=revenue_year] = " + d.year);
             this.value = d.year;
           });
         });
         d3.select('#revenue-' + revenueValues.length + ' input[name="revenue_amt"]').on('keyup', function() {
+          console.log("Calling onKeyp on #revenue-" + revenueValues.length + " input[name=revenue_amt]");
           add_input_rev(revenueValues.length);
         });
       }
@@ -994,6 +1197,8 @@ var drawGraph = function () {
 
     // Initial display on sidebar
     function initialInfo() {
+      console.log("Calling initialInfo");
+
       var countTypes = [0, 0, 0, 0];
 
       var forProfitsArray = [];
@@ -1023,17 +1228,30 @@ var drawGraph = function () {
           countTypes[2]++;
         }
       }
+      console.log("Set forProfitsArray =", forProfitsArray);
+      console.log("Set nonProfitsArray =", nonProfitsArray);
+      console.log("Set governmentArray =", governmentArray);
+      console.log("Set individualArray =", individualArray);
 
       //  Printing to side panel within web application.
-      d3.select('#info')
+      console.log("Printing to the side panel")
+      d3
+        .select('#info')
         .html("<h3 style='padding-bottom:10px;'>The Data</h3>")
         .style('list-style', 'square');
 
-      d3.select('#info').append('div').attr('id', 'breakdown').style('width', '100%');
+      d3
+        .select('#info')
+        .append('div')
+        .attr('id', 'breakdown')
+        .style('width', '100%');
 
-      var x = d3.scale.linear()
+      var x = d3
+        .scale
+        .linear()
         .domain([0, d3.max(countTypes)])
         .range([0, $('#breakdown').width()]);
+      console.log("Set x =", x);
 
       var typesColor = 0;
       var typesText = 0;
@@ -1074,7 +1292,8 @@ var drawGraph = function () {
           }
         });
 
-
+        console.log("Set typesColor =", typesColor);
+        console.log("Set typesText =", typesText);
 
       d3.select('#info')
         .append('text')
@@ -1089,24 +1308,28 @@ var drawGraph = function () {
     }
 
     d3.selectAll('.for-profit-entity').on('click', function(n, i) {
+      console.log("Running onClick for .for-profit-entity with n, i =", n, i);
 
       sinclick(forProfitObjects[i]);
 
     });
 
     d3.selectAll('.non-profit-entity').on('click', function(n, i) {
+      console.log("Running onClick for .non-profit-entity with n, i =", n, i);
 
       sinclick(nonProfitObjects[i]);
 
     });
 
     d3.selectAll('.individual-entity').on('click', function(n, i) {
+      console.log("Running onClick for .Individuali-entity with n, i =", n, i);
 
       sinclick(individualObjects[i]);
 
     });
 
     d3.selectAll('.government-entity').on('click', function(n, i) {
+      console.log("Running onClick for .government-entity with n, i =", n, i);
 
       sinclick(governmentObjects[i]);
 
@@ -1114,19 +1337,18 @@ var drawGraph = function () {
 
     //click-location works here...
     d3.selectAll('.click-location').on('click', function(r) {
+      console.log("Running onClick for .click-location with r =", r);
 
       handleQuery(this.innerHTML);
     });
 
-
     searchAutoComplete();
 
-
-
-
     function searchAutoComplete() {
+      console.log("Running searchAutoComplete");
       var s = "";
 
+      console.log("Running forEach on allNodes to splitLocations, sort, and create option tags.");
       allNodes.forEach(function(d) {
         name = d.name.toLowerCase();
         nickname = d.nickname.toLowerCase();
@@ -1144,50 +1366,71 @@ var drawGraph = function () {
         }
 
         if (splitLocations) {
-          console.log("splitLocations", splitLocations)
-          splitLocations.forEach(function(l) {
-            console.log("l", l)
-            var location = l;
-            var lwcLocation = location.toLowerCase();
-            (!(lwcLocation in locationsHash)) ?
-              (
-                locationsHash[lwcLocation] = [],
-                locationsHash[lwcLocation].push(d),
-                sortedLocationsList.push(location)
-              ) :
-              (locationsHash[lwcLocation].push(d));
-          });
+          // console.log("splitLocations", splitLocations);
+          // console.log("Ain't no forEach here!");
+          // splitLocations.forEach(function(l) {
+          //   console.log("l", l)
+          //   var location = l;
+          //   var lwcLocation = location.toLowerCase();
+          //   (!(lwcLocation in locationsHash)) ?
+          //     (
+          //       locationsHash[lwcLocation] = [],
+          //       locationsHash[lwcLocation].push(d),
+          //       sortedLocationsList.push(location)
+          //     ) :
+          //     (locationsHash[lwcLocation].push(d));
+          // });
         }
       });
 
       sortedNamesList = _.sortBy(sortedNamesList,
-        function(names) { return names.toLowerCase(); }
+        function(names) {
+          // console.log("Running sortBy on sortedNamesList with names =", names);
+          return names.toLowerCase();
+        }
       );
 
       sortedLocationsList = _.sortBy(sortedLocationsList,
-        function(locations) { return locations.toLowerCase(); }
+        function(locations) {
+          // console.log("Running sortBy on sortedLocationsList with locations =", locations);
+          return locations.toLowerCase();
+        }
       );
 
       sortedSearchList = _.sortBy(sortedNamesList.concat(sortedLocationsList),
-        function(keys) { return keys; }
+        function(keys) {
+          // console.log("Running sortBy on sortedNamesList.concat(sortedLocationsList) with keys =", keys);
+          return keys;
+        }
       );
 
+      console.log("Setting option tags");
       for (var count = 0; count < sortedSearchList.length; count++) {
         s += '<option value="' + sortedSearchList[count] + '">';
       }
+      console.log("s is now " + s);
     }
 
-    //filter the sortedSearchList on keyup
-    $('#search-text').autocomplete({
-      lookup: sortedSearchList,
-      appendTo: $('.filter-name-location'),
-      onSelect: function (suggestion) { handleQuery(suggestion.value); }
-    }).on('keyup', function() {
-      handleQuery(this.value);
-    });
+    try {
+      //filter the sortedSearchList on keyup
+      $('#search-text').autocomplete({
+        lookup: sortedSearchList,
+        appendTo: $('.filter-name-location'),
+        onSelect: function (suggestion) {
+          console.log("Running autocomplete and calling handleQuery with value = " + suggestion.value);
+          handleQuery(suggestion.value);
+        }
+      }).on('keyup', function() {
+        handleQuery(this.value);
+      });
+    } catch (err) {
+      console.log("autocomplete error: ", err);
+    }
+
 
     d3.selectAll('option').on('keydown',
       function(n, i) {
+        console.log("Running onKeydown handler on option with n, i =", n, i);
         if (d3.event.keyCode === 13) {
           var query = (d3.selectAll('option'))[0][i].value;
           handleQuery(query);
@@ -1196,10 +1439,12 @@ var drawGraph = function () {
     );
 
     function handleQuery(query) {
+      console.log("Calling handleQuery with query = " + query);
       query = query.toLowerCase();
 
       if (query in entitiesHash) { sinclick(entitiesHash[query]); }
 
+      console.log("Chaging opacities on fundLinks, investLinks, etc.");
       if (query in locationsHash) {
         fundLink.style("opacity", function(l) {
           var locationSource = l.source.location;
@@ -1264,6 +1509,7 @@ var drawGraph = function () {
         d3.selectAll('circle').style("stroke", "white");
 
         d3.selectAll('.node').style('opacity', function(n) {
+          console.log("Setting opacity on n = ", n);
           var locationSource = n.location;
           if(locationSource){
             for(var i =0; i<locationSource.length; i++){
@@ -1288,6 +1534,7 @@ var drawGraph = function () {
     dataListSortedLocations = generateNamesDataList(sortedLocationsList);
 
     function generateNamesDataList(sortedList) {
+      console.log("Running generateNamesDataList with sortedList = ", sortedList);
       var datalist = "";
 
       for (var i = 0; i < sortedList.length; i++) {
@@ -1298,6 +1545,7 @@ var drawGraph = function () {
     }
 
     function handleNodeHover(d) {
+      console.log("Running handleNodeHover with d = ", d);
       var s = textDisplay(d);
 
       //  Printing to side panel within web application.
@@ -1354,6 +1602,7 @@ var drawGraph = function () {
       neighboringNodesIndices[d.ID] = 1;
 
       fundingConnections.forEach(function(link) {
+        console.log("Running forEach on fundingConnections with link = ", link);
         if (isLinkSource(link, d)) {
           neighboringNodesIndices[link.target.index] = 1;
         }
@@ -1364,6 +1613,7 @@ var drawGraph = function () {
       });
 
       investmentConnections.forEach(function(link) {
+        console.log("Running forEach on investmentConnections with link = ", link);
         if (isLinkSource(link, d)) {
           neighboringNodesIndices[link.target.index] = 1;
         }
@@ -1374,6 +1624,7 @@ var drawGraph = function () {
       });
 
       collaborationConnections.forEach(function(link) {
+        console.log("Running forEach on collaborationConnections with link = ", link);
         if (isLinkSource(link, d)) {
           neighboringNodesIndices[link.target.index] = 1;
         }
@@ -1384,6 +1635,7 @@ var drawGraph = function () {
       });
 
       dataConnections.forEach(function(link) {
+        console.log("Running forEach on dataConnections with link = ", link);
         if (isLinkSource(link, d)) {
           neighboringNodesIndices[link.target.index] = 1;
         }
@@ -1420,6 +1672,7 @@ var drawGraph = function () {
     }
 
     function handleAdjNodeClick(d) {
+      console.log("Running handleAdjNodeClick with d =", d);
       fundLink.style("opacity", function(l) {
         if (d === l.source || d === l.target) {
           return "1";
@@ -1453,10 +1706,12 @@ var drawGraph = function () {
       });
 
       var isLinkTarget = function(link, node) {
+        console.log("Running isLinkTarget with link, node =", link, node);
         return link.target.index === node.index;
       }
 
       var isLinkSource = function(link, node) {
+        console.log("Running isLinkSource with link, node =", link, node);
         return link.source.index === node.index;
       }
 
@@ -1465,6 +1720,7 @@ var drawGraph = function () {
       neighboringNodesIndices[d.ID] = 1;
 
       fundingConnections.forEach(function(link) {
+        console.log("Running forEach on fundingConnections with link = ", link);
         if (isLinkSource(link, d)) {
           neighboringNodesIndices[link.target.index] = 1;
         }
@@ -1475,6 +1731,7 @@ var drawGraph = function () {
       });
 
       investmentConnections.forEach(function(link) {
+        console.log("Running forEach on investmentConnections with link = ", link);
         if (isLinkSource(link, d)) {
           neighboringNodesIndices[link.target.index] = 1;
         }
@@ -1485,6 +1742,7 @@ var drawGraph = function () {
       });
 
       collaborationConnections.forEach(function(link) {
+        console.log("Running forEach on collaborationConnections with link = ", link);
         if (isLinkSource(link, d)) {
           neighboringNodesIndices[link.target.index] = 1;
         }
@@ -1495,6 +1753,7 @@ var drawGraph = function () {
       });
 
       dataConnections.forEach(function(link) {
+        console.log("Running forEach on dataConnections with link = ", link);
         if (isLinkSource(link, d)) {
           neighboringNodesIndices[link.target.index] = 1;
         }
@@ -1505,6 +1764,7 @@ var drawGraph = function () {
       });
 
       svg.selectAll('.node').style("opacity", function(n) {
+        console.log("Running opacity on .node with n = ", n);
         if (n.ID in neighboringNodesIndices) {
           return "1";
         } else {
@@ -1518,6 +1778,7 @@ var drawGraph = function () {
         .on('mouseout', null);
 
       node.filter(function(singleNode) {
+        console.log("Running filter on node with singleNode = ", singleNode);
           if (singleNode !== d) {
             return singleNode;
           }
@@ -1529,6 +1790,7 @@ var drawGraph = function () {
 
       node
         .filter(function(l) {
+          console.log("Running filter on node with l = ", l);
           return (
             neighborFund.indexOf(l.index) > -1 ||
             neighborInvest.indexOf(l.index) > -1 ||
@@ -1543,6 +1805,7 @@ var drawGraph = function () {
     }
 
     function offNode() {
+      console.log("Running offNode");
       node
         .style("stroke", "white")
         .on('mouseover', handleNodeHover)
@@ -1597,6 +1860,7 @@ var drawGraph = function () {
         .style(
           'opacity',
           function(d) {
+            console.log("Setting opacity on d = ", d);
             var textOpacity;
 
             if (d.type === "For-Profit") {
@@ -1623,6 +1887,7 @@ var drawGraph = function () {
     }
 
     function sinclick(d) {
+      console.log("Running sinclick with d = ", d);
       var clearResetFlag = 0;
 
       handleClickNodeHover(d);
@@ -1634,6 +1899,7 @@ var drawGraph = function () {
         .style(
           "opacity",
           function(l) {
+            console.log("Setting opacity on fundLink l = ", l);
             if (d === l.source || d === l.target) {
               return "1";
             } else {
@@ -1649,6 +1915,7 @@ var drawGraph = function () {
         .style(
           "opacity",
           function(l) {
+            console.log("Setting opacity on investLink l = ", l);
             if (d === l.source || d === l.target) {
               return "1";
             } else {
@@ -1664,6 +1931,7 @@ var drawGraph = function () {
         .style(
           "opacity",
           function(l) {
+            console.log("Setting opacity on porucsLink l = ", l);
             if (d === l.source || d === l.target) {
               return "1";
             } else {
@@ -1679,6 +1947,7 @@ var drawGraph = function () {
         .style(
           "opacity",
           function(l) {
+            console.log("Setting opacity on dataLink l = ", l);
             if (d === l.source || d === l.target) {
               return "1";
             } else {
@@ -1691,6 +1960,7 @@ var drawGraph = function () {
         .style(
           "stroke",
           function(singleNode) {
+            console.log("Setting stroke on singleNode = ", singleNode);
             if (singleNode !== d) {
               return "white";
             } else {
@@ -1702,6 +1972,7 @@ var drawGraph = function () {
       node
         .filter(
           function(singleNode) {
+            console.log("Running filter on node singleNode = ", singleNode);
             if (singleNode !== d) { return singleNode; }
           }
         )
@@ -1711,63 +1982,75 @@ var drawGraph = function () {
         .funding_connections
         .filter(
           function(link) {
+            console.log("Running filter on funding_connections link = ", link);
             return link.source.index === d.index ||
               link.target.index === d.index;
           }
         )
         .map(
           function(link) {
+            console.log("Mapping funding_connections link = ", link);
             return link.source.index === d.index ?
               link.target.index :
               link.source.index;
           }
         );
+      console.log("Set neighborFund to ", neighborFund);
 
       var neighborInvest = graph
         .investment_connections
         .filter(
           function(link) {
+            console.log("Running filter on investment_connections link = ", link);
             return link.source.index === d.index ||
               link.target.index === d.index;
           }
         )
         .map(
           function(link) {
+            console.log("Mapping investment_connections link = ", link);
             return link.source.index === d.index ?
             link.target.index :
             link.source.index;
           }
         );
+      console.log("Set neighborInvest to ", neighborInvest);
 
       var neighborPorucs = graph
         .collaboration_connections
         .filter(
           function(link) {
+            console.log("Running filter on collaboration_connections link = ", link);
             return link.source.index === d.index ||
             link.target.index === d.index;
           }
         )
         .map(
           function(link) {
+            console.log("Mapping collaboration_connections link = ", link);
             return link.source.index === d.index ?
             link.target.index :
             link.source.index;
           }
         );
+      console.log("Set neighborPorucs to ", neighborPorucs);
 
       var neighborData = graph
         .data_connections
         .filter(
           function(link) {
+            console.log("Running filter on data_connections link = ", link);
             return link.source.index === d.index ||
             link.target.index === d.index;
           }
         )
         .map(
           function(link) {
+            console.log("Mapping data_connections link = ", link);
             return link.source.index === d.index ? link.target.index : link.source.index;
           }
         );
+      console.log("Set neighborData to ", neighborData);
 
       svg
         .selectAll('.node')
@@ -1777,6 +2060,7 @@ var drawGraph = function () {
         .style(
           "opacity",
           function(l) {
+            console.log("Setting opacity on .node to l = " + l);
             return (
               neighborFund.indexOf(l.index) > -1 ||
               neighborInvest.indexOf(l.index) > -1 ||
@@ -1790,6 +2074,7 @@ var drawGraph = function () {
       node
         .filter(
           function(l) {
+            console.log("Running filter on node with l = " + l);
             return (
               neighborFund.indexOf(l.index) > -1 ||
               neighborInvest.indexOf(l.index) > -1 ||
@@ -1804,6 +2089,7 @@ var drawGraph = function () {
     }
 
     function dragstart(d) {
+      console.log("Running dragstart with d = " + d);
       d3
         .select(this)
         .classed(
@@ -1818,6 +2104,7 @@ var drawGraph = function () {
     }
 
     function drag(d) {
+      console.log("Running drag with d = " + d);
       node
         .on('mouseover', null)
         .on('mouseout', null)
@@ -1825,6 +2112,7 @@ var drawGraph = function () {
     }
 
     function dragend(d) {
+      console.log("Running dragend with d = " + d);
       d3
         .select(this)
         .classed(
@@ -1839,6 +2127,7 @@ var drawGraph = function () {
     }
 
     function tick(e) {
+      // console.log("Running tick(e)");
       // Push different nodes in different directions for clustering.
       var k = 8 * e.alpha;
 
@@ -1866,6 +2155,7 @@ var drawGraph = function () {
         }
       );
 
+      // console.log("Setting x1, y1 and x2, y2");
       if (_.isEmpty(centeredNode)) {
         fundLink
           .attr("x1", function(d) { return d.source.x; })
@@ -2039,12 +2329,11 @@ var drawGraph = function () {
           );
 
         textElement.attr("transform", transformText);
-
       }
-
     }
 
     var determineVisibleNodes = function() {
+      console.log("Running determineVisibleNodes");
       //  Construct associative array of the visible nodes' indices (keys) and corresponding objects (values).
       var visibleNodes = {};
 
@@ -2063,6 +2352,7 @@ var drawGraph = function () {
 
     ***/
     var connectionsCheckboxActions = function() {
+      console.log("Running connectionsCheckboxActions");
       var connectionClasses = ['.invest', '.fund', '.porucs', '.data'];
 
       d3.selectAll('.group-items.connections input')[0].forEach(
@@ -2086,6 +2376,7 @@ var drawGraph = function () {
 
     // Only reveal the connections with both source and target nodes visible.
     var revealConnections = function(selector, visibleNodes) {
+      console.log("Running revealConnections with selector, visibleNodes =", selector, visibleNodes);
       d3.selectAll(selector).style(
         "visibility",
         function(l) {
@@ -2102,6 +2393,7 @@ var drawGraph = function () {
     };
 
     var hideConnections = function(selector) {
+      console.log("Running hideConnections with selector = ", selector);
       d3.selectAll(selector).style(
         "visibility",
         function(l) { return "hidden"; }
@@ -2111,6 +2403,7 @@ var drawGraph = function () {
 
     // If none of the type's nodes are visible, then the connections should not be visible as well (no nodes = no connections).
     var shouldCheckboxRemainUnchecked = function(selector, visibleNodes) {
+      console.log("Running shouldCheckboxRemainUnchecked with selector, visibleNodes =", selector, visibleNodes);
       if (
         visibleNodes.length === 0 ||
         (
@@ -2131,6 +2424,7 @@ var drawGraph = function () {
 
     ***/
     var typesCheckboxActions = function() {
+      console.log("Running typesCheckboxActions");
 
       d3.selectAll('#cb_forpro, #cb_nonpro, #cb_gov, #cb_individ').on(
         'click',
@@ -2160,6 +2454,8 @@ var drawGraph = function () {
 
     //  Initialize the display accordingly...
     var nodeVisibility = function(type, visibility) {
+      console.log("Running nodeVisibility with type, visibility =", type, visibility);
+
       d3
         .selectAll(".node").filter(
           function(d) { if (d.type === type) { return this; } }
@@ -2168,6 +2464,9 @@ var drawGraph = function () {
     };
 
     var setVisibility = function(link, linkData, visibleNodes, connectionType) {
+      console.log("Running setVisibility with link, linkData, visibleNodes, connectionType = ",
+        link, linkData, visibleNodes, connectionType);
+
       if (linkData.source.ID in visibleNodes && linkData.target.ID in visibleNodes) {
         switch (connectionType) {
           case "Funding":
@@ -2200,6 +2499,7 @@ var drawGraph = function () {
 
     //  For each rendered node, if the node is a for-profit, then for each connection type, determine if the node is a source or target of the connection, add the connection to the array.
     var toggleLinks = function(visibleNodes) {
+      console.log("Running toggleLinks with visibleNodes =", visibleNodes);
 
       //  Finding links with nodes of a certain type.
       fundLink.filter(
@@ -2228,6 +2528,7 @@ var drawGraph = function () {
     };
 
     var reflectConnectionChanges = function() {
+      console.log("Running reflectConnectionChanges");
       var visibleFundingConnections = fundLink.filter(
         function(link) {
           return d3.select(this).style('visibility') === 'visible';
@@ -2274,6 +2575,7 @@ var drawGraph = function () {
     d3.selectAll('#cb_emp, #cb_numtwit').on(
       'click',
       function() {
+        console.log("Running onClick handler for #cb_emp, #cb_numtwit");
         if (document.getElementById("cb_emp").checked) {
           node
             .transition()
@@ -2343,6 +2645,7 @@ var drawGraph = function () {
       .on(
         'click',
         function() {
+          console.log("Running onClick handler for svg");
           var m = d3.mouse(this);
 
           if (clearResetFlag === 1) {
