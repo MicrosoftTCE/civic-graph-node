@@ -496,7 +496,8 @@
 
 
           d3.selectAll('#editCurrentInfo').on('click', function() {
-              prefillCurrent(d);
+              // prefillCurrent(d);
+              alert("Thank you for visiting the Civic Graph. We’re making some updates and are temporarily not accepting new information. Please check back next week!");
             })
             .on('mouseover', function() {
               d3.select(this).style('cursor', 'pointer');
@@ -743,7 +744,9 @@
         // Also, the user has the options of going directly to form B or C
         // Form B - click submit button
         // Form C - click on hyperlink below the submission button
-        d3.selectAll('#edit').on('click', editForm);
+        d3.selectAll('#edit').on('click', function() {
+          alert("Thank you for visiting the Civic Graph. We’re making some updates and are temporarily not accepting new information. Please check back next week!");
+        });
 
         function editForm() {
           d3.select('#edit-add-info').html('<i class=" icon-file on-left"></i>' + 'Reset Form').on('click', editForm);
