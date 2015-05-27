@@ -1,7 +1,7 @@
-var drag = function (node) {
-  console.log("Running drag with node = " + node);
+var drag = function (target) {
+  console.log("Running drag with target = " + target);
 
-  node
+  target
     .on('mouseover', null)
     .on('mouseout', null)
     .on('click', null);

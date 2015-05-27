@@ -1,19 +1,37 @@
-    function addInputFund(counterF) {
-      console.log("Running addInputFund with counterF = " + counterF);
+var d3 = require('d3');
+var $  = require('jquery');
 
-      if ($('#funding-' + counterF + ' input[name="fund"]').val() !== "") {
-        d3.select('#funding-' + counterF + ' input[name="fund"]').on('keyup', function() {
-          console.log("Running fund onKeyup with counterF = " + counterF);
-          preFillName(this.value, '#funding-' + (counterF - 1) + ' input[name="fund"]', entitiesHash);
-        });
-        counterF++; // counter -> 2
+var addDataList = require('./add-data-list');
+var preFillName = require('./pre-fill-name');
 
+var fundingTmpl = require("jade!../templates/funding.jade");
 
-        $("#funding-" + (counterF - 1)).after(fundingTmpl({ idx: counterF }));
-        addDataList('#funding-' + counterF + ' datalist');
-        d3.select("#funding-" + counterF + " input[name='fund']").on("keyup", function() {
-          console.log("Running fund onKeyup with counterF = " + counterF);
-          addInputFund(counterF);
-        });
+var addInputFund = function (idx, entitiesHash, dataListSortedNames) {
+  console.log("Running addInputFund with idx = " + idx);
+
+  if ($('#funding-' + idx + ' input[name="fund"]').val() !== "") {
+    d3.select('#funding-' + idx + ' input[name="fund"]').on(
+      'keyup',
+      function() {
+        console.log("Running fund onKeyup with idx = " + idx);
+        preFillName(this.value, '#funding-' + (idx - 1) + ' input[name="fund"]', entitiesHash);
       }
-    }
+    );
+    idx++; // counter -> 2
+
+
+    $("#funding-" + (idx - 1)).after(fundingTmpl({ idx: idx }));
+
+    addDataList('#funding-' + idx + ' datalist', dataListSortedNames);
+
+    d3.select("#funding-" + idx + " input[name='fund']").on(
+      "keyup",
+      function() {
+        console.log("Running fund onKeyup with idx = " + idx);
+        addInputFund(idx, entitiesHash, dataListSortedNames);
+      }
+    );
+  }
+};
+
+module.exports = addInputFund;

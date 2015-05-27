@@ -1,18 +1,36 @@
-    function addInputLocations(counterJ) {
-      console.log("Running addInputLocations with counterJ = " + counterJ);
+var d3 = require('d3');
+var $  = require('jquery');
 
-      if ($('#location-' + counterJ + ' input[name="location"]').val() !== "") {
-        d3.select('#location-' + counterJ + ' input[name="location"]').on('keyup', function () {
-          console.log("Running onKeyup with counterJ = " + counterJ);
-          preFillLocation(this.value, locationsHash);
-        });
+var preFillLocation = require('./pre-fill-location');
 
-        counterJ++;
+var locationTmpl = require("jade!../templates/location.jade");
 
-        $("#location-" + (counterJ - 1)).after(locationTmpl({ idx: counterJ }));
-        d3.select("#location-" + counterJ +  " input[name='location']").on("keyup", function() {
-          console.log("Running location onKeyup with counterJ = " + counterJ);
-          addInputLocations(counterJ);
-        });
+var addInputLocations = function (idx, locationsHash) {
+  console.log("Running addInputLocations with idx = " + idx);
+
+  if ($('#location-' + idx + ' input[name="location"]').val() !== "") {
+    d3.select('#location-' + idx + ' input[name="location"]').on(
+      'keyup',
+      function () {
+        console.log("Running onKeyup with idx = " + idx);
+
+        preFillLocation(this.value, locationsHash);
       }
-    }
+    );
+
+    idx++;
+
+    $("#location-" + (idx - 1)).after(locationTmpl({ idx: idx }));
+
+    d3.select("#location-" + idx +  " input[name='location']").on(
+      "keyup",
+      function() {
+        console.log("Running location onKeyup with idx = " + idx);
+
+        addInputLocations(idx, locationsHash);
+      }
+    );
+  }
+};
+
+module.exports = addInputLocations;

@@ -1,10 +1,15 @@
 var d3 = require('d3');
 
-var handleClickNodeHover = function(d) {
-  console.log("Running handleClickNodeHover with d =", d);
-  s = textDisplay(d);
+var editDisplay    = require('./edit-display');
+var prefillCurrent = require('./prefill-current');
+var textDisplay    = require('./text-display');
 
-  webform = editDisplay(d);
+var handleClickNodeHover = function(obj) {
+  console.log("Running handleClickNodeHover with obj =", obj);
+
+  s = textDisplay(obj);
+
+  webform = editDisplay(obj);
 
   // For editing the data displayed within the side panel.
   d3.select('#edit')
@@ -17,7 +22,19 @@ var handleClickNodeHover = function(d) {
 
   d3.selectAll('#editCurrentInfo').on('click', function() {
       console.log("Running onClick for #editCurrentInfo");
-      prefillCurrent(d);
+      prefillCurrent(
+        obj,
+        allNodes,
+        fundLink,
+        investLink,
+        porucsLink,
+        dataLink,
+        graph,
+        dataListSortedNames,
+        dataListSortedLocations,
+        entitiesHash,
+        locationsHash
+      );
     })
     .on('mouseover', function() {
       d3.select(this).style('cursor', 'pointer');

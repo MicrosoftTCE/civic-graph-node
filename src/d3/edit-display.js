@@ -1,5 +1,6 @@
 var editDisplay = function(d) {
   console.log("Running editDisplay");
+
   var webform = "";
 
   webform +=

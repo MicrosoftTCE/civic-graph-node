@@ -1,15 +1,30 @@
-    function addInputLoc(counterU) {
-      console.log("Running addInputLoc with counterU = " + counterU);
+var d3 = require('d3');
+var $  = require('jquery');
 
-      if ($('#location-' + counterU + ' input[name="location"]').val() !== "") {
-        d3.select('#location-' + counterU + ' input[name="location"]').on('keyup', null);
+var locTmpl = require("jade!../templates/loc.jade");
 
-        counterU++;
+var addInputLoc = function (idx) {
+  console.log("Running addInputLoc with idx = " + idx);
 
-        $("#location-" + (counterU - 1)).after(locTmpl({ idx: counterU }));
-        d3.select("#location-" + counterU +  " input[name='location']").on("keyup", function() {
-          console.log("Running loc onKeyup with counterU = " + counterU);
-          addInputLoc(counterU);
-        });
+  if ($('#location-' + idx + ' input[name="location"]').val() !== "") {
+    d3.select('#location-' + idx + ' input[name="location"]').on(
+      'keyup',
+      null
+    );
+
+    idx++;
+
+    $("#location-" + (idx - 1)).after(locTmpl({ idx: idx }));
+
+    d3.select("#location-" + idx +  " input[name='location']").on(
+      "keyup",
+      function() {
+        console.log("Running loc onKeyup with idx = " + idx);
+
+        addInputLoc(idx);
       }
-    }
+    );
+  }
+};
+
+module.exports = addInputLoc;

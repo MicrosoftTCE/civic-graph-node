@@ -1,21 +1,43 @@
-    function addInputInvestMade(counterIM) {
-      console.log("Running addInputInvestMade with counterIM = " + counterIM);
+var d3 = require('d3');
+var $  = require('jquery');
 
-      if ($('#investmentmade-' + counterIM + ' input[name="investmade"]').val() !== "") {
-        d3.select('#investmentmade-' + counterIM + ' input[name="investmade"]').on('keyup', function() {
-          console.log("Running fund made onKeyup with counterIM = " + counterIM);
-          preFillName(this.value, '#investmentmade-' + (counterIM - 1) + ' input[name="investmade"]', entitiesHash);
-        });
-        counterIM++; // counter -> 2
+var addDataList = require('./add-data-list');
+var preFillName = require('./pre-fill-name');
 
+var investmentMadeTmpl = require("jade!../templates/investment-made.jade");
 
-        $("#investmentmade-" + (counterIM - 1)).after(investmentMadeTmpl({ idx: counterIM }));
+var addInputInvestMade = function (idx, entitiesHash, dataListSortedNames) {
+  console.log("Running addInputInvestMade with idx = " + idx);
 
-        addDataList('#investmentmade-' + counterIM + ' datalist');
+  if ($('#investmentmade-' + idx + ' input[name="investmade"]').val() !== "") {
+    d3.select('#investmentmade-' + idx + ' input[name="investmade"]').on(
+      'keyup',
+      function() {
+        console.log("Running fund made onKeyup with idx = " + idx);
 
-        d3.select("#investmentmade-" + counterIM + " input[name='investmade']").on("keyup", function() {
-          console.log("Running fund made onKeyup with counterIM = " + counterIM);
-          addInputInvestMade(counterIM);
-        });
+        preFillName(
+          this.value,
+          '#investmentmade-' + (idx - 1) + ' input[name="investmade"]',
+          entitiesHash
+        );
       }
-    }
+    );
+    idx++; // counter -> 2
+
+
+    $("#investmentmade-" + (idx - 1)).after(investmentMadeTmpl({ idx: idx }));
+
+    addDataList('#investmentmade-' + idx + ' datalist', dataListSortedNames);
+
+    d3.select("#investmentmade-" + idx + " input[name='investmade']").on(
+      "keyup",
+      function() {
+        console.log("Running fund made onKeyup with idx = " + idx);
+
+        addInputInvestMade(idx, entitiesHash, dataListSortedNames);
+      }
+    );
+  }
+};
+
+module.exports = addInputInvestMade;

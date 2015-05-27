@@ -1,3 +1,5 @@
+var handleClickNodeHover = require('./handle-click-node-hover');
+
 var handleAdjNodeClick = function (
   node,
   fundLink,
@@ -125,6 +127,11 @@ var handleAdjNodeClick = function (
     .on('mouseover', null)
     .on('mouseout', null)
     .on('click', null);
+
+  var neighborFund;
+  var neighborInvest;
+  var neighborPorucs;
+  var neighborData;
 
   node
     .filter(function(link) {

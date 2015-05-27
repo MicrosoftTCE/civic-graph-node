@@ -1,15 +1,30 @@
-    function addInputExp(counterE) {
-      console.log("Running addInputExp with counterE = " + counterE);
+var d3 = require('d3');
+var $  = require('jquery');
 
-      if ($('#expense-' + counterE + ' input[name="expense_amt"]').val() !== "") {
-        d3.select('#expense-' + counterE + ' input[name="expense_amt"]').on('keyup', null);
-        counterE++; // counter -> 2
+var expensesTmpl = require("jade!../templates/expenses.jade");
+
+var addInputExp = function (idx) {
+  console.log("Running addInputExp with idx = " + idx);
+
+  if ($('#expense-' + idx + ' input[name="expense_amt"]').val() !== "") {
+    d3.select('#expense-' + idx + ' input[name="expense_amt"]').on(
+      'keyup',
+      null
+    );
+    idx++; // counter -> 2
 
 
-        $("#expense-" + (counterE - 1)).after(expensesTmpl({ idx: counterE }));
-        d3.select("#expense-" + counterE + " input[name=expense_amt]").on("keyup", function() {
-          console.log("Running exp onKeyup with counterE = " + counterE);
-          addInputExp(counterE);
-        });
+    $("#expense-" + (idx - 1)).after(expensesTmpl({ idx: idx }));
+
+    d3.select("#expense-" + idx + " input[name=expense_amt]").on(
+      "keyup",
+      function() {
+        console.log("Running exp onKeyup with idx = " + idx);
+
+        addInputExp(idx);
       }
-    }
+    );
+  }
+};
+
+module.exports = addInputExp;

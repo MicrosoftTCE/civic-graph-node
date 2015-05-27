@@ -1,4 +1,12 @@
-var _ = require('underscore');
+var d3 = require('d3');
+var _  = require('lodash');
+
+exports.colors = {
+  cyan: "rgb(46, 146, 207)"
+};
+
+exports.employeeScale = d3.scale.sqrt().domain([10, 130000]).range([10, 50]);
+exports.twitterScale  = d3.scale.sqrt().domain([10, 1000000]).range([10, 50]);
 
 exports.getQueryParams = function() {
   console.log("Running getQueryParams");

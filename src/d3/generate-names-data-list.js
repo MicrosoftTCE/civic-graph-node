@@ -1,5 +1,5 @@
 var generateNamesDataList = function (sortedList) {
-  console.log("Running generateNamesDataList with sortedList = ", sortedList);
+  console.log("Running generateNamesDataList with " + sortedList.length + " names.");
 
   var datalist = "";
 

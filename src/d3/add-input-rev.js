@@ -1,17 +1,30 @@
+var d3 = require('d3');
+var $  = require('jquery');
 
-    function addInputRev(counterR) {
-      console.log("Running addInputRev with counterR = " + counterR);
+var revenueTmpl = require("jade!../templates/revenue.jade");
 
-      if ($('#revenue-' + counterR + ' input[name="revenue_amt"]').val() !== "") {
-        d3.select('#revenue-' + counterR + ' input[name="revenue_amt"]').on('keyup', null);
-        counterR++; // counter -> 2
+var addInputRev = function (idx) {
+  console.log("Running addInputRev with idx = " + idx);
 
+  if ($('#revenue-' + idx + ' input[name="revenue_amt"]').val() !== "") {
+    d3.select('#revenue-' + idx + ' input[name="revenue_amt"]').on(
+      'keyup',
+      null
+    );
 
-        $("#revenue-" + (counterR - 1)).after(revenueTmpl({ idx: counterR }));
+    idx++;
 
-        d3.select("#revenue-" + counterR + " input[name=revenue_amt]").on("keyup", function() {
-          console.log("Running rev onKeyup with counterR = " + counterR);
-          addInputRev(counterR);
-        });
+    $("#revenue-" + (idx - 1)).after(revenueTmpl({ idx: idx }));
+
+    d3.select("#revenue-" + idx + " input[name=revenue_amt]").on(
+      "keyup",
+      function() {
+        console.log("Running rev onKeyup with idx = " + idx);
+
+        addInputRev(idx);
       }
-    }
+    );
+  }
+};
+
+module.exports = addInputRev;

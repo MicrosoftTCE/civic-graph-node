@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var determineNullFields = function () {
+var determineNullFields = function (allNodes) {
   console.log("Running determineNullFields");
 
   var nullFieldCount = 0;

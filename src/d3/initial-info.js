@@ -1,3 +1,7 @@
+var $ = require('jquery');
+
+var entityNamesTmpl = require('jade!../templates/entity-names.jade');
+
 var initialInfo = function (allNodes) {
   console.log("Calling initialInfo");
 

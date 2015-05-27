@@ -1,21 +1,39 @@
-    function addInputData(counterD) {
-      console.log("Running addInputData with counterD = " + counterD);
+var d3 = require('d3');
+var $  = require('jquery');
 
-      if ($('#data-' + counterD + ' input[name="data"]').val() !== "") {
-        d3.select('#data-' + counterD + ' input[name="data"]').on('keyup', function() {
-          console.log("Running data onKeyup with counterD = " + counterD);
-          preFillName(this.value, '#data-' + (counterD - 1) + ' input[name="data"]', entitiesHash);
-        });
-        counterD++; // counter -> 2
+var addDataList = require('./add-data-list');
+var preFillName = require('./pre-fill-name');
 
+var dataTmpl = require("jade!../templates/data.jade");
 
-        $("#data-" + (counterD - 1)).after(dataTmpl({ idx: counterD }));
+var addInputData = function (idx, entitiesHash, dataListSortedNames) {
+  console.log("Running addInputData with idx = " + idx);
 
-        addDataList('#data-' + counterD + ' datalist');
+  if ($('#data-' + idx + ' input[name="data"]').val() !== "") {
+    d3.select('#data-' + idx + ' input[name="data"]').on(
+      'keyup',
+      function() {
+        console.log("Running data onKeyup with idx = " + idx);
 
-        d3.select("#data-" + counterD + " input[name='data']").on("keyup", function() {
-          console.log("Running data onKeyup with counterD = " + counterD);
-          addInputData(counterD);
-        });
+        preFillName(this.value, '#data-' + (idx - 1) + ' input[name="data"]', entitiesHash);
       }
-    }
+    );
+    idx++; // counter -> 2
+
+
+    $("#data-" + (idx - 1)).after(dataTmpl({ idx: idx }));
+
+    addDataList('#data-' + idx + ' datalist', dataListSortedNames);
+
+    d3.select("#data-" + idx + " input[name='data']").on(
+      "keyup",
+      function() {
+        console.log("Running data onKeyup with idx = " + idx);
+
+        addInputData(idx, entitiesHash, dataListSortedNames);
+      }
+    );
+  }
+};
+
+module.exports = addInputData;

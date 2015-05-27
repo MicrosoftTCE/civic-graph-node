@@ -38,7 +38,7 @@ router.get('/', function(req, res) {
       return db.query(qry)
     })
     .then(function(results) {
-      res.json(config.processResults(entities, bridges, operations, results));
+      res.json(config.processVertices(entities, bridges, operations, results));
     })
     .catch(function(err) {
       console.log("ERROR on /entities", err);
@@ -67,6 +67,6 @@ router.get('/:id', function(req, res) {
     console.log("ERROR on /entities/" + req.params.id, err);
     res.sendStatus(400);
   });
-})
+});
 
 module.exports = router;
