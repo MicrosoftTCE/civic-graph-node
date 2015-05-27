@@ -5,6 +5,8 @@ var wrap    = require('mysql-wrap');
 var _       = require('lodash');
 
 var select = sql.select;
+var insert = sql.insert;
+var update = sql.update;
 
 var router  = express.Router();
 
@@ -67,6 +69,63 @@ router.get('/:id', function(req, res) {
     console.log("ERROR on /entities/" + req.params.id, err);
     res.sendStatus(400);
   });
-})
+});
+
+router.post('/', function(req, res) {
+  var formObj = req.body;
+
+  var entityObj = {
+    name: formObj.name,
+    nickname: formObj.nickname,
+    entity_type: formObj.entity_type,
+    categories: formObj.categories,
+    location: formObj.location,
+    website: formObj.url,
+    twitter_handle: formObj.twitter_handle,
+    followers: formObj.followers,
+    employees: formObj.employees,
+    influence: formObj.influence,
+    relations: formObj.relations,
+    key_people: formObj.key_people,
+    ip_address: formObj.ip_address,
+    ip_geolocation: formObj.ip_geolocation,
+    render: "1",
+    deleted_at: null
+  };
+
+
+  if(formObj.id) {
+    var qry = update("entities", entityObj).where({id : formObj.id}).returning('*').toString();
+
+    db.query(qry).then(function(result) {
+      res.json(result);
+    });
+
+  } else {
+    var qry = insert("entities", entityObj);
+
+    db.query(qry.toString()).then(function(result) {
+      qry = select().from("entities_view").where({id : result.insertId}).toString();
+
+        return db.qry(qry);
+      }).then(function (result) {
+        res.json(result);
+
+        var entity = result;
+
+        if (formObj.funding_recieved !== null) {
+
+        }
+      });
+// .catch(function(err) {
+//       console.log("ERROR posting to /entities", err);
+//       res.sendStatus(400);
+//     });
+  }
+});
+
+// var newFundingReceivedEntity;
+//               (entity.funding_received).forEach(function(object) {
+//                 newFundingReceivedEntity = object;
 
 module.exports = router;

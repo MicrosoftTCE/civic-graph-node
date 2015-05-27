@@ -169,18 +169,43 @@ var drawGraph = function () {
       .style("visibility", "visible");
     console.log("Set fundLink =", fundLink);
 
-    //  INVESTMENTS
     var investLink = svg
       .selectAll(".invest")
       .data(investmentConnections)
       .enter()
       .append("line")
       .attr("class", "invest")
-      .style("stroke", "rgb(38,114,114)") // teal
+      .style("stroke", "rgb(111,93,168)") // lavender
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
     console.log("Set investLink =", investLink);
+
+    //   OLD INVESTMENTS
+    // var investLink = svg
+    //   .selectAll(".invest")
+    //   .data(investmentConnections)
+    //   .enter()
+    //   .append("line")
+    //   .attr("class", "invest")
+    //   .style("stroke", "rgb(38,114,114)") // teal
+    //   .style("stroke-width", "1")
+    //   .style("opacity", "0.2")
+    //   .style("visibility", "visible");
+    // console.log("Set investLink =", investLink);
+
+    // EMPLOYMENTS
+    // var employLink = svg
+    //   .selectAll(".employ")
+    //   .data(employmentConnections)
+    //   .enter()
+    //   .append("line")
+    //   .attr("class", "invest")
+    //   .style("stroke", "rgb(38,114,114)") // teal
+    //   .style("stroke-width", "1")
+    //   .style("opacity", "0.2")
+    //   .style("visibility", "visible");
+    // console.log("Set employLink =", employLink);
 
     //  COLLABORATIONS
     var porucsLink = svg
