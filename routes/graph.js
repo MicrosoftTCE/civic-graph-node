@@ -7,6 +7,18 @@ var data  = require('../data');
 router.get('/vertices', function(req, res) {
   data.getVertices(function(err, obj) {
     if (err) {
+      console.log(err);
+      res.sendStatus(400);
+    } else {
+      res.json(obj);
+    }
+  })
+});
+
+router.get('/store', function(req, res) {
+  data.getStore(function(err, obj) {
+    if (err) {
+      console.log(err);
       res.sendStatus(400);
     } else {
       res.json(obj);

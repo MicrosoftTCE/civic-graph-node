@@ -4,6 +4,7 @@ var cookieParser = require('cookie-parser');
 var favicon      = require('serve-favicon');
 var logger       = require('morgan');
 var path         = require('path');
+var _            = require('lodash');
 
 var data         = require('./data');
 
@@ -33,40 +34,12 @@ app.use('/graph', require('./routes/graph'));
 app.use('/', require('./routes/old'));
 
 app.get('/', function(req, res) {
-  data.getVertices(function(err, vertices) {
-    if (!err) {
-      data.getEdges('all', function(err, edges) {
-        res.render('index', {
-          title: 'Civic Graph',
-          civicStore: JSON.stringify({
-            vertices: vertices,
-            edges: edges
-          })
-        })
-      })
-    }
-  })
-
-  // res.render('index', {
-  //   title: 'Civic Graph',
-  //   civicStore: JSON.stringify({
-  //     vertices: [],
-  //     edges: {
-  //       funding: [],
-  //       investment: [],
-  //       collaboration: [],
-  //       data: []
-  //     },
-  //     entities: {
-  //       all: [],
-  //       names: []
-  //     },
-  //     locations: {
-  //       all: [],
-  //       names: []
-  //     }
-  //   })
-  // });
+  data.getStore(function(err, store) {
+    res.render('index', {
+      title: 'Civic Graph',
+      store: JSON.stringify(store)
+    });
+  });
 });
 
 /// catch 404 and forward to error handler

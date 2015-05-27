@@ -8,6 +8,8 @@ var select = sql.select;
 
 var router  = express.Router();
 
+var data  = require('../data');
+
 var config  = require('../config');
 var pool    = mysql.createPool(config.db);
 var db      = wrap(pool);
@@ -45,6 +47,17 @@ router.get('/', function(req, res) {
       res.sendStatus(400);
     });
 });
+
+router.get('/top', function(req, res) {
+  data.getTopEntities(function(err, obj) {
+    if (err) {
+      console.log("ERROR on /entities/top", err);
+      res.sendStatus(400);
+    } else {
+      res.json(obj);
+    }
+  })
+})
 
 router.get('/:id', function(req, res) {
   var qry = select("id, categories, website, twitter_handle, influence, relations, key_people")
