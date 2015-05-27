@@ -2,8 +2,8 @@ var d3 = require('d3');
 var $  = require('jquery');
 
 var dataTmpl               = require("jade!../templates/data.jade");
-var fundingGivenTmpl       = require("jade!../templates/funding-given.jade");
 var fundingTmpl            = require("jade!../templates/funding.jade");
+var fundingGivenTmpl       = require("jade!../templates/funding-given.jade");
 var investmentMadeTmpl     = require("jade!../templates/investment-made.jade");
 var investmentRecievedTmpl = require("jade!../templates/investment-received.jade");
 var keyPeopleTmpl          = require("jade!../templates/key-people.jade");
@@ -22,7 +22,19 @@ var addInputInvest      = require('./add-input-invest');
 var addInputInvestMade  = require('./add-input-invest-made');
 var addInputData        = require('./add-input-data');
 
-var preFillFormA = function (obj) {
+var preFillFormA = function (
+  obj,
+  allNodes,
+  fundLink,
+  investLink,
+  porucsLink,
+  dataLink,
+  graph,
+  dataListSortedNames,
+  dataListSortedLocations,
+  entitiesHash,
+  locationsHash
+) {
   console.log("Running preFillFormA with obj =", obj);
 
   // Time to prefill the form...
@@ -88,7 +100,7 @@ var preFillFormA = function (obj) {
             " and calling addInputLocations with length = " + location.length
           );
 
-          addInputLocations(location.length);
+          addInputLocations(location.length, locationsHash);
         }
       );
   }
@@ -173,7 +185,7 @@ var preFillFormA = function (obj) {
 
         $("#funding-" + i).after(fundingTmpl({ idx: i }));
 
-        addDataList('#funding-' + i + ' datalist');
+        addDataList('#funding-' + i + ' datalist', dataListSortedNames);
 
         d3.select('#funding-' + i + ' input[name="fund"]').on('keyup',
           function() {
@@ -216,7 +228,7 @@ var preFillFormA = function (obj) {
           console.log("Running onKeyup on #funding-" + fundingreceived.length + " input[name=fund]");
           console.log("Calling addInputFund with length");
 
-          addInputFund(fundingreceived.length);
+          addInputFund(fundingreceived.length, entitiesHash, dataListSortedNames);
         }
       );
   }
@@ -229,7 +241,7 @@ var preFillFormA = function (obj) {
         console.log("Running fundinggiven forEach with d, i =", d, i);
         $("#fundinggiven-" + i).after(fundingGivenTmpl({ idx: i }));
 
-        addDataList('#fundinggiven-' + i + ' datalist');
+        addDataList('#fundinggiven-' + i + ' datalist', dataListSortedNames);
 
         d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').on('keyup', function() {
           console.log("Running preFillName on #fundinggiven-" + i + " input[name=fundgiven] with " + this.value);
@@ -260,7 +272,7 @@ var preFillFormA = function (obj) {
           console.log("Running onKeyup on #fundinggiven-" + fundinggiven.length + " input[name=fundgiven]");
           console.log("Calling addInputFundGiven with length");
 
-          addInputFundGiven(fundinggiven.length);
+          addInputFundGiven(fundinggiven.length, entitiesHash, dataListSortedNames);
         }
       );
   }
@@ -272,7 +284,7 @@ var preFillFormA = function (obj) {
       console.log("Running investmentreceived forEach with d, i =", d, i);
       $("#investing-" + i).after(investmentRecievedTmpl({ idx: i }));
 
-      addDataList('#investing-' + i + ' datalist');
+      addDataList('#investing-' + i + ' datalist', dataListSortedNames);
 
       d3.select('#investing-' + i + ' input[name="invest"]').on('keyup',
         function() {
@@ -310,7 +322,7 @@ var preFillFormA = function (obj) {
           console.log("Running onKeyup on #investing-" + investmentreceived.length + " input[name=invest]");
           console.log("Calling addInputInvest with length");
 
-          addInputInvest(investmentreceived.length);
+          addInputInvest(investmentreceived.length, entitiesHash, dataListSortedNames);
         }
       );
   }
@@ -322,7 +334,7 @@ var preFillFormA = function (obj) {
       console.log("Running investmentsmade forEach with d, i =", d, i);
       $("#investmentmade-" + i).after(investmentMadeTmpl({ idx: i }));
 
-      addDataList('#investmentmade-' + i + ' datalist');
+      addDataList('#investmentmade-' + i + ' datalist', dataListSortedNames);
 
       d3.select('#investmentmade-' + i + ' input[name="investmade"]')
         .on(
@@ -362,7 +374,7 @@ var preFillFormA = function (obj) {
           console.log("Running onKeyup on #investmentmade-" + investmentsmade.length + " input[name=investmade]");
           console.log("Calling addInputInvestMade with length");
 
-          addInputInvestMade(investmentsmade.length);
+          addInputInvestMade(investmentsmade.length, entitiesHash, dataListSortedNames);
         }
       );
   }
@@ -374,7 +386,7 @@ var preFillFormA = function (obj) {
       console.log("Running dataProviders forEach with d, i =", d, i);
       $("#data-" + i).after(dataTmpl({ idx: i }));
 
-      addDataList('#data-' + i + ' datalist');
+      addDataList('#data-' + i + ' datalist', dataListSortedNames);
 
       d3.select('#data-' + i + ' input[name="data"]').on('keyup',
         function() {
@@ -397,7 +409,7 @@ var preFillFormA = function (obj) {
         function() {
           console.log("Running onKeyup on #data-" + dataProviders.length + " input[name=data]");
           console.log("Calling addInputData with length");
-          addInputData(dataProviders.length);
+          addInputData(dataProviders.length, entitiesHash, dataListSortedNames);
         }
       );
   }
@@ -408,7 +420,18 @@ var preFillFormA = function (obj) {
     d3.select('#name').style("border-color", "#d9d9d9");
     d3.select('#location').style("border-color", "#d9d9d9");
 
-    displayFormB();
+    displayFormB(
+      allNodes,
+      fundLink,
+      investLink,
+      porucsLink,
+      dataLink,
+      graph,
+      dataListSortedNames,
+      dataListSortedLocations,
+      entitiesHash,
+      locationsHash
+    );
     preFillFormB(obj);
   });
 };

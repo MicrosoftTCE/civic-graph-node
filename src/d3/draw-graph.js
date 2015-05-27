@@ -1,33 +1,26 @@
-var investingTmpl          = require("jade!../templates/investing.jade");
-var collaborationTmpl      = require("jade!../templates/collaboration.jade");
-var revenueTmpl            = require("jade!../templates/revenue.jade");
-var expensesTmpl           = require("jade!../templates/expenses.jade");
-var entityNamesTmpl        = require("jade!../templates/entity-names.jade");
-
 var $ = require("jquery");
 var _ = require("lodash");
 
+var connectionCboxActions = require('./connection-cbox-actions');
+var dblClickCb            = require('./dbl-click-cb');
+var drag                  = require('./drag');
+var dragEndCb             = require('./drag-end-cb');
+var editForm              = require('./edit-form');
+var generateNamesDataList = require('./generate-names-data-list');
+var handleNodeHoverCb     = require('./handle-node-hover-cb');
+var handleQuery           = require('./handle-query');
+var initialInfo           = require('./initial-info');
+var offNodeCb             = require('./off-node-cb');
+var searchAutoComplete    = require('./search-auto-complete');
+var sinclickCb            = require('./sinclick-cb');
+var tickCb                = require('./tick-cb');
+var translation           = require('./translation');
+var typesCboxActions      = require('./types-cbox-actions');
+var weightSorter          = require('./weight-sorter');
+var wrap                  = require('./wrap');
+
 var drawGraph = function () {
   console.log("Running drawGraph");
-
-  var wrap = require('./wrap');
-  var transformText = require('./transform-text');
-  var translation = require('./translation');
-  var numCommas = require('./num-commas');
-  var weightSorter = require('./weight-sorter');
-  var preFillName = require('./pre-fill-name');
-  var preParseForm = require('./pre-parse-form');
-  var preFillLocation = require('./pre-fill-location');
-  var iterateThroughObj = require('./iterate-through-obj');
-  var determineNullFields = require('./determine-null-fields');
-  var displayFormCSendJson = require('./display-form-c-send-json');
-  var searchAutoComplete = require('./search-auto-complete');
-  var handleQuery = require('./handle-query');
-  var generateNamesDataList = require('./generate-names-data-list');
-  var handleNodeHoverCb = require('./handle-node-hover-cb');
-  var sinclickCb = require('./sinclick-cb');
-  var offNodeCb = require('./off-node-cb');
-  var dragstart = require('./dragstart');
 
   var width = 1000;
   var height = 1000;
@@ -47,17 +40,17 @@ var drawGraph = function () {
 
   var collaborationConnections;
   var dataConnections;
-  // var fundingConnections;
+  var fundingConnections;
   var investmentConnections;
 
   var centeredNode = {};
 
-  var entitiesHash = {}; // lowercase
-  var locationsHash = {}; // Lowercase
+  var entitiesHash = {};
+  var locationsHash = {};
 
-  var sortedNamesList = []; // Presentation
-  var sortedLocationsList = []; // Presentation
-  var sortedSearchList = []; // Presentation
+  var sortedNamesList = [];
+  var sortedLocationsList = [];
+  var sortedSearchList = [];
 
   var dataListSortedNames;
   var dataListSortedLocations;
@@ -87,7 +80,9 @@ var drawGraph = function () {
   $(window).on('resize',
     function() {
       console.log("Running window.onResize handler");
+
       var targetWidth = container.width();
+
       network.attr("width", targetWidth);
       network.attr("height", Math.round(targetWidth / aspect));
     }
@@ -135,10 +130,10 @@ var drawGraph = function () {
       .size([width, height])
       .links(connections)
       .linkStrength(0)
-      .charge(function(d) {
-        if (d.render === 1) {
-          if (d.employees !== null) {
-            return -6 * empScale(d.employees);
+      .charge(function(target) {
+        if (target.render === 1) {
+          if (target.employees !== null) {
+            return -6 * empScale(target.employees);
           } else {
             return -25;
           }
@@ -148,13 +143,6 @@ var drawGraph = function () {
       })
       .linkDistance(50);
     console.log("Set force d3 layout =", force);
-
-    var drag = force
-      .drag()
-      .on("dragstart", drag)
-      .on("drag", drag)
-      .on("dragend", dragend);
-    console.log("Set drag =", drag);
 
     //  FUNDINGS
     var fundLink = svg
@@ -167,6 +155,7 @@ var drawGraph = function () {
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
+
     console.log("Set fundLink =", fundLink);
 
     var investLink = svg
@@ -179,6 +168,7 @@ var drawGraph = function () {
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
+
     console.log("Set investLink =", investLink);
 
     //   OLD INVESTMENTS
@@ -218,6 +208,7 @@ var drawGraph = function () {
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
+
     console.log("Set porucsLink =", porucsLink);
 
     //  data
@@ -231,77 +222,8 @@ var drawGraph = function () {
       .style("stroke-width", "1")
       .style("opacity", "0.2")
       .style("visibility", "visible");
+
     console.log("Set dataLink =", dataLink);
-
-    var nodeInit = svg
-      .selectAll(".node")
-      .data(allNodes)
-      .enter()
-      .append("g")
-      .attr("class", "node")
-      .style("visibility", "visible")
-      .on('dblclick', dblclick)
-      .call(drag);
-    console.log("Set nodeInit =", nodeInit);
-
-    console.log("Running force.start()");
-    force
-      .on("tick", tick)
-      .start();
-
-    forProfitNodes = svg
-      .selectAll('.node')
-      .filter(function(d) { return d.type === "For-Profit"; })
-      .sort(weightSorter);
-    console.log("Set forProfitNodes =", forProfitNodes);
-
-    nonProfitNodes = svg
-      .selectAll('.node')
-      .filter(function(d) { return d.type === "Non-Profit"; })
-      .sort(weightSorter);
-    console.log("Set nonProfitNodes =", nonProfitNodes);
-
-    individualNodes = svg
-      .selectAll('.node')
-      .filter(function(d) { return d.type === "Individual"; })
-      .sort(weightSorter);
-    console.log("Set individualNodes =", individualNodes);
-
-    governmentNodes = svg
-      .selectAll('.node')
-      .filter(function(d) { return d.type === "Government"; })
-      .sort(weightSorter);
-    console.log("Set governmentNodes =", governmentNodes);
-
-    // Select the nodes to choose for highlighting nickname
-    // on visualization (TOP 5)
-    forProfitNodes.each(function(d, i) {
-      if (i >= forProfitNodes[0].length - 5) {
-        fiveMostConnectedForProfit[d.name] = d.weight;
-      }
-    });
-    console.log("Set fiveMostConnectedForProfit =", fiveMostConnectedForProfit);
-
-    nonProfitNodes.each(function(d, i) {
-      if (i >= nonProfitNodes[0].length - 5) {
-        fiveMostConnectedNonProfit[d.name] = d.weight;
-      }
-    });
-    console.log("Set fiveMostConnectedNonProfit =", fiveMostConnectedNonProfit);
-
-    individualNodes.each(function(d, i) {
-      if (i >= individualNodes[0].length - 5) {
-        fiveMostConnectedIndividuals[d.name] = d.weight;
-      }
-    });
-    console.log("Set fiveMostConnectedIndividuals =", fiveMostConnectedIndividuals);
-
-    governmentNodes.each(function(d, i) {
-      if (i >= governmentNodes[0].length - 5) {
-        fiveMostConnectedGovernment[d.name] = d.weight;
-      }
-    });
-    console.log("Set fiveMostConnectedGovernment =", fiveMostConnectedGovernment);
 
     var textElement = svg
       .selectAll('.node')
@@ -347,6 +269,34 @@ var drawGraph = function () {
       .style('color', '#FFFFFF')
       .style('pointer-events', 'none');
     console.log("Set textElement =", textElement);
+
+    var nodeInit = svg
+      .selectAll(".node")
+      .data(allNodes)
+      .enter()
+      .append("g")
+      .attr("class", "node")
+      .style("visibility", "visible")
+      .on(
+        'dblclick',
+        dblClickCb(
+          allNodes,
+          connections,
+          tickCb(
+            allNodes,
+            centeredNode,
+            fundLink,
+            investLink,
+            porucsLink,
+            dataLink,
+            node,
+            textElement
+          )
+        )
+      )
+      // .call(drag);
+
+    console.log("Set nodeInit =", nodeInit);
 
     var node = nodeInit
       .append("circle")
@@ -413,6 +363,98 @@ var drawGraph = function () {
       ));
     console.log("Set node =", node);
 
+    var drag = force
+      .drag()
+      .on("dragstart", drag)
+      .on("drag", drag)
+      .on(
+        "dragend",
+        dragEndCb(
+          node,
+          fundLink,
+          investLink,
+          porucsLink,
+          dataLink,
+          fundingConnections,
+          investmentConnections,
+          collaborationConnections,
+          dataConnections,
+          graph
+        )
+      );
+    console.log("Set drag =", drag);
+
+    console.log("Running force.start()");
+    force
+      .on(
+        "tick",
+        tickCb(
+          allNodes,
+          centeredNode,
+          fundLink,
+          investLink,
+          porucsLink,
+          dataLink,
+          node,
+          textElement
+        )
+      )
+      .start();
+
+    forProfitNodes = svg
+      .selectAll('.node')
+      .filter(function(d) { return d.type === "For-Profit"; })
+      .sort(weightSorter);
+    console.log("Set forProfitNodes =", forProfitNodes);
+
+    nonProfitNodes = svg
+      .selectAll('.node')
+      .filter(function(d) { return d.type === "Non-Profit"; })
+      .sort(weightSorter);
+    console.log("Set nonProfitNodes =", nonProfitNodes);
+
+    individualNodes = svg
+      .selectAll('.node')
+      .filter(function(d) { return d.type === "Individual"; })
+      .sort(weightSorter);
+    console.log("Set individualNodes =", individualNodes);
+
+    governmentNodes = svg
+      .selectAll('.node')
+      .filter(function(d) { return d.type === "Government"; })
+      .sort(weightSorter);
+    console.log("Set governmentNodes =", governmentNodes);
+
+    // Select the nodes to choose for highlighting nickname
+    // on visualization (TOP 5)
+    forProfitNodes.each(function(d, i) {
+      if (i >= forProfitNodes[0].length - 5) {
+        fiveMostConnectedForProfit[d.name] = d.weight;
+      }
+    });
+    console.log("Set fiveMostConnectedForProfit =", fiveMostConnectedForProfit);
+
+    nonProfitNodes.each(function(d, i) {
+      if (i >= nonProfitNodes[0].length - 5) {
+        fiveMostConnectedNonProfit[d.name] = d.weight;
+      }
+    });
+    console.log("Set fiveMostConnectedNonProfit =", fiveMostConnectedNonProfit);
+
+    individualNodes.each(function(d, i) {
+      if (i >= individualNodes[0].length - 5) {
+        fiveMostConnectedIndividuals[d.name] = d.weight;
+      }
+    });
+    console.log("Set fiveMostConnectedIndividuals =", fiveMostConnectedIndividuals);
+
+    governmentNodes.each(function(d, i) {
+      if (i >= governmentNodes[0].length - 5) {
+        fiveMostConnectedGovernment[d.name] = d.weight;
+      }
+    });
+    console.log("Set fiveMostConnectedGovernment =", fiveMostConnectedGovernment);
+
     textElement.call(wrap, 80);
 
     while (force.alpha() > 0.025) {
@@ -422,10 +464,6 @@ var drawGraph = function () {
 
     // Must adjust the force parameters...
 
-    var dblclick = require('./dblclick');
-    var handleClickNodeHover = require('./handle-click-node-hover');
-    var prefillCurrent = require('./prefill-current');
-    var editForm = require('./edit-form');
 
     // Form A has the required items + basic items
     // Also, the user has the options of going directly to form B or C
@@ -552,507 +590,15 @@ var drawGraph = function () {
     dataListSortedNames = generateNamesDataList(sortedNamesList);
     dataListSortedLocations = generateNamesDataList(sortedLocationsList);
 
+    connectionCboxActions(nodeInit);
 
-
-    function drag(d) {
-      console.log("Running drag with d = " + d);
-      node
-        .on('mouseover', null)
-        .on('mouseout', null)
-        .on('click', null);
-    }
-
-    function dragend(d) {
-      console.log("Running dragend with d = " + d);
-      d3
-        .select(this)
-        .classed(
-          "fixed",
-          function(d) { d.fixed = true; }
-        );
-
-      node
-        .on(
-          'mouseover',
-          handleNodeHoverCb(
-            fundLink,
-            investLink,
-            porucsLink,
-            dataLink,
-            fundingConnections,
-            investmentConnections,
-            collaborationConnections,
-            dataConnections
-          )
-        )
-        .on(
-          'mouseout',
-          offNodeCb(
-            fundLink,
-            investLink,
-            porucsLink,
-            dataLink,
-            fundingConnections,
-            investmentConnections,
-            collaborationConnections,
-            dataConnections,
-            graph
-          )
-        )
-        .on('click', sinclickCb(
-          fundLink,
-          investLink,
-          porucsLink,
-          dataLink,
-          graph
-        ));
-    }
-
-    function tick(e) {
-      // console.log("Running tick(e)");
-      // Push different nodes in different directions for clustering.
-      var k = 8 * e.alpha;
-
-      /* Four quandrant separation */
-      allNodes.forEach(
-        function(o, i) {
-          if (o.type !== null) {
-            if (o.type === "Individual") {
-              o.x += (k + k);
-              o.y += (k + k);
-            }
-            if (o.type === "Non-Profit") {
-              o.x += (-k - k);
-              o.y += (k + k);
-            }
-            if (o.type === "For-Profit") {
-              o.x += (k + k);
-              o.y += (-k - k);
-            }
-            if (o.type === "Government") {
-              o.x += (-k - k);
-              o.y += (-k - k);
-            }
-          }
-        }
-      );
-
-      // console.log("Setting x1, y1 and x2, y2");
-      if (_.isEmpty(centeredNode)) {
-        fundLink
-          .attr("x1", function(d) { return d.source.x; })
-          .attr("y1", function(d) { return d.source.y; })
-          .attr("x2", function(d) { return d.target.x; })
-          .attr("y2", function(d) { return d.target.y; });
-
-        investLink
-          .attr("x1", function(d) { return d.source.x; })
-          .attr("y1", function(d) { return d.source.y; })
-          .attr("x2", function(d) { return d.target.x; })
-          .attr("y2", function(d) { return d.target.y; });
-
-        porucsLink
-          .attr("x1", function(d) { return d.source.x; })
-          .attr("y1", function(d) { return d.source.y; })
-          .attr("x2", function(d) { return d.target.x; })
-          .attr("y2", function(d) { return d.target.y; });
-
-        dataLink
-          .attr("x1", function(d) { return d.source.x; })
-          .attr("y1", function(d) { return d.source.y; })
-          .attr("x2", function(d) { return d.target.x; })
-          .attr("y2", function(d) { return d.target.y; });
-
-        node
-          .attr("cx", function(d) { return d.x = d.x; })
-          .attr("cy", function(d) { return d.y = d.y; });
-
-        textElement.attr("transform", transformText);
-
-      } else {
-        fundLink
-          .attr(
-            "x1",
-            function(d) {
-              if (d.source === centeredNode) { d.source.x = centeredNode.x; }
-              return d.source.x;
-            }
-          )
-          .attr(
-            "y1",
-            function(d) {
-              if (d.source === centeredNode) { d.source.y = centeredNode.y; }
-              return d.source.y;
-            }
-          )
-          .attr(
-            "x2",
-            function(d) {
-              if (d.target === centeredNode) { d.target.x = centeredNode.x; }
-              return d.target.x;
-            }
-          )
-          .attr(
-            "y2",
-            function(d) {
-              if (d.target === centeredNode) { d.target.y = centeredNode.y; }
-              return d.target.y;
-            }
-          );
-
-        investLink
-          .attr(
-            "x1",
-            function(d) {
-              if (d.source === centeredNode) { d.source.x = centeredNode.x; }
-              return d.source.x;
-            }
-          )
-          .attr(
-            "y1",
-            function(d) {
-              if (d.source === centeredNode) { d.source.y = centeredNode.y; }
-              return d.source.y;
-            }
-          )
-          .attr(
-            "x2",
-            function(d) {
-              if (d.target === centeredNode) { d.target.x = centeredNode.x; }
-              return d.target.x;
-            }
-          )
-          .attr(
-            "y2",
-            function(d) {
-              if (d.target === centeredNode) { d.target.y = centeredNode.y; }
-              return d.target.y;
-            }
-          );
-
-        porucsLink
-          .attr(
-            "x1",
-            function(d) {
-              if (d.source === centeredNode) { d.source.x = centeredNode.x; }
-              return d.source.x;
-            }
-          )
-          .attr(
-            "y1",
-            function(d) {
-              if (d.source === centeredNode) { d.source.y = centeredNode.y; }
-              return d.source.y;
-            }
-          )
-          .attr(
-            "x2",
-            function(d) {
-              if (d.target === centeredNode) { d.target.x = centeredNode.x; }
-              return d.target.x;
-            }
-          )
-          .attr(
-            "y2",
-            function(d) {
-              if (d.target === centeredNode) { d.target.y = centeredNode.y; }
-              return d.target.y;
-            }
-          );
-
-        dataLink
-          .attr(
-            "x1",
-            function(d) {
-              if (d.source === centeredNode) { d.source.x = centeredNode.x; }
-              return d.source.x;
-            }
-          )
-          .attr(
-            "y1",
-            function(d) {
-              if (d.source === centeredNode) { d.source.y = centeredNode.y; }
-              return d.source.y;
-            }
-          )
-          .attr(
-            "x2",
-            function(d) {
-              if (d.target === centeredNode) { d.target.x = centeredNode.x; }
-              return d.target.x;
-            }
-          )
-          .attr(
-            "y2",
-            function(d) {
-              if (d.target === centeredNode) { d.target.y = centeredNode.y; }
-              return d.target.y;
-            }
-          );
-
-        node
-          .attr(
-            "cx",
-            function(d, i) {
-              if ((d3.select(node)[0][0].data())[i].name === centeredNode.name) {
-                d.x = centeredNode.x;
-              }
-              return d.x;
-            }
-          )
-          .attr(
-            "cy",
-            function(d, i) {
-              if ((d3.select(node)[0][0].data())[i].name === centeredNode.name) {
-                d.y = centeredNode.y;
-              }
-              return d.y;
-            }
-          );
-
-        textElement.attr("transform", transformText);
-      }
-    }
-
-    var determineVisibleNodes = function() {
-      console.log("Running determineVisibleNodes");
-      //  Construct associative array of the visible nodes' indices (keys) and corresponding objects (values).
-      var visibleNodes = {};
-
-      for (var x = 0; x < nodeInit[0].length; x++) {
-        if (nodeInit[0][x].style.visibility === "visible") {
-          visibleNodes[nodeInit[0][x].__data__.ID] = nodeInit[0][x];
-        }
-      }
-
-      return visibleNodes;
-    };
-
-    /***
-
-      For the "Connections" checkboxes
-
-    ***/
-    var connectionsCheckboxActions = function() {
-      console.log("Running connectionsCheckboxActions");
-      var connectionClasses = ['.invest', '.fund', '.porucs', '.data'];
-
-      d3.selectAll('.group-items.connections input')[0].forEach(
-        function(d, i) {
-          d3.selectAll('#' + d.id).on('click', (
-            function(d, i) {
-              return function() {
-                var visibleNodes = determineVisibleNodes();
-
-                document.getElementById(d.id).checked ?
-                  revealConnections(connectionClasses[i], visibleNodes) :
-                  hideConnections(connectionClasses[i]);
-
-                shouldCheckboxRemainUnchecked(connectionClasses[i], visibleNodes);
-              };
-          }
-          )(d, i));
-        }
-      );
-    };
-
-    // Only reveal the connections with both source and target nodes visible.
-    var revealConnections = function(selector, visibleNodes) {
-      console.log("Running revealConnections with selector, visibleNodes =", selector, visibleNodes);
-      d3.selectAll(selector).style(
-        "visibility",
-        function(l) {
-          if (
-            l.source.index in visibleNodes &&
-            l.target.index in visibleNodes &&
-            this.style.visibility === "hidden"
-          ) {
-            return "visible";
-          } else
-            return "hidden";
-        }
-      );
-    };
-
-    var hideConnections = function(selector) {
-      console.log("Running hideConnections with selector = ", selector);
-      d3.selectAll(selector).style(
-        "visibility",
-        function(l) { return "hidden"; }
-      );
-    };
-
-
-    // If none of the type's nodes are visible, then the connections should not be visible as well (no nodes = no connections).
-    var shouldCheckboxRemainUnchecked = function(selector, visibleNodes) {
-      console.log("Running shouldCheckboxRemainUnchecked with selector, visibleNodes =", selector, visibleNodes);
-      if (
-        visibleNodes.length === 0 ||
-        (
-          document.getElementById(cb_individ).checked &&
-          document.getElementById(cb_forpro).checked &&
-          document.getElementById(cb_nonpro).checked &&
-          document.getElementById(cb_gov).checked)
-        ) {
-        d3.select(selector).attr('checked', false);
-      }
-    }
-
-    connectionsCheckboxActions();
-
-    /***
-
-      For the "Types" checkboxes
-
-    ***/
-    var typesCheckboxActions = function() {
-      console.log("Running typesCheckboxActions");
-
-      d3.selectAll('#cb_forpro, #cb_nonpro, #cb_gov, #cb_individ').on(
-        'click',
-        function() {
-          var visibleNodes = determineVisibleNodes();
-
-          $('#cb_forpro').is(':checked') ?
-            nodeVisibility('For-Profit', 'visible') :
-            nodeVisibility('For-Profit', 'hidden');
-
-          $('#cb_nonpro').is(':checked') ?
-            nodeVisibility('Non-Profit', 'visible') :
-            nodeVisibility('Non-Profit', 'hidden');
-
-          $('#cb_gov').is(':checked') ?
-            nodeVisibility('Government', 'visible') :
-            nodeVisibility('Government', 'hidden');
-
-          $('#cb_individ').is(':checked') ?
-            nodeVisibility('Individual', 'visible') :
-            nodeVisibility('Individual', 'hidden');
-
-          toggleLinks(visibleNodes);
-        }
-      );
-    };
-
-    //  Initialize the display accordingly...
-    var nodeVisibility = function(type, visibility) {
-      console.log("Running nodeVisibility with type, visibility =", type, visibility);
-
-      d3
-        .selectAll(".node").filter(
-          function(d) { if (d.type === type) { return this; } }
-        )
-        .style("visibility", visibility);
-    };
-
-    var setVisibility = function(link, linkData, visibleNodes, connectionType) {
-      console.log("Running setVisibility with link, linkData, visibleNodes, connectionType = ",
-        link, linkData, visibleNodes, connectionType);
-
-      if (linkData.source.ID in visibleNodes && linkData.target.ID in visibleNodes) {
-        switch (connectionType) {
-          case "Funding":
-            ($('#cb_fund').is(':checked')) ?
-              d3.select(link).style('visibility', 'visible') :
-              d3.select(link).style('visibility', 'hidden');
-            break;
-          case "Investment":
-            ($('#cb_invest').is(':checked')) ?
-              d3.select(link).style('visibility', 'visible') :
-              d3.select(link).style('visibility', 'hidden');
-            break;
-          case "Collaboration":
-            ($('#cb_porucs').is(':checked')) ?
-              d3.select(link).style('visibility', 'visible') :
-              d3.select(link).style('visibility', 'hidden');
-            break;
-          case "Data":
-            ($('#cb_data').is(':checked')) ?
-              d3.select(link).style('visibility', 'visible') :
-              d3.select(link).style('visibility', 'hidden');
-            break;
-          default:
-            break;
-        }
-      } else {
-        d3.select(link).style('visibility', 'hidden');
-      }
-    };
-
-    //  For each rendered node, if the node is a for-profit, then for each connection type, determine if the node is a source or target of the connection, add the connection to the array.
-    var toggleLinks = function(visibleNodes) {
-      console.log("Running toggleLinks with visibleNodes =", visibleNodes);
-
-      //  Finding links with nodes of a certain type.
-      fundLink.filter(
-        function(link) {
-          setVisibility(this, this.__data__, visibleNodes, "Funding");
-        }
-      );
-      investLink.filter(
-        function(link) {
-          setVisibility(this, this.__data__, visibleNodes, "Investment");
-        }
-      );
-      porucsLink.filter(
-        function(link) {
-          setVisibility(this, this.__data__, visibleNodes, "Collaboration");
-        }
-      );
-      dataLink.filter(
-        function(link) {
-          setVisibility(this, this.__data__, visibleNodes, "Data");
-        }
-      );
-
-      // Time to reflect these changes accordingly with the connection checkboxes to ensure consistency.
-      reflectConnectionChanges();
-    };
-
-    var reflectConnectionChanges = function() {
-      console.log("Running reflectConnectionChanges");
-      var visibleFundingConnections = fundLink.filter(
-        function(link) {
-          return d3.select(this).style('visibility') === 'visible';
-        }
-      );
-
-      var visibleInvestmentConnections = investLink.filter(
-        function(link) {
-          return d3.select(this).style('visibility') === 'visible';
-        }
-      );
-
-      var visibleCollaborationsConnections = porucsLink.filter(
-        function(link) {
-          return d3.select(this).style('visibility') === 'visible';
-        }
-      );
-
-      var visibleDataConnections = dataLink.filter(
-        function(link) {
-          return d3.select(this).style('visibility') === 'visible';
-        }
-      );
-
-      if (visibleFundingConnections[0].length === 0) {
-        $('#cb_fund').attr('checked', false);
-      }
-
-      if (visibleInvestmentConnections[0].length === 0) {
-        $('#cb_invest').attr('checked', false);
-      }
-
-      if (visibleCollaborationsConnections[0].length === 0) {
-        $('#cb_porucs').attr('checked', false);
-      }
-
-      if (visibleDataConnections[0].length === 0) {
-        $('#cb_data').attr('checked', false);
-      }
-    };
-
-    typesCheckboxActions();
+    typesCboxActions(
+      nodeInit,
+      fundLink,
+      investLink,
+      porucsLink,
+      dataLink
+    );
 
     d3.selectAll('#cb_emp, #cb_numtwit').on(
       'click',
@@ -1151,7 +697,9 @@ var drawGraph = function () {
               function(d) { d.fixed = false; }
             );
 
-            d3.selectAll('g').call(drag);
+            d3
+              .selectAll('g')
+              .call(drag);
 
             centeredNode = jQuery.extend(true, {}, {});
 
@@ -1177,7 +725,19 @@ var drawGraph = function () {
               )
               .linkDistance(50)
 
-            .on("tick", tick)
+            .on(
+              "tick",
+              tickCb(
+                allNodes,
+                centeredNode,
+                fundLink,
+                investLink,
+                porucsLink,
+                dataLink,
+                node,
+                textElement
+              )
+            )
             .start();
           }
 

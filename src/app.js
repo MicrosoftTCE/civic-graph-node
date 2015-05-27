@@ -59,9 +59,12 @@ d3.selectAll('#cb_mapview').on('click', function() {
   }
 });
 
+// var drawEntityGraph = require('./d4/draw-entity-graph');
 var drawGraph = require('./d3/draw-graph');
 var drawMap = require('./d3/draw-map');
 var loadD3Layer = require('./d3/load-d3-layer');
+
+// drawEntityGraph();
 
 var currentView = utils.getQueryParams()['view'];
 

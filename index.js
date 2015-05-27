@@ -4,6 +4,9 @@ var cookieParser = require('cookie-parser');
 var favicon      = require('serve-favicon');
 var logger       = require('morgan');
 var path         = require('path');
+var _            = require('lodash');
+
+var data         = require('./data');
 
 var app = express();
 
@@ -27,10 +30,16 @@ app.get('/join', routes.join);
 app.use('/cities', require('./routes/city'));
 app.use('/entities', require('./routes/entity'));
 app.use('/locations', require('./routes/location'));
+app.use('/graph', require('./routes/graph'));
 app.use('/', require('./routes/old'));
 
 app.get('/', function(req, res) {
-  res.render('index', { title: 'Civic Graph' });
+  data.getStore(function(err, store) {
+    res.render('index', {
+      title: 'Civic Graph',
+      store: JSON.stringify(store)
+    });
+  });
 });
 
 /// catch 404 and forward to error handler

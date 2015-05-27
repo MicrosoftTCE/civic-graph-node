@@ -3,12 +3,35 @@ var $ = require('jquery');
 var processFormB = require('./process-form-b');
 var displayFormC = require('./display-form-c');
 
-var displayFormCSendJson = function (obj) {
+var displayFormCSendJson = function (
+  obj,
+  allNodes,
+  fundLink,
+  investLink,
+  porucsLink,
+  dataLink,
+  graph,
+  dataListSortedNames,
+  dataListSortedLocations,
+  entitiesHash,
+  locationsHash
+) {
   console.log("Running displayFormCSendJson with obj =", obj);
 
   // var formObj = processFormB(obj);
 
-  displayFormC();
+  displayFormC(
+    allNodes,
+    fundLink,
+    investLink,
+    porucsLink,
+    dataLink,
+    graph,
+    dataListSortedNames,
+    dataListSortedLocations,
+    entitiesHash,
+    locationsHash
+  );
 
   // d3.xhr.post('/entities').data(formObj).on("success", callback);
 

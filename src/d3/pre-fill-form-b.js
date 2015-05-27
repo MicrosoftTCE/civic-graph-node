@@ -29,7 +29,7 @@
           console.log("Calling forEach on collaboration with d, i =", d, i);
           $("#collaboration-" + i).after(collaborationTmpl({ idx: i }));
 
-          addDataList('#collaboration-' + i + ' datalist');
+          addDataList('#collaboration-' + i + ' datalist', dataListSortedNames);
 
           d3.select('#collaboration-' + i + ' input[name="collaboration"]').on('keyup', function() {
             console.log("Calling onKeyup on #collaboration-" + i + " input[name=collaboration]");
@@ -46,7 +46,7 @@
 
         d3.select('#collaboration-' + collaboration.length + ' input[name="collaboration"]').on('keyup', function() {
           console.log("Calling onKeyup on #collaboration-" + collaboration.length + " input[name=collaboration]");
-          add_input_collab(collaboration.length);
+          addInputCollab(collaboration.length, entitiesHash, dataListSortedNames);
         });
       }
 

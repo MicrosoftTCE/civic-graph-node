@@ -1,22 +1,39 @@
-    function add_input_collab(counterC) {
-      console.log("Running add_input_collab with counterC = " + counterC);
+var d3 = require('d3');
+var $  = require('jquery');
 
-      if ($('#collaboration-' + counterC + ' input[name="collaboration"]').val() !== "") {
-        d3.select('#collaboration-' + counterC + ' input[name="collaboration"]').on('keyup', function() {
-          console.log("Running collab onKeyup with counterC = " + counterC);
-          preFillName(this.value, '#collaboration-' + (counterC - 1) + ' input[name="collaboration"]', entitiesHash);
-        });
-        counterC++; // counter -> 2
+var addDataList = require('./add-data-list');
+var preFillName = require('./pre-fill-name');
 
+var collaborationTmpl = require("jade!../templates/collaboration.jade");
 
-        $("#collaboration-" + (counterC - 1)).after(collaborationTmpl({ idx: CounterC }));
+var addInputCollab = function (idx, entitiesHash, dataListSortedNames) {
+  console.log("Running addInputCollab with idx = " + idx);
 
-        addDataList('#collaboration-' + counterC + ' datalist');
+  if ($('#collaboration-' + idx + ' input[name="collaboration"]').val() !== "") {
+    d3.select('#collaboration-' + idx + ' input[name="collaboration"]').on(
+      'keyup',
+      function() {
+        console.log("Running collab onKeyup with idx = " + idx);
 
-        d3.select("#collaboration-" + counterC + " input[name='collaboration']").on("keyup", function() {
-          console.log("Running collab onKeyup with counterC = " + counterC);
-          add_input_collab(counterC);
-
-        });
+        preFillName(this.value, '#collaboration-' + (idx - 1) + ' input[name="collaboration"]', entitiesHash);
       }
-    }
+    );
+    idx++; // counter -> 2
+
+
+    $("#collaboration-" + (idx - 1)).after(collaborationTmpl({ idx: CounterC }));
+
+    addDataList('#collaboration-' + idx + ' datalist', dataListSortedNames);
+
+    d3.select("#collaboration-" + idx + " input[name='collaboration']").on(
+      "keyup",
+      function() {
+        console.log("Running collab onKeyup with idx = " + idx);
+
+        addInputCollab(idx, entitiesHash, dataListSortedNames);
+      }
+    );
+  }
+};
+
+module.exports = addInputCollab;

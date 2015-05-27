@@ -4,9 +4,13 @@ html
   title= title
 
   script(type='text/javascript', src='http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0')
-  script(type='text/javascript', src='bundle.js')
+
+  script.
+    window.civicStore = !{store};
 
   body.metro
   include ./partials/nav-bar
   #wrapper
     block content
+
+  script(type='text/javascript', src='bundle.js')

@@ -70,7 +70,6 @@ var searchAutoComplete = function (allNodes, entitiesHash, sortedNamesList, sort
     s += '<option value="' + sortedSearchList[count] + '">';
   }
 
-  console.log("s is now " + s);
   // d3.select('.filter-name-location datalist').html(s);
 };
 

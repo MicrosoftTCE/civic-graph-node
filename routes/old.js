@@ -31,12 +31,35 @@ router.get('/athena', function(req, res) {
       return db.query(qry)
     })
     .then(function(results) {
+      var funding = [];
+      var investment = [];
+      var collaboration = [];
+      var data = [];
 
+      _.each(bridges, function(row) {
+        switch(row.connection) {
+          case 'Funding Received':
+            funding.push(row)
+            break;
+          case 'Investment Received':
+            investment.push(row)
+            break;
+          case 'Collaboration':
+            collaboration.push(row)
+            break;
+          case 'Data':
+            data.push(row)
+            break;
+        }
+      })
 
-      res.json(_.merge(
-        { entities: _.values(config.processResults(entities, bridges, results)) },
-        config.processConnections(bridges)
-      ));
+      res.json({
+        entities: _.values(config.processVertices(entities, bridges, results)),
+        funding_connections: config.processEdges(funding, true),
+        investment_connections: config.processEdges(investment, true),
+        collaboration_connections: config.processEdges(collaboration),
+        data_connections: config.processEdges(data)
+      });
     })
     .catch(function(err) {
       console.log("ERROR on /entities", err);
