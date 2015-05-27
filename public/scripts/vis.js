@@ -3281,6 +3281,7 @@ function drawMap() {
 
 
 var d3Layers = {};
+d3Layers.ready = false;
 
 function loadD3Layer() {
     //Create an instance of the D3 Overlay Manager
@@ -3623,7 +3624,7 @@ function loadD3Layer() {
                 d3Layers.d3Routes.options.resetClick();
             });
 
-            d3Layers.d3Routes.ready = true;
+            d3Layers.ready = true;
 
         },
 
@@ -3863,7 +3864,7 @@ function loadD3Layer() {
     };
 
     var loadAll = function() {
-        if(d3Layers && d3Layers.d3Routes && d3Layers.d3Routes.ready) {
+        if(d3Layers && d3Layers.d3Routes && d3Layers.ready) {
 
             Microsoft.Maps.Events.invoke(map, 'viewchangeend');
             var t = d3Layers.d3Routes.svg.transition().duration(1000);
