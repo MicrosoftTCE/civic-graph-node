@@ -502,7 +502,8 @@ function drawGraph() {
 
 
                 d3.selectAll('#editCurrentInfo').on('click', function() {
-                        prefillCurrent(d);
+                        // prefillCurrent(d);
+                        alert("We are currently making some changes to the Civic Graph right now, so we are not accepting new information. Please check back next week and try again!")
                     })
                     .on('mouseover', function() {
                         d3.select(this).style('cursor', 'pointer');
@@ -3183,35 +3184,61 @@ function drawGraph() {
         });
     }
 
+    function hideSideBar(className){
+        var elements = document.getElementsByClassName(className);
+        elements[0].style.visibility = "hidden";
+      }
+
+      function showSideBar(className){
+        var elements = document.getElementsByClassName(className);
+        elements[0].style.visibility = "visible";
+
+      }
+
 
     if (current_view == 'map') {
       drawMap();
       document.getElementById('cb_mapview').checked = true;
       document.getElementById('cb_networkview').checked = false;
+      hideSideBar("example");
     } else if (current_view == 'network') {
       drawGraph();
       document.getElementById('cb_mapview').checked = false;
       document.getElementById('cb_networkview').checked = true;
+      showSideBar("example");
     } else {
       drawGraph();
       document.getElementById('cb_mapview').checked = false;
       document.getElementById('cb_networkview').checked = true;
+      showSideBar("example");
+      // hideSideBar("example");
     }
 
     d3.selectAll('#cb_networkview').on('click', function() {
         if (document.getElementById('cb_networkview').checked) {
-            drawGraph();
-            var map = document.getElementById('map');
-            map.parentNode.removeChild(map);
+            if(document.getElementById('network')) {
+                jQuery('#network').show();
+            }
+            else {
+                drawGraph();
+            }
+            jQuery('#map').hide();
+            jQuery('.d3-tip').hide();
+            showSideBar("example");
         }
     });
 
     d3.selectAll('#cb_mapview').on('click', function() {
         if (document.getElementById('cb_mapview').checked) {
-            console.log("asd");
-            var network = document.getElementById('network');
-            network.parentNode.removeChild(network);
-            drawMap();
+            if(document.getElementById('map')) {
+                jQuery('#map').show();
+                jQuery('.d3-tip').show();
+            }
+            else {
+                drawMap();
+            }
+            jQuery('#network').hide();
+            hideSideBar("example");
         }
     });
 
@@ -3235,7 +3262,7 @@ function drawMap() {
 
   map = new Microsoft.Maps.Map(document.getElementById('map'), {
     credentials: 'Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M',
-    center: new Microsoft.Maps.Location(40, -80),
+    center: new Microsoft.Maps.Location(25, -30),
     zoom: 3,
     mapTypeId: Microsoft.Maps.MapTypeId.road
   });
@@ -3588,15 +3615,15 @@ function loadD3Layer() {
                 .attr("class", "pinpoint")
                 .attr("opacity", 0)
                 .attr("stroke-opacity", 0)
-                .on('mouseout', d3Layers.d3Routes.options.resetHover)
-                .on('mouseover', d3Layers.d3Routes.options.highlightHover)
-                .on("click", d3Layers.d3Routes.options.highlightClick);
+                .on('mouseout', function() {d3Layers.d3Routes.options.resetHover();})
+                .on('mouseover', function(d) {d3Layers.d3Routes.options.highlightHover(d);})
+                .on("click", function(d) {d3Layers.d3Routes.options.highlightClick(d);});
 
             svg.select(".rect").on("click", function() {
                 d3Layers.d3Routes.options.resetClick();
             });
 
-            d3Layers.d3Routes.options.ready = true;
+            d3Layers.d3Routes.ready = true;
 
         },
 
@@ -3836,7 +3863,7 @@ function loadD3Layer() {
     };
 
     var loadAll = function() {
-        if(d3Layers && d3Layers.d3Routes && d3Layers.d3Routes.options && d3Layers.d3Routes.options.ready) {
+        if(d3Layers && d3Layers.d3Routes && d3Layers.d3Routes.ready) {
 
             Microsoft.Maps.Events.invoke(map, 'viewchangeend');
             var t = d3Layers.d3Routes.svg.transition().duration(1000);
