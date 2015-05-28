@@ -4,13 +4,15 @@ var $  = require('jquery');
 var addDataList = require('./add-data-list');
 var preFillName = require('./pre-fill-name');
 
+var utils = require('../utilities');
+
 var collaborationTmpl = require("jade!../templates/collaboration.jade");
 
 /**
  *  Adds a collaborator text input with a datalist dropdown
- *  using the dataListSortedNames and calling addDataList
+ *  using the utils.getSortedNameOptions() and calling addDataList
  */
-var addInputCollab = function (idx, dataListSortedNames) {
+var addInputCollab = function (idx) {
   console.log("Running addInputCollab with idx = " + idx);
 
   if ($('#collaboration-' + idx + ' input[name="collaboration"]').val() !== "") {
@@ -27,14 +29,14 @@ var addInputCollab = function (idx, dataListSortedNames) {
 
     $("#collaboration-" + (idx - 1)).after(collaborationTmpl({ idx: CounterC }));
 
-    addDataList('#collaboration-' + idx + ' datalist', dataListSortedNames);
+    addDataList('#collaboration-' + idx + ' datalist', utils.getSortedNameOptions());
 
     d3.select("#collaboration-" + idx + " input[name='collaboration']").on(
       "keyup",
       function() {
         console.log("Running collab onKeyup with idx = " + idx);
 
-        addInputCollab(idx, dataListSortedNames);
+        addInputCollab(idx);
       }
     );
   }

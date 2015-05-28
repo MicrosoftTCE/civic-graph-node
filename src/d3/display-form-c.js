@@ -8,7 +8,6 @@ var sinclick            = require('./sinclick');
 var formCTmpl = require('jade!../templates/form-c.jade');
 
 var displayFormC = function (
-  dataListSortedNames,
   dataListSortedLocations,
   locationsHash
 ) {
@@ -24,13 +23,11 @@ var displayFormC = function (
       console.log("Running onClick on #info ul a with d, i =", d, i);
       sinclick(suggestions[i]);
       editForm(
-        dataListSortedNames,
         dataListSortedLocations,
         locationsHash
       );
       preFillFormA(
         suggestions[i],
-        dataListSortedNames,
         dataListSortedLocations,
         locationsHash
       );

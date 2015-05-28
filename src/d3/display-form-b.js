@@ -9,10 +9,11 @@ var addInputRev           = require('./add-input-rev');
 var addInputExp           = require('./add-input-exp');
 var displayFormCSendJson  = require('./display-form-c-send-json');
 
+var utils = require('../utilities');
+
 var formBTmpl = require("jade!../templates/form-b.jade");
 
 var displayFormB = function(
-  dataListSortedNames,
   dataListSortedLocations,
   locationsHash
 ) {
@@ -38,7 +39,7 @@ var displayFormB = function(
 
     d3.select('#info').html(form);
 
-    addDataList('#collaboration-0 datalist', dataListSortedNames);
+    addDataList('#collaboration-0 datalist', utils.getSortedNameOptions());
 
     if( formObject.location !== null) {
       var location = formObject.location;
@@ -53,7 +54,7 @@ var displayFormB = function(
     d3.selectAll('input[name="collaboration"]').on(
       'keyup',
       function() {
-        addInputCollab(0), dataListSortedNames;
+        addInputCollab(0);
 
         preFillName(this.value, '#collaboration-0 input');
       }
@@ -73,7 +74,6 @@ var displayFormB = function(
       'click',
       function() { displayFormCSendJson(
         formObject,
-        dataListSortedNames,
         dataListSortedLocations,
         locationsHash
       ); }

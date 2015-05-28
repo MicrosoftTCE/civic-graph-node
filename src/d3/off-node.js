@@ -1,6 +1,7 @@
 var d3 = require('d3');
 
 var sinclick = require('./sinclick');
+var handleNodeHover = require('./handle-node-hover');
 
 var offNode = function offNode(node) {
   console.log("Running offNode");
@@ -61,7 +62,7 @@ var offNode = function offNode(node) {
     .style(
       'opacity',
       function(entity) {
-        console.log("Setting opacity on entity = ", entity);
+        // console.log("Setting opacity on entity = ", entity);
         var textOpacity;
 
         // TODO: switch statement?

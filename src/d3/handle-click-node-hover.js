@@ -24,7 +24,6 @@ var handleClickNodeHover = function(obj) {
       console.log("Running onClick for #editCurrentInfo");
       prefillCurrent(
         obj,
-        dataListSortedNames,
         dataListSortedLocations,
         locationsHash
       );

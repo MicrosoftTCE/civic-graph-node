@@ -77,7 +77,8 @@ var handleNodeHover = function (node) {
   neighboringNodesIndices[node.id] = 1;
 
   window.civicStore.edges.funding.forEach(function(link) {
-    console.log("Running forEach on funding connections with link = ", link);
+    // console.log("Running forEach on funding connections with link = ", link);
+
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -88,7 +89,8 @@ var handleNodeHover = function (node) {
   });
 
   window.civicStore.edges.investment.forEach(function(link) {
-    console.log("Running forEach on investment connections with link = ", link);
+    // console.log("Running forEach on investment connections with link = ", link);
+
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -99,7 +101,8 @@ var handleNodeHover = function (node) {
   });
 
   window.civicStore.edges.collaboration.forEach(function(link) {
-    console.log("Running forEach on collaboration connections with link = ", link);
+    // console.log("Running forEach on collaboration connections with link = ", link);
+
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -110,7 +113,8 @@ var handleNodeHover = function (node) {
   });
 
   window.civicStore.edges.data.forEach(function(link) {
-    console.log("Running forEach on data connections with link = ", link);
+    // console.log("Running forEach on data connections with link = ", link);
+
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }

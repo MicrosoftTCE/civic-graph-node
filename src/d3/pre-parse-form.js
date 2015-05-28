@@ -3,7 +3,6 @@ var preFillFormA = require('./pre-fill-form-a');
 
 var preParseForm = function (
   input,
-  dataListSortedNames,
   dataListSortedLocations,
   locationsHash
 ) {
@@ -13,13 +12,11 @@ var preParseForm = function (
 
   if (input in entitiesHash) {
     editForm(
-      dataListSortedNames,
       dataListSortedLocations,
       locationsHash
     );
     preFillFormA(
       entitiesHash[input],
-      dataListSortedNames,
       dataListSortedLocations,
       locationsHash
     );

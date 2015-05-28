@@ -4,9 +4,11 @@ var $  = require('jquery');
 var addDataList = require('./add-data-list');
 var preFillName = require('./pre-fill-name');
 
+var utils = require('../utilities');
+
 var investingTmpl = require("jade!../templates/investing.jade");
 
-var addInputInvest = function (idx, dataListSortedNames) {
+var addInputInvest = function (idx) {
   console.log("Running addInputInvest with idx = " + idx);
 
   if ($('#investing-' + idx + ' input[name="invest"]').val() !== "") {
@@ -23,12 +25,12 @@ var addInputInvest = function (idx, dataListSortedNames) {
 
     $("#investing-" + (idx - 1)).after(investingTmpl({ idx: idx }));
 
-    addDataList('#investing-' + idx + ' datalist', dataListSortedNames);
+    addDataList('#investing-' + idx + ' datalist', utils.getSortedNameOptions());
 
     d3.select("#investing-" + idx + " input[name='invest']").on("keyup", function() {
       console.log("Running invest onKeyup with idx = " + idx);
 
-      addInputInvest(idx, dataListSortedNames);
+      addInputInvest(idx);
     });
   }
 };

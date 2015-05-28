@@ -5,7 +5,6 @@ var displayFormC = require('./display-form-c');
 
 var displayFormCSendJson = function (
   obj,
-  dataListSortedNames,
   dataListSortedLocations,
   locationsHash
 ) {
@@ -14,7 +13,6 @@ var displayFormCSendJson = function (
   var formObj = processFormB(obj);
 
   displayFormC(
-    dataListSortedNames,
     dataListSortedLocations,
     locationsHash
   );

@@ -1,9 +1,10 @@
-var d3        = require('d3');
+var d3 = require('d3');
+
+var utils = require('../utilities');
 
 var formATmpl = require("jade!../templates/form-a.jade");
 
 var editForm = function(
-  dataListSortedNames,
   dataListSortedLocations,
   locationsHash
 ) {
@@ -13,14 +14,14 @@ var editForm = function(
     .html('<i class=" icon-file on-left"></i>Reset Form')
     .on('click', editForm);
 
-  node.on('mouseover', null);
+  window.d3Node.on('mouseover', null);
 
   sa = formATmpl();
 
   // Render the string into HTML
   d3.select('#info').html(sa);
 
-  d3.select('datalist#list-name').html(dataListSortedNames);
+  d3.select('datalist#list-name').html(utils.getSortedNameOptions());
 
   d3.select('input#name').on('keyup',
     function() {
@@ -77,48 +78,48 @@ var editForm = function(
       addInputKp(0);
     });
 
-  addDataList('#funding-0 datalist', dataListSortedNames);
+  addDataList('#funding-0 datalist', utils.getSortedNameOptions());
 
   d3.select('#funding-0 input[name="fund"]').on('keyup',
     function() {
       console.log("Running onKeyup on #funding-0 input[name=fund]");
-      addInputFund(0, dataListSortedNames);
+      addInputFund(0);
       preFillName(this.value, '#funding-0 input');
     });
 
-  addDataList('#investing-0 datalist', dataListSortedNames);
+  addDataList('#investing-0 datalist', utils.getSortedNameOptions());
 
   d3.select('#investing-0 input[name="invest"]').on('keyup',
     function() {
       console.log("Running onKeyup on #investing-0 input[name=invest]");
-      addInputInvest(0, dataListSortedNames);
+      addInputInvest(0);
       preFillName(this.value, '#investing-0 input');
     });
 
-  addDataList('#fundinggiven-0 datalist', dataListSortedNames);
+  addDataList('#fundinggiven-0 datalist', utils.getSortedNameOptions());
 
   d3.select('#fundinggiven-0 input[name="fundgiven"]').on('keyup',
     function() {
       console.log("Running onKeyup on #fundinggiven-0 input[name=fundgiven]");
-      addInputFundGiven(0, dataListSortedNames);
+      addInputFundGiven(0);
       preFillName(this.value, '#fundinggiven-0 input');
     });
 
-  addDataList('#investmentmade-0 datalist', dataListSortedNames);
+  addDataList('#investmentmade-0 datalist', utils.getSortedNameOptions());
 
   d3.select('#investmentmade-0 input[name="investmade"]').on('keyup',
     function() {
       console.log("Running onKeyup on #investmentmade-0 input[name=investmade]");
-      addInputInvestMade(0, dataListSortedNames);
+      addInputInvestMade(0);
       preFillName(this.value, '#investmentmade-0 input');
     });
 
-  addDataList('#data-0 datalist', dataListSortedNames);
+  addDataList('#data-0 datalist', utils.getSortedNameOptions());
 
   d3.select('#data-0 input[name="data"]').on('keyup',
     function() {
       console.log("Running onKeyup on #data-0 input[name=data]");
-      addInputData(0, dataListSortedNames);
+      addInputData(0);
       preFillName(this.value, '#data-0 input');
     });
 
@@ -126,7 +127,6 @@ var editForm = function(
     function() {
       console.log("Running onClick on #toFormC");
       displayFormC(
-        dataListSortedNames,
         dataListSortedLocations,
         locationsHash
       );
@@ -138,7 +138,6 @@ var editForm = function(
       d3.select('#name').style("border-color", "#d9d9d9");
       d3.select('#location').style("border-color", "#d9d9d9");
       displayFormB(
-        dataListSortedNames,
         dataListSortedLocations,
         locationsHash
       );

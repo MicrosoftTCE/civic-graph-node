@@ -79,7 +79,7 @@ var handleQuery = function (query) {
     d3.selectAll('circle').style("stroke", "white");
 
     d3.selectAll('.node').style('opacity', function(n) {
-      console.log("Setting opacity on n = ", n);
+      // console.log("Setting opacity on n = ", n);
 
       var locationSource = n.location;
 

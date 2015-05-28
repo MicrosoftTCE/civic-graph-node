@@ -4,9 +4,11 @@ var $  = require('jquery');
 var addDataList = require('./add-data-list');
 var preFillName = require('./pre-fill-name');
 
+var utils = require('../utilities');
+
 var investmentMadeTmpl = require("jade!../templates/investment-made.jade");
 
-var addInputInvestMade = function (idx, dataListSortedNames) {
+var addInputInvestMade = function (idx) {
   console.log("Running addInputInvestMade with idx = " + idx);
 
   if ($('#investmentmade-' + idx + ' input[name="investmade"]').val() !== "") {
@@ -26,14 +28,14 @@ var addInputInvestMade = function (idx, dataListSortedNames) {
 
     $("#investmentmade-" + (idx - 1)).after(investmentMadeTmpl({ idx: idx }));
 
-    addDataList('#investmentmade-' + idx + ' datalist', dataListSortedNames);
+    addDataList('#investmentmade-' + idx + ' datalist', utils.getSortedNameOptions());
 
     d3.select("#investmentmade-" + idx + " input[name='investmade']").on(
       "keyup",
       function() {
         console.log("Running fund made onKeyup with idx = " + idx);
 
-        addInputInvestMade(idx, dataListSortedNames);
+        addInputInvestMade(idx);
       }
     );
   }

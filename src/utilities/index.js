@@ -83,6 +83,28 @@ var getNicknameHash = function () {
   return window.civicStore.lookups.byNickname;
 };
 
+var getLocationHash = function () {
+  window.civicStore.lookups = window.civicStore.lookups || {};
+
+  if (!window.civicStore.lookups.byLocation) {
+    var byLocation = {};
+
+    _.each(
+      _.values(window.civicStore.locations),
+      function(location) {
+        var city = window.civicStore.cities[location.city_id];
+
+        byName[name] = byName[name] || [];
+        byName[name].push({ id: entity.id, name: entity.name });
+      }
+    )
+
+    window.civicStore.lookups.byLocation = byLocation;
+  }
+
+  return window.civicStore.lookups.byLocation;
+};
+
 var getSortedNames = function () {
   window.civicStore.lists = window.civicStore.lists || {};
 
@@ -98,6 +120,12 @@ var getSortedNames = function () {
 
   return window.civicStore.lists.names;
 };
+
+var getSortedNameOptions = function () {
+  return _.map(getSortedNames(), function(name) {
+    return '<option value="' + name + '"></option>'
+  }).join('');
+}
 
 var getSortedLocations = function () {
   window.civicStore.lists = window.civicStore.lists || {};
@@ -159,16 +187,18 @@ var getLowercaseList = function () {
   return window.civicStore.lists.lowercase;
 };
 
-exports.colors              = colors
-exports.employeeScale       = employeeScale
-exports.twitterScale        = twitterScale;
-exports.getQueryParams      = getQueryParams;
-exports.getNameHash         = getNameHash;
-exports.getNicknameHash     = getNicknameHash;
-exports.getSortedNames      = getSortedNames;
-exports.getSortedLocations  = getSortedLocations;
-exports.getSortedList       = getSortedList;
-exports.getLowercaseList    = getLowercaseList;
+exports.colors               = colors
+exports.employeeScale        = employeeScale
+exports.twitterScale         = twitterScale;
+exports.getQueryParams       = getQueryParams;
+exports.getNameHash          = getNameHash;
+exports.getNicknameHash      = getNicknameHash;
+exports.getLocationsHash     = getLocationsHash;
+exports.getSortedNames       = getSortedNames;
+exports.getSortedLocations   = getSortedLocations;
+exports.getSortedList        = getSortedList;
+exports.getLowercaseList     = getLowercaseList;
+exports.getSortedNameOptions = getSortedNameOptions;
 // exports.getEntityById       = getEntityById;
 // exports.getEntityByName     = getEntityByName;
 // exports.getEntityByNickname = getEntityByNickname;

@@ -1,5 +1,7 @@
-var $ = require("jquery");
-var _ = require("lodash");
+var $            = require("jquery");
+var _            = require("lodash");
+
+require('devbridge-autocomplete');
 
 var utils                 = require('../utilities');
 
@@ -44,11 +46,8 @@ var drawGraph = function () {
 
   var locationsHash = {};
 
-  console.log("locationsHash", locationsHash)
-
   var sortedSearchList = [];
 
-  var dataListSortedNames;
   var dataListSortedLocations;
 
   window.d3RootElem = d3
@@ -473,7 +472,6 @@ var drawGraph = function () {
     }
   );
 
-  dataListSortedNames = window.civicStore.names;
   dataListSortedLocations = window.civicStore.locations;
 
   connectionCboxActions(nodeInit);
@@ -571,7 +569,7 @@ var drawGraph = function () {
             .selectAll('g')
             .call(drag);
 
-          centeredNode = jQuery.extend(true, {}, {});
+          centeredNode = $.extend(true, {}, {});
 
           var force = d3
             .layout

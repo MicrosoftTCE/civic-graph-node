@@ -52,7 +52,8 @@ var handleAdjNodeClick = function (
   neighboringNodesIndices[d.ID] = 1;
 
   window.civicStore.edges.funding.forEach(function(link) {
-    console.log("Running forEach on funding connections with link = ", link);
+    // console.log("Running forEach on funding connections with link = ", link);
+
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -63,7 +64,8 @@ var handleAdjNodeClick = function (
   });
 
   window.civicStore.edges.investment.forEach(function(link) {
-    console.log("Running forEach on investment connections with link = ", link);
+    // console.log("Running forEach on investment connections with link = ", link);
+
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -74,7 +76,8 @@ var handleAdjNodeClick = function (
   });
 
   window.civicStore.edges.collaboration.forEach(function(link) {
-    console.log("Running forEach on collaboration connections with link = ", link);
+    // console.log("Running forEach on collaboration connections with link = ", link);
+
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -85,7 +88,8 @@ var handleAdjNodeClick = function (
   });
 
   window.civicStore.edges.data.forEach(function(link) {
-    console.log("Running forEach on data connections with link = ", link);
+    // console.log("Running forEach on data connections with link = ", link);
+
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -110,7 +114,8 @@ var handleAdjNodeClick = function (
     .on('mouseout', null);
 
   node.filter(function(singleNode) {
-    console.log("Running filter on node with singleNode = ", singleNode);
+    // console.log("Running filter on node with singleNode = ", singleNode);
+
       if (singleNode !== node) {
         return singleNode;
       }
@@ -127,7 +132,7 @@ var handleAdjNodeClick = function (
 
   node
     .filter(function(link) {
-      console.log("Running filter on node with l = ", l);
+      // console.log("Running filter on node with link = ", link);
       return (
         neighborFund.indexOf(link.index) > -1 ||
         neighborInvest.indexOf(link.index) > -1 ||

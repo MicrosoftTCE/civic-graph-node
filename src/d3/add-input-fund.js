@@ -4,9 +4,11 @@ var $  = require('jquery');
 var addDataList = require('./add-data-list');
 var preFillName = require('./pre-fill-name');
 
+var utils = require('../utilities');
+
 var fundingTmpl = require("jade!../templates/funding.jade");
 
-var addInputFund = function (idx, dataListSortedNames) {
+var addInputFund = function (idx) {
   console.log("Running addInputFund with idx = " + idx);
 
   if ($('#funding-' + idx + ' input[name="fund"]').val() !== "") {
@@ -22,13 +24,13 @@ var addInputFund = function (idx, dataListSortedNames) {
 
     $("#funding-" + (idx - 1)).after(fundingTmpl({ idx: idx }));
 
-    addDataList('#funding-' + idx + ' datalist', dataListSortedNames);
+    addDataList('#funding-' + idx + ' datalist', utils.getSortedNameOptions());
 
     d3.select("#funding-" + idx + " input[name='fund']").on(
       "keyup",
       function() {
         console.log("Running fund onKeyup with idx = " + idx);
-        addInputFund(idx, dataListSortedNames);
+        addInputFund(idx);
       }
     );
   }

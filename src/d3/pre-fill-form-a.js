@@ -1,6 +1,8 @@
 var d3 = require('d3');
 var $  = require('jquery');
 
+var utils = require('../utilities');
+
 var dataTmpl               = require("jade!../templates/data.jade");
 var fundingTmpl            = require("jade!../templates/funding.jade");
 var fundingGivenTmpl       = require("jade!../templates/funding-given.jade");
@@ -24,7 +26,6 @@ var addInputData        = require('./add-input-data');
 
 var preFillFormA = function (
   obj,
-  dataListSortedNames,
   dataListSortedLocations,
   locationsHash
 ) {
@@ -100,7 +101,7 @@ var preFillFormA = function (
 
   d3.selectAll('input[name="entitytype"]').filter(
     function(d, i) {
-      console.log("Running filter on input[name='entitytype'] with d, i", d, i);
+      // console.log("Running filter on input[name='entitytype'] with d, i", d, i);
 
       this.checked = (this.value === obj.type);d = false;
     }
@@ -109,7 +110,7 @@ var preFillFormA = function (
   if (obj.categories !== null) {
     d3.selectAll('.webform-categories input').filter(
       function(d, i) {
-        console.log("Running filter on .webform-categories input with d, i", d, i);
+        // console.log("Running filter on .webform-categories input with d, i", d, i);
 
         this.checked =  (
           (obj.categories).indexOf(
@@ -178,7 +179,7 @@ var preFillFormA = function (
 
         $("#funding-" + i).after(fundingTmpl({ idx: i }));
 
-        addDataList('#funding-' + i + ' datalist', dataListSortedNames);
+        addDataList('#funding-' + i + ' datalist', utils.getSortedNameOptions());
 
         d3.select('#funding-' + i + ' input[name="fund"]').on('keyup',
           function() {
@@ -221,7 +222,7 @@ var preFillFormA = function (
           console.log("Running onKeyup on #funding-" + fundingreceived.length + " input[name=fund]");
           console.log("Calling addInputFund with length");
 
-          addInputFund(fundingreceived.length, dataListSortedNames);
+          addInputFund(fundingreceived.length);
         }
       );
   }
@@ -234,7 +235,7 @@ var preFillFormA = function (
         console.log("Running fundinggiven forEach with d, i =", d, i);
         $("#fundinggiven-" + i).after(fundingGivenTmpl({ idx: i }));
 
-        addDataList('#fundinggiven-' + i + ' datalist', dataListSortedNames);
+        addDataList('#fundinggiven-' + i + ' datalist', utils.getSortedNameOptions());
 
         d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').on('keyup', function() {
           console.log("Running preFillName on #fundinggiven-" + i + " input[name=fundgiven] with " + this.value);
@@ -265,7 +266,7 @@ var preFillFormA = function (
           console.log("Running onKeyup on #fundinggiven-" + fundinggiven.length + " input[name=fundgiven]");
           console.log("Calling addInputFundGiven with length");
 
-          addInputFundGiven(fundinggiven.length, dataListSortedNames);
+          addInputFundGiven(fundinggiven.length);
         }
       );
   }
@@ -277,7 +278,7 @@ var preFillFormA = function (
       console.log("Running investmentreceived forEach with d, i =", d, i);
       $("#investing-" + i).after(investmentRecievedTmpl({ idx: i }));
 
-      addDataList('#investing-' + i + ' datalist', dataListSortedNames);
+      addDataList('#investing-' + i + ' datalist', utils.getSortedNameOptions());
 
       d3.select('#investing-' + i + ' input[name="invest"]').on('keyup',
         function() {
@@ -315,7 +316,7 @@ var preFillFormA = function (
           console.log("Running onKeyup on #investing-" + investmentreceived.length + " input[name=invest]");
           console.log("Calling addInputInvest with length");
 
-          addInputInvest(investmentreceived.length, dataListSortedNames);
+          addInputInvest(investmentreceived.length);
         }
       );
   }
@@ -327,7 +328,7 @@ var preFillFormA = function (
       console.log("Running investmentsmade forEach with d, i =", d, i);
       $("#investmentmade-" + i).after(investmentMadeTmpl({ idx: i }));
 
-      addDataList('#investmentmade-' + i + ' datalist', dataListSortedNames);
+      addDataList('#investmentmade-' + i + ' datalist', utils.getSortedNameOptions());
 
       d3.select('#investmentmade-' + i + ' input[name="investmade"]')
         .on(
@@ -367,7 +368,7 @@ var preFillFormA = function (
           console.log("Running onKeyup on #investmentmade-" + investmentsmade.length + " input[name=investmade]");
           console.log("Calling addInputInvestMade with length");
 
-          addInputInvestMade(investmentsmade.length, dataListSortedNames);
+          addInputInvestMade(investmentsmade.length);
         }
       );
   }
@@ -379,7 +380,7 @@ var preFillFormA = function (
       console.log("Running dataProviders forEach with d, i =", d, i);
       $("#data-" + i).after(dataTmpl({ idx: i }));
 
-      addDataList('#data-' + i + ' datalist', dataListSortedNames);
+      addDataList('#data-' + i + ' datalist', utils.getSortedNameOptions());
 
       d3.select('#data-' + i + ' input[name="data"]').on('keyup',
         function() {
@@ -402,7 +403,7 @@ var preFillFormA = function (
         function() {
           console.log("Running onKeyup on #data-" + dataProviders.length + " input[name=data]");
           console.log("Calling addInputData with length");
-          addInputData(dataProviders.length, dataListSortedNames);
+          addInputData(dataProviders.length);
         }
       );
   }
@@ -414,7 +415,6 @@ var preFillFormA = function (
     d3.select('#location').style("border-color", "#d9d9d9");
 
     displayFormB(
-      dataListSortedNames,
       dataListSortedLocations,
       locationsHash
     );

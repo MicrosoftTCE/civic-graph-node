@@ -4,9 +4,11 @@ var $  = require('jquery');
 var addDataList = require('./add-data-list');
 var preFillName = require('./pre-fill-name');
 
+var utils = require('../utilities');
+
 var dataTmpl = require("jade!../templates/data.jade");
 
-var addInputData = function (idx, dataListSortedNames) {
+var addInputData = function (idx) {
   console.log("Running addInputData with idx = " + idx);
 
   if ($('#data-' + idx + ' input[name="data"]').val() !== "") {
@@ -23,14 +25,14 @@ var addInputData = function (idx, dataListSortedNames) {
 
     $("#data-" + (idx - 1)).after(dataTmpl({ idx: idx }));
 
-    addDataList('#data-' + idx + ' datalist', dataListSortedNames);
+    addDataList('#data-' + idx + ' datalist', utils.getSortedNameOptions());
 
     d3.select("#data-" + idx + " input[name='data']").on(
       "keyup",
       function() {
         console.log("Running data onKeyup with idx = " + idx);
 
-        addInputData(idx, dataListSortedNames);
+        addInputData(idx);
       }
     );
   }
