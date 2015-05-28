@@ -17,9 +17,9 @@ var qry = "SELECT a.name AS source_name," +
         "b.entity_1_id AS source_id," +
         "c.name AS target_name," +
         "b.entity_2_id AS target_id," +
-        "b.connection AS connection" +
-        "FROM bridges_view b JOIN entities a ON (b.entity_1_id = a.id)" +
-        "JOIN entities c ON (b.entity_2_id = c.id)" +
+        "b.connection AS connection " +
+        "FROM bridges_view b JOIN entities a ON (b.entity_1_id = a.id) " +
+        "JOIN entities c ON (b.entity_2_id = c.id) " +
         "WHERE (a.entity_type <> ? AND c.entity_type <> ?)";
 
 

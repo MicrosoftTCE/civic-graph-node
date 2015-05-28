@@ -137,7 +137,7 @@ h2#webform-head Information
         )
         input#address(
           placeholder = 'Address (optional)'
-          style='width:100%;'
+          style='width:100%; margin-top: 5px;'
           type='text'
         )
     datalist#list-location
@@ -146,6 +146,7 @@ h2#webform-head Information
       name='website'
       placeholder='Website'
       type='text'
+      style='margin-top:15px;'
     )
   h3.form-header(style='display:inline-block;')
     | Number of
@@ -259,6 +260,17 @@ h2#webform-head Information
         style='display:inline-block; width: 20%;'
         type='text'
       )
+  h3.form-header Who is their employer?
+  #employment-0
+    .employment-input.input-control.text(data-role='input-control')
+      input.employer(
+        list='employment-list'
+        name='employment'
+        placeholder='Employer'
+        style='display:inline-block; width:100%;'
+        type='text'
+      )
+      datalist#employment-list
   h3.form-header Who provides them with data?
   #data-0.input-control.text(data-role='input-control')
     input.data-entity(

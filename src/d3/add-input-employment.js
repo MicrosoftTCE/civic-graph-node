@@ -1,21 +1,39 @@
-// function addInputEmployment(counterFG) {
-//   console.log("Running addInputFundGiven with counterFG = " + counterFG);
+var d3 = require('d3');
+var $  = require('jquery');
 
-//   if ($('#fundinggiven-' + counterFG + ' input[name="fundgiven"]').val() !== "") {
-//     d3.select('#fundinggiven-' + counterFG + ' input[name="fundgiven"]').on('keyup', function() {
-//       console.log("Running fund given onKeyup with counterFG = " + counterFG);
-//       preFillName(this.value, '#fundinggiven-' + (counterFG - 1) + ' input[name="fundgiven"]', entitiesHash);
-//     });
-//     counterFG++; // counter -> 2
+var addDataList = require('./add-data-list');
+var preFillName = require('./pre-fill-name');
+
+var employmentTmpl = require("jade!../templates/employment.jade");
+
+var addInputEmployment = function (idx, dataListSortedNames) {
+  console.log("Running addInputData with idx = " + idx);
+
+  if ($('#data-' + idx + ' input[name="data"]').val() !== "") {
+    d3.select('#data-' + idx + ' input[name="data"]').on(
+      'keyup',
+      function() {
+        console.log("Running data onKeyup with idx = " + idx);
+
+        preFillName(this.value, '#data-' + (idx - 1) + ' input[name="data"]');
+      }
+    );
+    idx++; // counter -> 2
 
 
-//     $("#fundinggiven-" + (counterFG - 1)).after(fundingGivenTmpl({ idx: counterFG }));
+    $("#data-" + (idx - 1)).after(employmentTmpl({ idx: idx }));
 
-//     addDataList('#fundinggiven-' + counterFG + ' datalist');
+    addDataList('#data-' + idx + ' datalist', dataListSortedNames);
 
-//     d3.select("#fundinggiven-" + counterFG + " input[name='fundgiven']").on("keyup", function() {
-//       console.log("Running fund given onKeyup with counterFG = " + counterFG);
-//       addInputFundGiven(counterFG);
-//     });
-//   }
-// }
+    d3.select("#data-" + idx + " input[name='data']").on(
+      "keyup",
+      function() {
+        console.log("Running data onKeyup with idx = " + idx);
+
+        addInputData(idx, dataListSortedNames);
+      }
+    );
+  }
+};
+
+module.exports = addInputEmployment;

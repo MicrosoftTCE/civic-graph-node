@@ -13,15 +13,15 @@ var pool    = mysql.createPool(config.db);
 var db      = wrap(pool);
 
 router.get('/', function(req, res) {
-var qry = "SELECT City_ID," +
-      "COUNT(Entities.ID) as entitycount," +
+var qry = "SELECT city_id," +
+      "COUNT(entities.id) as entitycount," +
       "CONCAT('.', GROUP_CONCAT(Entity_ID SEPARATOR '.'), '.')" +
-      "AS Entity_List, Entities.Type, Cities.City_Name," +
-      "Cities.State_Code, Cities.Country_Code, Cities.Country_Name, Cities.City_Long," +
-      "Cities.City_Lat FROM Entities JOIN Locations ON Locations.Entity_ID = Entities.ID" +
-      "JOIN Cities ON Locations.City_ID = Cities.ID GROUP BY City_ID," +
-      "Entities.Type ORDER BY Cities.ID DESC," +
-      "FIELD(Entities.Type, 'For-Profit','Individual','Non-Profit','Government') ASC";
+      "AS entity_list, entities.entity_type, cities.city_name," +
+      "cities.state_code, cities.country_code, cities.country_name, cities.city_long," +
+      "cities.city_lat FROM entities JOIN locations ON locations.entity_id = entities.id " +
+      "JOIN cities ON locations.city_id = cities.id GROUP BY city_id," +
+      "entities.entity_type ORDER BY cities.id DESC," +
+      "FIELD(entities.entity_type, 'For-Profit','Individual','Non-Profit','Government') ASC";
 
 
   db.query(qry).then(function(result) {

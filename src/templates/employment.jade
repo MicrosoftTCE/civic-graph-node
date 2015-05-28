@@ -1,11 +1,15 @@
 <!-- employment.jade -->
 div(id="#employment-" + idx)
- .invest-input.input-control.text(data-role="input-control")
-    input.employer(
-      type="text"
-      name="employ"
-      placeholder="Employment"
-      style="display:inline-block; width:100%;"
-      list="employment-list"
-    )
-    datalist#employment-list
+    .employment-input.input-control.text(data-role='input-control')
+      input.employer(
+        list='employment-list'
+        name='employment'
+        placeholder='Employer'
+        style='display:inline-block; width:100%;'
+        type='text'
+      )
+      datalist#employment-list
+
+<!-- end employment.jade -->
+
+
