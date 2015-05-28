@@ -24,15 +24,8 @@ var addInputData        = require('./add-input-data');
 
 var preFillFormA = function (
   obj,
-  allNodes,
-  fundLink,
-  investLink,
-  porucsLink,
-  dataLink,
-  graph,
   dataListSortedNames,
   dataListSortedLocations,
-  entitiesHash,
   locationsHash
 ) {
   console.log("Running preFillFormA with obj =", obj);
@@ -191,7 +184,7 @@ var preFillFormA = function (
           function() {
             console.log("Running preFillName on #funding-" + i + " input[name=fund] with " + this.value);
 
-            preFillName(this.value, '#funding-' + i + ' input[name="fund"]', entitiesHash);
+            preFillName(this.value, '#funding-' + i + ' input[name="fund"]');
           }
         );
 
@@ -228,7 +221,7 @@ var preFillFormA = function (
           console.log("Running onKeyup on #funding-" + fundingreceived.length + " input[name=fund]");
           console.log("Calling addInputFund with length");
 
-          addInputFund(fundingreceived.length, entitiesHash, dataListSortedNames);
+          addInputFund(fundingreceived.length, dataListSortedNames);
         }
       );
   }
@@ -245,7 +238,7 @@ var preFillFormA = function (
 
         d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').on('keyup', function() {
           console.log("Running preFillName on #fundinggiven-" + i + " input[name=fundgiven] with " + this.value);
-          preFillName(this.value, '#fundinggiven-' + i + ' input[name="fundgiven"]', entitiesHash);
+          preFillName(this.value, '#fundinggiven-' + i + ' input[name="fundgiven"]');
         });
 
         d3.select('#fundinggiven-' + i + ' input[name="fundgiven"]').text(function(e) {
@@ -272,7 +265,7 @@ var preFillFormA = function (
           console.log("Running onKeyup on #fundinggiven-" + fundinggiven.length + " input[name=fundgiven]");
           console.log("Calling addInputFundGiven with length");
 
-          addInputFundGiven(fundinggiven.length, entitiesHash, dataListSortedNames);
+          addInputFundGiven(fundinggiven.length, dataListSortedNames);
         }
       );
   }
@@ -289,7 +282,7 @@ var preFillFormA = function (
       d3.select('#investing-' + i + ' input[name="invest"]').on('keyup',
         function() {
           console.log("Running preFillName on #investing-" + i + " input[name=invest] with " + this.value);
-          preFillName(this.value, '#investing-' + i + ' input[name="invest"]', entitiesHash);
+          preFillName(this.value, '#investing-' + i + ' input[name="invest"]');
         }
       );
 
@@ -322,7 +315,7 @@ var preFillFormA = function (
           console.log("Running onKeyup on #investing-" + investmentreceived.length + " input[name=invest]");
           console.log("Calling addInputInvest with length");
 
-          addInputInvest(investmentreceived.length, entitiesHash, dataListSortedNames);
+          addInputInvest(investmentreceived.length, dataListSortedNames);
         }
       );
   }
@@ -341,7 +334,7 @@ var preFillFormA = function (
           'keyup',
           function() {
             console.log("Running preFillName on #investing-" + i + " input[name=invest] with " + this.value);
-            preFillName(this.value, '#investmentmade-' + i + ' input[name="investmade"]', entitiesHash);
+            preFillName(this.value, '#investmentmade-' + i + ' input[name="investmade"]');
           }
         );
 
@@ -374,7 +367,7 @@ var preFillFormA = function (
           console.log("Running onKeyup on #investmentmade-" + investmentsmade.length + " input[name=investmade]");
           console.log("Calling addInputInvestMade with length");
 
-          addInputInvestMade(investmentsmade.length, entitiesHash, dataListSortedNames);
+          addInputInvestMade(investmentsmade.length, dataListSortedNames);
         }
       );
   }
@@ -391,7 +384,7 @@ var preFillFormA = function (
       d3.select('#data-' + i + ' input[name="data"]').on('keyup',
         function() {
           console.log("Running preFillName on #data-" + i + " input[name=data] with " + this.value);
-          preFillName(this.value, '#data-' + i + ' input[name="data"]', entitiesHash);
+          preFillName(this.value, '#data-' + i + ' input[name="data"]');
         }
       );
 
@@ -409,7 +402,7 @@ var preFillFormA = function (
         function() {
           console.log("Running onKeyup on #data-" + dataProviders.length + " input[name=data]");
           console.log("Calling addInputData with length");
-          addInputData(dataProviders.length, entitiesHash, dataListSortedNames);
+          addInputData(dataProviders.length, dataListSortedNames);
         }
       );
   }
@@ -421,15 +414,8 @@ var preFillFormA = function (
     d3.select('#location').style("border-color", "#d9d9d9");
 
     displayFormB(
-      allNodes,
-      fundLink,
-      investLink,
-      porucsLink,
-      dataLink,
-      graph,
       dataListSortedNames,
       dataListSortedLocations,
-      entitiesHash,
       locationsHash
     );
     preFillFormB(obj);

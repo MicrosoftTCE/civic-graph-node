@@ -6,7 +6,7 @@ var preFillName = require('./pre-fill-name');
 
 var investingTmpl = require("jade!../templates/investing.jade");
 
-var addInputInvest = function (idx, entitiesHash, dataListSortedNames) {
+var addInputInvest = function (idx, dataListSortedNames) {
   console.log("Running addInputInvest with idx = " + idx);
 
   if ($('#investing-' + idx + ' input[name="invest"]').val() !== "") {
@@ -15,7 +15,7 @@ var addInputInvest = function (idx, entitiesHash, dataListSortedNames) {
       function() {
         console.log("Running invest onKeyup with idx = " + idx);
 
-        preFillName(this.value, '#investing-' + (idx - 1) + ' input[name="invest"]', entitiesHash);
+        preFillName(this.value, '#investing-' + (idx - 1) + ' input[name="invest"]');
       }
     );
     idx++; // counter -> 2
@@ -28,7 +28,7 @@ var addInputInvest = function (idx, entitiesHash, dataListSortedNames) {
     d3.select("#investing-" + idx + " input[name='invest']").on("keyup", function() {
       console.log("Running invest onKeyup with idx = " + idx);
 
-      addInputInvest(idx, entitiesHash, dataListSortedNames);
+      addInputInvest(idx, dataListSortedNames);
     });
   }
 };

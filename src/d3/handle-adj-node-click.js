@@ -1,44 +1,36 @@
 var handleClickNodeHover = require('./handle-click-node-hover');
 
 var handleAdjNodeClick = function (
-  node,
-  fundLink,
-  investLink,
-  porucsLink,
-  dataLink,
-  fundingConnections,
-  investmentConnections,
-  collaborationConnections,
-  dataConnections
+  node
 ) {
   console.log("Running handleAdjNodeClick with node =", node);
 
-  fundLink.style("opacity", function(l) {
-    if (node === l.source || node === l.target) {
+  window.civicStore.lines.funding.style("opacity", function(link) {
+    if (node === link.source || node === link.target) {
       return "1";
     } else {
       return "0.05";
     }
   });
 
-  investLink.style("opacity", function(l) {
-    if (node === l.source || node === l.target) {
+  window.civicStore.lines.investment.style("opacity", function(link) {
+    if (node === link.source || node === link.target) {
       return "1";
     } else {
       return "0.05";
     }
   });
 
-  porucsLink.style("opacity", function(l) {
-    if (node === l.source || node === l.target) {
+  window.civicStore.lines.collaboration.style("opacity", function(link) {
+    if (node === link.source || node === link.target) {
       return "1";
     } else {
       return "0.05";
     }
   });
 
-  dataLink.style("opacity", function(l) {
-    if (node === l.source || node === l.target) {
+  window.civicStore.lines.data.style("opacity", function(link) {
+    if (node === link.source || node === link.target) {
       return "1";
     } else {
       return "0.05";
@@ -59,8 +51,8 @@ var handleAdjNodeClick = function (
 
   neighboringNodesIndices[d.ID] = 1;
 
-  fundingConnections.forEach(function(link) {
-    console.log("Running forEach on fundingConnections with link = ", link);
+  window.civicStore.edges.funding.forEach(function(link) {
+    console.log("Running forEach on funding connections with link = ", link);
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -70,8 +62,8 @@ var handleAdjNodeClick = function (
     }
   });
 
-  investmentConnections.forEach(function(link) {
-    console.log("Running forEach on investmentConnections with link = ", link);
+  window.civicStore.edges.investment.forEach(function(link) {
+    console.log("Running forEach on investment connections with link = ", link);
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -81,8 +73,8 @@ var handleAdjNodeClick = function (
     }
   });
 
-  collaborationConnections.forEach(function(link) {
-    console.log("Running forEach on collaborationConnections with link = ", link);
+  window.civicStore.edges.collaboration.forEach(function(link) {
+    console.log("Running forEach on collaboration connections with link = ", link);
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -92,8 +84,8 @@ var handleAdjNodeClick = function (
     }
   });
 
-  dataConnections.forEach(function(link) {
-    console.log("Running forEach on dataConnections with link = ", link);
+  window.civicStore.edges.data.forEach(function(link) {
+    console.log("Running forEach on data connections with link = ", link);
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -103,7 +95,7 @@ var handleAdjNodeClick = function (
     }
   });
 
-  svg.selectAll('.node').style("opacity", function(n) {
+  window.d3RootElem.selectAll('.node').style("opacity", function(n) {
     console.log("Running opacity on .node with n = ", n);
     if (n.ID in neighboringNodesIndices) {
       return "1";

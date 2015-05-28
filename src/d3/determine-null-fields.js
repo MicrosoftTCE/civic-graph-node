@@ -1,7 +1,8 @@
 var _ = require('lodash');
 
-var determineNullFields = function (allNodes) {
+var determineNullFields = function () {
   console.log("Running determineNullFields");
+  var allNodes = _.values(window.civicStore.vertices);
 
   var nullFieldCount = 0;
   var nullFieldArr   = [];

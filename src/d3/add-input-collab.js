@@ -6,7 +6,11 @@ var preFillName = require('./pre-fill-name');
 
 var collaborationTmpl = require("jade!../templates/collaboration.jade");
 
-var addInputCollab = function (idx, entitiesHash, dataListSortedNames) {
+/**
+ *  Adds a collaborator text input with a datalist dropdown
+ *  using the dataListSortedNames and calling addDataList
+ */
+var addInputCollab = function (idx, dataListSortedNames) {
   console.log("Running addInputCollab with idx = " + idx);
 
   if ($('#collaboration-' + idx + ' input[name="collaboration"]').val() !== "") {
@@ -15,7 +19,7 @@ var addInputCollab = function (idx, entitiesHash, dataListSortedNames) {
       function() {
         console.log("Running collab onKeyup with idx = " + idx);
 
-        preFillName(this.value, '#collaboration-' + (idx - 1) + ' input[name="collaboration"]', entitiesHash);
+        preFillName(this.value, '#collaboration-' + (idx - 1) + ' input[name="collaboration"]');
       }
     );
     idx++; // counter -> 2
@@ -30,7 +34,7 @@ var addInputCollab = function (idx, entitiesHash, dataListSortedNames) {
       function() {
         console.log("Running collab onKeyup with idx = " + idx);
 
-        addInputCollab(idx, entitiesHash, dataListSortedNames);
+        addInputCollab(idx, dataListSortedNames);
       }
     );
   }

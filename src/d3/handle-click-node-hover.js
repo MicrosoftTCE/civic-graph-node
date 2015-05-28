@@ -24,15 +24,8 @@ var handleClickNodeHover = function(obj) {
       console.log("Running onClick for #editCurrentInfo");
       prefillCurrent(
         obj,
-        allNodes,
-        fundLink,
-        investLink,
-        porucsLink,
-        dataLink,
-        graph,
         dataListSortedNames,
         dataListSortedLocations,
-        entitiesHash,
         locationsHash
       );
     })

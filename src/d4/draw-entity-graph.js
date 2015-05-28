@@ -47,6 +47,7 @@ var drawEntityGraph = function () {
     .attr("viewBox", [0, 0, width, height].join(' '))
     .attr("preserveAspectRatio", 'xMidYMid');
 
+  console.log("Drawing graph at " + root);
   drawGraph(root);
 };
 

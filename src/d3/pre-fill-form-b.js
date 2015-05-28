@@ -33,7 +33,7 @@
 
           d3.select('#collaboration-' + i + ' input[name="collaboration"]').on('keyup', function() {
             console.log("Calling onKeyup on #collaboration-" + i + " input[name=collaboration]");
-            preFillName(this.value, '#collaboration-' + i + ' input[name="collaboration"]', entitiesHash);
+            preFillName(this.value, '#collaboration-' + i + ' input[name="collaboration"]');
           });
 
           d3.select('#collaboration-' + i + ' input[name="collaboration"]').text(function(e) {
@@ -46,7 +46,7 @@
 
         d3.select('#collaboration-' + collaboration.length + ' input[name="collaboration"]').on('keyup', function() {
           console.log("Calling onKeyup on #collaboration-" + collaboration.length + " input[name=collaboration]");
-          addInputCollab(collaboration.length, entitiesHash, dataListSortedNames);
+          addInputCollab(collaboration.length, dataListSortedNames);
         });
       }
 

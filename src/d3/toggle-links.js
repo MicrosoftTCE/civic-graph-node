@@ -1,46 +1,35 @@
 var reflectConnectionChanges = require('./reflect-connection-changes');
 var setVisibility            = require('./set-visibility');
 
-var toggleLinks = function(
-  visibleNodes,
-  fundLink,
-  investLink,
-  porucsLink,
-  dataLink
-) {
+var toggleLinks = function(visibleNodes) {
   console.log("Running toggleLinks with visibleNodes =", visibleNodes);
 
-  fundLink.filter(
+  window.civicStore.lines.funding.filter(
     function(link) {
       setVisibility(this, this.__data__, visibleNodes, "Funding");
     }
   );
 
-  investLink.filter(
+  window.civicStore.lines.investment.filter(
     function(link) {
       setVisibility(this, this.__data__, visibleNodes, "Investment");
     }
   );
 
-  porucsLink.filter(
+  window.civicStore.lines.collaboration.filter(
     function(link) {
       setVisibility(this, this.__data__, visibleNodes, "Collaboration");
     }
   );
 
-  dataLink.filter(
+  window.civicStore.lines.data.filter(
     function(link) {
       setVisibility(this, this.__data__, visibleNodes, "Data");
     }
   );
 
   // Time to reflect these changes accordingly with the connection checkboxes to ensure consistency.
-  reflectConnectionChanges(
-    fundLink,
-    investLink,
-    porucsLink,
-    dataLink
-  );
+  reflectConnectionChanges();
 };
 
 module.exports = toggleLinks;

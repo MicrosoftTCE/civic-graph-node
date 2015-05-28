@@ -1,7 +1,7 @@
 var d3 = require('d3');
 var _  = require('lodash');
 
-var dblClickCb = function(allNodes, connections, tick) {
+var dblClickCb = function(connections, tick) {
 
   return function(d) {
     console.log("Running dblClick with d =", d);
@@ -13,11 +13,11 @@ var dblClickCb = function(allNodes, connections, tick) {
     var dblclickobject = (d3.select(this).data())[0];
 
     var svgWidth = parseInt(
-      svg.style("width").substring(0, ((svg.style("width")).length + 1) / 2)
+      window.d3RootElem.style("width").substring(0, ((window.d3RootElem.style("width")).length + 1) / 2)
     );
 
     var svgHeight = parseInt(
-      svg.style("height").substring(0, ((svg.style("height")).length + 1) / 2)
+      window.d3RootElem.style("height").substring(0, ((window.d3RootElem.style("height")).length + 1) / 2)
     );
 
     var halfSVGWidth = parseInt(svgWidth / 2);
@@ -36,7 +36,7 @@ var dblClickCb = function(allNodes, connections, tick) {
     centeredNode.y = height / 2 - 60;
 
     var force = d3.layout.force()
-      .nodes(allNodes)
+      .nodes(_.values(window.civicStore.vertices))
       .size([width, height])
       .links(connections)
       .linkStrength(0)

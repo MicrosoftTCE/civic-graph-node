@@ -1,32 +1,27 @@
 var d3 = require('d3');
 
-var reflectConnectionChanges = function(
-  fundLink,
-  investLink,
-  porucsLink,
-  dataLink
-) {
+var reflectConnectionChanges = function() {
   console.log("Running reflectConnectionChanges");
 
-  var visibleFundingConnections = fundLink.filter(
+  var visibleFundingConnections = window.civicStore.lines.funding.filter(
     function(link) {
       return d3.select(this).style('visibility') === 'visible';
     }
   );
 
-  var visibleInvestmentConnections = investLink.filter(
+  var visibleInvestmentConnections = window.civicStore.lines.investment.filter(
     function(link) {
       return d3.select(this).style('visibility') === 'visible';
     }
   );
 
-  var visibleCollaborationsConnections = porucsLink.filter(
+  var visibleCollaborationsConnections = window.civicStore.lines.collaboration.filter(
     function(link) {
       return d3.select(this).style('visibility') === 'visible';
     }
   );
 
-  var visibleDataConnections = dataLink.filter(
+  var visibleDataConnections = window.civicStore.lines.data.filter(
     function(link) {
       return d3.select(this).style('visibility') === 'visible';
     }
@@ -41,7 +36,7 @@ var reflectConnectionChanges = function(
   }
 
   if (visibleCollaborationsConnections[0].length === 0) {
-    $('#cb_porucs').attr('checked', false);
+    $('#cb_collaboration').attr('checked', false);
   }
 
   if (visibleDataConnections[0].length === 0) {

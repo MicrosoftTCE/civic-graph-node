@@ -5,15 +5,8 @@ var displayFormC = require('./display-form-c');
 
 var displayFormCSendJson = function (
   obj,
-  allNodes,
-  fundLink,
-  investLink,
-  porucsLink,
-  dataLink,
-  graph,
   dataListSortedNames,
   dataListSortedLocations,
-  entitiesHash,
   locationsHash
 ) {
   console.log("Running displayFormCSendJson with obj =", obj);
@@ -21,15 +14,8 @@ var displayFormCSendJson = function (
   var formObj = processFormB(obj);
 
   displayFormC(
-    allNodes,
-    fundLink,
-    investLink,
-    porucsLink,
-    dataLink,
-    graph,
     dataListSortedNames,
     dataListSortedLocations,
-    entitiesHash,
     locationsHash
   );
 

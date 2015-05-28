@@ -19,7 +19,7 @@ var setVisibility = function(link, linkData, visibleNodes, connectionType) {
           d3.select(link).style('visibility', 'hidden');
         break;
       case "Collaboration":
-        ($('#cb_porucs').is(':checked')) ?
+        ($('#cb_collaboration').is(':checked')) ?
           d3.select(link).style('visibility', 'visible') :
           d3.select(link).style('visibility', 'hidden');
         break;

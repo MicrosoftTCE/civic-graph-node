@@ -229,6 +229,42 @@ var getEdges = function(edgeType, callback) {
 };
 
 var getLocations = function(callback) {
+  var qry = select().from("locations_view").toString();
+
+  db.query(qry)
+    .then(function(results) {
+      var locationHash = {};
+
+      _.each(results, function(location) {
+        locationHash[location.id] = location;
+      });
+
+      callback(null, { locations: locationHash });
+    })
+    .catch(function(err) {
+      callback(err, null);
+    });
+};
+
+var getCities = function(callback) {
+  var qry = select().from("cities_view").toString();
+
+  db.query(qry)
+    .then(function(results) {
+      var cityHash = {};
+
+      _.each(results, function(city) {
+        cityHash[city.id] = city;
+      });
+
+      callback(null, { cities: cityHash });
+    })
+    .catch(function(err) {
+      callback(err, null);
+    });
+};
+
+var getLocationsWithCities = function(callback) {
   var qry = "SELECT DISTINCT l.entity_id AS entity, l.address, l.address_lat, " +
     "l.address_long, c.city_name, c.state_name, c.state_code, c.country_name, " +
     "c.country_code, c.city_lat, c.city_long FROM `locations_view` l " +
@@ -247,29 +283,52 @@ var getStore = function(callback) {
   getVertices(function(err, vertices) {
     var entityHash = {};
     var ids = [];
-    var names = {};
-
-    console.log("Got " + vertices.vertices.length + " vertices!");
+    // var search = {};
 
     _.each(vertices.vertices, function(vertex) {
       entityHash[vertex.id] = vertex;
       ids.push(vertex.id);
-      names[vertex.name.toLowerCase()] = names[vertex.name.toLowerCase()] || {}
-      names[vertex.name.toLowerCase()][vertex.id] = true;
-      names[vertex.nickname.toLowerCase()] = names[vertex.nickname.toLowerCase()] || {};
-      names[vertex.nickname.toLowerCase()][vertex.id] = true;
+      // search[vertex.name] = search[vertex.name] || {}
+      // search[vertex.name][vertex.id] = true;
+      // search[vertex.nickname] = search[vertex.nickname] || {};
+      // search[vertex.nickname][vertex.id] = true;
     })
 
     getSpecifiedEdges(ids, function(err, edges) {
       getLocations(function(err, locations) {
-        var out = {
-          vertices: entityHash,
-          edges: edges.edges,
-          names: _.mapValues(names, function(name) { return _.keys(name); }),
-          locations: locations.locations
-        };
+        getCities(function(err, cities) {
+        _.each(locations.locations, function(location) {
+            if (location.entity) {
+              var key = [ location.city_name ];
 
-        callback(err, out);
+              if (location.state_name) {
+                key.push(location.state_name)
+              } else if (location.state_code) {
+                key.push(location.state_code)
+              }
+
+              if (location.country_name) {
+                key.push(location.country_name)
+              } else if (location.country_code) {
+                key.push(location.country_code)
+              }
+
+              key = key.join(", ")
+
+              search[key] = search[key] || [];
+              search[key][location.entity] = true;
+            }
+          })
+
+          var out = {
+            vertices: entityHash,
+            edges: edges.edges,
+            locations: locations.locations,
+            cities: cities.cities
+          };
+
+          callback(err, out);
+        })
       })
     });
   });
