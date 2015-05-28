@@ -502,8 +502,8 @@ function drawGraph() {
 
 
                 d3.selectAll('#editCurrentInfo').on('click', function() {
-                        // prefillCurrent(d);
-                        alert("We are currently making some changes to the Civic Graph right now, so we are not accepting new information. Please check back next week and try again!")
+                        prefillCurrent(d);
+                        
                     })
                     .on('mouseover', function() {
                         d3.select(this).style('cursor', 'pointer');
@@ -3187,13 +3187,13 @@ function drawGraph() {
     function hideSideBar(className){
         var elements = document.getElementsByClassName(className);
         elements[0].style.visibility = "hidden";
-      }
+    }
 
-      function showSideBar(className){
+    function showSideBar(className){
         var elements = document.getElementsByClassName(className);
         elements[0].style.visibility = "visible";
 
-      }
+    }
 
 
     if (current_view == 'map') {
@@ -3217,12 +3217,12 @@ function drawGraph() {
     d3.selectAll('#cb_networkview').on('click', function() {
         if (document.getElementById('cb_networkview').checked) {
             if(document.getElementById('network')) {
-                jQuery('#network').show();
+                jQuery('#network').fadeIn("slow");
             }
             else {
                 drawGraph();
             }
-            jQuery('#map').hide();
+            jQuery('#map').fadeOut("slow");
             jQuery('.d3-tip').hide();
             showSideBar("example");
         }
@@ -3231,13 +3231,13 @@ function drawGraph() {
     d3.selectAll('#cb_mapview').on('click', function() {
         if (document.getElementById('cb_mapview').checked) {
             if(document.getElementById('map')) {
-                jQuery('#map').show();
+                jQuery('#map').fadeIn("slow");
                 jQuery('.d3-tip').show();
             }
             else {
                 drawMap();
             }
-            jQuery('#network').hide();
+            jQuery('#network').fadeOut("slow");
             hideSideBar("example");
         }
     });
@@ -3645,48 +3645,6 @@ function loadD3Layer() {
 
         }
     });
-
-    // d3Layers.d3Circles = d3MapTools.addLayer({
-    //   loaded: function (svg, projection) {
-
-    //     svg.call(tip);
-    //         // console.log(locationData);
-    //     radiusScale = d3.scale.linear().domain([0, maxVal]).range([5, 55]);
-
-    //         // console.log(maxVal)
-    //     svg.selectAll("circle")
-    //          .data(locationData)
-    //          .enter()
-    //          .append("circle")
-    //          .attr("transform", function(d) {
-    //             return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
-    //          })
-    //          .attr("r", function(d){
-    //             return radiusScale(d.val);
-    //         })
-    //         .style({
-    //             fill: "grey",
-    //             stroke: "black"
-    //         })
-    //         .attr("class", "pinpoint")
-    //         .attr("opacity", 0.8)
-    //         .on('mouseover', tip.show)
-    //         .on('mouseout', tip.hide)
-
-    //     },
-
-    //    viewChanged: function(svg, projection) {
-
-
-    //         svg.selectAll("circle")
-    //             .attr("transform", function(d) {
-    //                 return "translate(" + projection.projection()([d.lon, d.lat]) + ")" ;
-    //             });
-
-    //         svg.attr("visibility", map.getTargetZoom() < 10 ? "visible":"hidden");
-
-    //    }
-    // });
 
             d3Layers.d3Donuts = d3MapTools.addLayer({
                 
