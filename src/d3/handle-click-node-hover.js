@@ -22,11 +22,7 @@ var handleClickNodeHover = function(obj) {
 
   d3.selectAll('#editCurrentInfo').on('click', function() {
       console.log("Running onClick for #editCurrentInfo");
-      prefillCurrent(
-        obj,
-        dataListSortedLocations,
-        locationsHash
-      );
+      prefillCurrent(obj);
     })
     .on('mouseover', function() {
       d3.select(this).style('cursor', 'pointer');

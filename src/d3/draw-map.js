@@ -2,7 +2,7 @@ var d3 = require("d3");
 
 var loadD3Layer = require("./load-d3-layer")
 
-function drawMap() {
+var drawMap = function () {
   var width  = 960;
   var height = 500;
 
@@ -29,3 +29,5 @@ function drawMap() {
 
   d3.select(self.frameElement).style("height", height + "px");
 }
+
+module.exports = drawMap;

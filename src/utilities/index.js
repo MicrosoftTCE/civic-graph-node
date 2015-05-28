@@ -93,9 +93,24 @@ var getLocationHash = function () {
       _.values(window.civicStore.locations),
       function(location) {
         var city = window.civicStore.cities[location.city_id];
+        var key = [city.city_name];
 
-        byName[name] = byName[name] || [];
-        byName[name].push({ id: entity.id, name: entity.name });
+        if (city.state_name) {
+          key.push(city.state_name);
+        } else if (city.state_code) {
+          key.push(city.state_code);
+        }
+
+        if (city.country_name) {
+          key.push(city.country_name);
+        } else if (city.country_code) {
+          key.push(city.country_code);
+        }
+
+        key = key.join(", ").toLowerCase()
+
+        byLocation[key] = byLocation[key] || [];
+        byLocation[key].push(window.civicStore.vertices[location.entity]);
       }
     )
 
@@ -125,7 +140,7 @@ var getSortedNameOptions = function () {
   return _.map(getSortedNames(), function(name) {
     return '<option value="' + name + '"></option>'
   }).join('');
-}
+};
 
 var getSortedLocations = function () {
   window.civicStore.lists = window.civicStore.lists || {};
@@ -159,6 +174,12 @@ var getSortedLocations = function () {
   return window.civicStore.lists.locations;
 };
 
+var getSortedLocationOptions = function () {
+  return _.map(getSortedLocations(), function(name) {
+    return '<option value="' + name + '"></option>'
+  }).join('');
+};
+
 var getSortedList = function () {
   window.civicStore.lists = window.civicStore.lists || {};
 
@@ -187,18 +208,19 @@ var getLowercaseList = function () {
   return window.civicStore.lists.lowercase;
 };
 
-exports.colors               = colors
-exports.employeeScale        = employeeScale
-exports.twitterScale         = twitterScale;
-exports.getQueryParams       = getQueryParams;
-exports.getNameHash          = getNameHash;
-exports.getNicknameHash      = getNicknameHash;
-exports.getLocationsHash     = getLocationsHash;
-exports.getSortedNames       = getSortedNames;
-exports.getSortedLocations   = getSortedLocations;
-exports.getSortedList        = getSortedList;
-exports.getLowercaseList     = getLowercaseList;
-exports.getSortedNameOptions = getSortedNameOptions;
-// exports.getEntityById       = getEntityById;
-// exports.getEntityByName     = getEntityByName;
-// exports.getEntityByNickname = getEntityByNickname;
+exports.colors                   = colors
+exports.employeeScale            = employeeScale
+exports.twitterScale             = twitterScale;
+exports.getQueryParams           = getQueryParams;
+exports.getNameHash              = getNameHash;
+exports.getNicknameHash          = getNicknameHash;
+exports.getLocationHash          = getLocationHash;
+exports.getSortedNames           = getSortedNames;
+exports.getSortedLocations       = getSortedLocations;
+exports.getSortedList            = getSortedList;
+exports.getLowercaseList         = getLowercaseList;
+exports.getSortedNameOptions     = getSortedNameOptions;
+exports.getSortedLocationOptions = getSortedLocationOptions;
+// exports.getEntityById            = getEntityById;
+// exports.getEntityByName          = getEntityByName;
+// exports.getEntityByNickname      = getEntityByNickname;

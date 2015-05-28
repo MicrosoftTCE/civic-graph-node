@@ -4,10 +4,7 @@ var utils = require('../utilities');
 
 var formATmpl = require("jade!../templates/form-a.jade");
 
-var editForm = function(
-  dataListSortedLocations,
-  locationsHash
-) {
+var editForm = function() {
   console.log("Running editForm");
 
   d3.select('#edit-add-info')
@@ -29,13 +26,13 @@ var editForm = function(
       preParseForm(this.value);
     });
 
-  d3.select('datalist#list-location').html(dataListSortedLocations);
+  d3.select('datalist#list-location').html(utils.getSortedLocationOptions());
 
   d3.select('input#location').on('keyup',
     function() {
       console.log("Running onKeyup for input#location");
       preFillLocation(this.value);
-      addInputLocations(0, locationsHash);
+      addInputLocations(0);
     });
 
   // To split the location string into
@@ -126,10 +123,7 @@ var editForm = function(
   d3.select("#toFormC").on('click',
     function() {
       console.log("Running onClick on #toFormC");
-      displayFormC(
-        dataListSortedLocations,
-        locationsHash
-      );
+      displayFormC();
     });
 
   d3.selectAll('#submit-A').on('click',
@@ -137,10 +131,7 @@ var editForm = function(
       console.log("Running onClick on #submit-A");
       d3.select('#name').style("border-color", "#d9d9d9");
       d3.select('#location').style("border-color", "#d9d9d9");
-      displayFormB(
-        dataListSortedLocations,
-        locationsHash
-      );
+      displayFormB();
     });
 };
 

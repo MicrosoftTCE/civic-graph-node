@@ -3,19 +3,12 @@ var $ = require('jquery');
 var processFormB = require('./process-form-b');
 var displayFormC = require('./display-form-c');
 
-var displayFormCSendJson = function (
-  obj,
-  dataListSortedLocations,
-  locationsHash
-) {
+var displayFormCSendJson = function (obj) {
   console.log("Running displayFormCSendJson with obj =", obj);
 
   var formObj = processFormB(obj);
 
-  displayFormC(
-    dataListSortedLocations,
-    locationsHash
-  );
+  displayFormC();
 
   $.ajax({
     type: 'POST',

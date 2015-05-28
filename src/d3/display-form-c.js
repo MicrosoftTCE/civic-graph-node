@@ -7,10 +7,7 @@ var sinclick            = require('./sinclick');
 
 var formCTmpl = require('jade!../templates/form-c.jade');
 
-var displayFormC = function (
-  dataListSortedLocations,
-  locationsHash
-) {
+var displayFormC = function () {
   console.log("Running displayFormC");
 
   var suggestions = determineNullFields(_.values(window.civicStore.vertices));
@@ -22,15 +19,8 @@ var displayFormC = function (
     function(d, i) {
       console.log("Running onClick on #info ul a with d, i =", d, i);
       sinclick(suggestions[i]);
-      editForm(
-        dataListSortedLocations,
-        locationsHash
-      );
-      preFillFormA(
-        suggestions[i],
-        dataListSortedLocations,
-        locationsHash
-      );
+      editForm();
+      preFillFormA(suggestions[i]);
     }
   );
 }

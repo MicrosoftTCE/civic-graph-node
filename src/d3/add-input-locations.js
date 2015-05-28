@@ -1,11 +1,13 @@
 var d3 = require('d3');
 var $  = require('jquery');
 
+var utils = require('../utilities');
+
 var preFillLocation = require('./pre-fill-location');
 
 var locationTmpl = require("jade!../templates/location.jade");
 
-var addInputLocations = function (idx, locationsHash) {
+var addInputLocations = function (idx) {
   console.log("Running addInputLocations with idx = " + idx);
 
   if ($('#location-' + idx + ' input[name="location"]').val() !== "") {
@@ -14,7 +16,7 @@ var addInputLocations = function (idx, locationsHash) {
       function () {
         console.log("Running onKeyup with idx = " + idx);
 
-        preFillLocation(this.value, locationsHash);
+        preFillLocation(this.value, utils.getLocationHash());
       }
     );
 
@@ -27,7 +29,7 @@ var addInputLocations = function (idx, locationsHash) {
       function() {
         console.log("Running location onKeyup with idx = " + idx);
 
-        addInputLocations(idx, locationsHash);
+        addInputLocations(idx);
       }
     );
   }

@@ -1,25 +1,14 @@
 var editForm = require('./edit-form');
 var preFillFormA = require('./pre-fill-form-a');
 
-var preParseForm = function (
-  input,
-  dataListSortedLocations,
-  locationsHash
-) {
+var preParseForm = function (input) {
   console.log("Running preParseForm with", input);
 
   input = input.toLowerCase();
 
   if (input in entitiesHash) {
-    editForm(
-      dataListSortedLocations,
-      locationsHash
-    );
-    preFillFormA(
-      entitiesHash[input],
-      dataListSortedLocations,
-      locationsHash
-    );
+    editForm();
+    preFillFormA(entitiesHash[input]); // TODO
   }
 }
 

@@ -1,20 +1,8 @@
-var prefillCurrent = function(
-  obj,
-  dataListSortedLocations,
-  locationsHash
-) {
+var prefillCurrent = function(obj) {
   console.log("Running prefillCurrent with obj =", obj);
 
-  editForm(
-    dataListSortedLocations,
-    locationsHash
-  );
-
-  preFillFormA(
-    obj,
-    dataListSortedLocations,
-    locationsHash
-  );
+  editForm();
+  preFillFormA(obj);
 };
 
 module.exports = prefillCurrent;

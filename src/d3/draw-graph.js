@@ -29,7 +29,6 @@ var drawGraph = function () {
   var width = 1000;
   var height = 1000;
 
-  var allNodes;
   var forProfitNodes;
   var nonProfitNodes;
   var individualNodes;
@@ -43,12 +42,6 @@ var drawGraph = function () {
   var clearResetFlag = 1;
 
   var centeredNode = {};
-
-  var locationsHash = {};
-
-  var sortedSearchList = [];
-
-  var dataListSortedLocations;
 
   window.d3RootElem = d3
     .select('.content')
@@ -94,7 +87,6 @@ var drawGraph = function () {
   var empScale = d3.scale.sqrt().domain([10, 130000]).range([10, 50]);
   var twitScale = d3.scale.sqrt().domain([10, 1000000]).range([10, 50]);
 
-  console.log("Running AJAX call to /athena");
   console.log("civicStore", window.civicStore);
 
   var allNodes = _.values(window.civicStore.vertices);
@@ -106,7 +98,9 @@ var drawGraph = function () {
       .concat(window.civicStore.edges.data)
 
   console.log("allNodes =", allNodes.length);
-  console.log("connections =", connections.length);
+  console.log("connections =", connections);
+
+  console.log("width, height", width, height);
 
   var force = d3
     .layout
@@ -187,7 +181,7 @@ var drawGraph = function () {
 
   console.log("Set data links =", window.civicStore.lines.data);
 
-  var textElement = window.d3RootElem
+  window.textElement = window.d3RootElem
     .selectAll('.node')
     .append('text')
     .text(function(d) { return d.nickname; })
@@ -471,8 +465,6 @@ var drawGraph = function () {
       }
     }
   );
-
-  dataListSortedLocations = window.civicStore.locations;
 
   connectionCboxActions(nodeInit);
 

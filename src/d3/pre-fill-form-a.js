@@ -24,11 +24,7 @@ var addInputInvest      = require('./add-input-invest');
 var addInputInvestMade  = require('./add-input-invest-made');
 var addInputData        = require('./add-input-data');
 
-var preFillFormA = function (
-  obj,
-  dataListSortedLocations,
-  locationsHash
-) {
+var preFillFormA = function (obj) {
   console.log("Running preFillFormA with obj =", obj);
 
   // Time to prefill the form...
@@ -94,7 +90,7 @@ var preFillFormA = function (
             " and calling addInputLocations with length = " + location.length
           );
 
-          addInputLocations(location.length, locationsHash);
+          addInputLocations(location.length);
         }
       );
   }
@@ -414,10 +410,7 @@ var preFillFormA = function (
     d3.select('#name').style("border-color", "#d9d9d9");
     d3.select('#location').style("border-color", "#d9d9d9");
 
-    displayFormB(
-      dataListSortedLocations,
-      locationsHash
-    );
+    displayFormB();
     preFillFormB(obj);
   });
 };

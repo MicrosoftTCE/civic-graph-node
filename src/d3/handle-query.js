@@ -1,6 +1,8 @@
 var sinclick             = require('./sinclick');
 var handleClickNodeHover = require('./handle-click-node-hover');
 
+var utils = require('../utilities');
+
 var handleQuery = function (query) {
   console.log("Calling handleQuery with query = " + query);
 
@@ -11,7 +13,7 @@ var handleQuery = function (query) {
   }
 
   console.log("Chaging opacities on funding lines, investment lines, etc.");
-  if (query in locationsHash) {
+  if (query in utils.getLocationHash()) {
     window.civicStore.lines.funding.style("opacity", function(l) {
       var locationSource = l.source.location;
       var locationTarget = l.target.location;

@@ -1,11 +1,16 @@
 var d3 = require('d3');
 
-var preFillLocation = function (input, locationsHash) {
+var utils = require('../utilities');
+
+var preFillLocation = function (input) {
   console.log("Running preFillLocation with", input);
 
-  if (input.toLowerCase() in locationsHash) {
+  var locationHash = utils.getLocationHash();
+  var key = input.toLowerCase();
+
+  if (key in locationHash) {
     d3.selectAll('#location').text(
-      function(d) { this.value = locationsHash[input][0].location; }
+      function(d) { this.value = locationsHash[key][0].location; }
     );
   }
 }

@@ -13,10 +13,7 @@ var utils = require('../utilities');
 
 var formBTmpl = require("jade!../templates/form-b.jade");
 
-var displayFormB = function(
-  dataListSortedLocations,
-  locationsHash
-) {
+var displayFormB = function() {
   console.log("Running displayFormB");
   // Now we have a perfectly structured JSON object that contains
   // the information given by the user and inputted into the webform.
@@ -72,11 +69,7 @@ var displayFormB = function(
 
     d3.selectAll('#submit-B').on(
       'click',
-      function() { displayFormCSendJson(
-        formObject,
-        dataListSortedLocations,
-        locationsHash
-      ); }
+      function() { displayFormCSendJson(formObject); }
     );
 
   } else { //  Error checking the form...

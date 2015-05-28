@@ -51,19 +51,28 @@ d3.selection.prototype.moveToBack = function() {
 
 d3.selectAll('#cb_networkview').on('click', function() {
   console.log("Running cb_networkview click handler");
+
   if (document.getElementById('cb_networkview').checked) {
-    drawGraph();
     var map = document.getElementById('map');
-    map.parentNode.removeChild(map);
+
+    if (map) {
+      map.parentNode.removeChild(map);
+    }
+
+    drawGraph();
   }
 });
 
 d3.selectAll('#cb_mapview').on('click', function() {
   console.log("Running cb_mapview click handler");
+
   if (document.getElementById('cb_mapview').checked) {
-    console.log("asd");
     var network = document.getElementById('network');
-    network.parentNode.removeChild(network);
+
+    if (network) {
+      network.parentNode.removeChild(network);
+    }
+
     drawMap();
   }
 });
@@ -73,8 +82,6 @@ var drawGraph = require('./d3/draw-graph');
 var drawMap = require('./d3/draw-map');
 var loadD3Layer = require('./d3/load-d3-layer');
 
-drawGraph();
-
 var currentView = utils.getQueryParams()['view'];
 
 // TODO: set checkboxes on document ready
@@ -83,14 +90,18 @@ var networkView = document.getElementById('cb_networkview');
 
 if (currentView == 'map') {
   console.log("currentView == map; calling drawMap");
+
   drawMap();
+
   if (mapView && networkView) {
     mapView.checked = true;
     networkView.checked = false;
   }
 } else {
   console.log("currentView == network; calling drawGraph");
+
   drawGraph();
+
   if (mapView && networkView) {
     mapView.checked = false;
     networkView.checked = true;
