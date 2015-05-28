@@ -1,5 +1,8 @@
-var searchAutoComplete = function (allNodes, entitiesHash, sortedNamesList, sortedLocationsList) {
+
+var searchAutoComplete = function () {
   console.log("Running searchAutoComplete");
+
+  var allNodes = _.values(window.civicStore.vertices);
 
   var s = ""; /////
 

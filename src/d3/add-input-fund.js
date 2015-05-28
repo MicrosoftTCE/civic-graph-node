@@ -6,7 +6,7 @@ var preFillName = require('./pre-fill-name');
 
 var fundingTmpl = require("jade!../templates/funding.jade");
 
-var addInputFund = function (idx, entitiesHash, dataListSortedNames) {
+var addInputFund = function (idx, dataListSortedNames) {
   console.log("Running addInputFund with idx = " + idx);
 
   if ($('#funding-' + idx + ' input[name="fund"]').val() !== "") {
@@ -14,7 +14,7 @@ var addInputFund = function (idx, entitiesHash, dataListSortedNames) {
       'keyup',
       function() {
         console.log("Running fund onKeyup with idx = " + idx);
-        preFillName(this.value, '#funding-' + (idx - 1) + ' input[name="fund"]', entitiesHash);
+        preFillName(this.value, '#funding-' + (idx - 1) + ' input[name="fund"]');
       }
     );
     idx++; // counter -> 2
@@ -28,7 +28,7 @@ var addInputFund = function (idx, entitiesHash, dataListSortedNames) {
       "keyup",
       function() {
         console.log("Running fund onKeyup with idx = " + idx);
-        addInputFund(idx, entitiesHash, dataListSortedNames);
+        addInputFund(idx, dataListSortedNames);
       }
     );
   }

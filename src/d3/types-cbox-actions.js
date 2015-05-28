@@ -4,13 +4,7 @@ var determineVisibleNodes = require('./determine-visible-nodes');
 var nodeVisibility        = require('./node-visibility');
 var toggleLinks           = require('./toggle-links');
 
-var typesCboxActions = function(
-  nodeInit,
-  fundLink,
-  investLink,
-  porucsLink,
-  dataLink
-) {
+var typesCboxActions = function(nodeInit) {
   console.log("Running typesCheckboxActions");
 
   d3.selectAll('#cb_forpro, #cb_nonpro, #cb_gov, #cb_individ').on(
@@ -34,13 +28,7 @@ var typesCboxActions = function(
         nodeVisibility('Individual', 'visible') :
         nodeVisibility('Individual', 'hidden');
 
-      toggleLinks(
-        visibleNodes,
-        fundLink,
-        investLink,
-        porucsLink,
-        dataLink
-      );
+      toggleLinks(visibleNodes);
     }
   );
 };

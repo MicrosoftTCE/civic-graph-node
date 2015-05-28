@@ -6,7 +6,7 @@ var preFillName = require('./pre-fill-name');
 
 var investmentMadeTmpl = require("jade!../templates/investment-made.jade");
 
-var addInputInvestMade = function (idx, entitiesHash, dataListSortedNames) {
+var addInputInvestMade = function (idx, dataListSortedNames) {
   console.log("Running addInputInvestMade with idx = " + idx);
 
   if ($('#investmentmade-' + idx + ' input[name="investmade"]').val() !== "") {
@@ -17,8 +17,7 @@ var addInputInvestMade = function (idx, entitiesHash, dataListSortedNames) {
 
         preFillName(
           this.value,
-          '#investmentmade-' + (idx - 1) + ' input[name="investmade"]',
-          entitiesHash
+          '#investmentmade-' + (idx - 1) + ' input[name="investmade"]'
         );
       }
     );
@@ -34,7 +33,7 @@ var addInputInvestMade = function (idx, entitiesHash, dataListSortedNames) {
       function() {
         console.log("Running fund made onKeyup with idx = " + idx);
 
-        addInputInvestMade(idx, entitiesHash, dataListSortedNames);
+        addInputInvestMade(idx, dataListSortedNames);
       }
     );
   }

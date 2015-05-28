@@ -6,7 +6,7 @@ var preFillName = require('./pre-fill-name');
 
 var dataTmpl = require("jade!../templates/data.jade");
 
-var addInputData = function (idx, entitiesHash, dataListSortedNames) {
+var addInputData = function (idx, dataListSortedNames) {
   console.log("Running addInputData with idx = " + idx);
 
   if ($('#data-' + idx + ' input[name="data"]').val() !== "") {
@@ -15,7 +15,7 @@ var addInputData = function (idx, entitiesHash, dataListSortedNames) {
       function() {
         console.log("Running data onKeyup with idx = " + idx);
 
-        preFillName(this.value, '#data-' + (idx - 1) + ' input[name="data"]', entitiesHash);
+        preFillName(this.value, '#data-' + (idx - 1) + ' input[name="data"]');
       }
     );
     idx++; // counter -> 2
@@ -30,7 +30,7 @@ var addInputData = function (idx, entitiesHash, dataListSortedNames) {
       function() {
         console.log("Running data onKeyup with idx = " + idx);
 
-        addInputData(idx, entitiesHash, dataListSortedNames);
+        addInputData(idx, dataListSortedNames);
       }
     );
   }

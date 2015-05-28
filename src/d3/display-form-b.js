@@ -12,15 +12,8 @@ var displayFormCSendJson  = require('./display-form-c-send-json');
 var formBTmpl = require("jade!../templates/form-b.jade");
 
 var displayFormB = function(
-  allNodes,
-  fundLink,
-  investLink,
-  porucsLink,
-  dataLink,
-  graph,
   dataListSortedNames,
   dataListSortedLocations,
-  entitiesHash,
   locationsHash
 ) {
   console.log("Running displayFormB");
@@ -60,7 +53,7 @@ var displayFormB = function(
     d3.selectAll('input[name="collaboration"]').on(
       'keyup',
       function() {
-        addInputCollab(0, entitiesHash), dataListSortedNames;
+        addInputCollab(0), dataListSortedNames;
 
         preFillName(this.value, '#collaboration-0 input');
       }
@@ -80,15 +73,8 @@ var displayFormB = function(
       'click',
       function() { displayFormCSendJson(
         formObject,
-        allNodes,
-        fundLink,
-        investLink,
-        porucsLink,
-        dataLink,
-        graph,
         dataListSortedNames,
         dataListSortedLocations,
-        entitiesHash,
         locationsHash
       ); }
     );

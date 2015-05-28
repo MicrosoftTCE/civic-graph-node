@@ -1,24 +1,18 @@
-var sinclickCb           = require('./sinclick-cb');
+var sinclick             = require('./sinclick');
 var handleClickNodeHover = require('./handle-click-node-hover');
 
-var handleQuery = function (query, fundLink, investLink, porucsLink, dataLink, graph) {
+var handleQuery = function (query) {
   console.log("Calling handleQuery with query = " + query);
 
   query = query.toLowerCase();
 
   if (query in entitiesHash) {
-    sinclickCb(
-      fundLink,
-      investLink,
-      porucsLink,
-      dataLink,
-      graph
-    )(entitiesHash[query]);
+    sinclick(entitiesHash[query]);
   }
 
-  console.log("Chaging opacities on fundLinks, investLinks, etc.");
+  console.log("Chaging opacities on funding lines, investment lines, etc.");
   if (query in locationsHash) {
-    fundLink.style("opacity", function(l) {
+    window.civicStore.lines.funding.style("opacity", function(l) {
       var locationSource = l.source.location;
       var locationTarget = l.target.location;
 
@@ -34,7 +28,7 @@ var handleQuery = function (query, fundLink, investLink, porucsLink, dataLink, g
       }
     });
 
-    investLink.style("opacity", function(l) {
+    window.civicStore.lines.investment.style("opacity", function(l) {
       var locationSource = l.source.location;
       var locationTarget = l.target.location;
 
@@ -50,7 +44,7 @@ var handleQuery = function (query, fundLink, investLink, porucsLink, dataLink, g
       }
     });
 
-    porucsLink.style("opacity", function(l) {
+    window.civicStore.lines.collaboration.style("opacity", function(l) {
       var locationSource = l.source.location;
       var locationTarget = l.target.location;
 
@@ -66,7 +60,7 @@ var handleQuery = function (query, fundLink, investLink, porucsLink, dataLink, g
       }
     });
 
-    dataLink.style("opacity", function(l) {
+    window.civicStore.lines.data.style("opacity", function(l) {
       var locationSource = l.source.location;
       var locationTarget = l.target.location;
 

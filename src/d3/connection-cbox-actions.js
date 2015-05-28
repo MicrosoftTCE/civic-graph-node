@@ -8,7 +8,7 @@ var shouldCboxRemainUnchecked = require('./should-cbox-remain-unchecked');
 var connectionCboxActions = function(nodeInit) {
   console.log("Running connectionCboxActions");
 
-  var connectionClasses = ['.invest', '.fund', '.porucs', '.data'];
+  var connectionClasses = ['.invest', '.fund', '.collaboration', '.data'];
 
   d3.selectAll('.group-items.connections input')[0].forEach(
     function(input, idx) {

@@ -40,13 +40,13 @@ text {
 g.node {
   cursor: pointer;
 }
-/*g text:hover 
+/*g text:hover
 {
   font-weight: 500;
   fill: black;
   font-size: 14px;
 }*/
-/*g circle:hover 
+/*g circle:hover
 {
   fill: teal;
 }*/
@@ -54,7 +54,7 @@ g.node {
 .navstyle {
   /*  margin-top: 15px;
   margin-bottom: 20px;*/
-  
+
   display: inline-block !important;
 }
 .navstyle .desc {
@@ -65,17 +65,17 @@ g.node {
 {
   stroke:rgb(120,129,0);
 }
- 
+
 .invest
 {
   stroke:rgb(120,0,1);
 }
- 
-.porucs
+
+.collaboration
 {
   stroke:rgb(255,125,65);
 }
- 
+
 .affil
 {
   stroke:rgb(135,126,255);
@@ -84,17 +84,17 @@ g.node {
 {
   stroke-width:2.5px;
 }
- 
+
 .node:hover + .invest
 {
   stroke-width:2.5px;
 }
- 
-.node:hover + .porucs
+
+.node:hover + .collaboration
 {
   stroke-width:2.5px;
 }
- 
+
 .node:hover + .affil
 {
   stroke-width:2.5px;

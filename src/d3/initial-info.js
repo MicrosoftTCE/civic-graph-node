@@ -2,8 +2,10 @@ var $ = require('jquery');
 
 var entityNamesTmpl = require('jade!../templates/entity-names.jade');
 
-var initialInfo = function (allNodes) {
+var initialInfo = function () {
   console.log("Calling initialInfo");
+
+  var allNodes = _.values(window.civicStore.vertices);
 
   var countTypes = [0, 0, 0, 0];
 

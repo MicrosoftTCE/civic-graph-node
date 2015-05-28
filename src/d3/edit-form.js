@@ -3,15 +3,8 @@ var d3        = require('d3');
 var formATmpl = require("jade!../templates/form-a.jade");
 
 var editForm = function(
-  allNodes,
-  fundLink,
-  investLink,
-  porucsLink,
-  dataLink,
-  graph,
   dataListSortedNames,
   dataListSortedLocations,
-  entitiesHash,
   locationsHash
 ) {
   console.log("Running editForm");
@@ -89,7 +82,7 @@ var editForm = function(
   d3.select('#funding-0 input[name="fund"]').on('keyup',
     function() {
       console.log("Running onKeyup on #funding-0 input[name=fund]");
-      addInputFund(0, entitiesHash, dataListSortedNames);
+      addInputFund(0, dataListSortedNames);
       preFillName(this.value, '#funding-0 input');
     });
 
@@ -98,7 +91,7 @@ var editForm = function(
   d3.select('#investing-0 input[name="invest"]').on('keyup',
     function() {
       console.log("Running onKeyup on #investing-0 input[name=invest]");
-      addInputInvest(0, entitiesHash, dataListSortedNames);
+      addInputInvest(0, dataListSortedNames);
       preFillName(this.value, '#investing-0 input');
     });
 
@@ -107,7 +100,7 @@ var editForm = function(
   d3.select('#fundinggiven-0 input[name="fundgiven"]').on('keyup',
     function() {
       console.log("Running onKeyup on #fundinggiven-0 input[name=fundgiven]");
-      addInputFundGiven(0, entitiesHash, dataListSortedNames);
+      addInputFundGiven(0, dataListSortedNames);
       preFillName(this.value, '#fundinggiven-0 input');
     });
 
@@ -116,7 +109,7 @@ var editForm = function(
   d3.select('#investmentmade-0 input[name="investmade"]').on('keyup',
     function() {
       console.log("Running onKeyup on #investmentmade-0 input[name=investmade]");
-      addInputInvestMade(0, entitiesHash, dataListSortedNames);
+      addInputInvestMade(0, dataListSortedNames);
       preFillName(this.value, '#investmentmade-0 input');
     });
 
@@ -125,7 +118,7 @@ var editForm = function(
   d3.select('#data-0 input[name="data"]').on('keyup',
     function() {
       console.log("Running onKeyup on #data-0 input[name=data]");
-      addInputData(0, entitiesHash, dataListSortedNames);
+      addInputData(0, dataListSortedNames);
       preFillName(this.value, '#data-0 input');
     });
 
@@ -133,15 +126,8 @@ var editForm = function(
     function() {
       console.log("Running onClick on #toFormC");
       displayFormC(
-        allNodes,
-        fundLink,
-        investLink,
-        porucsLink,
-        dataLink,
-        graph,
         dataListSortedNames,
         dataListSortedLocations,
-        entitiesHash,
         locationsHash
       );
     });
@@ -152,15 +138,8 @@ var editForm = function(
       d3.select('#name').style("border-color", "#d9d9d9");
       d3.select('#location').style("border-color", "#d9d9d9");
       displayFormB(
-        allNodes,
-        fundLink,
-        investLink,
-        porucsLink,
-        dataLink,
-        graph,
         dataListSortedNames,
         dataListSortedLocations,
-        entitiesHash,
         locationsHash
       );
     });

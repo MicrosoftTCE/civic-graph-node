@@ -1,12 +1,7 @@
 var transformText = require('./transform-text');
 
 var tickCb = function (
-  allNodes,
   centeredNode,
-  fundLink,
-  investLink,
-  porucsLink,
-  dataLink,
   node,
   textElement
 ) {
@@ -17,7 +12,7 @@ var tickCb = function (
     var k = 8 * event.alpha;
 
     /* Four quandrant separation */
-    allNodes.forEach(
+    _.values(window.civicStore.vertices).forEach(
       function(entity, idx) {
         if (entity.type !== null) {
           if (entity.type === "Individual") {
@@ -42,25 +37,25 @@ var tickCb = function (
 
     // console.log("Setting x1, y1 and x2, y2");
     if (_.isEmpty(centeredNode)) {
-      fundLink
+      window.civicStore.lines.funding
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
 
-      investLink
+      window.civicStore.lines.investment
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
 
-      porucsLink
+      window.civicStore.lines.collaboration
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
 
-      dataLink
+      window.civicStore.lines.data
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
@@ -73,7 +68,7 @@ var tickCb = function (
       textElement.attr("transform", transformText);
 
     } else {
-      fundLink
+      window.civicStore.lines.funding
         .attr(
           "x1",
           function(d) {
@@ -103,7 +98,7 @@ var tickCb = function (
           }
         );
 
-      investLink
+      window.civicStore.lines.investment
         .attr(
           "x1",
           function(d) {
@@ -133,7 +128,7 @@ var tickCb = function (
           }
         );
 
-      porucsLink
+      window.civicStore.lines.collaboration
         .attr(
           "x1",
           function(d) {
@@ -163,7 +158,7 @@ var tickCb = function (
           }
         );
 
-      dataLink
+      window.civicStore.lines.data
         .attr(
           "x1",
           function(d) {
