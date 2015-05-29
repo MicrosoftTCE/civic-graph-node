@@ -4,11 +4,10 @@ div(style="height: 30px")
     i#editCurrentInfo.icon-pencil.on-left
 
 h1
-  a(href=url, target="_blank")
-    #{name}
+  a(href=url, target="_blank")= name
 
 div.category-label Type of entity:
-div.category-value #{type}
+div.category-value= entity_type
 
 div.category-label Location:
 if locations
@@ -17,26 +16,31 @@ if locations
       li
         div.category-value
           a.click-location(style="cursor: pointer")
-            #{location}
+            = loc.city
+            if loc.state
+              | ,
+              = loc.state
+            if loc.country
+              | ,
+              = loc.country
 else
   div.category-value N/A
 
 if isOrganization
   div.category-label Employees:
-  div.category-value #{numEmployees}
+  div.category-value= employees
 
 div.category-label Twitter:
 div.category-value
   if twitter_handle
-    a(href=twitterLink, target="_blank")
-      #{twitterHandle}
+    a(href=twitterLink, target="_blank")= twitter_handle
   else
     | N/A
 
 div.category-label Twitter Followers:
 div.category-value
   if twitter_followers
-    #{twitter_followers}
+    = twitter_followers
   else
     | N/A
 
@@ -45,88 +49,45 @@ if key_people
   ul
     for person in key_people
       li
-        a(href="bingSearchUrl", target="_blank")
-          #{person.name}
+        a(href="bingSearchUrl", target="_blank")= person
 
-if funding_received
-  div.category-label Received funding from:
+if funding
+  div.category-label Funding:
   ul
-    for fund in funding_received
+    for funder in funding
       li
         div.category-value
           a(href="bingSearchUrl", target="_blank")
-            #{entity}
+            = funder.entity
             | :
-          if amount
-            strong(style="color: rgb(255,185,0)")
-              unknown
+          if funder.amount
+            strong(style="color: rgb(127,186,0)") = funder.amount
           else
-            strong(style="color: rgb(127,186,0)")
-              #{amount}
+            strong(style="color: rgb(255,185,0)") unknown
 else
-  div.category-label No known funding received.
+  div.category-label No known funding received or given.
 
-if funding_given
-  div.category-label Gave funding to:
+if investments
+  div.category-label Investment:
   ul
-    for fund in funding_given
+    for investment in investments
       li
         div.category-value
-          a(href="bingSearchUrl", target="_blank")
-            #{entity}
+          a(href="bingSearchUrl", target="_blank")= investment.entity
             | :
-          if amount
-            strong(style="color: rgb(255,185,0)")
-              | unknown
+          if investment.amount
+            strong(style="color: rgb(127,186,0)") = investment.amount
           else
-            strong(style="color: rgb(127,186,0)")
-              #{amount}
+            strong(style="color: rgb(255,185,0)") unknown
 else
-  div.category-label No known funding provided.
-
-if investments_received
-  div.category-label Received investments from:
-  ul
-    for investment in investments_received
-      li
-        div.category-value
-          a(href="bingSearchUrl", target="_blank")
-            #{entity}
-            | :
-          if amount
-            strong(style="color: rgb(255,185,0)")
-              | unknown
-          else
-            strong(style="color: rgb(127,186,0)")
-              #{amount}
-else
-  div.category-label No known investments received.
-
-if investments_made
-  div.category-label Invested in:
-  ul
-    for investment in investments_made
-      li
-        div.category-value
-          a(href="bingSearchUrl", target="_blank")
-            #{entity}
-            | :
-          if amount
-            strong(style="color: rgb(255,185,0)")
-              | unknown
-          else
-            strong(style="color: rgb(127,186,0)")
-              #{amount}
-else
-  div.category-label No known investments made.
+  div.category-label No known investments.
 
 if collaborations
   div.category-label Collaborated with:
   ul
-    for collab in collaborations
+    for collaboration in collaborations
       li
-        a(href="bingSearchUrl", target="_blank")
-          #{entity}
+        a(href="bingSearchUrl", target="_blank")= collaboration.entity
 else
   div.category-label No known collaborations.
 
@@ -135,56 +96,51 @@ if data
   ul
     for datum in data
       li
-        a(href="bingSearchUrl", target="_blank")
-          #{entity}
+        a(href="bingSearchUrl", target="_blank")= datum.entity
 else
   div.category-label No known external data usage.
 
 if revenue
   div.category-label Revenue:
   ul
-    for amt in revenue
+    for rev in revenue
       li
-        if year
-          div.category-value #{year}:
-          if amount
-            strong(style="color: rgb(127,186,0)")
-              #{amount}
+        if rev.year
+          div.category-value
+            = rev.year
+            | :
+          if rev.amount
+            strong(style="color: rgb(127,186,0)")= rev.amount
           else
-            strong(style="color: rgb(255,185,0)")
-              | unknown
+            strong(style="color: rgb(255,185,0)") unknown
         else
           div.category-value Unknown Year:
-          if amount
-            strong(style="color: rgb(127,186,0)")
-              #{amount}
+          if rev.amount
+            strong(style="color: rgb(127,186,0)")= rev.amount
           else
-            strong(style="color: rgb(255,185,0)")
-              | unknown
+            strong(style="color: rgb(255,185,0)") unknown
 else
   div.category-label No known revenue information.
 
 if expenses
   div.category-label Expenses:
   ul
-    for amt in expenses
+    for exp in expenses
       li
-        if year
-          div.category-value #{year}:
-          if amount
-            strong(style="color: rgb(127,186,0)")
-              #{amount}
+        if exp.year
+          div.category-value
+            = exp.year
+            | :
+          if exp.amount
+            strong(style="color: rgb(127,186,0)")= exp.amount
           else
-            strong(style="color: rgb(255,185,0)")
-              | unknown
+            strong(style="color: rgb(255,185,0)") unknown
         else
           div.category-value Unknown Year:
-          if amount
-            strong(style="color: rgb(127,186,0)")
-              #{amount}
+          if exp.amount
+            strong(style="color: rgb(127,186,0)")= exp.amount
           else
-            strong(style="color: rgb(255,185,0)")
-              | unknown
+            strong(style="color: rgb(255,185,0)") unknown
 else
   div.category-label No known expense information.
 <!-- end text-display.jade -->

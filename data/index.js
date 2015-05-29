@@ -11,6 +11,116 @@ var config  = require('../config');
 var pool    = mysql.createPool(config.db);
 var db      = wrap(pool);
 
+var processVertices = function(entities, bridges, operations, locations) {
+  var out = {};
+
+  _.each(entities, function(entity) {
+    if (entity.key_people) {
+      entity.key_people = entity.key_people.split("|");
+    }
+
+    out[entity.id] = _.merge({
+      collaborations: [],
+      data: [],
+      employment: [],
+      expenses: [],
+      funding: [],
+      investments: [],
+      locations: [],
+      revenue: [],
+      loaded: false
+    }, entity);
+  })
+
+  _.each(bridges, function(bridge) {
+
+    try {
+      switch (bridge.connection) {
+        case "Funding Received":
+        case "Funding Given":
+          out[bridge.entity_1_id].funding.push({
+            entity_id: bridge.entity_2_id,
+            entity: out[bridge.entity_2_id].name,
+            amount: bridge.amount,
+            year: bridge.year
+          });
+          break;
+        case "Investment Received":
+        case "Investment Made":
+          out[bridge.entity_1_id].investments.push({
+            entity_id: bridge.entity_2_id,
+            entity: out[bridge.entity_2_id].name,
+            amount: bridge.amount,
+            year: bridge.year
+          });
+          break;
+        case "Collaboration":
+          out[bridge.entity_1_id].collaborations.push({
+            entity_id: bridge.entity_2_id,
+            entity: out[bridge.entity_2_id].name
+          });
+          break;
+        case "Data":
+          out[bridge.entity_1_id].data.push({
+            entity_id: bridge.entity_2_id,
+            entity: out[bridge.entity_2_id].name
+          });
+          break;
+        case "Employment":
+          out[bridge.entity_1_id].employment.push({
+            entity_id: bridge.entity_2_id,
+            entity: out[bridge.entity_2_id].name
+          });
+          break;
+      }
+    } catch (err) {}
+  })
+
+  _.each(operations, function(operation) {
+
+    try {
+      if (operation.finance === "Revenue") {
+        out[operation.entity_id].revenue.push({
+          amount: operation.amount,
+          year: operation.year
+        });
+      } else if (operation.finance === "Expenses") {
+        out[operation.entity_id].expenses.push({
+          amount: operation.amount,
+          year: operation.year
+        });
+      }
+    } catch (err) {}
+  })
+
+  _.each(locations, function(location) {
+    try {
+      var id = location.entity_id
+      delete location.entity_id
+      out[id].locations.push(location)
+    } catch (err) {}
+  })
+
+  return out;
+};
+
+var processEdges = function(edges, withData) {
+  return _.map(edges, function(edge) {
+    return withData ? {
+      source: edge.entity_2_id,
+      target: edge.entity_1_id,
+      type: 'Received',
+      year: edge.connection_year,
+      amount: edge.amount,
+      render: edge.render
+    } : {
+      source: edge.entity_2_id,
+      target: edge.entity_1_id,
+      render: edge.render
+    }
+  })
+};
+
 var getTopEntities = function(callback) {
   var entities, bridges;
 
@@ -42,8 +152,14 @@ var getTopEntities = function(callback) {
       return db.query(qry)
     })
     .then(function(results) {
+      operations = results;
+      qry = select().from("locations_with_city").toString()
+
+      return db.query(qry)
+    })
+    .then(function(results) {
       callback(null, {
-        vertices: _.values(config.processVertices(entities, bridges, results))
+        vertices: _.values(processVertices(entities, bridges, operations, results))
       });
     })
     .catch(function(err) {
@@ -74,8 +190,14 @@ var getOtherEntities = function(idsToAvoid, callback) {
       return db.query(qry)
     })
     .then(function(results) {
+      operations = results;
+      qry = select().from("locations_with_city").toString()
+
+      return db.query(qry)
+    })
+    .then(function(results) {
       callback(null, {
-        vertices: _.values(config.processVertices(entities, bridges, results))
+        vertices: _.values(processVertices(entities, bridges, operations, results))
       });
     })
     .catch(function(err) {
@@ -84,25 +206,64 @@ var getOtherEntities = function(idsToAvoid, callback) {
 };
 
 var getVertices = function(callback) {
-  getTopEntities(function(err, topEntities) {
-    if (err) {
-      callback(err, null);
-    } else {
-      var idsToAvoid = _.map(topEntities.vertices, function(entity) {
-        return entity.id;
-      })
+  var qry = "SELECT DISTINCT * FROM (" +
+    "SELECT e.* FROM (" +
+    "SELECT * FROM `entities_view` WHERE render = 1 " +
+    "ORDER BY employees DESC LIMIT 10) e " +
+    "UNION " +
+    "SELECT f.* FROM (" +
+    "SELECT * FROM `entities_view` WHERE render = 1 " +
+    "ORDER BY followers DESC LIMIT 10) f " +
+    ") t ORDER BY t.name";
 
-      getOtherEntities(idsToAvoid, function(err, otherEntities) {
-        if (err) {
-          callback(err, null);
-        } else {
-          callback(null, {
-            vertices: topEntities.vertices.concat(otherEntities.vertices)
-          });
-        }
-      })
-    }
-  })
+  db.query(qry)
+    .then(function(results) {
+      entities = _.map(results, function(row) {
+        row.loaded = true;
+        return row;
+      });
+
+      var idsToAvoid = _.map(entities, function(entity) {
+        return entity.id;
+      });
+
+      qry = "SELECT id, name, nickname, followers, employees, entity_type " +
+          "FROM entities_view " +
+          "WHERE id NOT IN (" + idsToAvoid.join(",") + ")";
+
+      return db.query(qry)
+    })
+    .then(function(results) {
+
+      entities = entities.concat(_.map(results, function(row) {
+        row.loaded = false;
+        return row;
+      }));
+
+      qry = select().from("bridges_view").where({render: 1}).toString()
+
+      return db.query(qry)
+    })
+    .then(function(results) {
+      bridges = results;
+      qry = select().from("operations_view").toString()
+
+      return db.query(qry)
+    })
+    .then(function(results) {
+      operations = results;
+      qry = select().from("locations_with_city").toString()
+
+      return db.query(qry)
+    })
+    .then(function(results) {
+      callback(null, {
+        vertices: _.values(processVertices(entities, bridges, operations, results))
+      });
+    })
+    .catch(function(err) {
+      callback(err, null);
+    });
 };
 
 var getSpecifiedEdges = function(entityIds, callback) {
@@ -138,10 +299,10 @@ var getSpecifiedEdges = function(entityIds, callback) {
 
       callback(null, {
         edges: {
-          funding: config.processEdges(parsed.funding, true),
-          investment: config.processEdges(parsed.investment, true),
-          collaboration: config.processEdges(parsed.collaboration),
-          data: config.processEdges(parsed.data),
+          funding: processEdges(parsed.funding, true),
+          investment: processEdges(parsed.investment, true),
+          collaboration: processEdges(parsed.collaboration),
+          data: processEdges(parsed.data),
         }
       });
     })
@@ -182,10 +343,10 @@ var getAllEdges = function(callback) {
 
       callback(null, {
         edges: {
-          funding: config.processEdges(parsed.funding, true),
-          investment: config.processEdges(parsed.investment, true),
-          collaboration: config.processEdges(parsed.collaboration),
-          data: config.processEdges(parsed.data),
+          funding: processEdges(parsed.funding, true),
+          investment: processEdges(parsed.investment, true),
+          collaboration: processEdges(parsed.collaboration),
+          data: processEdges(parsed.data),
         }
       });
     })
@@ -221,7 +382,7 @@ var getEdges = function(edgeType, callback) {
 
   db.query(qry)
     .then(function(results) {
-      callback(null, { edges: config.processEdges(results, withData) });
+      callback(null, { edges: processEdges(results, withData) });
     })
     .catch(function(err) {
       callback(err, null);
@@ -334,6 +495,8 @@ var getStore = function(callback) {
   });
 };
 
+exports.processVertices   = processVertices;
+exports.processEdges      = processEdges;
 exports.getAllEdges       = getAllEdges;
 exports.getEdges          = getEdges;
 exports.getLocations      = getLocations;

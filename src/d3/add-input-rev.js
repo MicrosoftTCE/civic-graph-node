@@ -1,7 +1,7 @@
 var d3 = require('d3');
 var $  = require('jquery');
 
-var revenueTmpl = require("jade!../templates/revenue.jade");
+var revenueTmpl = require("../templates/revenue.hbs");
 
 var addInputRev = function (idx) {
   console.log("Running addInputRev with idx = " + idx);

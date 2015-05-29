@@ -1,0 +1,169 @@
+<!-- form-a.hbs -->
+<h2 id="webform-head">Information</h2>
+
+<hr/>
+
+<div class="webform-content">
+  <div class="input-control text" data-role="input-control">
+    <input id="name" list="list-name" name="name" placeholder="Name of Entity" type="text"/>
+    <datalist id="list-name"></datalist>
+  </div>
+  <div class="form-header">What type of entity?</div>
+  <div class="webform-entities">
+    <div class="input-control radio default-style webform" data-role="input-control">
+      <label>
+        <input checked="checked" id="rb_forpro" name="entitytype" type="radio" value="For-Profit"/>
+        <span class="check"></span>
+        <h4 class="webform-labels">For-Profit</h4>
+      </label>
+    </div>
+    <div class="input-control radio default-style webform" data-role="input-control">
+      <label>
+        <input id="rb_nonpro" name="entitytype" type="radio" value="Non-Profit"/>
+        <span class="check"></span>
+        <h4 class="webform-labels">Non-Profit</h4>
+      </label>
+    </div>
+    <div class="input-control radio default-style webform" data-role="input-control">
+      <label>
+        <input id="rb_gov" name="entitytype" type="radio" value="Government"/>
+        <span class="check"></span>
+        <h4 class="webform-labels">Government</h4>
+      </label>
+    </div>
+    <div class="input-control radio default-style webform" data-role="input-control">
+      <label>
+        <input id="rb_individs" name="entitytype" type="radio" value="Individual"/>
+        <span class="check"></span>
+        <h4 class="webform-labels">Individual</h4>
+      </label>
+    </div>
+  </div>
+  <div class="form-header">What kind of work do they do?</div>
+  <h4>(Select All That Apply)</h4>
+  <div class="webform-categories">
+    <div class="input-control checkbox webform" data-role="input-control">
+      <label>
+        <input data-show="general" id="cb_gen" name="gen" type="checkbox" value="General"/>
+        <span class="check"></span>
+        <h4 class="webform-labels">General Civic Tech</h4>
+      </label>
+    </div>
+    <div class="input-control checkbox webform" data-role="input-control">
+      <label>
+        <input data-show="datalytics" id="cb_datat" name="datat" type="checkbox" value="DataAnalytics"/>
+        <span class="check"></span>
+        <h4 class="webform-labels">Data & Analytics</h4>
+      </label>
+    </div>
+    <div class="input-control checkbox webform" data-role="input-control">
+      <label>
+        <input data-show="econedu" id="cb_eced" name="eced" type="checkbox" value="EconGrowthEdu"/>
+        <span class="check"></span>
+        <h4 class="webform-labels">Jobs & Education</h4>
+      </label>
+    </div>
+    <div class="input-control checkbox webform" data-role="input-control">
+      <label>
+        <input data-show="srcities" id="cb_src" name="srcities" type="checkbox" value="SRCities"/>
+        <span class="check"></span>
+        <h4 class="webform-labels">Smart & Resilient Cities</h4>
+      </label>
+    </div>
+    <div class="input-control checkbox webform" data-role="input-control">
+      <label>
+        <input data-show="socserv" id="cb_socs" name="socserv" type="checkbox" value="SocialServ"/>
+        <span class="check"></span>
+        <h4 class="webform-labels">Social Services</h4>
+      </label>
+    </div>
+    <div class="input-control checkbox webform" data-role="input-control">
+      <label>
+        <input data-show="govtech" id="cb_govt" name="govtech" type="checkbox" value="GovTech"/>
+        <span class="check"></span>
+        <h4 class="webform-labels">GovTech</h4>
+      </label>
+    </div>
+  </div>
+  <div id="location-0">
+    <div class="input-control text" data-role="input-control">
+      <input class="locations" id="location" list="list-location" name="location" placeholder="City" style="width:50%;" type="text"/>
+      <input id="state" placeholder="State" style="width:22%;" type="text"/>
+      <input id="country" placeholder="Country" style="width:28%;" type="text"/>
+    </div>
+  </div>
+  <datalist id="list-location"></datalist>
+</div>
+
+<div class="input-control text" data-role="input-control">
+  <input id="website" name="website" placeholder="Website" type="text"/>
+</div>
+
+<div class="form-header" style="display:inline-block;">Number of Employees</div>
+<div class="input-control text" data-role="input-control" style="width:27% !important; display:inline-block; float:right; margin-top: 2%;">
+  <input id="employee" maxlength="6" name="employees" style="width:100% !important;" type="text"/>
+</div>
+
+<div class="form-header">Key People?</div>
+<div class="input-control text" data-role="input-control" id="key-people-0">
+  <input class="kpeople" name="kpeople" placeholder="Key Person\'s Name" type="text"/>
+</div>
+
+<div class="form-header">Who funds them via grants?</div>
+<div id="funding-0">
+  <div class="fund-input input-control text" data-role="input-control">
+    <input class="funder" list="funding-received-list" name="fund" placeholder="Funder" style="display:inline-block; width:50%;" type="text"/>
+    <datalist id="funding-received-list"></datalist>
+    <input class="fund_amt" name="fund_amt" placeholder="Amount" style="display:inline-block; width: 27%;" type="text"/>
+    <input class="fund_year" name="fund_year" placeholder="Year" style="display:inline-block; width: 20%;" type="text"/>
+  </div>
+</div>
+
+<div class="form-header">Who invests in them via equity stakes (stock)?</div>
+<div id="investing-0">
+  <div class="invest-input input-control text" data-role="input-control">
+    <input class="investor" list="investment-received-list" name="invest" placeholder="Investor" style="display:inline-block; width:50%;" type="text"/>
+    <datalist id="investment-received-list"></datalist>
+    <input class="invest_amt" name="invest_amt" placeholder="Amount" style="display:inline-block; width: 27%;" type="text"/>
+    <input class="invest_year" name="invest_year" placeholder="Year" style="display:inline-block; width: 20%;" type="text"/>
+  </div>
+</div>
+
+<div class="form-header">Who do they fund via grants?</div>
+<div id="fundinggiven-0">
+  <div class="fundgiven-input input-control text" data-role="input-control">
+    <input class="fundee" list="funding-given-list" name="fundgiven" placeholder="Fundee" style="display:inline-block; width:50%;" type="text"/>
+    <datalist id="funding-given-list"></datalist>
+    <input class="fundgiven_amt" name="fundgiven_amt" placeholder="Amount" style="display:inline-block; width: 27%;" type="text"/>
+    <input class="fundgiven_year" name="fundgiven_year" placeholder="Year" style="display:inline-block; width: 20%;" type="text"/>
+  </div>
+</div>
+
+<div class="form-header">Who do they invest in via equity stakes (stock)?</div>
+<div id="investmentmade-0">
+  <div class="investmade-input input-control text" data-role="input-control">
+    <input class="investee" list="investment-made-list" name="investmade" placeholder="Investee" style="display:inline-block; width:50%;" type="text"/>
+    <datalist id="investment-made-list"></datalist>
+    <input class="investmade_amt" name="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;" type="text"/>
+    <input class="investmade_year" name="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;" type="text"/>
+  </div>
+</div>
+
+<div class="form-header">Who provides them with data?</div>
+<div class="input-control text" data-role="input-control" id="data-0">
+  <input class="data-entity" list="data-received-list" name="data" placeholder="Data Resource" type="text"/>
+  <datalist id="data-received-list"></datalist>
+</div>
+
+<div id="nextPhase">
+  <button href="javascript: check_empty()" id="submit-A" type="button">Next</button>
+</div>
+
+<hr/>
+
+<div class="webform-footer">
+  <span id="">Some entities lack adequate information. Would you like to help?</span>
+  <br/>
+  <span id="toFormC">Click here!</span>
+</div>
+<!-- end form-a.hbs -->

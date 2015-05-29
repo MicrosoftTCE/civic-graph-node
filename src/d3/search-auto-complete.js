@@ -8,6 +8,8 @@ var searchAutoComplete = function () {
 
   console.log("Running forEach on allNodes to splitLocations, sort, and create option tags.");
 
+  var entitiesHash = {};
+
   // allNodes.forEach(
   //   function(entity) {
   //     var name = entity.name.toLowerCase();

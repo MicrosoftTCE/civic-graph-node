@@ -9,7 +9,7 @@ var processFormA = function() {
     categories: null,
     name: null,
     nickname: null,
-    location: null,
+    locations: [],
     url: null,
     employees: null,
     key_people: null,
@@ -99,27 +99,22 @@ var processFormA = function() {
     if (formObject.categories.length === 0) { formObject.categories = null; }
 
     // Obtain the location
-    formObject.location = [];
 
     d3.selectAll('.locations').filter(
       function(d) {
         // console.log("Running filter on .locations with d =", d);
         if (this.value !== "") {
-          var city = this.value;
-          var state = $(this).siblings("#state").val();
-          var country = $(this).siblings("#country").val();
-
-          if(city && state && country) {
-            formObject.location.push(
-              city + ',' + ' ' +  state + ',' + ' ' + country
-            );
-          } else {
-            formObject.location.push(city + ',' + ' ' +  state);
-          }
+          formObject.locations.push(
+            {
+              city: this.value,
+              state: $(this).siblings("#state").val(),
+              country: $(this).siblings("#country").val()
+            }
+          );
         }
       });
 
-    if(formObject.location.length === 0) { formObject.location = null; }
+    if(formObject.locations.length === 0) { formObject.locations = null; }
 
     // Obtain the URL
     formObject.url = "";

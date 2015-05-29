@@ -1,15 +1,15 @@
 var textDisplay = require('./text-display');
 
-var editDisplayTmpl = require("jade!../templates/edit-display.jade");
+var editDisplayTmpl = require("../templates/edit-display.hbs");
 
-var handleNodeHover = function () {
-  console.log("Running handleNodeHover with node = ", window.d3Node);
+var handleNodeHover = function (d) {
+  console.log("Running handleNodeHover with node = ", d);
 
-  var s = textDisplay(window.d3Node);
+  var s = textDisplay(d);
 
   //  Printing to side panel within web application.
   console.log("Calling editDisplayTmpl with ", window.d3Node);
-  webform = editDisplayTmpl(window.d3Node);
+  webform = editDisplayTmpl(d);
 
   // For editing the data displayed within the side panel.
   d3
@@ -28,7 +28,7 @@ var handleNodeHover = function () {
     .style(
       "opacity",
       function(link) {
-        return (window.d3Node === link.source || window.d3Node === link.target) ? 1 : 0.05;
+        return (d === link.source || d === link.target) ? 1 : 0.05;
       }
     );
 
@@ -39,7 +39,7 @@ var handleNodeHover = function () {
     .style(
       "opacity",
       function(link) {
-        return (window.d3Node === link.source || window.d3Node === link.target) ? 1 : 0.05;
+        return (d === link.source || d === link.target) ? 1 : 0.05;
       }
     );
 
@@ -50,7 +50,7 @@ var handleNodeHover = function () {
     .style(
       "opacity",
       function(link) {
-        return (window.d3Node === link.source || window.d3Node === link.target) ? 1 : 0.05;
+        return (d === link.source || d === link.target) ? 1 : 0.05;
       }
     );
 
@@ -61,7 +61,7 @@ var handleNodeHover = function () {
     .style(
       "opacity",
       function(link) {
-        return (window.d3Node === link.source || window.d3Node === link.target) ? 1 : 0.05;
+        return (d === link.source || d === link.target) ? 1 : 0.05;
       }
     );
 
@@ -75,16 +75,16 @@ var handleNodeHover = function () {
 
   var neighboringNodesIndices = {};
 
-  neighboringNodesIndices[window.d3Node.id] = 1;
+  neighboringNodesIndices[d.id] = 1;
 
   window.civicStore.edges.funding.forEach(function(link) {
     // console.log("Running forEach on funding connections with link = ", link);
 
-    if (isLinkSource(link, window.d3Node)) {
+    if (isLinkSource(link, d)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
 
-    if (isLinkTarget(link, window.d3Node)) {
+    if (isLinkTarget(link, d)) {
       neighboringNodesIndices[link.source.index] = 1;
     }
   });
@@ -92,11 +92,11 @@ var handleNodeHover = function () {
   window.civicStore.edges.investment.forEach(function(link) {
     // console.log("Running forEach on investment connections with link = ", link);
 
-    if (isLinkSource(link, window.d3Node)) {
+    if (isLinkSource(link, d)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
 
-    if (isLinkTarget(link, window.d3Node)) {
+    if (isLinkTarget(link, d)) {
       neighboringNodesIndices[link.source.index] = 1;
     }
   });
@@ -104,11 +104,11 @@ var handleNodeHover = function () {
   window.civicStore.edges.collaboration.forEach(function(link) {
     // console.log("Running forEach on collaboration connections with link = ", link);
 
-    if (isLinkSource(link, window.d3Node)) {
+    if (isLinkSource(link, d)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
 
-    if (isLinkTarget(link, window.d3Node)) {
+    if (isLinkTarget(link, d)) {
       neighboringNodesIndices[link.source.index] = 1;
     }
   });
@@ -116,11 +116,11 @@ var handleNodeHover = function () {
   window.civicStore.edges.data.forEach(function(link) {
     // console.log("Running forEach on data connections with link = ", link);
 
-    if (isLinkSource(link, window.d3Node)) {
+    if (isLinkSource(link, d)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
 
-    if (isLinkTarget(link, window.d3Node)) {
+    if (isLinkTarget(link, d)) {
       neighboringNodesIndices[link.source.index] = 1;
     }
   });

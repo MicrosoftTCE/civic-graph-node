@@ -1,0 +1,20 @@
+<!-- form-c.hbs -->
+<h2 id="webform-head">Information</h2>
+
+<hr/>
+
+<div style="text-align:center;" class="webform-content">
+  <p>
+    Thank you for contributing to Civic Graph! Refresh the page
+    to view your changes (it might take a few moments).
+  </p>
+  <p>
+    Would you like to add or edit more info?
+  </p>
+  <ul id="suggestions">
+    {{#each suggestions}}
+      <li><a style="cursor:pointer;">{{name}}</a></li>
+    {{/each}}
+  </ul>
+</div>
+<!-- end form-c.hbs -->

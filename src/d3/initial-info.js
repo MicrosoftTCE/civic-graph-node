@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-var entityNamesTmpl = require('jade!../templates/entity-names.jade');
+var entityNamesTmpl = require('../templates/entity-names.hbs');
 
 var initialInfo = function () {
   console.log("Calling initialInfo");
@@ -15,27 +15,27 @@ var initialInfo = function () {
   var governmentArray = [];
 
   for (var x = 0; x < allNodes.length; x++) {
-    if (allNodes[x].type === "For-Profit") {
+    if (allNodes[x].entity_type === "For-Profit") {
       forProfitsArray.push(allNodes[x].name);
-      forProfitObjects.push(allNodes[x]);
+      window.forProfitObjects.push(allNodes[x]);
       countTypes[0]++;
     }
 
-    if (allNodes[x].type === "Non-Profit") {
+    if (allNodes[x].entity_type === "Non-Profit") {
       nonProfitsArray.push(allNodes[x].name);
-      nonProfitObjects.push(allNodes[x]);
+      window.nonProfitObjects.push(allNodes[x]);
       countTypes[1]++;
     }
 
-    if (allNodes[x].type === "Individual") {
+    if (allNodes[x].entity_type === "Individual") {
       individualArray.push(allNodes[x].name);
-      individualObjects.push(allNodes[x]);
+      window.individualObjects.push(allNodes[x]);
       countTypes[3]++;
     }
 
-    if (allNodes[x].type === "Government") {
+    if (allNodes[x].entity_type === "Government") {
       governmentArray.push(allNodes[x].name);
-      governmentObjects.push(allNodes[x]);
+      window.governmentObjects.push(allNodes[x]);
       countTypes[2]++;
     }
   }

@@ -18,6 +18,7 @@ var common = {
   module: {
     loaders: [
       { test: /\.css$/, loader: "style-loader!css-loader" },
+      { test: /\.hbs$/, loader: "handlebars-loader" },
       { test: /\.json$/, loader: "json-loader" },
       { test: /\.json5$/, loader: "json5-loader" },
       { test: /\.txt$/, loader: "raw-loader" },

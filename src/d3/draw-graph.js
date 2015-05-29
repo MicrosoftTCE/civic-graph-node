@@ -266,7 +266,13 @@ var drawGraph = function () {
     .on('mouseover', handleNodeHover)
     .on('mouseout', offNode)
     .on('click', sinclick);
-  // console.log("Set node =", node);
+
+  window.textElement.call(wrap, 80);
+
+  while (force.alpha() > 0.025) {
+    // console.log("force.tick()");
+    force.tick();
+  }
 
   var drag = force
     .drag()
@@ -278,9 +284,10 @@ var drawGraph = function () {
         window.d3Node // FIXME
       )
     );
-  console.log("Set drag =", drag);
 
+  console.log("Set drag =", drag);
   console.log("Running force.start()");
+
   force
     .on("tick", tick)
     .start();
@@ -339,12 +346,6 @@ var drawGraph = function () {
   });
   console.log("Set fiveMostConnectedGovernment =", fiveMostConnectedGovernment);
 
-  window.textElement.call(wrap, 80);
-
-  while (force.alpha() > 0.025) {
-    // console.log("force.tick()");
-    force.tick();
-  }
 
   // Must adjust the force parameters...
 
@@ -364,19 +365,19 @@ var drawGraph = function () {
   var displayFormB = require('./display-form-b');
   var addDataList = require('./add-data-list');
 
-  var forProfitObjects = [];
-  var nonProfitObjects = [];
-  var governmentObjects = [];
-  var individualObjects = [];
+  window.forProfitObjects = [];
+  window.nonProfitObjects = [];
+  window.governmentObjects = [];
+  window.individualObjects = [];
 
-  initialInfo(allNodes);
+  initialInfo();
 
   d3.selectAll('.for-profit-entity').on(
     'click',
     function(n, i) {
       console.log("Running onClick for .for-profit-entity with n, i =", n, i);
 
-      sinclick(forProfitObjects[i]);
+      sinclick(window.forProfitObjects[i]);
     }
   );
 
@@ -385,7 +386,7 @@ var drawGraph = function () {
     function(n, i) {
       console.log("Running onClick for .non-profit-entity with n, i =", n, i);
 
-      sinclick(nonProfitObjects[i]);
+      sinclick(window.nonProfitObjects[i]);
     }
   );
 
@@ -394,7 +395,7 @@ var drawGraph = function () {
     function(n, i) {
       console.log("Running onClick for .Individuali-entity with n, i =", n, i);
 
-      sinclick(individualObjects[i]);
+      sinclick(window.individualObjects[i]);
     }
   );
 
@@ -403,7 +404,7 @@ var drawGraph = function () {
     function(n, i) {
       console.log("Running onClick for .government-entity with n, i =", n, i);
 
-      sinclick(governmentObjects[i]);
+      sinclick(window.governmentObjects[i]);
     }
   );
 

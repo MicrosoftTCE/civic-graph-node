@@ -8,6 +8,8 @@ var handleQuery = function (query) {
 
   query = query.toLowerCase();
 
+  var entitiesHash = {};
+
   if (query in entitiesHash) {
     sinclick(entitiesHash[query]);
   }

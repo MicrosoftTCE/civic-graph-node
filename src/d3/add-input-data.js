@@ -6,7 +6,7 @@ var preFillName = require('./pre-fill-name');
 
 var utils = require('../utilities');
 
-var dataTmpl = require("jade!../templates/data.jade");
+var dataTmpl = require("../templates/data.hbs");
 
 var addInputData = function (idx) {
   console.log("Running addInputData with idx = " + idx);

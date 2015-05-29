@@ -1,7 +1,7 @@
 var d3 = require('d3');
 var $  = require('jquery');
 
-var locTmpl = require("jade!../templates/loc.jade");
+var locTmpl = require("../templates/loc.hbs");
 
 var addInputLoc = function (idx) {
   console.log("Running addInputLoc with idx = " + idx);

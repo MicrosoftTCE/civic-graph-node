@@ -3,6 +3,8 @@ var _  = require('lodash');
 
 var tick = require('./tick');
 
+var u = require('../utilities');
+
 var dblClick = function(d) {
   console.log("Running dblClick with d =", d);
 
@@ -43,7 +45,7 @@ var dblClick = function(d) {
     .charge(function(d) {
       if (d.render === 1) {
         if (d.employees !== null) {
-          return -6 * empScale(d.employees);
+          return -6 * u.employeeScale(d.employees);
         } else {
           return -25;
         }

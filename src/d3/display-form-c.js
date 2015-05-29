@@ -5,7 +5,7 @@ var editForm            = require('./edit-form');
 var preFillFormA        = require('./pre-fill-form-a');
 var sinclick            = require('./sinclick');
 
-var formCTmpl = require('jade!../templates/form-c.jade');
+var formCTmpl = require('../templates/form-c.hbs');
 
 var displayFormC = function () {
   console.log("Running displayFormC");

@@ -7,36 +7,50 @@ var textDisplay    = require('./text-display');
 var handleClickNodeHover = function(obj) {
   console.log("Running handleClickNodeHover with obj =", obj);
 
-  s = textDisplay(obj);
+  var display = textDisplay(obj);
 
   webform = editDisplay(obj);
 
   // For editing the data displayed within the side panel.
-  d3.select('#edit')
+  d3.
+    select('#edit')
     .html(webform);
 
   //  Printing to side panel within web application.
-  d3.select('#info')
-    .html(s)
+  d3
+    .select('#info')
+    .html(display)
     .style('list-style', 'square');
 
-  d3.selectAll('#editCurrentInfo').on('click', function() {
-      console.log("Running onClick for #editCurrentInfo");
-      prefillCurrent(obj);
-    })
-    .on('mouseover', function() {
-      d3.select(this).style('cursor', 'pointer');
+  d3
+    .selectAll('#editCurrentInfo').on(
+      'click',
+      function() {
+        console.log("Running onClick for #editCurrentInfo");
+        prefillCurrent(obj);
+      }
+    )
+    .on(
+      'mouseover',
+      function() {
+        d3
+          .select(this)
+          .style('cursor', 'pointer');
 
-      return d3
-        .select('#editBox')
-        .style("visibility", "visible");
-    })
-    .on('mousemove', function() {
-      return d3
-        .select('#editBox')
-        .style("top", (d3.event.pageY + 4) + "px")
-        .style("left", (d3.event.pageX + 16) + "px");
-    })
+        return d3
+          .select('#editBox')
+          .style("visibility", "visible");
+      }
+    )
+    .on(
+      'mousemove',
+      function() {
+        return d3
+          .select('#editBox')
+          .style("top", (d3.event.pageY + 4) + "px")
+          .style("left", (d3.event.pageX + 16) + "px");
+      }
+    )
     .on('mouseout', function() {
       return d3
         .select('#editBox')

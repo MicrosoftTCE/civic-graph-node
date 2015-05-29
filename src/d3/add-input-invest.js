@@ -6,7 +6,7 @@ var preFillName = require('./pre-fill-name');
 
 var utils = require('../utilities');
 
-var investingTmpl = require("jade!../templates/investing.jade");
+var investingTmpl = require("../templates/investing.hbs");
 
 var addInputInvest = function (idx) {
   console.log("Running addInputInvest with idx = " + idx);

@@ -11,7 +11,7 @@ var displayFormCSendJson  = require('./display-form-c-send-json');
 
 var utils = require('../utilities');
 
-var formBTmpl = require("jade!../templates/form-b.jade");
+var formBTmpl = require("../templates/form-b.hbs");
 
 var displayFormB = function() {
   console.log("Running displayFormB");

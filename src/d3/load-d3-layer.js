@@ -1,8 +1,8 @@
 var D3OverlayManager = require("./scripts/D3OverlayManager");
 
-var tipTmpl      = require("jade!../templates/d3-tip.jade");
-var donutTipTmpl = require("jade!../templates/d3-donut-tip.jade");
-var routeTipTmpl = require("jade!../templates/d3-route-tip.jade");
+var tipTmpl      = require("../templates/d3-tip.hbs");
+var donutTipTmpl = require("../templates/d3-donut-tip.hbs");
+var routeTipTmpl = require("../templates/d3-route-tip.hbs");
 
 var d3Layers = {};
 

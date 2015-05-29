@@ -6,6 +6,8 @@ var preParseForm = function (input) {
 
   input = input.toLowerCase();
 
+  var entitiesHash = {};
+
   if (input in entitiesHash) {
     editForm();
     preFillFormA(entitiesHash[input]); // TODO

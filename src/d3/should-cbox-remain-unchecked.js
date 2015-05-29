@@ -1,25 +1,22 @@
 var d3 = require('d3');
+var $  = require('jquery');
 
 var shouldCboxRemainUnchecked = function(
   selector,
-  visibleNodes,
-  cboxForProfit,
-  cboxNonProfit,
-  cboxGovernment,
-  cboxIndividual
+  visibleNodes
 ) {
   console.log("Running shouldCboxRemainUnchecked with selector, visibleNodes =", selector, visibleNodes);
 
   if (
     visibleNodes.length === 0 ||
     (
-      document.getElementById(cboxIndividual).checked &&
-      document.getElementById(cboxForProfit).checked &&
-      document.getElementById(cboxNonProfit).checked &&
-      document.getElementById(cboxGovernment).checked)
-    ) {
-
-    d3.select(selector).attr('checked', false);
+      $('#cb_individ').is('checked') &&
+      $('#cb_forpro').is('checked') &&
+      $('#cb_nonpro').is('checked') &&
+      $('#cb_gov').is('checked')
+    )
+  ) {
+    $(selector).attr('checked', false);
   }
 };
 

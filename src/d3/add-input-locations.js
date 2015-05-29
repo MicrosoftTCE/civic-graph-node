@@ -5,7 +5,7 @@ var utils = require('../utilities');
 
 var preFillLocation = require('./pre-fill-location');
 
-var locationTmpl = require("jade!../templates/location.jade");
+var locationTmpl = require("../templates/location.hbs");
 
 var addInputLocations = function (idx) {
   console.log("Running addInputLocations with idx = " + idx);

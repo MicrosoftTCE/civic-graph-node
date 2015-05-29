@@ -6,7 +6,9 @@ var d3 = require('d3');
  */
 var preFillName = function (name, inputSelector) {
   console.log("Running preFillName with", name, inputSelector);
-  var key = name.toLowerCase()
+  var key = name.toLowerCase();
+
+  var entitiesHash = {};
 
   if (key in entitiesHash) {
     d3.selectAll(inputSelector).text(

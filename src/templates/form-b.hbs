@@ -1,0 +1,101 @@
+<!-- form-b.hbs -->
+<h2 id="webform-head">Information</h2>
+
+<hr />
+
+<div class="webform-content">
+  <div data-role="input-control" class="input-control text">
+    <input id="name" type="text" name="name" placeholder="Name of Entity" disabled="disabled" />
+  </div>
+
+  <h3 class="form-header">Entity Type</h3>
+
+  <div class="webform-entities">
+    <div data-role="input-control" class="input-control radio default-style webform">
+      <label>
+        <input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" disabled="disabled" />
+        <span class="webform-labels">For-Profit</span>
+      </label>
+    </div>
+
+    <div data-role="input-control" class="input-control radio default-style webform">
+      <label>
+        <input id="rb_nonpro" type="radio" name="entitytype" value="Non-Profit" disabled="disabled" />
+        <span class="webform-labels">Non-Profit</span>
+      </label>
+    </div>
+
+    <div data-role="input-control" class="input-control radio default-style webform">
+      <label>
+        <input id="rb_gov" type="radio" name="entitytype" value="Government" disabled="disabled" />
+        <span class="webform-labels">Government</span>
+      </label>
+    </div>
+
+    <div data-role="input-control" class="input-control radio default-style webform">
+      <label>
+        <input id="rb_individs" type="radio" name="entitytype" value="Individual" disabled="disabled" />
+        <span class="webform-labels">Individual</span>
+      </label>
+    </div>
+  </div>
+
+  <div id="location-0" data-role="input-control" class="input-control text">
+    <input id="location" type="text" name="location" placeholder="City" class="locations" />
+  </div>
+
+  <hr />
+
+  <div data-role="input-control" class="input-control text">
+    <input id="nickname" type="text" name="nickname" placeholder="Nickname/Abbr." />
+  </div>
+
+  <div data-role="input-control" class="input-control text">
+    <input id="twitterhandle" type="text" name="twitterhandle" placeholder="Twitter Handle" />
+  </div>
+
+  <h3 style="display: inline-block" class="form-header">Circle of Influence:</h3>
+
+  <div class="webform-influence">
+    <div data-role="input-control" class="input-control radio default-style webform">
+      <label>
+        <input id="rb_local" type="radio" name="influence-type" value="Local Influence" checked="checked" />
+        <span class="webform-labels">Local Influence</span>
+      </label>
+    </div>
+
+    <div data-role="input-control" class="input-control radio default-style webform">
+      <label>
+        <input id="rb_global" type="radio" name="influence-type" value="Global Influence" checked="checked" />
+        <span class="webform-labels">Global Influence</span>
+      </label>
+    </div>
+  </div>
+
+  <h3 class="form-header">Collaboration</h3>
+
+  <div id="collaboration-0" data-role="input-control" class="input-control text">
+    <input type="text" name="collaboration" placeholder="Collaborator" list="collaborator-list" class="collaborator" />
+  </div>
+
+  <h3 class="form-header">Revenue</h3>
+
+  <div id="revenue-0">
+    <div data-role="input-control" class="revenue-input input-control text">
+      <input type="text" name="revenue_amt" placeholder="Amount" style= "display:inline-block; width: 57%" class="revenue_amt" />
+      <input type="text"name="revenue_year" placeholder="Year" style="display:inline-block; width: 20%" class="revenue_year" />
+    </div>
+  </div>
+
+  <h3 class="form-header">Expenses</h3>
+
+  <div id="expense-0">
+    <div data-role="input-control" class="expense-input input-control text">
+      <input type="text" name="expense_amt" placeholder="Amount" style="display:inline-block; width: 57%" class="expense_amt" />
+      <input type="text" name="expense_year" placeholder="Year" style="display:inline-block; width: 20%" class="expense_year" />
+    </div>
+  </div>
+
+  <button id="submit-B" type="button" href= "javascript:%20check_empty()">Submit</button>
+</div>
+<!-- end form-b.hbs -->

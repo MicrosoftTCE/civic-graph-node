@@ -1,0 +1,168 @@
+<!-- text-display.hbs -->
+<div style="height: 30px">
+  <a style="float: right"><i id="editCurrentInfo" class="icon-pencil on-left"></i></a>
+</div>
+
+<h1>
+  <a href="{{url}}" target="_blank">{{name}}</a>
+</h1>
+
+<div class="category-label">Type of entity:</div>
+<div class="category-value">{{entity_type}}</div>
+
+<div class="category-label">Location:</div>
+
+{{#if locations}}
+  <ul>
+    {{#each locations}}
+      <li>
+        <div class="category-value">
+          <a class="click-location" style="cursor: pointer">
+            {{city}}{{#if state}}, {{state}}{{/if}}{{#if country}}, {{country}}{{/if}}
+          </a>
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <div class="category-value">N/A</div>
+{{/if}}
+
+{{#if employees}}
+  <div class="category-label">Employees:</div>
+  <div class="category-value">{{employees}}</div>
+{{/if}}
+
+<div class="category-label">Twitter:</div>
+<div class="category-value">
+  {{#if twitter_handle}}
+    <a href="{{twitter_handle}}" target="_blank">{{twitter_handle}}</a>
+  {{else}}
+    N/A
+  {{/if}}
+</div>
+
+<div class="category-label">Twitter Followers:</div>
+<div class="category-value">
+  {{#if twitter_followers}}{{twitter_followers}}{{else}}N/A{{/if}}
+</div>
+
+{{#if key_people}}
+  <div class="category-label">Key People:</div>
+  <ul>
+    {{#each key_people}}
+      <li><a href="bingSearchUrl" target="_blank">{{this}}</a></li>
+    {{/each}}
+  </ul>
+{{/if}}
+
+{{#if funding}}
+  <div class="category-label">Funding:</div>
+  <ul>
+    {{#each funding}}
+      <li>
+        <div class="category-value">
+          <a href="bingSearchUrl" target="_blank">{{entity}}</a>:
+          {{#if amount}}
+            <strong style="color: rgb(127,186,0)">{{amount}}</strong>
+          {{else}}
+            <strong style="color: rgb(255,185,0)">unknown</strong>
+          {{/if}}
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <div class="category-label">No known funding received or given.</div>
+{{/if}}
+
+{{#if investments}}
+  <div class="category-label">Investment:</div>
+  <ul>
+    {{#each investments}}
+      <li>
+        <div class="category-value">
+          <a href="bingSearchUrl" target="_blank">{{entity}}</a>:
+          {{#if amount}}
+            <strong style="color: rgb(127,186,0)">{{amount}}</strong>
+          {{else}}
+            <strong style="color: rgb(255,185,0)">unknown</strong>
+          {{/if}}
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <div class="category-label">No known investments.</div>
+{{/if}}
+
+{{#if collaborations}}
+  <div class="category-label">Collaborated with:</div>
+  <ul>
+    {{#each collaborations}}
+      <li>
+        <div class="category-value">
+          <a href="bingSearchUrl" target="_blank">{{entity}}</a>
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <div class="category-label">No known collaborations.</div>
+{{/if}}
+
+{{#if data}}
+  <div class="category-label">Obtained data from:</div>
+  <ul>
+    {{#each data}}
+      <li>
+        <div class="category-value">
+          <a href="bingSearchUrl" target="_blank">{{entity}}</a>
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <div class="category-label">No known external data usage.</div>
+{{/if}}
+
+{{#if revenue}}
+  <div class="category-label">Revenue:</div>
+  <ul>
+    {{#each revenue}}
+      <li>
+        <div class="category-value">
+          {{#if year}}{{year}}{{else}}Unknown Year{{/if}}:
+          {{#if amount}}
+            <strong style="color: rgb(127,186,0)">{{amount}}</strong>
+          {{else}}
+            <strong style="color: rgb(255,185,0)">unknown</strong>
+          {{/if}}
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <div class="category-label">No known revenue information.</div>
+{{/if}}
+
+{{#if expenses}}
+  <div class="category-label">Expenses:</div>
+  <ul>
+    {{#each expenses}}
+      <li>
+        <div class="category-value">
+          {{#if year}}{{year}}{{else}}Unknown Year{{/if}}:
+          {{#if amount}}
+            <strong style="color: rgb(127,186,0)">{{amount}}</strong>
+          {{else}}
+            <strong style="color: rgb(255,185,0)">unknown</strong>
+          {{/if}}
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <div class="category-label">No known expense information.</div>
+{{/if}}
+<!-- end text-display.jade -->

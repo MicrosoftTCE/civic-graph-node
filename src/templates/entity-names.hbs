@@ -1,0 +1,34 @@
+<!-- entity-names.hbs -->
+<h3 style="padding-top:15px; color:rgb(127,186,0);">
+  For-Profit ({{forProfits.length}}):
+</h3>
+
+{{#each forProfits}}
+  <a style="font-size:16px; cursor:pointer;" class="for-profit-entity">{{this}}</a>
+{{/each}}
+
+<h3 style="padding-top:15px; color:rgb(0,164,239);">
+  Non-Profit ({{nonProfits.length}}):
+</h3>
+
+{{#each nonProfits}}
+  <a style="font-size:16px; cursor:pointer;" class="non-profit-entity">{{this}}</a>
+{{/each}}
+
+<h3 style="padding-top:15px; color:rgb(242,80,34);">
+  Government ({{governments.length}}):
+</h3>
+
+{{#each governments}}
+  <a style="font-size:16px; cursor:pointer;" class="government-entity">{{this}}</a>
+{{/each}}
+
+<h3 style="padding-top:15px; color:rgb(255,185,0);">
+  Individual ({{individuals.length}}):
+</h3>
+
+{{#each individuals}}
+  <a style="font-size:16px; cursor:pointer;" class="individual-entity">{{this}}</a>
+{{/each}}
+
+<!-- end entity-names.hbs -->
