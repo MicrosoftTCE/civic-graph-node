@@ -5,7 +5,7 @@ var hideConnections = require('./hide-connections');
 var revealConnections = require('./reveal-connections');
 var shouldCboxRemainUnchecked = require('./should-cbox-remain-unchecked');
 
-var connectionCboxActions = function(nodeInit) {
+var connectionCboxActions = function() {
   console.log("Running connectionCboxActions");
 
   var connectionClasses = ['.invest', '.fund', '.collaboration', '.data'];
@@ -16,7 +16,7 @@ var connectionCboxActions = function(nodeInit) {
         'click', (
         function(input, idx) {
           return function() {
-            var visibleNodes = determineVisibleNodes(nodeInit);
+            var visibleNodes = determineVisibleNodes();
 
             document.getElementById(input.id).checked ?
               revealConnections(connectionClasses[idx], visibleNodes) :

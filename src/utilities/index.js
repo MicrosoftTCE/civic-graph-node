@@ -2,7 +2,15 @@ var d3 = require('d3');
 var _  = require('lodash');
 
 var colors = {
-  cyan: "rgb(46, 146, 207)"
+  cyan: "rgb(46, 146, 207)",
+  purple: "rgb(111,93,168)",
+  teal: "rgb(38,114,114)",
+  yellow: "rgb(235,232,38)",
+  pink: "rgb(191,72,150)",
+  gold: "rgb(255,185,0)",
+  blue: "rgb(0,164,239)",
+  lime: "rgb(127,186,0)",
+  orange: "rgb(242,80,34)"
 };
 
 var employeeScale = d3.scale.sqrt().domain([10, 130000]).range([10, 50]);

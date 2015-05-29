@@ -4,13 +4,13 @@ var determineVisibleNodes = require('./determine-visible-nodes');
 var nodeVisibility        = require('./node-visibility');
 var toggleLinks           = require('./toggle-links');
 
-var typesCboxActions = function(nodeInit) {
+var typesCboxActions = function() {
   console.log("Running typesCheckboxActions");
 
   d3.selectAll('#cb_forpro, #cb_nonpro, #cb_gov, #cb_individ').on(
     'click',
     function() {
-      var visibleNodes = determineVisibleNodes(nodeInit);
+      var visibleNodes = determineVisibleNodes();
 
       $('#cb_forpro').is(':checked') ?
         nodeVisibility('For-Profit', 'visible') :

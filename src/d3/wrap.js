@@ -1,17 +1,20 @@
 var d3 = require('d3');
 var _  = require('underscore');
 
+var u = require('../utilities');
+
 var wrap = function(text, width) {
   console.log("Running wrap with text, width =", text, width);
 
   text.each(function() {
-    console.log("Running each on text");
-    var data = d3.select(this)[0][0].__data__;
-    var dy = parseFloat(text.attr("dy"));
-    var line = [];
-    var lineHeight = 1.1; // ems
-    var lineNumber = 0;
     var text = d3.select(this);
+    var words = text.text().split(/\s+/).reverse();
+    var word;
+    var line = [];
+    var lineNumber = 0;
+    var lineHeight = 1.1; // ems
+    var dy = parseFloat(text.attr("dy"));
+    var data = d3.select(this)[0][0].__data__;
     var tspan = text
       .text(null)
       .append("tspan")
@@ -20,7 +23,7 @@ var wrap = function(text, width) {
         "y",
         function() {
           if (data.employees !== null) {
-            return empScale(data.employees) + 10;
+            return u.employeeScale(data.employees) + 10;
           } else {
             return 7 + 10;
           }
@@ -28,8 +31,6 @@ var wrap = function(text, width) {
       )
       .attr("dy", dy + "em");
 
-    var word;
-    var words = text.text().split(/\s+/).reverse();
 
     while (word = words.pop()) {
       line.push(word);
@@ -46,7 +47,7 @@ var wrap = function(text, width) {
             "y",
             function() {
               if (data.employees !== null) {
-                return empScale(data.employees) + 5;
+                return u.employeeScale(data.employees) + 5;
               } else {
                 return 7 + 5;
               }

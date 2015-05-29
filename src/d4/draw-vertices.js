@@ -12,7 +12,7 @@ var drawVertices = function (vertices) {
     .force()
     .nodes(vertices)
     .size([width, height])
-    .links(connections)
+    .links(window.connections)
     .linkStrength(0)
     .charge(function(vertex) {
       if (vertex.employees) {

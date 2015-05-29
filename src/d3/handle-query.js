@@ -100,7 +100,7 @@ var handleQuery = function (query) {
       .on('click', null);
 
     node
-      .filter(function(n, i) { return nodeInit[0][i].style.opacity == 1; })
+      .filter(function(n, i) { return window.nodeInit[0][i].style.opacity == 1; })
       .on('mouseover', handleClickNodeHover);
   }
 };

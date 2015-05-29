@@ -3,10 +3,10 @@ var _            = require("lodash");
 
 require('devbridge-autocomplete');
 
-var utils                 = require('../utilities');
+var u                     = require('../utilities');
 
 var connectionCboxActions = require('./connection-cbox-actions');
-var dblClickCb            = require('./dbl-click-cb');
+var dblClick              = require('./dbl-click');
 var drag                  = require('./drag');
 var dragEndCb             = require('./drag-end-cb');
 var editForm              = require('./edit-form');
@@ -17,7 +17,7 @@ var initialInfo           = require('./initial-info');
 var offNode               = require('./off-node');
 var searchAutoComplete    = require('./search-auto-complete');
 var sinclick              = require('./sinclick');
-var tickCb                = require('./tick-cb');
+var tick                  = require('./tick');
 var translation           = require('./translation');
 var typesCboxActions      = require('./types-cbox-actions');
 var weightSorter          = require('./weight-sorter');
@@ -26,8 +26,8 @@ var wrap                  = require('./wrap');
 var drawGraph = function () {
   console.log("Running drawGraph");
 
-  var width = 1000;
-  var height = 1000;
+  window.width = 1000;
+  window.height = 1000;
 
   var forProfitNodes;
   var nonProfitNodes;
@@ -41,15 +41,15 @@ var drawGraph = function () {
 
   var clearResetFlag = 1;
 
-  var centeredNode = {};
+  window.centeredNode = {};
 
   window.d3RootElem = d3
     .select('.content')
     .append('svg')
     .attr("xmlns", 'http://www.w3.org/2000/svg')
     .attr("id", 'network')
-    .attr("height", height)
-    .attr("width", width)
+    .attr("height", window.height)
+    .attr("width", window.width)
     .style("top", "-50px")
     .style("position", "relative");
 
@@ -59,7 +59,7 @@ var drawGraph = function () {
     .attr('id', 'editBox')
     .append('p')
     .text('Edit')
-    .style('color', '#2e92cf'); // cyanish
+    .style('color', u.colors.cyan); // cyanish
 
   var aspect = width / height;
   var network = $('#network');
@@ -76,43 +76,38 @@ var drawGraph = function () {
     }
   ).trigger("resize");
 
-  var viewBoxParameters = '0 0 ' + width + ' ' + height;
+  var viewBoxParameters = '0 0 ' + window.width + ' ' + window.height;
 
   window.d3RootElem
     .attr("viewBox", viewBoxParameters)
     .attr("preserveAspectRatio", 'xMidYMid');
 
-  //  Static Scale
-  //  Improve by dynamically obtaining min and max values
-  var empScale = d3.scale.sqrt().domain([10, 130000]).range([10, 50]);
-  var twitScale = d3.scale.sqrt().domain([10, 1000000]).range([10, 50]);
-
   console.log("civicStore", window.civicStore);
 
   var allNodes = _.values(window.civicStore.vertices);
 
-  var connections =
+  window.connections =
     [].concat(window.civicStore.edges.funding)
       .concat(window.civicStore.edges.investment)
       .concat(window.civicStore.edges.collaboration)
       .concat(window.civicStore.edges.data)
 
-  console.log("allNodes =", allNodes.length);
-  console.log("connections =", connections);
+  console.log("allNodes =", allNodes);
+  // console.log("connections =", window.connections);
 
-  console.log("width, height", width, height);
+  console.log("width, window.height", width, window.height);
 
   var force = d3
     .layout
     .force()
     .nodes(allNodes)
-    .size([width, height])
-    .links(connections)
+    .size([window.width, window.height])
+    .links(window.connections)
     .linkStrength(0)
     .charge(function(target) {
       if (target.render === 1) {
         if (target.employees !== null) {
-          return -6 * empScale(target.employees);
+          return -6 * u.employeeScale(target.employees);
         } else {
           return -25;
         }
@@ -132,7 +127,7 @@ var drawGraph = function () {
     .enter()
     .append("line")
     .attr("class", "fund")
-    .style("stroke", "rgb(111,93,168)") // lavender
+    .style("stroke", u.colors.purple)
     .style("stroke-width", "1")
     .style("opacity", "0.2")
     .style("visibility", "visible");
@@ -146,7 +141,7 @@ var drawGraph = function () {
     .enter()
     .append("line")
     .attr("class", "invest")
-    .style("stroke", "rgb(38,114,114)") // teal
+    .style("stroke", u.colors.teal)
     .style("stroke-width", "1")
     .style("opacity", "0.2")
     .style("visibility", "visible");
@@ -160,7 +155,7 @@ var drawGraph = function () {
     .enter()
     .append("line")
     .attr("class", "collaboration")
-    .style("stroke", "rgb(235,232,38)") // yellow
+    .style("stroke", u.colors.yellow)
     .style("stroke-width", "1")
     .style("opacity", "0.2")
     .style("visibility", "visible");
@@ -174,12 +169,22 @@ var drawGraph = function () {
     .enter()
     .append("line")
     .attr("class", "data")
-    .style("stroke", "rgb(191,72,150)") // pink
+    .style("stroke", u.colors.pink)
     .style("stroke-width", "1")
     .style("opacity", "0.2")
     .style("visibility", "visible");
 
   console.log("Set data links =", window.civicStore.lines.data);
+
+  window.nodeInit = window.d3RootElem
+    .selectAll(".node")
+    .data(allNodes)
+    .enter()
+    .append("g")
+    .attr("class", "node")
+    .style("visibility", "visible")
+    .on('dblclick', dblClick)
+    // .call(drag);
 
   window.textElement = window.d3RootElem
     .selectAll('.node')
@@ -190,7 +195,7 @@ var drawGraph = function () {
     .attr("y",
       function(d) {
         if (d.employees !== null) {
-          return empScale(d.employees) + 10;
+          return u.employeeScale(d.employees) + 10;
         } else {
           return 7 + 10;
         }
@@ -224,36 +229,17 @@ var drawGraph = function () {
     .style('font-size', '14px')
     .style('color', '#FFFFFF')
     .style('pointer-events', 'none');
-  console.log("Set textElement =", textElement);
 
-  var nodeInit = window.d3RootElem
-    .selectAll(".node")
-    .data(allNodes)
-    .enter()
-    .append("g")
-    .attr("class", "node")
-    .style("visibility", "visible")
-    .on(
-      'dblclick',
-      dblClickCb(
-        connections,
-        tickCb(
-          centeredNode,
-          window.d3Node,                   // FIXME
-          textElement
-        )
-      )
-    )
-    // .call(drag);
+  console.log("Set textElement =", window.textElement);
 
-  console.log("Set nodeInit =", nodeInit);
+  console.log("Set nodeInit =", window.nodeInit);
 
-  window.d3Node = nodeInit
+  window.d3Node = window.nodeInit
     .append("circle")
     .attr("r",
       function(d) {
         if (d.employees !== null) {
-          return empScale(d.employees);
+          return u.employeeScale(d.employees);
         } else {
           return "7";
         }
@@ -261,10 +247,10 @@ var drawGraph = function () {
     .style("fill",
       function(d) {
         if (d.type !== null) {
-          if (d.type === "Individual") { return "rgb(255,185,0)"; }
-          if (d.type === "Non-Profit") { return "rgb(0,164,239)"; }
-          if (d.type === "For-Profit") { return "rgb(127,186,0)"; }
-          if (d.type === "Government") { return "rgb(242,80,34)"; }
+          if (d.type === "For-Profit") { return u.colors.lime; }
+          if (d.type === "Non-Profit") { return u.colors.blue; }
+          if (d.type === "Government") { return u.colors.orange; }
+          if (d.type === "Individual") { return u.colors.gold; }
         }
       })
     .attr("cx",
@@ -296,14 +282,7 @@ var drawGraph = function () {
 
   console.log("Running force.start()");
   force
-    .on(
-      "tick",
-      tickCb(
-        centeredNode,
-        window.d3Node, // FIXME
-        textElement
-      )
-    )
+    .on("tick", tick)
     .start();
 
   forProfitNodes = window.d3RootElem
@@ -360,7 +339,7 @@ var drawGraph = function () {
   });
   console.log("Set fiveMostConnectedGovernment =", fiveMostConnectedGovernment);
 
-  textElement.call(wrap, 80);
+  window.textElement.call(wrap, 80);
 
   while (force.alpha() > 0.025) {
     // console.log("force.tick()");
@@ -441,7 +420,7 @@ var drawGraph = function () {
   try {
     //filter the sortedSearchList on keyup
     $('#search-text').autocomplete({
-      lookup: utils.getSortedList(),
+      lookup: u.getSortedList(),
       appendTo: $('.filter-name-location'),
       onSelect: function (suggestion) {
         console.log("Running autocomplete and calling handleQuery with value = " + suggestion.value);
@@ -466,9 +445,9 @@ var drawGraph = function () {
     }
   );
 
-  connectionCboxActions(nodeInit);
+  connectionCboxActions();
 
-  typesCboxActions(nodeInit);
+  typesCboxActions();
 
   d3.selectAll('#cb_emp, #cb_numtwit').on(
     'click',
@@ -483,19 +462,19 @@ var drawGraph = function () {
             "r",
             function(d) {
               if (d.employees !== null) {
-                return empScale(d.employees);
+                return u.employeeScale(d.employees);
               } else {
                 return "7";
               }
             }
           );
 
-        textElement
+        window.textElement
           .attr(
             'transform',
             function(d) {
               if (d.employees !== null) {
-                return translation(0, -(empScale(d.employees)));
+                return translation(0, -(u.employeeScale(d.employees)));
               } else {
                 return translation(0, -7);
               }
@@ -515,7 +494,7 @@ var drawGraph = function () {
                 if (d.followers > 1000000) {
                   return "50";
                 } else {
-                  return twitScale(d.followers);
+                  return u.twitterScale(d.followers);
                 }
               } else {
                 return "7";
@@ -523,12 +502,12 @@ var drawGraph = function () {
             }
           );
 
-        textElement
+        window.textElement
           .attr(
             'transform',
             function(d) {
               if (d.followers !== null) {
-                return translation(0, -(twitScale(d.followers)));
+                return translation(0, -(u.twitterScale(d.followers)));
               } else {
                 return translation(0, -7);
               }
@@ -561,20 +540,20 @@ var drawGraph = function () {
             .selectAll('g')
             .call(drag);
 
-          centeredNode = $.extend(true, {}, {});
+          window.centeredNode = {};
 
           var force = d3
             .layout
             .force()
             .nodes(allNodes)
-            .size([width, height])
-            .links(connections)
+            .size([window.width, window.height])
+            .links(window.connections)
             .linkStrength(0)
             .charge(
               function(d) {
                 if (d.render === 1) {
                   if (d.employees !== null)
-                    return -6 * empScale(d.employees);
+                    return -6 * u.employeeScale(d.employees);
                   else {
                     return -25;
                   }
@@ -585,14 +564,7 @@ var drawGraph = function () {
             )
             .linkDistance(50)
 
-          .on(
-            "tick",
-            tickCb(
-              centeredNode,
-              window.d3Node,
-              textElement
-            )
-          )
+          .on("tick", tick)
           .start();
         }
 
