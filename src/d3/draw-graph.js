@@ -454,7 +454,6 @@ var drawGraph = function () {
           textOpacity =
             (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
         }
->>>>>>> 0f57d09370c08a265071b35debb772646761f2f9
 
         if (d.type === "Non-Profit") {
           textOpacity =

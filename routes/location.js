@@ -18,9 +18,9 @@ router.get('/', function(req, res) {
         } else {
           res.json({ locations: results });
         }
-      })
+      });
     }
-  })
+  });
 });
 
 module.exports = router;
