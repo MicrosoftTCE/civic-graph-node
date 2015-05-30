@@ -3,8 +3,6 @@ var d3 = require('d3');
 var handleClickNodeHover = require('./handle-click-node-hover');
 
 var sinclick = function (node) {
-  console.log("Running sinclick with node = ", node);
-
   var clearResetFlag = 0;
 
   handleClickNodeHover(window.d3Node);
@@ -16,7 +14,6 @@ var sinclick = function (node) {
     .style(
       "opacity",
       function(link) {
-        // console.log("Setting opacity on funding line = ", link);
         if (window.d3Node === link.source || window.d3Node === link.target) {
           return "1";
         } else {
@@ -32,7 +29,6 @@ var sinclick = function (node) {
     .style(
       "opacity",
       function(link) {
-        // console.log("Setting opacity on investment line = ", link);
         if (window.d3Node === link.source || window.d3Node === link.target) {
           return "1";
         } else {
@@ -48,7 +44,6 @@ var sinclick = function (node) {
     .style(
       "opacity",
       function(link) {
-        // console.log("Setting opacity on collaboration line = ", link);
         if (window.d3Node === link.source || window.d3Node === link.target) {
           return "1";
         } else {
@@ -64,7 +59,6 @@ var sinclick = function (node) {
     .style(
       "opacity",
       function(link) {
-        // console.log("Setting opacity on data line = ", link);
         if (window.d3Node === link.source || window.d3Node === link.target) {
           return "1";
         } else {
@@ -77,7 +71,6 @@ var sinclick = function (node) {
     .style(
       "stroke",
       function(singleNode) {
-        // console.log("Setting stroke on singleNode = ", singleNode);
         if (singleNode !== window.d3Node) {
           return "white";
         } else {
@@ -89,7 +82,6 @@ var sinclick = function (node) {
   window.d3Node
     .filter(
       function(singleNode) {
-        // console.log("Running filter on node singleNode = ", singleNode);
         if (singleNode !== window.d3Node) { return singleNode; }
       }
     )
@@ -98,74 +90,62 @@ var sinclick = function (node) {
   var neighborFund = window.civicStore.edges.funding
     .filter(
       function(link) {
-        // console.log("Running filter on funding_connections link = ", link);
         return link.source.index === window.d3Node.index ||
           link.target.index === window.d3Node.index;
       }
     )
     .map(
       function(link) {
-        // console.log("Mapping funding_connections link = ", link);
         return link.source.index === window.d3Node.index ?
           link.target.index :
           link.source.index;
       }
     );
-  console.log("Set neighborFund to ", neighborFund);
 
   var neighborInvest = window.civicStore.edges.investment
     .filter(
       function(link) {
-        // console.log("Running filter on investment_connections link = ", link);
         return link.source.index === window.d3Node.index ||
           link.target.index === window.d3Node.index;
       }
     )
     .map(
       function(link) {
-        // console.log("Mapping investment_connections link = ", link);
         return link.source.index === window.d3Node.index ?
         link.target.index :
         link.source.index;
       }
     );
-  console.log("Set neighborInvest to ", neighborInvest);
 
   var neighborPorucs = window.civicStore.edges.collaboration
     .filter(
       function(link) {
-        // console.log("Running filter on collaboration_connections link = ", link);
         return link.source.index === window.d3Node.index ||
         link.target.index === window.d3Node.index;
       }
     )
     .map(
       function(link) {
-        // console.log("Mapping collaboration_connections link = ", link);
         return link.source.index === window.d3Node.index ?
         link.target.index :
         link.source.index;
       }
     );
-  console.log("Set neighborPorucs to ", neighborPorucs);
 
   var neighborData = window.civicStore.edges.data
     .filter(
       function(link) {
-        // console.log("Running filter on data_connections link = ", link);
         return link.source.index === window.d3Node.index ||
         link.target.index === window.d3Node.index;
       }
     )
     .map(
       function(link) {
-        // console.log("Mapping data_connections link = ", link);
         return link.source.index === window.d3Node.index ? link.target.index : link.source.index;
       }
     );
-  console.log("Set neighborData to ", neighborData);
 
-  window.d3RootElem
+  window.svg
     .selectAll('.node')
     .transition()
     .duration(350)
@@ -173,7 +153,6 @@ var sinclick = function (node) {
     .style(
       "opacity",
       function(l) {
-        // console.log("Setting opacity on .node to l = " + l);
         return (
           neighborFund.indexOf(l.index) > -1 ||
           neighborInvest.indexOf(l.index) > -1 ||
@@ -187,7 +166,6 @@ var sinclick = function (node) {
   window.d3Node
     .filter(
       function(l) {
-        // console.log("Running filter on node with l = " + l);
         return (
           neighborFund.indexOf(l.index) > -1 ||
           neighborInvest.indexOf(l.index) > -1 ||

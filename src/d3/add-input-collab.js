@@ -13,14 +13,10 @@ var collaborationTmpl = require("../templates/collaboration.hbs");
  *  using the utils.getSortedNameOptions() and calling addDataList
  */
 var addInputCollab = function (idx) {
-  console.log("Running addInputCollab with idx = " + idx);
-
   if ($('#collaboration-' + idx + ' input[name="collaboration"]').val() !== "") {
     d3.select('#collaboration-' + idx + ' input[name="collaboration"]').on(
       'keyup',
       function() {
-        console.log("Running collab onKeyup with idx = " + idx);
-
         preFillName(this.value, '#collaboration-' + (idx - 1) + ' input[name="collaboration"]');
       }
     );
@@ -34,8 +30,6 @@ var addInputCollab = function (idx) {
     d3.select("#collaboration-" + idx + " input[name='collaboration']").on(
       "keyup",
       function() {
-        console.log("Running collab onKeyup with idx = " + idx);
-
         addInputCollab(idx);
       }
     );

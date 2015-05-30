@@ -4,8 +4,6 @@ var $  = require('jquery');
 var keyPeopleTmpl = require("../templates/key-people.hbs");
 
 var addInputKp = function (idx) {
-  console.log("Running addInputKp with idx = " + idx);
-
   if ($('#key-people-' + idx + ' input[name="kpeople"]').val() !== "") {
     d3.select('#key-people-' + idx + ' input[name="kpeople"]').on(
       'keyup',
@@ -19,8 +17,6 @@ var addInputKp = function (idx) {
     d3.select("#key-people-" + idx + " input[name='kpeople']").on(
       "keyup",
       function() {
-        console.log("Running kp onKeyup with idx = " + idx);
-
         addInputKp(idx);
       }
     );

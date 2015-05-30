@@ -9,14 +9,11 @@ var utils = require('../utilities');
 var investmentMadeTmpl = require("../templates/investment-made.hbs");
 
 var addInputInvestMade = function (idx) {
-  console.log("Running addInputInvestMade with idx = " + idx);
 
   if ($('#investmentmade-' + idx + ' input[name="investmade"]').val() !== "") {
     d3.select('#investmentmade-' + idx + ' input[name="investmade"]').on(
       'keyup',
       function() {
-        console.log("Running fund made onKeyup with idx = " + idx);
-
         preFillName(
           this.value,
           '#investmentmade-' + (idx - 1) + ' input[name="investmade"]'
@@ -33,8 +30,6 @@ var addInputInvestMade = function (idx) {
     d3.select("#investmentmade-" + idx + " input[name='investmade']").on(
       "keyup",
       function() {
-        console.log("Running fund made onKeyup with idx = " + idx);
-
         addInputInvestMade(idx);
       }
     );

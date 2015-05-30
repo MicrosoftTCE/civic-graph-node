@@ -14,7 +14,6 @@ var utils = require('../utilities');
 var formBTmpl = require("../templates/form-b.hbs");
 
 var displayFormB = function() {
-  console.log("Running displayFormB");
   // Now we have a perfectly structured JSON object that contains
   // the information given by the user and inputted into the webform.
   // Send this object as a parameter to form B, and render form B accordingly.
@@ -22,9 +21,6 @@ var displayFormB = function() {
   var formObject = processFormA();
 
   if (formObject.location && formObject.name) {
-    console.log("formObject.location =", formObject.location);
-    console.log("formObject.name =", formObject.name);
-
     var counterKey = 0;
     var counterK = 0;
 

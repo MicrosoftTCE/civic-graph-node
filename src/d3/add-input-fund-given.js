@@ -9,15 +9,11 @@ var utils = require('../utilities');
 var fundingGivenTmpl = require("../templates/funding-given.hbs");
 
 var addInputFundGiven = function (idx) {
-  console.log("Running addInputFundGiven with idx = " + idx);
-
   if ($('#fundinggiven-' + idx + ' input[name="fundgiven"]').val() !== "") {
 
     d3.select('#fundinggiven-' + idx + ' input[name="fundgiven"]').on(
       'keyup',
       function() {
-        console.log("Running fund given onKeyup with idx = " + idx);
-
         preFillName(
           this.value,
           '#fundinggiven-' + (idx - 1) + ' input[name="fundgiven"]'
@@ -35,7 +31,6 @@ var addInputFundGiven = function (idx) {
     d3.select("#fundinggiven-" + idx + " input[name='fundgiven']").on(
       "keyup",
       function() {
-        console.log("Running fund given onKeyup with idx = " + idx);
         addInputFundGiven(idx);
       }
     );

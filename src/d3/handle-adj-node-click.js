@@ -1,10 +1,6 @@
 var handleClickNodeHover = require('./handle-click-node-hover');
 
-var handleAdjNodeClick = function (
-  node
-) {
-  console.log("Running handleAdjNodeClick with node =", node);
-
+var handleAdjNodeClick = function (node) {
   window.civicStore.lines.funding.style("opacity", function(link) {
     if (node === link.source || node === link.target) {
       return "1";
@@ -38,12 +34,10 @@ var handleAdjNodeClick = function (
   });
 
   var isLinkTarget = function(link, node) {
-    console.log("Running isLinkTarget with link, node =", link, node);
     return link.target.index === node.index;
   }
 
   var isLinkSource = function(link, node) {
-    console.log("Running isLinkSource with link, node =", link, node);
     return link.source.index === node.index;
   }
 
@@ -52,7 +46,6 @@ var handleAdjNodeClick = function (
   neighboringNodesIndices[d.ID] = 1;
 
   window.civicStore.edges.funding.forEach(function(link) {
-    // console.log("Running forEach on funding connections with link = ", link);
 
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
@@ -64,8 +57,6 @@ var handleAdjNodeClick = function (
   });
 
   window.civicStore.edges.investment.forEach(function(link) {
-    // console.log("Running forEach on investment connections with link = ", link);
-
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
     }
@@ -76,7 +67,6 @@ var handleAdjNodeClick = function (
   });
 
   window.civicStore.edges.collaboration.forEach(function(link) {
-    // console.log("Running forEach on collaboration connections with link = ", link);
 
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
@@ -88,7 +78,6 @@ var handleAdjNodeClick = function (
   });
 
   window.civicStore.edges.data.forEach(function(link) {
-    // console.log("Running forEach on data connections with link = ", link);
 
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
@@ -99,8 +88,7 @@ var handleAdjNodeClick = function (
     }
   });
 
-  window.d3RootElem.selectAll('.node').style("opacity", function(n) {
-    console.log("Running opacity on .node with n = ", n);
+  window.svg.selectAll('.node').style("opacity", function(n) {
     if (n.ID in neighboringNodesIndices) {
       return "1";
     } else {
@@ -113,9 +101,8 @@ var handleAdjNodeClick = function (
     .style("stroke", "black")
     .on('mouseout', null);
 
-  node.filter(function(singleNode) {
-    // console.log("Running filter on node with singleNode = ", singleNode);
-
+  node
+    .filter(function(singleNode) {
       if (singleNode !== node) {
         return singleNode;
       }
@@ -132,7 +119,6 @@ var handleAdjNodeClick = function (
 
   node
     .filter(function(link) {
-      // console.log("Running filter on node with link = ", link);
       return (
         neighborFund.indexOf(link.index) > -1 ||
         neighborInvest.indexOf(link.index) > -1 ||

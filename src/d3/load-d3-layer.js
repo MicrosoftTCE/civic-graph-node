@@ -7,8 +7,6 @@ var routeTipTmpl = require("../templates/d3-route-tip.hbs");
 var d3Layers = {};
 
 function loadD3Layer() {
-  console.log("Running loadD3Layer");
-
   var d3MapTools = new D3OverlayManager(map);
   var radius     = 80;
   var cityData   = [];
@@ -18,7 +16,6 @@ function loadD3Layer() {
     .attr('class', 'd3-tip')
     .offset([0, 0])
     .html(function(d) {
-      console.log("Returning tip template with d =", d);
       return tipTmpl(d);
     });
 
@@ -27,7 +24,6 @@ function loadD3Layer() {
     .attr("class", "d3-tip")
     .offset([0, 0])
     .html(function(d) {
-      console.log("Returning donutTip template with d =", d);
       return donutTipTmpl(d);
     });
 
@@ -37,7 +33,6 @@ function loadD3Layer() {
     .attr("class", "d3-tip")
     .offset([0, 0])
     .html(function(d) {
-      console.log("Returning routeTip template with d =", d);
       return routeTipTmpl(d);
     });
 
@@ -52,8 +47,6 @@ function loadD3Layer() {
     .await(analyze);
 
   function analyze(error, topology, connData, locData) {
-    console.log("Running analyze with error, topology, connData, locData =", error, topology, connData, locData);
-
     if (error) { console.log(error); throw error; }
 
     var locationData     = [];
@@ -89,7 +82,6 @@ function loadD3Layer() {
 
       locData.nodes.forEach(
         function(place) {
-          console.log("Running forEach on locData.nodes with place =", place);
           var name;
 
           if (place.cityLat === d.lat && place.cityLong === d.lon) {
@@ -112,8 +104,6 @@ function loadD3Layer() {
     }
 
     Object.keys(connData).forEach(function(key) {
-      console.log("Running forEach on Object.keys(connData) with key =", key);
-
       if (key === "nodes") { return; }
 
       connData[key].forEach(
@@ -168,7 +158,6 @@ function loadD3Layer() {
 
     d3Layers.d3Topology = d3MapTools.addLayer({
       loaded: function (svg, projection) {
-        console.log("Running loaded to d3Topology with svg, projection =", svg, projection);
         svg.selectAll(".topology")
           .data( topojson.feature(topology, topology.objects.countries).features )
           .enter()
@@ -183,7 +172,6 @@ function loadD3Layer() {
 
     d3Layers.d3Routes = d3MapTools.addLayer({
       loaded: function(svg, projection) {
-        console.log("Running loaded to d3Routes with svg, projection =", svg, projection);
         svg.call(routeTip);
         strokeScale = d3.scale.log().domain([1, 100]).range([3, 15]);
         svg
@@ -207,7 +195,6 @@ function loadD3Layer() {
 
     d3Layers.d3Circles = d3MapTools.addLayer({
       loaded: function (svg, projection) {
-        console.log("Running loaded to d3Circles with svg, projection =", svg, projection);
         svg.call(tip);
         radiusScale = d3.scale.linear().domain([0, maxVal]).range([5, 55]);
         svg
@@ -229,7 +216,6 @@ function loadD3Layer() {
       },
 
       viewChanged: function(svg, projection) {
-        console.log("Running viewChanged to d3Circles with svg, projection =", svg, projection);
         svg
           .selectAll("circle")
           .attr("transform",
@@ -245,7 +231,6 @@ function loadD3Layer() {
     d3Layers.d3Donuts = d3MapTools.addLayer({
       radius: 0.2,
       loaded: function(svg, projection) {
-        console.log("Running loaded to d3Donuts with svg, projection =", svg, projection);
         var arc       = d3.svg.arc();
         var list      = [];
         var subtotal  = 0;
@@ -320,13 +305,13 @@ function loadD3Layer() {
             return "translate(" + projection.projection()([d.lon, d.lat]) + ")";
           })
           .style("fill", function(d) {
-            if (d.type === "For-Profit")
+            if (d.entity_type === "For-Profit")
               return "#7cbd42";
-            if (d.type === "Non-Profit")
+            if (d.entity_type === "Non-Profit")
               return "#269fd9";
-            if (d.type === "Individual")
+            if (d.entity_type === "Individual")
               return "#fbb717";
-            if (d.type === "Government")
+            if (d.entity_type === "Government")
               return "#f05026";
 
             return "#FFFFFF";
@@ -336,7 +321,6 @@ function loadD3Layer() {
       },
 
       viewChanged: function(svg, projection) {
-        console.log("Running viewChanged to d3Donuts with svg, projection =", svg, projection);
         var arc = d3.svg.arc();
 
         svg

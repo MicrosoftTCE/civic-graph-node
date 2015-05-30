@@ -2,8 +2,6 @@ var d3 = require('d3');
 var $  = require('jquery');
 
 var processFormA = function() {
-  console.log("Running processFormA");
-
   var formObject = {
     type: null,
     categories: null,
@@ -51,13 +49,13 @@ var processFormA = function() {
   } else {
     // Set the entity type.
     if ($('input#rb_forpro').is(":checked")) {
-      formObject.type = "For-Profit";
+      formObject.entity_type = "For-Profit";
     } else if ($('input#rb_nonpro').is(":checked")) {
-      formObject.type = "Non-Profit";
+      formObject.entity_type = "Non-Profit";
     } else if ($('input#rb_gov').is(":checked")) {
-      formObject.type = "Government";
+      formObject.entity_type = "Government";
     } else {
-      formObject.type = "Individual";
+      formObject.entity_type = "Individual";
     }
 
     // Set the entity name.
@@ -69,7 +67,6 @@ var processFormA = function() {
 
     d3.selectAll('.webform-categories input').filter(
       function(d) {
-        // console.log("Running filter on .webform-categories input with d =", d);
         if (this.checked === true) {
           switch (this.value) {
             case 'General':
@@ -102,7 +99,6 @@ var processFormA = function() {
 
     d3.selectAll('.locations').filter(
       function(d) {
-        // console.log("Running filter on .locations with d =", d);
         if (this.value !== "") {
           formObject.locations.push(
             {
@@ -138,7 +134,6 @@ var processFormA = function() {
     formObject.key_people = [];
 
     d3.selectAll('.kpeople').filter(function(d) {
-      // console.log("Running filter on .kpeople with d =", d);
       if (this.value !== "") {
         formObject.key_people.push(this.value);
       }
@@ -153,7 +148,6 @@ var processFormA = function() {
 
     d3.selectAll('.fund-input .funder').filter(
       function(d, i) {
-        // console.log("Running filter on .fund-input .funder with d, i =", d, i);
         if (this.value) {
           if (!d3.selectAll('.fund_amt')[0][i].value) {
             fund_amount = null;
@@ -202,7 +196,6 @@ var processFormA = function() {
 
     d3.selectAll('.fundgiven-input .fundee').filter(
       function(d, i) {
-        // console.log("Running filter on .fundgiven-input .fundee with d, i =", d, i);
         if (this.value) {
           if (!d3.selectAll('.fundgiven_amt')[0][i].value) {
             fund_given_amount = null;
@@ -251,7 +244,6 @@ var processFormA = function() {
 
     d3.selectAll('.invest-input .investor').filter(
       function(d, i) {
-        // console.log("Running filter on .invest-input .investor with d, i =", d, i);
         if (this.value) {
           if (!d3.selectAll('.invest_amt')[0][i].value) {
             investment_amount = null;
@@ -298,7 +290,6 @@ var processFormA = function() {
     var investment_made_amount;
 
     d3.selectAll('.investmade-input .investee').filter(function(d, i) {
-      // console.log("Running filter on .investmade-input .investee with d, i =", d, i);
       if (this.value) {
         if (!d3.selectAll('.investmade_amt')[0][i].value) {
           investment_made_amount = null;
@@ -345,7 +336,6 @@ var processFormA = function() {
 
     d3.selectAll('.data-entity').filter(
       function(d, i) {
-        // console.log("Running filter on .data-entity with d, i =", d, i);
         if (this.value !== "") {
           formObject.data.push(this.value);
         }

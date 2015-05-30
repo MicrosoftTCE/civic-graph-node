@@ -1,7 +1,6 @@
 var _ = require('lodash');
 
 var determineNullFields = function () {
-  console.log("Running determineNullFields");
   var allNodes = _.values(window.civicStore.vertices);
 
   var nullFieldCount = 0;
@@ -22,14 +21,12 @@ var determineNullFields = function () {
 
       // Individuals do not have employees, people, rande, randeY
       // Not a fair comparison of null fields.
-      if (node.type === 'Individual') { nullFieldCount -= 4; }
+      if (node.entity_type === 'Individual') { nullFieldCount -= 4; }
 
       nullFieldArr.push({ name: node.name, nullFields: nullFieldCount });
       nullFieldCount = 0;
     }
   );
-
-  console.log("Looped through allNodes to set nullFieldArr =", nullFieldArr);
 
   //  Let's determine the nodes with the most null fields.
   var maxNullObj = _.max(nullFieldArr,
@@ -54,8 +51,6 @@ var determineNullFields = function () {
     }
   );
 
-  console.log("Set potentialSuggestions =", potentialSuggestions);
-
   var fiveSuggestions = [];
 
   while (fiveSuggestions.length < 5) {
@@ -67,8 +62,6 @@ var determineNullFields = function () {
       fiveSuggestions.push(potentialSuggestions[indexValue]);
     }
   }
-
-  console.log("set fiveSuggestions =", fiveSuggestions);
 
   return fiveSuggestions;
 }

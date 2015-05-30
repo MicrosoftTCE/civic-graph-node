@@ -4,8 +4,6 @@ var _  = require('underscore');
 var u = require('../utilities');
 
 var wrap = function(text, width) {
-  console.log("Running wrap with text, width =", text, width);
-
   text.each(function() {
     var text = d3.select(this);
     var words = text.text().split(/\s+/).reverse();

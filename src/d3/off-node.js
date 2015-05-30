@@ -4,8 +4,6 @@ var sinclick = require('./sinclick');
 var handleNodeHover = require('./handle-node-hover');
 
 var offNode = function offNode(node) {
-  console.log("Running offNode");
-
   if (window.d3Node) {
     window.d3Node
       .style("stroke", "white")
@@ -62,24 +60,23 @@ var offNode = function offNode(node) {
     .style(
       'opacity',
       function(entity) {
-        // console.log("Setting opacity on entity = ", entity);
         var textOpacity;
 
         // TODO: switch statement?
-        if (entity.type === "For-Profit") {
-          textOpacity = (fiveMostConnectedForProfit.hasOwnProperty(entity.name)) ? 1 : 0;
+        if (entity.entity_type === "For-Profit") {
+          textOpacity = (window.fiveMostConnectedForProfit.hasOwnProperty(entity.name)) ? 1 : 0;
         }
 
-        if (entity.type === "Non-Profit") {
-          textOpacity = (fiveMostConnectedNonProfit.hasOwnProperty(entity.name)) ? 1 : 0;
+        if (entity.entity_type === "Non-Profit") {
+          textOpacity = (window.fiveMostConnectedNonProfit.hasOwnProperty(entity.name)) ? 1 : 0;
         }
 
-        if (entity.type === "Individual") {
-          textOpacity = (fiveMostConnectedIndividuals.hasOwnProperty(entity.name)) ? 1 : 0;
+        if (entity.entity_type === "Individual") {
+          textOpacity = (window.fiveMostConnectedIndividuals.hasOwnProperty(entity.name)) ? 1 : 0;
         }
 
-        if (entity.type === "Government") {
-          textOpacity = (fiveMostConnectedGovernment.hasOwnProperty(entity.name)) ? 1 : 0;
+        if (entity.entity_type === "Government") {
+          textOpacity = (window.fiveMostConnectedGovernment.hasOwnProperty(entity.name)) ? 1 : 0;
         }
 
         return textOpacity;

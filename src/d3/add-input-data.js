@@ -9,14 +9,10 @@ var utils = require('../utilities');
 var dataTmpl = require("../templates/data.hbs");
 
 var addInputData = function (idx) {
-  console.log("Running addInputData with idx = " + idx);
-
   if ($('#data-' + idx + ' input[name="data"]').val() !== "") {
     d3.select('#data-' + idx + ' input[name="data"]').on(
       'keyup',
       function() {
-        console.log("Running data onKeyup with idx = " + idx);
-
         preFillName(this.value, '#data-' + (idx - 1) + ' input[name="data"]');
       }
     );
@@ -30,8 +26,6 @@ var addInputData = function (idx) {
     d3.select("#data-" + idx + " input[name='data']").on(
       "keyup",
       function() {
-        console.log("Running data onKeyup with idx = " + idx);
-
         addInputData(idx);
       }
     );

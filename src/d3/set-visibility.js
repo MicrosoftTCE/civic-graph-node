@@ -1,11 +1,6 @@
 var d3 = require('d3');
 
 var setVisibility = function(link, linkData, visibleNodes, connectionType) {
-  console.log(
-    "Running setVisibility with link, linkData, visibleNodes, connectionType = ",
-    link, linkData, visibleNodes, connectionType
-  );
-
   if (linkData.source.ID in visibleNodes && linkData.target.ID in visibleNodes) {
     switch (connectionType) {
       case "Funding":

@@ -3,8 +3,6 @@ var $ = require('jquery');
 var entityNamesTmpl = require('../templates/entity-names.hbs');
 
 var initialInfo = function () {
-  console.log("Calling initialInfo");
-
   var allNodes = _.values(window.civicStore.vertices);
 
   var countTypes = [0, 0, 0, 0];
@@ -39,13 +37,8 @@ var initialInfo = function () {
       countTypes[2]++;
     }
   }
-  console.log("Set forProfitsArray =", forProfitsArray);
-  console.log("Set nonProfitsArray =", nonProfitsArray);
-  console.log("Set governmentArray =", governmentArray);
-  console.log("Set individualArray =", individualArray);
 
   //  Printing to side panel within web application.
-  console.log("Printing to the side panel")
   d3
     .select('#info')
     .html("<h3 style='padding-bottom:10px;'>The Data</h3>")
@@ -62,7 +55,6 @@ var initialInfo = function () {
     .linear()
     .domain([0, d3.max(countTypes)])
     .range([0, $('#breakdown').width()]);
-  console.log("Set x =", x);
 
   var typesColor = 0;
   var typesText = 0;
@@ -105,9 +97,6 @@ var initialInfo = function () {
         return;
       }
     });
-
-    console.log("Set typesColor =", typesColor);
-    console.log("Set typesText =", typesText);
 
   d3.select('#info')
     .append('text')

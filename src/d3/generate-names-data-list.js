@@ -1,6 +1,4 @@
 var generateNamesDataList = function (sortedList) {
-  console.log("Running generateNamesDataList with " + sortedList.length + " names.");
-
   var datalist = "";
 
   for (var i = 0; i < sortedList.length; i++) {

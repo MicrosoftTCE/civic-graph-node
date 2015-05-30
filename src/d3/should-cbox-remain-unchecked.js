@@ -1,12 +1,7 @@
 var d3 = require('d3');
 var $  = require('jquery');
 
-var shouldCboxRemainUnchecked = function(
-  selector,
-  visibleNodes
-) {
-  console.log("Running shouldCboxRemainUnchecked with selector, visibleNodes =", selector, visibleNodes);
-
+var shouldCboxRemainUnchecked = function(selector, visibleNodes) {
   if (
     visibleNodes.length === 0 ||
     (

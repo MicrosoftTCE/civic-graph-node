@@ -1,12 +1,8 @@
 
 var searchAutoComplete = function () {
-  console.log("Running searchAutoComplete");
-
   // var allNodes = _.values(window.civicStore.vertices);
 
   var s = ""; /////
-
-  console.log("Running forEach on allNodes to splitLocations, sort, and create option tags.");
 
   var entitiesHash = {};
 
@@ -68,8 +64,6 @@ var searchAutoComplete = function () {
   //     return keys;
   //   }
   // );
-
-  console.log("Setting option tags");
 
   // for (var count = 0; count < sortedSearchList.length; count++) {
   //   s += '<option value="' + sortedSearchList[count] + '">';

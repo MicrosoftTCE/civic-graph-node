@@ -5,7 +5,6 @@ var d3 = require('d3');
  *  and sets the value of the input to the name or nickname
  */
 var preFillName = function (name, inputSelector) {
-  console.log("Running preFillName with", name, inputSelector);
   var key = name.toLowerCase();
 
   var entitiesHash = {};

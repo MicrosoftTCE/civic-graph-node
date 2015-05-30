@@ -1,7 +1,6 @@
 var d3 = require('d3');
 
 var reflectConnectionChanges = function() {
-  console.log("Running reflectConnectionChanges");
 
   var visibleFundingConnections = window.civicStore.lines.funding.filter(
     function(link) {

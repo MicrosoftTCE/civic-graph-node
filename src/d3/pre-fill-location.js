@@ -3,8 +3,6 @@ var d3 = require('d3');
 var utils = require('../utilities');
 
 var preFillLocation = function (input) {
-  console.log("Running preFillLocation with", input);
-
   var locationHash = utils.getLocationHash();
   var key = input.toLowerCase();
 

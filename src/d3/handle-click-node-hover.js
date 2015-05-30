@@ -5,8 +5,6 @@ var prefillCurrent = require('./prefill-current');
 var textDisplay    = require('./text-display');
 
 var handleClickNodeHover = function(obj) {
-  console.log("Running handleClickNodeHover with obj =", obj);
-
   var display = textDisplay(obj);
 
   webform = editDisplay(obj);
@@ -26,7 +24,6 @@ var handleClickNodeHover = function(obj) {
     .selectAll('#editCurrentInfo').on(
       'click',
       function() {
-        console.log("Running onClick for #editCurrentInfo");
         prefillCurrent(obj);
       }
     )

@@ -2,8 +2,6 @@ var reflectConnectionChanges = require('./reflect-connection-changes');
 var setVisibility            = require('./set-visibility');
 
 var toggleLinks = function(visibleNodes) {
-  console.log("Running toggleLinks with visibleNodes =", visibleNodes);
-
   window.civicStore.lines.funding.filter(
     function(link) {
       setVisibility(this, this.__data__, visibleNodes, "Funding");

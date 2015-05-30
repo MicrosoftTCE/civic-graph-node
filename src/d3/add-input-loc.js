@@ -4,8 +4,6 @@ var $  = require('jquery');
 var locTmpl = require("../templates/loc.hbs");
 
 var addInputLoc = function (idx) {
-  console.log("Running addInputLoc with idx = " + idx);
-
   if ($('#location-' + idx + ' input[name="location"]').val() !== "") {
     d3.select('#location-' + idx + ' input[name="location"]').on(
       'keyup',
@@ -19,8 +17,6 @@ var addInputLoc = function (idx) {
     d3.select("#location-" + idx +  " input[name='location']").on(
       "keyup",
       function() {
-        console.log("Running loc onKeyup with idx = " + idx);
-
         addInputLoc(idx);
       }
     );

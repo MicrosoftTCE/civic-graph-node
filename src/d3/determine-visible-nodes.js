@@ -1,6 +1,4 @@
 var determineVisibleNodes = function() {
-  console.log("Running determineVisibleNodes");
-
   // Construct associative array of the visible nodes'
   // indices (keys) and corresponding objects (values).
   var visibleNodes = {};

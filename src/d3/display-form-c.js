@@ -8,8 +8,6 @@ var sinclick            = require('./sinclick');
 var formCTmpl = require('../templates/form-c.hbs');
 
 var displayFormC = function () {
-  console.log("Running displayFormC");
-
   var suggestions = determineNullFields(_.values(window.civicStore.vertices));
 
   // Render the string into HTML
@@ -17,7 +15,6 @@ var displayFormC = function () {
 
   d3.selectAll('#info ul a').on('click',
     function(d, i) {
-      console.log("Running onClick on #info ul a with d, i =", d, i);
       sinclick(suggestions[i]);
       editForm();
       preFillFormA(suggestions[i]);

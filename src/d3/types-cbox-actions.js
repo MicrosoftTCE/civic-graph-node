@@ -5,8 +5,6 @@ var nodeVisibility        = require('./node-visibility');
 var toggleLinks           = require('./toggle-links');
 
 var typesCboxActions = function() {
-  console.log("Running typesCheckboxActions");
-
   d3.selectAll('#cb_forpro, #cb_nonpro, #cb_gov, #cb_individ').on(
     'click',
     function() {

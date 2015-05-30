@@ -3,12 +3,9 @@ var textDisplay = require('./text-display');
 var editDisplayTmpl = require("../templates/edit-display.hbs");
 
 var handleNodeHover = function (d) {
-  console.log("Running handleNodeHover with node = ", d);
-
   var s = textDisplay(d);
 
   //  Printing to side panel within web application.
-  console.log("Calling editDisplayTmpl with ", window.d3Node);
   webform = editDisplayTmpl(d);
 
   // For editing the data displayed within the side panel.
@@ -78,7 +75,6 @@ var handleNodeHover = function (d) {
   neighboringNodesIndices[d.id] = 1;
 
   window.civicStore.edges.funding.forEach(function(link) {
-    // console.log("Running forEach on funding connections with link = ", link);
 
     if (isLinkSource(link, d)) {
       neighboringNodesIndices[link.target.index] = 1;
@@ -90,7 +86,6 @@ var handleNodeHover = function (d) {
   });
 
   window.civicStore.edges.investment.forEach(function(link) {
-    // console.log("Running forEach on investment connections with link = ", link);
 
     if (isLinkSource(link, d)) {
       neighboringNodesIndices[link.target.index] = 1;
@@ -102,7 +97,6 @@ var handleNodeHover = function (d) {
   });
 
   window.civicStore.edges.collaboration.forEach(function(link) {
-    // console.log("Running forEach on collaboration connections with link = ", link);
 
     if (isLinkSource(link, d)) {
       neighboringNodesIndices[link.target.index] = 1;
@@ -114,7 +108,6 @@ var handleNodeHover = function (d) {
   });
 
   window.civicStore.edges.data.forEach(function(link) {
-    // console.log("Running forEach on data connections with link = ", link);
 
     if (isLinkSource(link, d)) {
       neighboringNodesIndices[link.target.index] = 1;
@@ -127,7 +120,7 @@ var handleNodeHover = function (d) {
 
   d3.select(this).style("stroke", "rgba(0,0,0,0.6)");
 
-  window.d3RootElem
+  window.svg
     .selectAll('.node')
     .transition()
     .duration(350)

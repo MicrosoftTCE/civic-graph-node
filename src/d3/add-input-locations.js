@@ -8,14 +8,10 @@ var preFillLocation = require('./pre-fill-location');
 var locationTmpl = require("../templates/location.hbs");
 
 var addInputLocations = function (idx) {
-  console.log("Running addInputLocations with idx = " + idx);
-
   if ($('#location-' + idx + ' input[name="location"]').val() !== "") {
     d3.select('#location-' + idx + ' input[name="location"]').on(
       'keyup',
       function () {
-        console.log("Running onKeyup with idx = " + idx);
-
         preFillLocation(this.value, utils.getLocationHash());
       }
     );
@@ -27,8 +23,6 @@ var addInputLocations = function (idx) {
     d3.select("#location-" + idx +  " input[name='location']").on(
       "keyup",
       function() {
-        console.log("Running location onKeyup with idx = " + idx);
-
         addInputLocations(idx);
       }
     );

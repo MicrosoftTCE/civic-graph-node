@@ -6,8 +6,6 @@ var tick = require('./tick');
 var u = require('../utilities');
 
 var dblClick = function(d) {
-  console.log("Running dblClick with d =", d);
-
   d3.select(this).classed("fixed", function(d) { d.fixed = false; });
 
   d3.select(this).on('mousedown.drag', null);
@@ -15,11 +13,11 @@ var dblClick = function(d) {
   var dblclickobject = (d3.select(this).data())[0];
 
   var svgWidth = parseInt(
-    window.d3RootElem.style("width").substring(0, ((window.d3RootElem.style("width")).length + 1) / 2)
+    window.svg.style("width").substring(0, ((window.svg.style("width")).length + 1) / 2)
   );
 
   var svgHeight = parseInt(
-    window.d3RootElem.style("height").substring(0, ((window.d3RootElem.style("height")).length + 1) / 2)
+    window.svg.style("height").substring(0, ((window.svg.style("height")).length + 1) / 2)
   );
 
   var halfSVGWidth = parseInt(svgWidth / 2);

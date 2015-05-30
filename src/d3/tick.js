@@ -1,28 +1,26 @@
 var transformText = require('./transform-text');
 
 var tick = function (event) {
-  // console.log("Running tick(e)");
-
   // Push different nodes in different directions for clustering.
   var k = 8 * event.alpha;
 
   /* Four quandrant separation */
   _.values(window.civicStore.vertices).forEach(
     function(entity, idx) {
-      if (entity.type !== null) {
-        if (entity.type === "Individual") {
+      if (entity.entity_type !== null) {
+        if (entity.entity_type === "Individual") {
           entity.x += (k + k);
           entity.y += (k + k);
         }
-        if (entity.type === "Non-Profit") {
+        if (entity.entity_type === "Non-Profit") {
           entity.x += (-k - k);
           entity.y += (k + k);
         }
-        if (entity.type === "For-Profit") {
+        if (entity.entity_type === "For-Profit") {
           entity.x += (k + k);
           entity.y += (-k - k);
         }
-        if (entity.type === "Government") {
+        if (entity.entity_type === "Government") {
           entity.x += (-k - k);
           entity.y += (-k - k);
         }
@@ -30,7 +28,6 @@ var tick = function (event) {
     }
   );
 
-  // console.log("Setting x1, y1 and x2, y2");
   if (_.isEmpty(window.centeredNode)) {
     window.civicStore.lines.funding
       .attr("x1", function(d) { return d.source.x; })

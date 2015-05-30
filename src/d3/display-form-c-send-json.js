@@ -4,8 +4,6 @@ var processFormB = require('./process-form-b');
 var displayFormC = require('./display-form-c');
 
 var displayFormCSendJson = function (obj) {
-  console.log("Running displayFormCSendJson with obj =", obj);
-
   var formObj = processFormB(obj);
 
   displayFormC();
@@ -16,7 +14,6 @@ var displayFormCSendJson = function (obj) {
     url: '/database/save',
     crossDomain: true
   }).done(function(returnData) {
-    console.log("Returning from AJAX POST to /database/save with returnData =", returnData);
     // TODO: ???
   });
 }

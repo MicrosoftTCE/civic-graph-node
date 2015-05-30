@@ -4,8 +4,6 @@ var handleClickNodeHover = require('./handle-click-node-hover');
 var utils = require('../utilities');
 
 var handleQuery = function (query) {
-  console.log("Calling handleQuery with query = " + query);
-
   query = query.toLowerCase();
 
   var entitiesHash = {};
@@ -14,7 +12,6 @@ var handleQuery = function (query) {
     sinclick(entitiesHash[query]);
   }
 
-  console.log("Chaging opacities on funding lines, investment lines, etc.");
   if (query in utils.getLocationHash()) {
     window.civicStore.lines.funding.style("opacity", function(l) {
       var locationSource = l.source.location;
@@ -83,8 +80,6 @@ var handleQuery = function (query) {
     d3.selectAll('circle').style("stroke", "white");
 
     d3.selectAll('.node').style('opacity', function(n) {
-      // console.log("Setting opacity on n = ", n);
-
       var locationSource = n.location;
 
       if (locationSource) {

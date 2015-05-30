@@ -1,8 +1,6 @@
 var d3 = require('d3');
 
 var revealConnections = function(selector, visibleNodes) {
-  console.log("Running revealConnections with selector, visibleNodes =", selector, visibleNodes);
-
   d3.selectAll(selector).style(
     "visibility",
     function(link) {

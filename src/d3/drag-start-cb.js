@@ -2,8 +2,6 @@ var d3 = require('d3');
 
 var dragStartCb = function (node) {
   return function (target) {
-    console.log("Running dragStart with node, target = " + node, target);
-
     d3
       .select(this)
       .classed(

@@ -4,8 +4,6 @@ var $  = require('jquery');
 var revenueTmpl = require("../templates/revenue.hbs");
 
 var addInputRev = function (idx) {
-  console.log("Running addInputRev with idx = " + idx);
-
   if ($('#revenue-' + idx + ' input[name="revenue_amt"]').val() !== "") {
     d3.select('#revenue-' + idx + ' input[name="revenue_amt"]').on(
       'keyup',
@@ -19,8 +17,6 @@ var addInputRev = function (idx) {
     d3.select("#revenue-" + idx + " input[name=revenue_amt]").on(
       "keyup",
       function() {
-        console.log("Running rev onKeyup with idx = " + idx);
-
         addInputRev(idx);
       }
     );
