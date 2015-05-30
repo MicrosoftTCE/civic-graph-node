@@ -58,14 +58,13 @@ router.get('/', function(req, res) {
 
 
 router.post('/', function(req, res) {
-// var cities = req.body.locations;
   var cities = req.body.city;
 
   _.each(cities, function(city) {
     if(city.id === null) {
-      http.get('http://dev.virtualearth.net/REST/v1/Locations?query=' + encodeURI(city.cityName) + '&key=Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M', function(res) {
+      http.get('http://dev.virtualearth.net/REST/v1/Locations?query=' + encodeURI(city.cityName) + '&key=Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M', function(response) {
         var data = '';
-        res.on('data', function(chunk) {
+        response.on('data', function(chunk) {
           data += chunk;
         }).on('end', function() {
           var location = JSON.parse(data);
@@ -90,37 +89,37 @@ router.post('/', function(req, res) {
 
                   var qry = insert("cities", cityDetails);
                   db.query(qry.toString()).then(function(result){
-
                     var CityAddresses = city.addresses;
                     _.each(CityAddresses, function(CityAddress) {
-                      if(address.id === null) {
-                        http.get('http://dev.virtualearth.net/REST/v1/Locations?q=' + encodeURI(CityAddress.address) + '&key=Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M', function(res) {
+                      if(CityAddress.id === null) {
+                        http.get('http://dev.virtualearth.net/REST/v1/Locations?q=' + encodeURI(CityAddress.address) + '&key=Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M', function(resp) {
                           var address = '';
-                          res.on('data', function(chunk) {
+                          resp.on('data', function(chunk) {
                             address += chunk;
                           }).on('end', function() {
                             if (address){
 
                               address = JSON.parse(address);
-                              console.log(address, 'adddjhhhfhf');
                               if (address.resourceSets && address.resourceSets.length > 0 && address.resourceSets[0].resources && address.resourceSets[0].resources.length > 0) {
                                 var locationsObj= {
                                   entity_id: req.body.id,
                                   city_id: result.insertId,
-                                  address: CityAddresses.address,
+                                  address: CityAddress.address,
                                   address_lat: address.resourceSets[0].resources[0].geocodePoints[0].coordinates[0],
                                   address_long: address.resourceSets[0].resources[0].geocodePoints[0].coordinates[1],
                                   deleted_at: null
                                 };
 
-                                console.log(locationsObj);
-
                                 var qry = insert("locations", locationsObj);
-                                db.query(qry.toString(), function(result) {
+                                db.query(qry.toString()).then(function(result) {
                                   console.log(result, 'hhhdhhd');
-                                  res.json(result);
+                                  resp.json(result);
                                 });
+                              } else {
+                                console.log('address array returned empty');
                               }
+                            } else {
+                              console.log('address not found');
                             }
                           });
                         });
@@ -129,39 +128,18 @@ router.post('/', function(req, res) {
                   });
                 });
               });
+            } else {
+              console.log('Location array returned empty')
             }
           }
           else {
-            console.log('could not get city location');
+            console.log('location not found');
           }
         }).on('error', function(err) {
         });
       });
     }
   });
-
-
-// "id": 1,
-//             "city_name": "Menlo Park",
-//             "state_code": "CA",
-//             "state_name": "California",
-//             "country_code": "USA",
-//             "country_name": "United States",
-//             "city_lat": 37.4553184509277,
-//             "city_long": -122.178558349609,
-//             "deleted_at": null
-  //get city fields,
-  //if id exists, update the table
-  //if not, insert a new row and get the insertid
-  //use the insertID to update the location's table
-  // check if it exists,
-     // if it does, update the locations table with the new additions
-     // if it doesn't, insert into the new row.
-
-
-//
-//
-
 });
 
 module.exports = router;
