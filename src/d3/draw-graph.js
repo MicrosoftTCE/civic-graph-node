@@ -181,6 +181,250 @@ var drawGraph = function () {
           return 7 + 10;
         }
       })
+// <<<<<<< HEAD
+//       .linkDistance(50);
+//     console.log("Set force d3 layout =", force);
+
+//     //  FUNDINGS
+//     var fundLink = svg
+//       .selectAll(".fund")
+//       .data(fundingConnections)
+//       .enter()
+//       .append("line")
+//       .attr("class", "fund")
+//       .style("stroke", "rgb(111,93,168)") // lavender
+//       .style("stroke-width", "1")
+//       .style("opacity", "0.2")
+//       .style("visibility", "visible");
+
+//     console.log("Set fundLink =", fundLink);
+
+//     var investLink = svg
+//       .selectAll(".invest")
+//       .data(investmentConnections)
+//       .enter()
+//       .append("line")
+//       .attr("class", "invest")
+//       .style("stroke", "rgb(111,93,168)") // lavender
+//       .style("stroke-width", "1")
+//       .style("opacity", "0.2")
+//       .style("visibility", "visible");
+
+//     console.log("Set investLink =", investLink);
+
+//     //   OLD INVESTMENTS
+//     // var investLink = svg
+//     //   .selectAll(".invest")
+//     //   .data(investmentConnections)
+//     //   .enter()
+//     //   .append("line")
+//     //   .attr("class", "invest")
+//     //   .style("stroke", "rgb(38,114,114)") // teal
+//     //   .style("stroke-width", "1")
+//     //   .style("opacity", "0.2")
+//     //   .style("visibility", "visible");
+//     // console.log("Set investLink =", investLink);
+
+//     // EMPLOYMENTS
+//     // var employLink = svg
+//     //   .selectAll(".employ")
+//     //   .data(employmentConnections)
+//     //   .enter()
+//     //   .append("line")
+//     //   .attr("class", "invest")
+//     //   .style("stroke", "rgb(38,114,114)") // teal
+//     //   .style("stroke-width", "1")
+//     //   .style("opacity", "0.2")
+//     //   .style("visibility", "visible");
+//     // console.log("Set employLink =", employLink);
+
+//     //  COLLABORATIONS
+//     var porucsLink = svg
+//       .selectAll(".porucs")
+//       .data(collaborationConnections)
+//       .enter()
+//       .append("line")
+//       .attr("class", "porucs")
+//       .style("stroke", "rgb(235,232,38)") // yellow
+//       .style("stroke-width", "1")
+//       .style("opacity", "0.2")
+//       .style("visibility", "visible");
+
+//     console.log("Set porucsLink =", porucsLink);
+
+//     //  data
+//     var dataLink = svg
+//       .selectAll(".data")
+//       .data(dataConnections)
+//       .enter()
+//       .append("line")
+//       .attr("class", "data")
+//       .style("stroke", "rgb(191,72,150)") // pink
+//       .style("stroke-width", "1")
+//       .style("opacity", "0.2")
+//       .style("visibility", "visible");
+
+//     console.log("Set dataLink =", dataLink);
+
+//     var textElement = svg
+//       .selectAll('.node')
+//       .append('text')
+//       .text(function(d) { return d.nickname; })
+//       .attr("x", 0)
+//       .attr("dy", "0.1em")
+//       .attr("y",
+//         function(d) {
+//           if (d.employees !== null) {
+//             return empScale(d.employees) + 10;
+//           } else {
+//             return 7 + 10;
+//           }
+//         })
+//       .style('opacity',
+//         function(d) {
+//           var textOpacity;
+
+//           if (d.type === "For-Profit") {
+//             textOpacity =
+//               (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
+//           }
+
+//           if (d.type === "Non-Profit") {
+//             textOpacity =
+//               (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
+//           }
+
+//           if (d.type === "Individual") {
+//             textOpacity =
+//               (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
+//           }
+
+//           if (d.type === "Government") {
+//             textOpacity =
+//               (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
+//           }
+
+//           return textOpacity;
+//         })
+//       .style('font-size', '14px')
+//       .style('color', '#FFFFFF')
+//       .style('pointer-events', 'none');
+//     console.log("Set textElement =", textElement);
+
+//     var nodeInit = svg
+//       .selectAll(".node")
+//       .data(allNodes)
+//       .enter()
+//       .append("g")
+//       .attr("class", "node")
+//       .style("visibility", "visible")
+//       .on(
+//         'dblclick',
+//         dblClickCb(
+//           allNodes,
+//           connections,
+//           tickCb(
+//             allNodes,
+//             centeredNode,
+//             fundLink,
+//             investLink,
+//             porucsLink,
+//             dataLink,
+//             node,
+//             textElement
+//           )
+//         )
+//       )
+//       // .call(drag);
+
+//     console.log("Set nodeInit =", nodeInit);
+
+//     var node = nodeInit
+//       .append("circle")
+//       .attr("r",
+//         function(d) {
+//           if (d.employees !== null) {
+//             return empScale(d.employees);
+//           } else {
+//             return "7";
+//           }
+//         })
+//       .style("fill",
+//         function(d) {
+//           if (d.type !== null) {
+//             if (d.type === "Individual") { return "rgb(255,185,0)"; }
+//             if (d.type === "Non-Profit") { return "rgb(0,164,239)"; }
+//             if (d.type === "For-Profit") { return "rgb(127,186,0)"; }
+//             if (d.type === "Government") { return "rgb(242,80,34)"; }
+//           }
+//         })
+//       .attr("cx",
+//         function(d) {
+//           return d.x;
+//         })
+//       .attr("cy",
+//         function(d) {
+//           return d.y;
+//         })
+//       .style("stroke-width", '1.5px')
+//       .style("stroke", 'white')
+//       .on(
+//         'mouseover',
+//         handleNodeHoverCb(
+//           fundLink,
+//           investLink,
+//           porucsLink,
+//           dataLink,
+//           fundingConnections,
+//           investmentConnections,
+//           collaborationConnections,
+//           dataConnections
+//         )
+//       )
+//       .on(
+//         'mouseout',
+//         offNodeCb(
+//           fundLink,
+//           investLink,
+//           porucsLink,
+//           dataLink,
+//           fundingConnections,
+//           investmentConnections,
+//           collaborationConnections,
+//           dataConnections,
+//           graph
+//         )
+//       )
+//       .on('click', sinclickCb(
+//         fundLink,
+//         investLink,
+//         porucsLink,
+//         dataLink,
+//         graph
+//       ));
+//     console.log("Set node =", node);
+
+//     var drag = force
+//       .drag()
+//       .on("dragstart", drag)
+//       .on("drag", drag)
+//       .on(
+//         "dragend",
+//         dragEndCb(
+//           node,
+//           fundLink,
+//           investLink,
+//           porucsLink,
+//           dataLink,
+//           fundingConnections,
+//           investmentConnections,
+//           collaborationConnections,
+//           dataConnections,
+//           graph
+//         )
+//       );
+//     console.log("Set drag =", drag);
+// =======
     .style('opacity',
       function(d) {
         var textOpacity;

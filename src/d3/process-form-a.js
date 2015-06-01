@@ -19,6 +19,7 @@ var processFormA = function() {
     funding_given: null,
     investments_made: null,
     collaborations: null,
+    employer: null,
     data: null,
     revenue: null,
     expenses: null,
@@ -329,6 +330,54 @@ var processFormA = function() {
 
     if (formObject.investments_made.length === 0) {
       formObject.investments_made = null;
+    }
+
+    formObject.employment = [];
+
+    var employment;
+
+    // d3.selectAll('.employment-input .employer').filter(
+    //   function(d, i) {
+    //     console.log("Running filter on .employment-input .employer with d, i =", d, i);
+    //     if (this.value) {
+    //       if (!d3.selectAll('.fundgiven_amt')[0][i].value) {
+    //         fund_given_amount = null;
+
+    //         if (!d3.selectAll('.fundgiven_year')[0][i].value) {
+    //           formObject.funding_given.push({
+    //             name: this.value,
+    //             amount: fund_given_amount,
+    //             year: null
+    //           });
+    //         } else {
+    //           formObject.funding_given.push({
+    //             name: this.value,
+    //             amount: fund_given_amount,
+    //             year: d3.selectAll('.fundgiven_year')[0][i].value
+    //           });
+    //         }
+    //       } else {
+    //         fund_given_amount = d3.selectAll('.fundgiven_amt')[0][i].value;
+
+    //         if (!d3.selectAll('.fundgiven_year')[0][i].value) {
+    //           formObject.funding_given.push({
+    //             name: this.value,
+    //             amount: fund_given_amount,
+    //             year: null
+    //           });
+    //         } else {
+    //           formObject.funding_given.push({
+    //             name: this.value,
+    //             amount: fund_given_amount,
+    //             year: d3.selectAll('.fundgiven_year')[0][i].value
+    //           });
+    //         }
+    //       }
+    //     }
+    //   });
+
+    if (formObject.employment.length === 0) {
+      formObject.employer = null;
     }
 
     // Obtain data

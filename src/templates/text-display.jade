@@ -82,6 +82,17 @@ if investments
 else
   div.category-label No known investments.
 
+if employment
+  div.category-label Employment by:
+  ul
+    for employment in employments
+      li
+        div.category-value
+          a(href="bingSearchUrl", target="_blank")
+            #{entity}
+else
+  div.category-label No known employments.
+
 if collaborations
   div.category-label Collaborated with:
   ul

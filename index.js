@@ -30,6 +30,8 @@ app.get('/join', routes.join);
 app.use('/cities', require('./routes/city'));
 app.use('/entities', require('./routes/entity'));
 app.use('/locations', require('./routes/location'));
+app.use('/geoloc', require('./routes/geoloc'));
+app.use('/entity-conn', require('./routes/entity-connection'));
 app.use('/graph', require('./routes/graph'));
 app.use('/', require('./routes/old'));
 

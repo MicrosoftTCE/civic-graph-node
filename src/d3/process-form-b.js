@@ -16,8 +16,11 @@ var processFormB = function(formObject) {
   if ($('.webform-influence input#rb_local').is(":checked")) {
     formObject.influence = "local";
   }
-  else {
+  else if($('.webform-influence input#rb_global').is(":checked")){
     formObject.influence = "global";
+  }
+  else if ($('.webform-influence input#rb_national').is(":checked")) {
+    formObject.influence = "national";
   }
 
   // Obtain collaborations

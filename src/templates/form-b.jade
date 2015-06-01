@@ -116,6 +116,17 @@ div.webform-content
         span.check
         h4.webform-labels Global Influence
 
+    div.input-control.radio.default-style.webform(data-role='input-control')
+      label
+        input#rb_global(
+          type='radio'
+          name='influence-type'
+          value='National Influence'
+          checked='checked'
+        )
+        span.check
+        h4.webform-labels National Influence
+
   h3.form-header Collaboration
 
   div#collaboration-0.input-control.text(data-role='input-control')
@@ -163,3 +174,4 @@ div.webform-content
 
   button#submit-B(type='button', href='javascript: check_empty()') Submit
 <!-- end form-b.jade -->
+//- if address, then adddress field should appear here with the values btw lines 67-84

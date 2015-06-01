@@ -306,6 +306,41 @@ var preFillFormA = function (obj) {
       );
   }
 
+  // if (obj.employment !== null) {
+  //   var employers = obj.employer;
+
+  //   dataProviders.forEach(function(d, i) {
+  //     console.log("Running dataProviders forEach with d, i =", d, i);
+  //     $("#data-" + i).after(dataTmpl({ idx: i }));
+
+  //     addDataList('#data-' + i + ' datalist', dataListSortedNames);
+
+  //     d3.select('#data-' + i + ' input[name="data"]').on('keyup',
+  //       function() {
+  //         console.log("Running preFillName on #data-" + i + " input[name=data] with " + this.value);
+  //         preFillName(this.value, '#data-' + i + ' input[name="data"]');
+  //       }
+  //     );
+
+  //     d3.select('#data-' + i + ' input[name="data"]').text(
+  //       function(e) {
+  //         console.log("Running text on #data-" + i + " input[name=data] set value = " + d.entity);
+  //         this.value = d.entity;
+  //       }
+  //     );
+  //   });
+
+  //   d3.select("#data-" + dataProviders.length + " input[name='data']")
+  //     .on(
+  //       "keyup",
+  //       function() {
+  //         console.log("Running onKeyup on #data-" + dataProviders.length + " input[name=data]");
+  //         console.log("Calling addInputData with length");
+  //         addInputData(dataProviders.length, dataListSortedNames);
+  //       }
+  //     );
+  // }
+
   if (obj.data !== null) {
     var dataProviders = obj.data;
 
