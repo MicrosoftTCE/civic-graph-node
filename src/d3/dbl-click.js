@@ -40,9 +40,12 @@ var dblClick = function(d) {
     .size([window.width, window.height])
     .links(window.connections)
     .linkStrength(0)
-    .charge(function(d) {
-      return d.employees !== null ? -6 * u.employeeScale(d.employees) -25;
-    })
+    .charge(
+      function(d) {
+        return d.render ||
+          (d.employees !== null ? -6 * u.employeeScale(d.employees) : -25);
+      }
+    )
     .linkDistance(50)
     .on("tick", tick)
     .start();

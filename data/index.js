@@ -126,11 +126,11 @@ var getTopEntities = function(callback) {
 
   var qry = "SELECT DISTINCT * FROM (" +
     "SELECT e.* FROM (" +
-    "SELECT * FROM `entities_view` WHERE render = 1 " +
+    "SELECT * FROM `entities_view` " +
     "ORDER BY employees DESC LIMIT 10) e " +
     "UNION " +
     "SELECT f.* FROM (" +
-    "SELECT * FROM `entities_view` WHERE render = 1 " +
+    "SELECT * FROM `entities_view` " +
     "ORDER BY followers DESC LIMIT 10) f " +
     ") t ORDER BY t.name";
 
@@ -141,7 +141,7 @@ var getTopEntities = function(callback) {
         return row;
       });
 
-      qry = select().from("bridges_view").where({render: 1}).toString()
+      qry = select().from("bridges_view").toString()
 
       return db.query(qry)
     })
@@ -179,7 +179,7 @@ var getOtherEntities = function(idsToAvoid, callback) {
         return row;
       });
 
-      qry = select().from("bridges_view").where({render: 1}).toString()
+      qry = select().from("bridges_view").toString()
 
       return db.query(qry)
     })
@@ -208,11 +208,11 @@ var getOtherEntities = function(idsToAvoid, callback) {
 var getVertices = function(callback) {
   var qry = "SELECT DISTINCT * FROM (" +
     "SELECT e.* FROM (" +
-    "SELECT * FROM `entities_view` WHERE render = 1 " +
+    "SELECT * FROM `entities_view` " +
     "ORDER BY employees DESC LIMIT 10) e " +
     "UNION " +
     "SELECT f.* FROM (" +
-    "SELECT * FROM `entities_view` WHERE render = 1 " +
+    "SELECT * FROM `entities_view` " +
     "ORDER BY followers DESC LIMIT 10) f " +
     ") t ORDER BY t.name";
 
@@ -240,7 +240,7 @@ var getVertices = function(callback) {
         return row;
       }));
 
-      qry = select().from("bridges_view").where({render: 1}).toString()
+      qry = select().from("bridges_view").toString()
 
       return db.query(qry)
     })
@@ -268,7 +268,7 @@ var getVertices = function(callback) {
 
 var getSpecifiedEdges = function(entityIds, callback) {
   var qry = select().from("bridges_view")
-    .where(and({render: 1}, $in('entity_1_id', entityIds), $in('entity_2_id', entityIds)))
+    .where(and($in('entity_1_id', entityIds), $in('entity_2_id', entityIds)))
     .toString()
 
   db.query(qry)
@@ -312,8 +312,7 @@ var getSpecifiedEdges = function(entityIds, callback) {
 };
 
 var getAllEdges = function(callback) {
-  var qry = select().from("bridges_view")
-    .where({render: 1}).toString()
+  var qry = select().from("bridges_view").toString()
 
   db.query(qry)
     .then(function(results) {
@@ -378,7 +377,7 @@ var getEdges = function(edgeType, callback) {
   }
 
   var qry = select().from("bridges_view")
-    .where({render: 1, connection: connection}).toString()
+    .where({connection: connection}).toString()
 
   db.query(qry)
     .then(function(results) {

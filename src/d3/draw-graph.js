@@ -46,8 +46,8 @@ var drawGraph = function () {
     .append('svg')
     .attr("xmlns", 'http://www.w3.org/2000/svg')
     .attr("id", 'network')
-    .attr("height", window.height)
-    .attr("width", window.width)
+    .attr("height", height)
+    .attr("width", width)
     .style("top", "-50px")
     .style("position", "relative");
 
@@ -72,38 +72,47 @@ var drawGraph = function () {
     }
   ).trigger("resize");
 
-  var viewBoxParameters = '0 0 ' + window.width + ' ' + window.height;
+  var viewBoxParameters = '0 0 ' + width + ' ' + height;
 
-  window.svg
+  svg
     .attr("viewBox", viewBoxParameters)
     .attr("preserveAspectRatio", 'xMidYMid');
 
-  var allNodes = _.values(window.civicStore.vertices);
+  var rawNodes = _.values(civicStore.vertices);
 
-  window.connections =
-    [].concat(window.civicStore.edges.funding)
-      .concat(window.civicStore.edges.investment)
-      .concat(window.civicStore.edges.collaboration)
-      .concat(window.civicStore.edges.data)
+  window.rawConnections =
+    [].concat(civicStore.edges.funding)
+      .concat(civicStore.edges.investment)
+      .concat(civicStore.edges.collaboration)
+      .concat(civicStore.edges.data)
 
   var force = d3
     .layout
     .force()
-    .nodes(allNodes)
-    .size([window.width, window.height])
-    .links(window.connections)
+    .nodes(rawNodes)
+    .size([width, height])
+    .links(rawConnections)
     .linkStrength(0)
-    .charge(function(d) {
-      return d.employees !== null ? -6 * u.employeeScale(d.employees) : -25;
-    })
+    .charge(
+      function(d) {
+        return d.render ||
+          (d.employees !== null ? -6 * u.employeeScale(d.employees) : -25);
+      }
+    )
     .linkDistance(50);
+
+  var drag = force
+    .drag()
+    .on("dragstart", drag)
+    .on("drag", drag)
+    .on("dragend", dragEnd);
 
   window.civicStore.lines = {};
 
   //  FUNDINGS
-  window.civicStore.lines.funding = window.svg
+  window.civicStore.lines.funding = svg
     .selectAll(".fund")
-    .data(window.civicStore.edges.funding)
+    .data(civicStore.edges.funding.filter(function(n) { return n.render === 1; }))
     .enter()
     .append("line")
     .attr("class", "fund")
@@ -113,9 +122,9 @@ var drawGraph = function () {
     .style("visibility", "visible");
 
   //  INVESTMENTS
-  window.civicStore.lines.investment = window.svg
+  window.civicStore.lines.investment = svg
     .selectAll(".invest")
-    .data(window.civicStore.edges.investment)
+    .data(civicStore.edges.investment.filter(function(n) { return n.render === 1; }))
     .enter()
     .append("line")
     .attr("class", "invest")
@@ -125,9 +134,9 @@ var drawGraph = function () {
     .style("visibility", "visible");
 
   //  COLLABORATIONS
-  window.civicStore.lines.collaboration = window.svg
+  window.civicStore.lines.collaboration = svg
     .selectAll(".collaboration")
-    .data(window.civicStore.edges.collaboration)
+    .data(civicStore.edges.collaboration.filter(function(n) { return n.render === 1; }))
     .enter()
     .append("line")
     .attr("class", "collaboration")
@@ -137,9 +146,9 @@ var drawGraph = function () {
     .style("visibility", "visible");
 
   //  data
-  window.civicStore.lines.data = window.svg
+  window.civicStore.lines.data = svg
     .selectAll(".data")
-    .data(window.civicStore.edges.data)
+    .data(civicStore.edges.data.filter(function(n) { return n.render === 1; }))
     .enter()
     .append("line")
     .attr("class", "data")
@@ -148,17 +157,67 @@ var drawGraph = function () {
     .style("opacity", "0.2")
     .style("visibility", "visible");
 
-  window.nodeInit = window.svg
+  window.nodeInit = svg
     .selectAll(".node")
-    .data(allNodes)
+    .data(rawNodes.filter(function(n) { return n.render === 1; }))
     .enter()
     .append("g")
     .attr("class", "node")
     .style("visibility", "visible")
     .on('dblclick', dblClick)
-    // .call(drag);
+    .call(drag);
 
-  window.textElement = window.svg
+  force
+    .on("tick", tick)
+    .start();
+
+  window.forProfitNodes = svg
+    .selectAll('.node')
+    .filter(function(d) { return d.entity_type === "For-Profit"; })
+    .sort(weightSorter);
+
+  window.nonProfitNodes = svg
+    .selectAll('.node')
+    .filter(function(d) { return d.entity_type === "Non-Profit"; })
+    .sort(weightSorter);
+
+  window.individualNodes = svg
+    .selectAll('.node')
+    .filter(function(d) { return d.entity_type === "Individual"; })
+    .sort(weightSorter);
+
+  window.governmentNodes = svg
+    .selectAll('.node')
+    .filter(function(d) { return d.entity_type === "Government"; })
+    .sort(weightSorter);
+
+  // Select the nodes to choose for highlighting nickname
+  // on visualization (TOP 5)
+  forProfitNodes.each(function(d, i) {
+    if (i >= forProfitNodes[0].length - 5) {
+      fiveMostConnectedForProfit[d.name] = d.weight;
+    }
+  });
+
+  nonProfitNodes.each(function(d, i) {
+    if (i >= nonProfitNodes[0].length - 5) {
+      fiveMostConnectedNonProfit[d.name] = d.weight;
+    }
+  });
+
+  individualNodes.each(function(d, i) {
+    if (i >= individualNodes[0].length - 5) {
+      fiveMostConnectedIndividuals[d.name] = d.weight;
+    }
+  });
+
+  governmentNodes.each(function(d, i) {
+    if (i >= governmentNodes[0].length - 5) {
+      fiveMostConnectedGovernment[d.name] = d.weight;
+    }
+  });
+
+  window.textElement = svg
     .selectAll('.node')
     .append('text')
     .text(function(d) { return d.nickname; })
@@ -166,256 +225,10 @@ var drawGraph = function () {
     .attr("dy", "0.1em")
     .attr("y",
       function(d) {
-        if (d.employees !== null) {
-          return u.employeeScale(d.employees) + 10;
-        } else {
-          return 7 + 10;
-        }
-      })
-// <<<<<<< HEAD
-//       .linkDistance(50);
-//     console.log("Set force d3 layout =", force);
-
-//     //  FUNDINGS
-//     var fundLink = svg
-//       .selectAll(".fund")
-//       .data(fundingConnections)
-//       .enter()
-//       .append("line")
-//       .attr("class", "fund")
-//       .style("stroke", "rgb(111,93,168)") // lavender
-//       .style("stroke-width", "1")
-//       .style("opacity", "0.2")
-//       .style("visibility", "visible");
-
-//     console.log("Set fundLink =", fundLink);
-
-//     var investLink = svg
-//       .selectAll(".invest")
-//       .data(investmentConnections)
-//       .enter()
-//       .append("line")
-//       .attr("class", "invest")
-//       .style("stroke", "rgb(111,93,168)") // lavender
-//       .style("stroke-width", "1")
-//       .style("opacity", "0.2")
-//       .style("visibility", "visible");
-
-//     console.log("Set investLink =", investLink);
-
-//     //   OLD INVESTMENTS
-//     // var investLink = svg
-//     //   .selectAll(".invest")
-//     //   .data(investmentConnections)
-//     //   .enter()
-//     //   .append("line")
-//     //   .attr("class", "invest")
-//     //   .style("stroke", "rgb(38,114,114)") // teal
-//     //   .style("stroke-width", "1")
-//     //   .style("opacity", "0.2")
-//     //   .style("visibility", "visible");
-//     // console.log("Set investLink =", investLink);
-
-//     // EMPLOYMENTS
-//     // var employLink = svg
-//     //   .selectAll(".employ")
-//     //   .data(employmentConnections)
-//     //   .enter()
-//     //   .append("line")
-//     //   .attr("class", "invest")
-//     //   .style("stroke", "rgb(38,114,114)") // teal
-//     //   .style("stroke-width", "1")
-//     //   .style("opacity", "0.2")
-//     //   .style("visibility", "visible");
-//     // console.log("Set employLink =", employLink);
-
-//     //  COLLABORATIONS
-//     var porucsLink = svg
-//       .selectAll(".porucs")
-//       .data(collaborationConnections)
-//       .enter()
-//       .append("line")
-//       .attr("class", "porucs")
-//       .style("stroke", "rgb(235,232,38)") // yellow
-//       .style("stroke-width", "1")
-//       .style("opacity", "0.2")
-//       .style("visibility", "visible");
-
-//     console.log("Set porucsLink =", porucsLink);
-
-//     //  data
-//     var dataLink = svg
-//       .selectAll(".data")
-//       .data(dataConnections)
-//       .enter()
-//       .append("line")
-//       .attr("class", "data")
-//       .style("stroke", "rgb(191,72,150)") // pink
-//       .style("stroke-width", "1")
-//       .style("opacity", "0.2")
-//       .style("visibility", "visible");
-
-//     console.log("Set dataLink =", dataLink);
-
-//     var textElement = svg
-//       .selectAll('.node')
-//       .append('text')
-//       .text(function(d) { return d.nickname; })
-//       .attr("x", 0)
-//       .attr("dy", "0.1em")
-//       .attr("y",
-//         function(d) {
-//           if (d.employees !== null) {
-//             return empScale(d.employees) + 10;
-//           } else {
-//             return 7 + 10;
-//           }
-//         })
-//       .style('opacity',
-//         function(d) {
-//           var textOpacity;
-
-//           if (d.type === "For-Profit") {
-//             textOpacity =
-//               (fiveMostConnectedForProfit.hasOwnProperty(d.name)) ? 1 : 0;
-//           }
-
-//           if (d.type === "Non-Profit") {
-//             textOpacity =
-//               (fiveMostConnectedNonProfit.hasOwnProperty(d.name)) ? 1 : 0;
-//           }
-
-//           if (d.type === "Individual") {
-//             textOpacity =
-//               (fiveMostConnectedIndividuals.hasOwnProperty(d.name)) ? 1 : 0;
-//           }
-
-//           if (d.type === "Government") {
-//             textOpacity =
-//               (fiveMostConnectedGovernment.hasOwnProperty(d.name)) ? 1 : 0;
-//           }
-
-//           return textOpacity;
-//         })
-//       .style('font-size', '14px')
-//       .style('color', '#FFFFFF')
-//       .style('pointer-events', 'none');
-//     console.log("Set textElement =", textElement);
-
-//     var nodeInit = svg
-//       .selectAll(".node")
-//       .data(allNodes)
-//       .enter()
-//       .append("g")
-//       .attr("class", "node")
-//       .style("visibility", "visible")
-//       .on(
-//         'dblclick',
-//         dblClickCb(
-//           allNodes,
-//           connections,
-//           tickCb(
-//             allNodes,
-//             centeredNode,
-//             fundLink,
-//             investLink,
-//             porucsLink,
-//             dataLink,
-//             node,
-//             textElement
-//           )
-//         )
-//       )
-//       // .call(drag);
-
-//     console.log("Set nodeInit =", nodeInit);
-
-//     var node = nodeInit
-//       .append("circle")
-//       .attr("r",
-//         function(d) {
-//           if (d.employees !== null) {
-//             return empScale(d.employees);
-//           } else {
-//             return "7";
-//           }
-//         })
-//       .style("fill",
-//         function(d) {
-//           if (d.type !== null) {
-//             if (d.type === "Individual") { return "rgb(255,185,0)"; }
-//             if (d.type === "Non-Profit") { return "rgb(0,164,239)"; }
-//             if (d.type === "For-Profit") { return "rgb(127,186,0)"; }
-//             if (d.type === "Government") { return "rgb(242,80,34)"; }
-//           }
-//         })
-//       .attr("cx",
-//         function(d) {
-//           return d.x;
-//         })
-//       .attr("cy",
-//         function(d) {
-//           return d.y;
-//         })
-//       .style("stroke-width", '1.5px')
-//       .style("stroke", 'white')
-//       .on(
-//         'mouseover',
-//         handleNodeHoverCb(
-//           fundLink,
-//           investLink,
-//           porucsLink,
-//           dataLink,
-//           fundingConnections,
-//           investmentConnections,
-//           collaborationConnections,
-//           dataConnections
-//         )
-//       )
-//       .on(
-//         'mouseout',
-//         offNodeCb(
-//           fundLink,
-//           investLink,
-//           porucsLink,
-//           dataLink,
-//           fundingConnections,
-//           investmentConnections,
-//           collaborationConnections,
-//           dataConnections,
-//           graph
-//         )
-//       )
-//       .on('click', sinclickCb(
-//         fundLink,
-//         investLink,
-//         porucsLink,
-//         dataLink,
-//         graph
-//       ));
-//     console.log("Set node =", node);
-
-//     var drag = force
-//       .drag()
-//       .on("dragstart", drag)
-//       .on("drag", drag)
-//       .on(
-//         "dragend",
-//         dragEndCb(
-//           node,
-//           fundLink,
-//           investLink,
-//           porucsLink,
-//           dataLink,
-//           fundingConnections,
-//           investmentConnections,
-//           collaborationConnections,
-//           dataConnections,
-//           graph
-//         )
-//       );
-//     console.log("Set drag =", drag);
-// =======
+        return d.render ||
+          (d.employees !== null ? u.employeeScale(d.employees) + 10 : 17);
+      }
+    )
     .style('opacity',
       function(d) {
         var textOpacity;
@@ -445,6 +258,7 @@ var drawGraph = function () {
     .style('font-size', '14px')
     .style('color', '#FFFFFF')
     .style('pointer-events', 'none');
+
 
   window.d3Node = window.nodeInit
     .append("circle")
@@ -482,66 +296,7 @@ var drawGraph = function () {
 
   window.textElement.call(wrap, 80);
 
-  while (force.alpha() > 0.025) {
-    // console.log("force.tick()");
-    force.tick();
-  }
-
-  var drag = force
-    .drag()
-    .on("dragstart", drag)
-    .on("drag", drag)
-    .on("dragend", dragEnd);
-
-  force
-    .on("tick", tick)
-    .start();
-
-  window.forProfitNodes = window.svg
-    .selectAll('.node')
-    .filter(function(d) { return d.entity_type === "For-Profit"; })
-    .sort(weightSorter);
-
-  window.nonProfitNodes = window.svg
-    .selectAll('.node')
-    .filter(function(d) { return d.entity_type === "Non-Profit"; })
-    .sort(weightSorter);
-
-  window.individualNodes = window.svg
-    .selectAll('.node')
-    .filter(function(d) { return d.entity_type === "Individual"; })
-    .sort(weightSorter);
-
-  window.governmentNodes = window.svg
-    .selectAll('.node')
-    .filter(function(d) { return d.entity_type === "Government"; })
-    .sort(weightSorter);
-
-  // Select the nodes to choose for highlighting nickname
-  // on visualization (TOP 5)
-  window.forProfitNodes.each(function(d, i) {
-    if (i >= window.forProfitNodes[0].length - 5) {
-      window.fiveMostConnectedForProfit[d.name] = d.weight;
-    }
-  });
-
-  window.nonProfitNodes.each(function(d, i) {
-    if (i >= window.nonProfitNodes[0].length - 5) {
-      window.fiveMostConnectedNonProfit[d.name] = d.weight;
-    }
-  });
-
-  window.individualNodes.each(function(d, i) {
-    if (i >= window.individualNodes[0].length - 5) {
-      window.fiveMostConnectedIndividuals[d.name] = d.weight;
-    }
-  });
-
-  window.governmentNodes.each(function(d, i) {
-    if (i >= window.governmentNodes[0].length - 5) {
-      window.fiveMostConnectedGovernment[d.name] = d.weight;
-    }
-  });
+  while (force.alpha() > 0.025) { force.tick(); }
 
 
   // Must adjust the force parameters...
@@ -726,7 +481,7 @@ var drawGraph = function () {
           var force = d3
             .layout
             .force()
-            .nodes(allNodes)
+            .nodes(rawNodes)
             .size([window.width, window.height])
             .links(window.connections)
             .linkStrength(0)
