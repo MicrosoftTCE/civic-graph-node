@@ -93,17 +93,8 @@ var drawGraph = function () {
     .size([window.width, window.height])
     .links(window.connections)
     .linkStrength(0)
-    .charge(function(target) {
-      if (target.render === 1) {
-        console.log("target", target);
-        if (target.employees !== null) {
-          return -6 * u.employeeScale(target.employees);
-        } else {
-          return -25;
-        }
-      } else {
-        return 0;
-      }
+    .charge(function(d) {
+      return d.employees !== null ? -6 * u.employeeScale(d.employees) : -25;
     })
     .linkDistance(50);
 

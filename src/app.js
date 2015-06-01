@@ -4,8 +4,8 @@ var $     = require('jquery');
 
 var utils = require('./utilities');
 
-var fs = require('fs');
-require('d3-geo-projection');
+// var fs = require('fs');
+// require('d3-geo-projection');
 require('topojson');
 require('queue-async');
 require('d3-tip');
@@ -55,7 +55,7 @@ d3.selectAll('#cb_networkview').on('click', function() {
 d3.selectAll('#cb_mapview').on('click', function() {
   console.log("Running cb_mapview click handler");
 
-  if (#('#cb_mapview').checked) {
+  if ($('#cb_mapview').checked) {
     var network = $('#network');
 
     if (network) {

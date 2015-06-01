@@ -3,7 +3,6 @@ var $ = require('jquery');
 var processFormB = require('./process-form-b');
 var displayFormC = require('./display-form-c');
 
-<<<<<<< HEAD
 var displayFormCSendJson = function (obj) {
   // var formObj = processFormB(obj);
 

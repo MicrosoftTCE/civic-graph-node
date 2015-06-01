@@ -41,15 +41,7 @@ var dblClick = function(d) {
     .links(window.connections)
     .linkStrength(0)
     .charge(function(d) {
-      if (d.render === 1) {
-        if (d.employees !== null) {
-          return -6 * u.employeeScale(d.employees);
-        } else {
-          return -25;
-        }
-      } else {
-        return 0;
-      }
+      return d.employees !== null ? -6 * u.employeeScale(d.employees) -25;
     })
     .linkDistance(50)
     .on("tick", tick)
