@@ -12,7 +12,7 @@ router.get('/vertices', function(req, res) {
     } else {
       res.json(obj);
     }
-  })
+  });
 });
 
 router.get('/store', function(req, res) {
@@ -23,7 +23,7 @@ router.get('/store', function(req, res) {
     } else {
       res.json(obj);
     }
-  })
+  });
 });
 
 router.get('/edges/all', function(req, res) {

@@ -17,7 +17,7 @@ var preFillName = require('./pre-fill-name');
 
 var u = require('../utilities');
 
-var formATmpl = require("../templates/form-a.hbs");
+var formATmpl = require("../templates/form-a.jade");
 
 var editForm = function() {
   d3.select('#edit-add-info')
@@ -60,23 +60,23 @@ var editForm = function() {
       // TODO: set cities
       // Make an ajax call to get the state and
       // country code on select of a location.
-      // d3.json("/cities", function(error, cities){
-      //   var cityNode = cities.nodes;
+      d3.json("/cities", function(error, cities){
+        var cityNode = cities.nodes;
 
-      //   for (var i =0; i <cityNode.length; i++) {
-      //     var city = cityNode[i];
+        for (var i =0; i <cityNode.length; i++) {
+          var city = cityNode[i];
 
-      //     if(city.City_Name == splitString[0]) {
-      //       if(splitString.length === 2) {
-      //         input1.val(city.State_Code);
-      //       }
-      //       if(splitString.length === 3) {
-      //         input1.val(city.State_Code);
-      //         input2.val(city.Country_Code);
-      //       }
-      //     }
-      //   }
-      // });
+          if(city.city_name == splitString[0]) {
+            if(splitString.length === 2) {
+              input1.val(city.state_code);
+            }
+            if(splitString.length === 3) {
+              input1.val(city.state_code);
+              input2.val(city.country_code);
+            }
+          }
+        }
+      });
     });
 
   d3.select('#key-people-0 input[name="kpeople"]').on('keyup',

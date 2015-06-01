@@ -11,7 +11,7 @@ var displayFormCSendJson  = require('./display-form-c-send-json');
 
 var utils = require('../utilities');
 
-var formBTmpl = require("../templates/form-b.hbs");
+var formBTmpl = require("../templates/form-b.jade");
 
 var displayFormB = function() {
   // Now we have a perfectly structured JSON object that contains

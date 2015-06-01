@@ -1,7 +1,7 @@
 var d3 = require('d3');
 var $  = require('jquery');
 
-var locTmpl = require("../templates/loc.hbs");
+var locTmpl = require("../templates/loc.jade");
 
 var addInputLoc = function (idx) {
   if ($('#location-' + idx + ' input[name="location"]').val() !== "") {

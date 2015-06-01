@@ -9,6 +9,7 @@ var select = sql.select;
 var router  = express.Router();
 
 var config  = require('../config');
+var data1  = require('../data');
 var pool    = mysql.createPool(config.db);
 var db      = wrap(pool);
 
@@ -54,15 +55,15 @@ router.get('/athena', function(req, res) {
       })
 
       res.json({
-        entities: _.values(config.processVertices(entities, bridges, results)),
-        funding_connections: config.processEdges(funding, true),
-        investment_connections: config.processEdges(investment, true),
-        collaboration_connections: config.processEdges(collaboration),
-        data_connections: config.processEdges(data)
+        entities: _.values(data1.processVertices(entities, bridges, results)),
+        funding_connections: data1.processEdges(funding, true),
+        investment_connections: data1.processEdges(investment, true),
+        collaboration_connections: data1.processEdges(collaboration),
+        data_connections: data1.processEdges(data)
       });
     })
     .catch(function(err) {
-      console.log("ERROR on /entities", err);
+      console.log("ERROR on /athena", err);
       res.sendStatus(400);
     });
 });

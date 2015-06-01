@@ -216,8 +216,8 @@ var getLowercaseList = function () {
   return window.civicStore.lists.lowercase;
 };
 
-exports.colors                   = colors
-exports.employeeScale            = employeeScale
+exports.colors                   = colors;
+exports.employeeScale            = employeeScale;
 exports.twitterScale             = twitterScale;
 exports.getQueryParams           = getQueryParams;
 exports.getNameHash              = getNameHash;

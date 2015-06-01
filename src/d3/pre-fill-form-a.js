@@ -3,13 +3,13 @@ var $  = require('jquery');
 
 var utils = require('../utilities');
 
-var dataTmpl               = require("../templates/data.hbs");
-var fundingTmpl            = require("../templates/funding.hbs");
-var fundingGivenTmpl       = require("../templates/funding-given.hbs");
-var investmentMadeTmpl     = require("../templates/investment-made.hbs");
-var investmentRecievedTmpl = require("../templates/investment-received.hbs");
-var keyPeopleTmpl          = require("../templates/key-people.hbs");
-var locationTmpl           = require("../templates/location.hbs");
+var dataTmpl               = require("../templates/data.jade");
+var fundingTmpl            = require("../templates/funding.jade");
+var fundingGivenTmpl       = require("../templates/funding-given.jade");
+var investmentMadeTmpl     = require("../templates/investment-made.jade");
+var investmentRecievedTmpl = require("../templates/investment-received.jade");
+var keyPeopleTmpl          = require("../templates/key-people.jade");
+var locationTmpl           = require("../templates/location.jade");
 
 var displayFormB = require('./display-form-b');
 var preFillFormB = require('./pre-fill-form-b');

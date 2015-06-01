@@ -6,7 +6,7 @@ var preFillName = require('./pre-fill-name');
 
 var utils = require('../utilities');
 
-var dataTmpl = require("../templates/data.hbs");
+var dataTmpl = require("../templates/data.jade");
 
 var addInputData = function (idx) {
   if ($('#data-' + idx + ' input[name="data"]').val() !== "") {

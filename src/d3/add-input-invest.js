@@ -6,7 +6,7 @@ var preFillName = require('./pre-fill-name');
 
 var utils = require('../utilities');
 
-var investingTmpl = require("../templates/investing.hbs");
+var investingTmpl = require("../templates/investing.jade");
 
 var addInputInvest = function (idx) {
   if ($('#investing-' + idx + ' input[name="invest"]').val() !== "") {

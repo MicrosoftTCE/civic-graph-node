@@ -1,7 +1,7 @@
 var d3 = require('d3');
 var $  = require('jquery');
 
-var revenueTmpl = require("../templates/revenue.hbs");
+var revenueTmpl = require("../templates/revenue.jade");
 
 var addInputRev = function (idx) {
   if ($('#revenue-' + idx + ' input[name="revenue_amt"]').val() !== "") {

@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-var entityNamesTmpl = require('../templates/entity-names.hbs');
+var entityNamesTmpl = require('../templates/entity-names.jade');
 
 var initialInfo = function () {
   var allNodes = _.values(window.civicStore.vertices);
