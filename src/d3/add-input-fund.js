@@ -6,7 +6,7 @@ var preFillName = require('./pre-fill-name');
 
 var utils = require('../utilities');
 
-var fundingTmpl = require("../templates/funding.jade");
+var fundingTmpl = require("../templates/funding.hbs");
 
 var addInputFund = function (idx) {
   if ($('#funding-' + idx + ' input[name="fund"]').val() !== "") {

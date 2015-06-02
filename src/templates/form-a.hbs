@@ -89,14 +89,15 @@
     <div class="input-control text" data-role="input-control">
       <input class="locations" id="location" list="list-location" name="location" placeholder="City" style="width:50%;" type="text"/>
       <input id="state" placeholder="State" style="width:22%;" type="text"/>
-      <input id="country" placeholder="Country" style="width:28%;" type="text"/>
+      <input id="country" placeholder="Country" style="width:28%; margin-top: 5px;" type="text"/>
+      <input id="address" placeholder="Address (Optional)" style="width:100%;" type="text"/>
     </div>
   </div>
   <datalist id="list-location"></datalist>
 </div>
 
 <div class="input-control text" data-role="input-control">
-  <input id="website" name="website" placeholder="Website" type="text"/>
+  <input id="website" name="website" placeholder="Website" type="text" style="margin-top: 15px;"/>
 </div>
 
 <div class="form-header" style="display:inline-block;">Number of Employees</div>
@@ -146,6 +147,14 @@
     <datalist id="investment-made-list"></datalist>
     <input class="investmade_amt" name="investmade_amt" placeholder="Amount" style="display:inline-block; width: 27%;" type="text"/>
     <input class="investmade_year" name="investmade_year" placeholder="Year" style="display:inline-block; width: 20%;" type="text"/>
+  </div>
+</div>
+
+<div class="form-header">Who is thier employer?</div>
+<div id="employment-0">
+  <div class="employment-input input-control text" data-role="input-control">
+    <input class="employer" list="employment-list" name="employment" placeholder="Employer" style="display:inline-block; width:100%;" type="text"/>
+    <datalist id="#employment-list"></datalist>
   </div>
 </div>
 

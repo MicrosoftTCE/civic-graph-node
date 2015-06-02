@@ -2,6 +2,7 @@ var d3 = require('d3');
 var $  = require('jquery');
 
 var addInputData = require('./add-input-data');
+var addInputEmployment = require('./add-input-employment');
 var addInputLocations = require('./add-input-locations');
 var addInputFund = require('./add-input-fund');
 var addInputInvest = require('./add-input-invest');
@@ -10,16 +11,18 @@ var addInputInvestMade = require('./add-input-invest-made');
 var addInputKp = require('./add-input-kp');
 var addDataList = require('./add-data-list');
 var preParseForm = require('./pre-parse-form');
-var displayFormB = require('./display-form-b');
+var displayFormB = require('./display-b-form');
 var displayFormC = require('./display-form-c');
 var preFillLocation = require('./pre-fill-location');
 var preFillName = require('./pre-fill-name');
 
 var u = require('../utilities');
 
-var formATmpl = require("../templates/form-a.jade");
+var formATmpl = require("../templates/form-a.hbs");
 
 var editForm = function() {
+  console.log('got called');
+
   d3.select('#edit-add-info')
     .html('<i class=" icon-file on-left"></i>Reset Form')
     .on('click', editForm);
@@ -61,10 +64,10 @@ var editForm = function() {
       // Make an ajax call to get the state and
       // country code on select of a location.
       d3.json("/cities", function(error, cities){
-        var cityNode = cities.nodes;
+              var cityArr = cities.cities;
 
-        for (var i =0; i <cityNode.length; i++) {
-          var city = cityNode[i];
+        for (var i =0; i < cityArr.length; i++) {
+          var city = cityArr[i];
 
           if(city.city_name == splitString[0]) {
             if(splitString.length === 2) {
@@ -114,6 +117,15 @@ var editForm = function() {
     function() {
       addInputInvestMade(0);
       preFillName(this.value, '#investmentmade-0 input');
+    });
+
+  addDataList('#employment-0 datalist', u.getSortedNameOptions());
+
+  d3.select('#employment-0 input[name="employment"]').on('keyup',
+    function() {
+      console.log('called');
+      addInputEmployment(0);
+      preFillName(this.value, '#employment-0 input');
     });
 
   addDataList('#data-0 datalist', u.getSortedNameOptions());

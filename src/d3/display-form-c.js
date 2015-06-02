@@ -5,7 +5,7 @@ var editForm            = require('./edit-form');
 var preFillFormA        = require('./pre-fill-form-a');
 var sinclick            = require('./sinclick');
 
-var formCTmpl = require('../templates/form-c.jade');
+var formCTmpl = require('../templates/form-c.hbs');
 
 var displayFormC = function () {
   var suggestions = determineNullFields(_.values(window.civicStore.vertices));

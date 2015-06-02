@@ -4,33 +4,35 @@ var $  = require('jquery');
 var addDataList = require('./add-data-list');
 var preFillName = require('./pre-fill-name');
 
-var employmentTmpl = require("jade!../templates/employment.jade");
+var utils = require('../utilities');
 
-var addInputEmployment = function (idx, dataListSortedNames) {
-  console.log("Running addInputData with idx = " + idx);
+var employmentTmpl = require("../templates/employment.hbs");
 
-  if ($('#data-' + idx + ' input[name="data"]').val() !== "") {
-    d3.select('#data-' + idx + ' input[name="data"]').on(
+var addInputEmployment = function (idx) {
+  console.log("Running addInputEmployment with idx = " + idx);
+
+  if ($('#employment-' + idx + ' input[name="employment"]').val() !== "") {
+    d3.select('#employment-' + idx + ' input[name="employment"]').on(
       'keyup',
       function() {
         console.log("Running data onKeyup with idx = " + idx);
 
-        preFillName(this.value, '#data-' + (idx - 1) + ' input[name="data"]');
+        preFillName(this.value, '#employment-' + (idx - 1) + ' input[name="employment"]');
       }
     );
     idx++; // counter -> 2
 
 
-    $("#data-" + (idx - 1)).after(employmentTmpl({ idx: idx }));
+    $("#employment-" + (idx - 1)).after(employmentTmpl({ idx: idx }));
 
-    addDataList('#data-' + idx + ' datalist', dataListSortedNames);
+    addDataList('#employment-' + idx + ' datalist', utils.getSortedNameOptions());
 
-    d3.select("#data-" + idx + " input[name='data']").on(
+    d3.select("#employment-" + idx + " input[name='employment']").on(
       "keyup",
       function() {
         console.log("Running data onKeyup with idx = " + idx);
 
-        addInputData(idx, dataListSortedNames);
+        addInputEmployment(idx);
       }
     );
   }

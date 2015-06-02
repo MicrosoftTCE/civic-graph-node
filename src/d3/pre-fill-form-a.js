@@ -3,18 +3,19 @@ var $  = require('jquery');
 
 var utils = require('../utilities');
 
-var dataTmpl               = require("../templates/data.jade");
-var fundingTmpl            = require("../templates/funding.jade");
-var fundingGivenTmpl       = require("../templates/funding-given.jade");
-var investmentMadeTmpl     = require("../templates/investment-made.jade");
-var investmentRecievedTmpl = require("../templates/investment-received.jade");
-var keyPeopleTmpl          = require("../templates/key-people.jade");
-var locationTmpl           = require("../templates/location.jade");
+var dataTmpl               = require("../templates/data.hbs");
+var fundingTmpl            = require("../templates/funding.hbs");
+var fundingGivenTmpl       = require("../templates/funding-given.hbs");
+var investmentMadeTmpl     = require("../templates/investment-made.hbs");
+var investmentRecievedTmpl = require("../templates/investment-received.hbs");
+var keyPeopleTmpl          = require("../templates/key-people.hbs");
+var locationTmpl           = require("../templates/location.hbs");
+var employmentTmpl         = require("../templates/employment.hbs");
 
-var displayFormB = require('./display-form-b');
 var preFillFormB = require('./pre-fill-form-b');
 var preFillName  = require('./pre-fill-name');
 var addDataList  = require('./add-data-list');
+var displayBForm = require('./display-b-form');
 
 var addInputFund        = require('./add-input-fund');
 var addInputKp          = require('./add-input-kp');
@@ -25,6 +26,10 @@ var addInputInvestMade  = require('./add-input-invest-made');
 var addInputData        = require('./add-input-data');
 
 var preFillFormA = function (obj) {
+
+  obj = obj[0][0].__data__;
+  console.log(obj);
+
   // Time to prefill the form...
   d3.selectAll('#name').text(
     function(d) {
@@ -35,13 +40,14 @@ var preFillFormA = function (obj) {
   if (obj.location !== null) {
 
     d3.json("/cities", function(error, cities) {
-      var cityNodes = cities.nodes;
-      var location  = obj.location;
-      var len       = location.length;
+      var cityNodes = cities.cities;
+      var locations  = obj.locations;
+      var len       = locations.length;
 
       for (var i = 0; i < len; i++) {
-        var string      = location[i].location;
-        var splitString = string.split(",");
+        var city      = locations[i].city;
+        var state = locations[i].state;
+        var country = locations[i].country;
 
         $("#location-" + i) .after(locationTmpl({ idx: i }));
 
@@ -49,23 +55,23 @@ var preFillFormA = function (obj) {
 
         d3.select('#location-' + i + ' input[name="location"]').text(
           function(e) {
-            $(this).val(splitString[0]);
+            $(this).val(city);
 
             var input1 = $(this).siblings("#state");
             var input2 = $(this).siblings("#country");
             var len    = cityNodes.length;
 
             for (var j = 0; j < len; j++) {
-              var city = cityNodes[j];
+              var cityStr = cityNodes[j];
 
-              if(city.cityName == splitString[0]) {
-                if(splitString.length === 2) {
-                  input1.val(city.stateCode);
+              if(city.city_name == cityStr) {
+                if(len === 2) {
+                  input1.val(state);
                 }
 
-                if(splitString.length === 3) {
-                  input1.val(city.stateCode);
-                  input2.val(city.countryCode);
+                if(len === 3) {
+                  input1.val(state);
+                  input2.val(country);
                 }
               }
             }
@@ -105,7 +111,7 @@ var preFillFormA = function (obj) {
 
   d3.selectAll('#website').text(
     function(d) {
-      this.value = obj.url;
+      this.value = obj.website;
     }
   );
 
@@ -140,10 +146,9 @@ var preFillFormA = function (obj) {
       );
   }
 
-  if (obj.funding_received !== null) {
-    var fundingreceived = obj.funding_received;
+  if (obj.funding_received.length > 0) {
 
-    fundingreceived.forEach(
+    obj.funding_received.forEach(
       function(d, i) {
         $("#funding-" + i).after(fundingTmpl({ idx: i }));
 
@@ -184,10 +189,9 @@ var preFillFormA = function (obj) {
       );
   }
 
-  if (obj.funding_given !== null) {
-    var fundinggiven = obj.funding_given;
+  if (obj.funding_given.length > 0) {
 
-    fundinggiven.forEach(
+    obj.funding_given.forEach(
       function(d, i) {
         $("#fundinggiven-" + i).after(fundingGivenTmpl({ idx: i }));
 
@@ -220,10 +224,9 @@ var preFillFormA = function (obj) {
       );
   }
 
-  if (obj.investments_received !== null) {
-    var investmentreceived = obj.investments_received;
+  if (obj.investments_received.length > 0) {
 
-    investmentreceived.forEach(function(d, i) {
+    obj.investments_received.forEach(function(d, i) {
       $("#investing-" + i).after(investmentRecievedTmpl({ idx: i }));
 
       addDataList('#investing-' + i + ' datalist', utils.getSortedNameOptions());
@@ -262,10 +265,9 @@ var preFillFormA = function (obj) {
       );
   }
 
-  if (obj.investments_made !== null) {
-    var investmentsmade = obj.investments_made;
+  if (obj.investments_made.length > 0) {
 
-    investmentsmade.forEach(function(d, i) {
+    obj.investments_made.forEach(function(d, i) {
       $("#investmentmade-" + i).after(investmentMadeTmpl({ idx: i }));
 
       addDataList('#investmentmade-' + i + ' datalist', utils.getSortedNameOptions());
@@ -297,54 +299,47 @@ var preFillFormA = function (obj) {
       );
     });
 
-    d3.select("#investmentmade-" + investmentsmade.length + " input[name='investmade']")
+    d3.select("#investmentmade-" + obj.investments_made.length + " input[name='investmade']")
       .on(
         "keyup",
         function() {
-          addInputInvestMade(investmentsmade.length);
+          addInputInvestMade(obj.investments_made.length);
         }
       );
   }
 
-  // if (obj.employment !== null) {
-  //   var employers = obj.employer;
+  if (obj.employers.length > 0) {
 
-  //   dataProviders.forEach(function(d, i) {
-  //     console.log("Running dataProviders forEach with d, i =", d, i);
-  //     $("#data-" + i).after(dataTmpl({ idx: i }));
+    obj.employers.forEach(function(d, i) {
+      $("#employment-" + i).after(employmentTmpl({ idx: i }));
 
-  //     addDataList('#data-' + i + ' datalist', dataListSortedNames);
+      addDataList('#employment-' + i + ' datalist', utils.getSortedNameOptions());
 
-  //     d3.select('#data-' + i + ' input[name="data"]').on('keyup',
-  //       function() {
-  //         console.log("Running preFillName on #data-" + i + " input[name=data] with " + this.value);
-  //         preFillName(this.value, '#data-' + i + ' input[name="data"]');
-  //       }
-  //     );
+      d3.select('#employment-' + i + ' input[name="employment"]').on('keyup',
+        function() {
+          preFillName(this.value, '#employment-' + i + ' input[name="employment"]');
+        }
+      );
 
-  //     d3.select('#data-' + i + ' input[name="data"]').text(
-  //       function(e) {
-  //         console.log("Running text on #data-" + i + " input[name=data] set value = " + d.entity);
-  //         this.value = d.entity;
-  //       }
-  //     );
-  //   });
+      d3.select('#employment-' + i + ' input[name="employment"]').text(
+        function(e) {
+          this.value = d.entity;
+        }
+      );
+    });
 
-  //   d3.select("#data-" + dataProviders.length + " input[name='data']")
-  //     .on(
-  //       "keyup",
-  //       function() {
-  //         console.log("Running onKeyup on #data-" + dataProviders.length + " input[name=data]");
-  //         console.log("Calling addInputData with length");
-  //         addInputData(dataProviders.length, dataListSortedNames);
-  //       }
-  //     );
-  // }
+    d3.select("#employment-" + obj.employers.length + " input[name='employment']")
+      .on(
+        "keyup",
+        function() {
+          addInputData(obj.employers.length);
+        }
+      );
+  }
 
-  if (obj.data !== null) {
-    var dataProviders = obj.data;
+  if (obj.data.length > 0) {
 
-    dataProviders.forEach(function(d, i) {
+    obj.data.forEach(function(d, i) {
       $("#data-" + i).after(dataTmpl({ idx: i }));
 
       addDataList('#data-' + i + ' datalist', utils.getSortedNameOptions());
@@ -371,11 +366,13 @@ var preFillFormA = function (obj) {
       );
   }
 
+  console.log(displayBForm, 'formB');
+  console.log(preFillName, 'prefill');
   d3.selectAll('#submit-A').on('click', function() {
     d3.select('#name').style("border-color", "#d9d9d9");
     d3.select('#location').style("border-color", "#d9d9d9");
 
-    displayFormB();
+    displayBForm();
     preFillFormB(obj);
   });
 };

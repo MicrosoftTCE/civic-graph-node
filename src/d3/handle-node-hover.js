@@ -1,6 +1,6 @@
 var textDisplay = require('./text-display');
 
-var editDisplayTmpl = require("../templates/edit-display.jade");
+var editDisplayTmpl = require("../templates/edit-display.hbs");
 
 var handleNodeHover = function (d) {
   var s = textDisplay(d);

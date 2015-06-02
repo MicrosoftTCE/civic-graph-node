@@ -32,34 +32,46 @@ router.get('/athena', function(req, res) {
       return db.query(qry)
     })
     .then(function(results) {
-      var funding = [];
-      var investment = [];
+      var funding_received = [];
+      var funding_given =[];
+      var investments_made = [];
+      var investments_received = [];
       var collaboration = [];
+      var employment = [];
       var data = [];
 
       _.each(bridges, function(row) {
+        console.log(bridges, 'heeyyyy');
         switch(row.connection) {
           case 'Funding Received':
-            funding.push(row)
+            funding_received.push(row);
             break;
           case 'Investment Received':
-            investment.push(row)
+            investments_received.push(row);
             break;
           case 'Collaboration':
-            collaboration.push(row)
+            collaboration.push(row);
             break;
           case 'Data':
-            data.push(row)
+            data.push(row);
+            break;
+          case 'Employment':
+            employment.push(row);
             break;
         }
-      })
+      });
 
       res.json({
         entities: _.values(data1.processVertices(entities, bridges, results)),
-        funding_connections: data1.processEdges(funding, true),
-        investment_connections: data1.processEdges(investment, true),
+        funding_received_connections: data1.processEdges(funding_received, true),
+        funding_given_connections: data1.processEdges(funding_given, true),
+        investments_received_connections: data1.processEdges(investments_received, true),
+        investments_made_connections: data1.processEdges(investments_made, true),
         collaboration_connections: data1.processEdges(collaboration),
-        data_connections: data1.processEdges(data)
+        data_connections: data1.processEdges(data),
+        employment_connections: data1.processVertices(employment),
+
+
       });
     })
     .catch(function(err) {

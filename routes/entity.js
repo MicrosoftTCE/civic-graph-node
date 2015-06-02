@@ -110,40 +110,14 @@ router.post('/', function(req, res) {
   if(formObj.id) {
     var qry = update("entities", entityObj).where({id : formObj.id}).returning('*').toString();
 
-    db.query(qry).then(function(result) {
-      res.json(result);
-    });
-
   } else {
     var qry = insert("entities", entityObj);
-
-    db.query(qry.toString()).then(function(result) {
-      qry = select().from("entities_view").where({id : result.insertId}).toString();
-
-        return db.qry(qry);
-      }).then(function (result) {
-        res.json(result);
-
-        var entity = result;
-
-        if (formObj.funding_recieved !== null) {
-
-        }
-      });
-// .catch(function(err) {
-//       console.log("ERROR posting to /entities", err);
-//       res.sendStatus(400);
-//     });
   }
+  db.query(qry).then(function(result) {
+    var entityId = result.insertId;
+
+  });
 });
 
-{
-
-}
-
-
-// var newFundingReceivedEntity;
-//               (entity.funding_received).forEach(function(object) {
-//                 newFundingReceivedEntity = object;
 
 module.exports = router;

@@ -1,7 +1,7 @@
 var d3 = require('d3');
 var $  = require('jquery');
 
-var expensesTmpl = require("../templates/expenses.jade");
+var expensesTmpl = require("../templates/expenses.hbs");
 
 var addInputExp = function (idx) {
   if ($('#expense-' + idx + ' input[name="expense_amt"]').val() !== "") {

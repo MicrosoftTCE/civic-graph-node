@@ -1,15 +1,15 @@
-var editForm = require('./edit-form');
-var preFillFormA = require('./pre-fill-form-a');
+// var editForm = require('./edit-form');
+// var preFillFormA = require('./pre-fill-form-a');
 
-var preParseForm = function (input) {
-  input = input.toLowerCase();
+// var preParseForm = function (input) {
+//   input = input.toLowerCase();
 
-  var entitiesHash = {};
+//   var entitiesHash = {};
 
-  if (input in entitiesHash) {
-    editForm();
-    preFillFormA(entitiesHash[input]); // TODO
-  }
-}
+//   if (input in entitiesHash) {
+//     editForm();
+//     preFillFormA(entitiesHash[input]); // TODO
+//   }
+// }
 
-module.exports = preParseForm;
+// module.exports = preParseForm;

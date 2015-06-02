@@ -1,7 +1,7 @@
 var d3 = require('d3');
 var $  = require('jquery');
 
-var keyPeopleTmpl = require("../templates/key-people.jade");
+var keyPeopleTmpl = require("../templates/key-people.hbs");
 
 var addInputKp = function (idx) {
   if ($('#key-people-' + idx + ' input[name="kpeople"]').val() !== "") {

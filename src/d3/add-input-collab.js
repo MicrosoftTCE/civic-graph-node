@@ -6,7 +6,7 @@ var preFillName = require('./pre-fill-name');
 
 var utils = require('../utilities');
 
-var collaborationTmpl = require("../templates/collaboration.jade");
+var collaborationTmpl = require("../templates/collaboration.hbs");
 
 /**
  *  Adds a collaborator text input with a datalist dropdown

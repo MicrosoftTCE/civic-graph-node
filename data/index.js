@@ -22,52 +22,70 @@ var processVertices = function(entities, bridges, operations, locations) {
     out[entity.id] = _.merge({
       collaborations: [],
       data: [],
-      employment: [],
+      employers: [],
       expenses: [],
-      funding: [],
-      investments: [],
+      funding_received: [],
+      funding_given: [],
+      investments_received: [],
+      investments_made: [],
       locations: [],
       revenue: [],
       loaded: false
     }, entity);
-  })
+  });
 
   _.each(bridges, function(bridge) {
 
     try {
       switch (bridge.connection) {
         case "Funding Received":
-        case "Funding Given":
-          out[bridge.entity_1_id].funding.push({
+          out[bridge.entity_1_id].funding_received.push({
+            bridge_id: bridge.id,
             entity_id: bridge.entity_2_id,
             entity: out[bridge.entity_2_id].name,
             amount: bridge.amount,
-            year: bridge.year
+            year: bridge.connection_year
+          });
+          out[bridge.entity_2_id].funding_given.push({
+            entity_id: bridge.entity_1_id,
+            entity: out[bridge.entity_1_id].name,
+            amount: bridge.amount,
+            year: bridge.connection_year
           });
           break;
         case "Investment Received":
-        case "Investment Made":
-          out[bridge.entity_1_id].investments.push({
+          out[bridge.entity_1_id].investments_received.push({
+            bridge_id: bridge.id,
             entity_id: bridge.entity_2_id,
             entity: out[bridge.entity_2_id].name,
             amount: bridge.amount,
-            year: bridge.year
+            year: bridge.connection_year
+          });
+          out[bridge.entity_2_id].investments_made.push({
+            bridge_id: bridge.id,
+            entity_id: bridge.entity_1_id,
+            entity: out[bridge.entity_1_id].name,
+            amount: bridge.amount,
+            year: bridge.connection_year
           });
           break;
         case "Collaboration":
           out[bridge.entity_1_id].collaborations.push({
+            bridge_id: bridge.id,
             entity_id: bridge.entity_2_id,
             entity: out[bridge.entity_2_id].name
           });
           break;
         case "Data":
           out[bridge.entity_1_id].data.push({
+            bridge_id: bridge.id,
             entity_id: bridge.entity_2_id,
             entity: out[bridge.entity_2_id].name
           });
           break;
         case "Employment":
           out[bridge.entity_1_id].employment.push({
+            bridge_id: bridge.id,
             entity_id: bridge.entity_2_id,
             entity: out[bridge.entity_2_id].name
           });
