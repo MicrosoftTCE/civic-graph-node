@@ -15,7 +15,7 @@ var employmentTmpl         = require("../templates/employment.hbs");
 var preFillFormB = require('./pre-fill-form-b');
 var preFillName  = require('./pre-fill-name');
 var addDataList  = require('./add-data-list');
-var displayBForm = require('./display-b-form');
+var displayFormB = require('./display-form-b');
 
 var addInputFund        = require('./add-input-fund');
 var addInputKp          = require('./add-input-kp');
@@ -25,10 +25,10 @@ var addInputInvest      = require('./add-input-invest');
 var addInputInvestMade  = require('./add-input-invest-made');
 var addInputData        = require('./add-input-data');
 
+
 var preFillFormA = function (obj) {
 
   obj = obj[0][0].__data__;
-  console.log(obj);
 
   // Time to prefill the form...
   d3.selectAll('#name').text(
@@ -37,17 +37,18 @@ var preFillFormA = function (obj) {
     }
   );
 
-  if (obj.location !== null) {
+  if (obj.location.length > 0) {
 
     d3.json("/cities", function(error, cities) {
       var cityNodes = cities.cities;
       var locations  = obj.locations;
-      var len       = locations.length;
 
-      for (var i = 0; i < len; i++) {
-        var city      = locations[i].city;
-        var state = locations[i].state;
-        var country = locations[i].country;
+      for (var i = 0; i < locations.length; i++) {
+        var cityObj = locations[i].city;
+        var address = locations[i].address;
+        var city      = cityObj.city_name;
+        var state =   cityObj.state_name;
+        var country = cityObj.country_name;
 
         $("#location-" + i) .after(locationTmpl({ idx: i }));
 
@@ -59,20 +60,18 @@ var preFillFormA = function (obj) {
 
             var input1 = $(this).siblings("#state");
             var input2 = $(this).siblings("#country");
-            var len    = cityNodes.length;
+            var input3 = $(this).siblings("#address").val(address);
 
-            for (var j = 0; j < len; j++) {
+            var length    = cityNodes.length;
+
+            for (var j = 0; j < length; j++) {
               var cityStr = cityNodes[j];
 
-              if(city.city_name == cityStr) {
-                if(len === 2) {
-                  input1.val(state);
-                }
-
-                if(len === 3) {
-                  input1.val(state);
-                  input2.val(country);
-                }
+              // console.log(cityStr, 'here', city);
+              if(city === cityStr.city_name) {
+                console.log('got in here too');
+                input1.val(cityStr.state_code);
+                input2.val(cityStr.country_code);
               }
             }
           }
@@ -80,11 +79,11 @@ var preFillFormA = function (obj) {
       }
     });
 
-    d3.select('#location-' + location.length + ' input[name="location"]')
+    d3.select('#location-' + obj.location.length + ' input[name="location"]')
       .on(
         'keyup',
         function() {
-          addInputLocations(location.length);
+          addInputLocations(obj.location.length);
         }
       );
   }
@@ -366,13 +365,10 @@ var preFillFormA = function (obj) {
       );
   }
 
-  console.log(displayBForm, 'formB');
-  console.log(preFillName, 'prefill');
   d3.selectAll('#submit-A').on('click', function() {
     d3.select('#name').style("border-color", "#d9d9d9");
     d3.select('#location').style("border-color", "#d9d9d9");
-
-    displayBForm();
+    displayFormB();
     preFillFormB(obj);
   });
 };

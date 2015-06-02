@@ -314,7 +314,7 @@ var drawGraph = function () {
   // Form B has the required items, which are already filled out,
   // and the advanced items. This form takes the user directly to form C
   // if the user submits the data via clicking the submit button.
-  var displayFormB = require('./display-b-form');
+  var displayFormB = require('./display-form-b');
   var addDataList = require('./add-data-list');
 
   window.forProfitObjects = [];

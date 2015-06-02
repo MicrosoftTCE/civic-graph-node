@@ -11,7 +11,7 @@ var addInputInvestMade = require('./add-input-invest-made');
 var addInputKp = require('./add-input-kp');
 var addDataList = require('./add-data-list');
 var preParseForm = require('./pre-parse-form');
-var displayFormB = require('./display-b-form');
+var displayFormB = require('./display-form-b');
 var displayFormC = require('./display-form-c');
 var preFillLocation = require('./pre-fill-location');
 var preFillName = require('./pre-fill-name');
@@ -21,7 +21,6 @@ var u = require('../utilities');
 var formATmpl = require("../templates/form-a.hbs");
 
 var editForm = function() {
-  console.log('got called');
 
   d3.select('#edit-add-info')
     .html('<i class=" icon-file on-left"></i>Reset Form')
@@ -123,7 +122,6 @@ var editForm = function() {
 
   d3.select('#employment-0 input[name="employment"]').on('keyup',
     function() {
-      console.log('called');
       addInputEmployment(0);
       preFillName(this.value, '#employment-0 input');
     });

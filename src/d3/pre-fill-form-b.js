@@ -12,10 +12,21 @@ var preFillFormB = function (obj) {
     this.value = obj.twitter_handle;
   });
 
+  // <input id="rb_forpro" type="radio" name="entitytype" value="For-Profit" disabled="">
+  //
+  d3.selectAll('input[name="entitytype"]').filter(function(d, i) {
+    if (obj.entity_type === this.value) {
+      this.checked = true;
+    }
+  });
+
+
   d3.selectAll('input[name="influence-type"]').filter(function(d, i) {
     if (obj.influence === "local" && this.value === "Local Influence") {
       this.checked = true;
     } else if (obj.influence === "global" && this.value === "Global Influence") {
+      this.checked = true;
+    } else if (obj.influence === "national" && this.value === "National Influence") {
       this.checked = true;
     } else {
       this.checked = false;

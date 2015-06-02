@@ -3,11 +3,16 @@ var $  = require('jquery');
 
 var processFormA = function() {
   var formObject = {
-    type: null,
+    entity_type: null,
     categories: null,
     name: null,
     nickname: null,
-    locations: [],
+    locations: [
+      {
+        city: null,
+        addresses: null
+      },
+    ],
     url: null,
     employees: null,
     key_people: null,
@@ -100,18 +105,21 @@ var processFormA = function() {
 
     d3.selectAll('.locations').filter(
       function(d) {
+        console.log(this.value, 'this');
         if (this.value !== "") {
-          formObject.locations.push(
-            {
+          formObject.locations.push({
+            city: {
               city: this.value,
               state: $(this).siblings("#state").val(),
               country: $(this).siblings("#country").val()
-            }
-          );
+            },
+            address: $(this).siblings("#address").val()
+          });
         }
       });
 
     if(formObject.locations.length === 0) { formObject.locations = null; }
+
 
     // Obtain the URL
     formObject.url = "";
@@ -332,19 +340,18 @@ var processFormA = function() {
       formObject.investments_made = null;
     }
 
-    formObject.employment = [];
+    formObject.employers = [];
 
     var employment;
 
     d3.selectAll('.employment-input .employer').filter(
       function(d, i) {
-        console.log("Running filter on .employment-input .employer with d, i =", d, i);
         if (this.value) {
           formObject.employers.push(this.value);
         }
       });
 
-    if (formObject.employment.length === 0) {
+    if (formObject.employers.length === 0) {
       formObject.employer = null;
     }
 
@@ -360,6 +367,7 @@ var processFormA = function() {
 
     if (formObject.data.length === 0) { formObject.data = null; }
   }
+  console.log(formObject, 'formObject');
 
   return formObject;
 };

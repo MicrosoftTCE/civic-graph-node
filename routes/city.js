@@ -31,15 +31,15 @@ router.get('/', function(req, res) {
 });
 
 
-// var locations = {
-  //   city: [
+// var locations = [
   //     {
   //       id: null,
   //       cityname: 'Bariga, Lagos, Nigeria',
   //       addresses: [
   //         {
   //           id: null,
-  //           address: '1, Microsoft Way'
+  //           address: '1, Microsoft Way',
+  //           address
   //         }
   //       ]
   //     },
@@ -54,7 +54,6 @@ router.get('/', function(req, res) {
   //       ]
   //     }
   //   ]
-  // }
 
 
 router.post('/', function(req, res) {

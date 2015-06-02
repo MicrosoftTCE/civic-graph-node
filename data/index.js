@@ -113,9 +113,18 @@ var processVertices = function(entities, bridges, operations, locations) {
 
   _.each(locations, function(location) {
     try {
-      var id = location.entity_id
-      delete location.entity_id
-      out[id].locations.push(location)
+      var id = location.entity_id;
+      delete location.entity_id;
+      out[id].locations.push(
+        {
+          city: {
+            city_name : location.city,
+            state_name: location.state,
+            country_name: location.country
+          },
+          address: location.address
+        }
+      );
     } catch (err) {}
   })
 
