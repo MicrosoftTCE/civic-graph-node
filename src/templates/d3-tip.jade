@@ -1,10 +1,10 @@
 <!-- d3-tip.jade -->
 span
-  #{name}
+  | #{name}
   br
-  #{val}
-  #{val > 1 ? "Entities," : "Entity,"}
+  | #{val}
+  | #{val > 1 ? "Entities," : "Entity,"}
   br
-  #{parseFloat((val / totalCount) * 100).toFixed(2)}
+  | #{parseFloat((val / totalCount) * 100).toFixed(2)}
   | %
 <!-- end d3-tip.jade -->

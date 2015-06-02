@@ -17,13 +17,14 @@ var initialInfo           = require('./initial-info');
 var offNode               = require('./off-node');
 var searchAutoComplete    = require('./search-auto-complete');
 var sinclick              = require('./sinclick');
-var tick                  = require('./tick');
 var translation           = require('./translation');
 var typesCboxActions      = require('./types-cbox-actions');
 var weightSorter          = require('./weight-sorter');
 var wrap                  = require('./wrap');
+var tick                  = require('./tick');
 
 var drawGraph = function () {
+  console.log("got in here");
   window.width = 1000;
   window.height = 1000;
 
@@ -37,7 +38,7 @@ var drawGraph = function () {
   window.fiveMostConnectedIndividuals = {};
   window.fiveMostConnectedGovernment = {};
 
-  var clearResetFlag = 1;
+  u.clearResetFlag = 1;
 
   window.centeredNode = {};
 
@@ -79,12 +80,26 @@ var drawGraph = function () {
     .attr("preserveAspectRatio", 'xMidYMid');
 
   var rawNodes = _.values(civicStore.vertices);
+  // rawNodes.unshift({name: "OMG"});
+
+  console.log(rawNodes, "rawNodes");
 
   window.rawConnections =
     [].concat(civicStore.edges.funding)
       .concat(civicStore.edges.investment)
       .concat(civicStore.edges.collaboration)
-      .concat(civicStore.edges.data)
+      .concat(civicStore.edges.data);
+
+  console.log(rawConnections, "rawConnections");
+
+  // window.rawConnections.forEach(function(connections) {
+  //   if(!rawNodes[connections.source]) {
+  //     console.log(connections, "I'm not  valid node");
+  //   }
+  //   else{
+  //     console.log("you gat me");
+  //   }
+  // });
 
   var force = d3
     .layout
@@ -95,8 +110,10 @@ var drawGraph = function () {
     .linkStrength(0)
     .charge(
       function(d) {
-        return d.render ||
-          (d.employees !== null ? -6 * u.employeeScale(d.employees) : -25);
+        if (d.render === 1) {
+          return (d.employees !== null) ? -6 * u.employeeScale(d.employees) :  -25;
+        } else
+          return 0;
       }
     )
     .linkDistance(50);
@@ -157,6 +174,7 @@ var drawGraph = function () {
     .style("opacity", "0.2")
     .style("visibility", "visible");
 
+  // debugger;
   window.nodeInit = svg
     .selectAll(".node")
     .data(rawNodes.filter(function(n) { return n.render === 1; }))
@@ -167,6 +185,7 @@ var drawGraph = function () {
     .on('dblclick', dblClick)
     .call(drag);
 
+  // debugger;
   force
     .on("tick", tick)
     .start();
@@ -360,20 +379,20 @@ var drawGraph = function () {
     }
   );
 
-  try {
-    //filter the sortedSearchList on keyup
-    $('#search-text').autocomplete({
-      lookup: u.getSortedList(),
-      appendTo: $('.filter-name-location'),
-      onSelect: function (suggestion) {
-        handleQuery(suggestion.value);
-      }
-    }).on('keyup', function() {
-      handleQuery(this.value);
-    });
-  } catch (err) {
-    console.log("autocomplete error: ", err);
-  }
+  // try {
+  //   //filter the sortedSearchList on keyup
+  //   $('#search-text').autocomplete({
+  //     lookup: u.getSortedList(),
+  //     appendTo: $('.filter-name-location'),
+  //     onSelect: function (suggestion) {
+  //       handleQuery(suggestion.value);
+  //     }
+  //   }).on('keyup', function() {
+  //     handleQuery(this.value);
+  //   });
+  // } catch (err) {
+  //   console.log("autocomplete error: ", err);
+  // }
 
   d3.selectAll('option').on('keydown',
     function(n, i) {
@@ -462,7 +481,7 @@ var drawGraph = function () {
       function() {
         var m = d3.mouse(this);
 
-        if (clearResetFlag === 1) {
+        if (u.clearResetFlag === 1) {
           d3.event.preventDefault();
 
           offNode();
@@ -482,8 +501,8 @@ var drawGraph = function () {
             .layout
             .force()
             .nodes(rawNodes)
-            .size([window.width, window.height])
-            .links(window.connections)
+            .size([width, height])
+            .links(rawConnections)
             .linkStrength(0)
             .charge(
               function(d) {
@@ -504,7 +523,7 @@ var drawGraph = function () {
           .start();
         }
 
-        clearResetFlag = 1;
+        u.clearResetFlag = 1;
       }
     );
 

@@ -42,7 +42,7 @@ router.get('/', function(req, res) {
       return db.query(qry)
     })
     .then(function(results) {
-      res.json(config.processVertices(entities, bridges, operations, results));
+      res.json(data.processVertices(entities, bridges, operations, results));
     })
     .catch(function(err) {
       console.log("ERROR on /entities", err);

@@ -52,7 +52,7 @@ var tick = function (event) {
       .attr("y1", function(d) { return d.source.y; })
       .attr("x2", function(d) { return d.target.x; })
       .attr("y2", function(d) { return d.target.y; });
-
+    
     window.d3Node
       .attr("cx", function(d) { return d.x = d.x; })
       .attr("cy", function(d) { return d.y = d.y; });

@@ -1,11 +1,12 @@
 var d3 = require('d3');
 
 var handleClickNodeHover = require('./handle-click-node-hover');
+var u                     = require('../utilities');
 
 var sinclick = function (node) {
-  var clearResetFlag = 0;
+  u.clearResetFlag = 0;
 
-  handleClickNodeHover(window.d3Node);
+  handleClickNodeHover(node);
 
   window.civicStore.lines.funding
     .transition()
@@ -14,7 +15,7 @@ var sinclick = function (node) {
     .style(
       "opacity",
       function(link) {
-        if (window.d3Node === link.source || window.d3Node === link.target) {
+        if (node === link.source || node === link.target) {
           return "1";
         } else {
           return "0.05";
@@ -29,7 +30,7 @@ var sinclick = function (node) {
     .style(
       "opacity",
       function(link) {
-        if (window.d3Node === link.source || window.d3Node === link.target) {
+        if (node === link.source || node === link.target) {
           return "1";
         } else {
           return "0.05";
@@ -44,7 +45,7 @@ var sinclick = function (node) {
     .style(
       "opacity",
       function(link) {
-        if (window.d3Node === link.source || window.d3Node === link.target) {
+        if (node === link.source || node === link.target) {
           return "1";
         } else {
           return "0.05";
@@ -59,7 +60,7 @@ var sinclick = function (node) {
     .style(
       "opacity",
       function(link) {
-        if (window.d3Node === link.source || window.d3Node === link.target) {
+        if (node === link.source || node === link.target) {
           return "1";
         } else {
           return "0.05";
@@ -71,7 +72,7 @@ var sinclick = function (node) {
     .style(
       "stroke",
       function(singleNode) {
-        if (singleNode !== window.d3Node) {
+        if (singleNode !== node) {
           return "white";
         } else {
           return "black";
@@ -82,7 +83,7 @@ var sinclick = function (node) {
   window.d3Node
     .filter(
       function(singleNode) {
-        if (singleNode !== window.d3Node) { return singleNode; }
+        if (singleNode !== node) { return singleNode; }
       }
     )
     .on('mouseover', null);
@@ -90,13 +91,13 @@ var sinclick = function (node) {
   var neighborFund = window.civicStore.edges.funding
     .filter(
       function(link) {
-        return link.source.index === window.d3Node.index ||
-          link.target.index === window.d3Node.index;
+        return link.source.index === node.index ||
+          link.target.index === node.index;
       }
     )
     .map(
       function(link) {
-        return link.source.index === window.d3Node.index ?
+        return link.source.index === node.index ?
           link.target.index :
           link.source.index;
       }
@@ -105,13 +106,13 @@ var sinclick = function (node) {
   var neighborInvest = window.civicStore.edges.investment
     .filter(
       function(link) {
-        return link.source.index === window.d3Node.index ||
-          link.target.index === window.d3Node.index;
+        return link.source.index === node.index ||
+          link.target.index === node.index;
       }
     )
     .map(
       function(link) {
-        return link.source.index === window.d3Node.index ?
+        return link.source.index === node.index ?
         link.target.index :
         link.source.index;
       }
@@ -120,13 +121,13 @@ var sinclick = function (node) {
   var neighborPorucs = window.civicStore.edges.collaboration
     .filter(
       function(link) {
-        return link.source.index === window.d3Node.index ||
-        link.target.index === window.d3Node.index;
+        return link.source.index === node.index ||
+        link.target.index === node.index;
       }
     )
     .map(
       function(link) {
-        return link.source.index === window.d3Node.index ?
+        return link.source.index === node.index ?
         link.target.index :
         link.source.index;
       }
@@ -135,13 +136,13 @@ var sinclick = function (node) {
   var neighborData = window.civicStore.edges.data
     .filter(
       function(link) {
-        return link.source.index === window.d3Node.index ||
-        link.target.index === window.d3Node.index;
+        return link.source.index === node.index ||
+        link.target.index === node.index;
       }
     )
     .map(
       function(link) {
-        return link.source.index === window.d3Node.index ? link.target.index : link.source.index;
+        return link.source.index === node.index ? link.target.index : link.source.index;
       }
     );
 

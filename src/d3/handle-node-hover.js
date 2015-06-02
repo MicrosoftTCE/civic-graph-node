@@ -126,7 +126,7 @@ var handleNodeHover = function (d) {
     .duration(350)
     .delay(0)
     .style("opacity", function(n) {
-      if (n.ID in neighboringNodesIndices) {
+      if (n.id in neighboringNodesIndices) {
         return "1";
       } else {
         return "0.05";

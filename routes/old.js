@@ -7,6 +7,7 @@ var _       = require('lodash');
 var select = sql.select;
 
 var router  = express.Router();
+var dat  = require('../data');
 
 var config  = require('../config');
 var pool    = mysql.createPool(config.db);
@@ -54,11 +55,11 @@ router.get('/athena', function(req, res) {
       })
 
       res.json({
-        entities: _.values(config.processVertices(entities, bridges, results)),
-        funding_connections: config.processEdges(funding, true),
-        investment_connections: config.processEdges(investment, true),
-        collaboration_connections: config.processEdges(collaboration),
-        data_connections: config.processEdges(data)
+        entities: _.values(dat.processVertices(entities, bridges, results)),
+        funding_connections: dat.processEdges(funding, true),
+        investment_connections: dat.processEdges(investment, true),
+        collaboration_connections: dat.processEdges(collaboration),
+        data_connections: dat.processEdges(data)
       });
     })
     .catch(function(err) {

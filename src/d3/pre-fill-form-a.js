@@ -25,6 +25,7 @@ var addInputInvestMade  = require('./add-input-invest-made');
 var addInputData        = require('./add-input-data');
 
 var preFillFormA = function (obj) {
+  console.log(obj);
   // Time to prefill the form...
   d3.selectAll('#name').text(
     function(d) {
