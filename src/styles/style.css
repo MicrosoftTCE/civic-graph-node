@@ -593,25 +593,29 @@ button#submit-B {
   position: relative;
 }
 
-.d3-tip {
+.d3-tip, div.tooltip {
   line-height: 1;
   font-weight: bold;
   padding: 12px;
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
-.routes {
-  pointer-events: visible;
+/*.routes {
+  opacity: 1;
+}*/
+
+.pinpoint.hidden {
+  opacity: 0.1;
 }
 
-.routes.funding_connections {
+.routes.hidden {
+  opacity: 0.1;
+}
+
+.routes.funding_given_connections, .routes.funding_received_connections, .routes.investments_made_connections, .routes.investments_received_connections{
   stroke: #6f5da8;
-} 
-
-.routes.investment_connections {
-  stroke: #267272;
 } 
 
 .routes.collaboration_connections {
@@ -620,4 +624,16 @@ button#submit-B {
 
 .routes.data_connections {
   stroke: #bf4896;
+}
+
+.entities.For-Profit {
+  fill: #6f5da8;
+} 
+
+.entities.Non-Profit {
+  fill: #267272;
+} 
+
+.entities.Government {
+  fill: #ebe826;
 }

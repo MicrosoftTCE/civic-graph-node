@@ -6,7 +6,7 @@ var revealConnections = require('./reveal-connections');
 var shouldCboxRemainUnchecked = require('./should-cbox-remain-unchecked');
 
 var connectionCboxActions = function() {
-  var connectionClasses = ['.invest', '.fund', '.collaboration', '.data'];
+  var connectionClasses = ['.invest', '.fund', '.collaboration', '.data', '.employment'];
 
   d3.selectAll('.group-items.connections input')[0].forEach(
     function(input, idx) {

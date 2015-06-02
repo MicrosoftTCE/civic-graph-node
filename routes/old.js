@@ -7,6 +7,7 @@ var _       = require('lodash');
 var select = sql.select;
 
 var router  = express.Router();
+// var dat  = require('../data');
 
 var config  = require('../config');
 var data1  = require('../data');
@@ -41,7 +42,7 @@ router.get('/athena', function(req, res) {
       var data = [];
 
       _.each(bridges, function(row) {
-        console.log(bridges, 'heeyyyy');
+        // console.log(bridges, 'heeyyyy');
         switch(row.connection) {
           case 'Funding Received':
             funding_received.push(row);
@@ -70,7 +71,6 @@ router.get('/athena', function(req, res) {
         collaboration_connections: data1.processEdges(collaboration),
         data_connections: data1.processEdges(data),
         employment_connections: data1.processVertices(employment),
-
 
       });
     })

@@ -20,13 +20,13 @@ var offNode = function offNode(node) {
     .style("opacity", "0.2")
     .style("stroke-width", "1px");
 
-  window.civicStore.lines.investment
-    .transition()
-    .duration(350)
-    .delay(0)
-    .style("stroke", "rgb(38,114,114)") // teal
-    .style("opacity", "0.2")
-    .style("stroke-width", "1px");
+  // window.civicStore.lines.investment
+  //   .transition()
+  //   .duration(350)
+  //   .delay(0)
+  //   .style("stroke", "rgb(38,114,114)") // teal
+  //   .style("opacity", "0.2")
+  //   .style("stroke-width", "1px");
 
   window.civicStore.lines.collaboration
     .transition()

@@ -254,7 +254,7 @@ var getVertices = function(callback) {
         return entity.id;
       });
 
-      qry = "SELECT id, name, nickname, followers, employees, entity_type " +
+      qry = "SELECT id, name, nickname, followers, employees, entity_type, render " +
           "FROM entities_view " +
           "WHERE id NOT IN (" + idsToAvoid.join(",") + ")";
 

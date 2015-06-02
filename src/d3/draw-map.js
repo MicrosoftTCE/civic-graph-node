@@ -16,15 +16,17 @@ var drawMap = function () {
 
   var map = new Microsoft.Maps.Map(document.getElementById('map'), {
     credentials: 'Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M',
-    center: new Microsoft.Maps.Location(40, -80),
-    zoom: 4,
+    center: new Microsoft.Maps.Location(25, -30),
+    zoom: 3,
     mapTypeId: Microsoft.Maps.MapTypeId.road
   });
 
   Microsoft.Maps.registerModule("D3OverlayModule", "./scripts/D3OverlayManager.js");
 
   Microsoft.Maps.loadModule("D3OverlayModule", {
-    callback: loadD3Layer
+    callback: function() {
+      loadD3Layer(map);
+    }
   });
 
   d3.select(self.frameElement).style("height", height + "px");
