@@ -1,15 +1,3 @@
-var d3    = require('d3');
-var _     = require('lodash');
-var $     = require('jquery');
-
-var utils = require('./utilities');
-
-// var fs = require('fs');
-// require('d3-geo-projection');
-require('topojson');
-var queue = require('queue-async');
-var tip = require('d3-tip');
-
 require('./styles/reset.css');
 require('./styles/normalize.css');
 require('./styles/metro-bootstrap.css');
@@ -22,6 +10,19 @@ require('./styles/checkboxes.css');
 require('./styles/footer.css');
 require('./styles/left-nav.css');
 require('./styles/developer-style.css');
+
+var d3    = require('d3');
+var _     = require('lodash');
+var $     = require('jquery');
+
+var utils = require('./utilities');
+
+// var fs = require('fs');
+// require('d3-geo-projection');
+require('topojson');
+var queue = require('queue-async');
+var tip = require('d3-tip');
+
 
 // TEMP
 // var formATmpl = require('jade!./templates/form-a.jade');
@@ -72,7 +73,7 @@ d3.selectAll('#cb_networkview').on('click', function() {
                 drawGraph();
             }
             $('#map').fadeOut("slow");
-            // jQuery('.d3-tip').hide();
+            $('.d3-tip').hide();
             showSideBar("example");
         }
 });
@@ -83,7 +84,7 @@ d3.selectAll('#cb_mapview').on('click', function() {
    if (document.getElementById('cb_mapview').checked) {
             if(document.getElementById('map')) {
                 $('#map').fadeIn("slow");
-                // jQuery('.d3-tip').show();
+                $('.d3-tip').show();
             }
             else {
                 drawMap();

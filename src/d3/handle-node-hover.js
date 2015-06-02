@@ -29,16 +29,16 @@ var handleNodeHover = function (d) {
       }
     );
 
-  window.civicStore.lines.investment
-    .transition()
-    .duration(350)
-    .delay(0)
-    .style(
-      "opacity",
-      function(link) {
-        return (d === link.source || d === link.target) ? 1 : 0.05;
-      }
-    );
+  // window.civicStore.lines.investment
+  //   .transition()
+  //   .duration(350)
+  //   .delay(0)
+  //   .style(
+  //     "opacity",
+  //     function(link) {
+  //       return (d === link.source || d === link.target) ? 1 : 0.05;
+  //     }
+  //   );
 
   window.civicStore.lines.collaboration
     .transition()
@@ -74,7 +74,7 @@ var handleNodeHover = function (d) {
 
   neighboringNodesIndices[d.id] = 1;
 
-  window.civicStore.edges.funding.forEach(function(link) {
+  window.civicStore.edges.funding.concat(window.civicStore.edges.investment).forEach(function(link) {
 
     if (isLinkSource(link, d)) {
       neighboringNodesIndices[link.target.index] = 1;
@@ -85,16 +85,16 @@ var handleNodeHover = function (d) {
     }
   });
 
-  window.civicStore.edges.investment.forEach(function(link) {
+  // window.civicStore.edges.investment.forEach(function(link) {
 
-    if (isLinkSource(link, d)) {
-      neighboringNodesIndices[link.target.index] = 1;
-    }
+  //   if (isLinkSource(link, d)) {
+  //     neighboringNodesIndices[link.target.index] = 1;
+  //   }
 
-    if (isLinkTarget(link, d)) {
-      neighboringNodesIndices[link.source.index] = 1;
-    }
-  });
+  //   if (isLinkTarget(link, d)) {
+  //     neighboringNodesIndices[link.source.index] = 1;
+  //   }
+  // });
 
   window.civicStore.edges.collaboration.forEach(function(link) {
 

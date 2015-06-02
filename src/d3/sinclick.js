@@ -23,20 +23,20 @@ var sinclick = function (node) {
       }
     );
 
-  window.civicStore.lines.investment
-    .transition()
-    .duration(350)
-    .delay(0)
-    .style(
-      "opacity",
-      function(link) {
-        if (node === link.source || node === link.target) {
-          return "1";
-        } else {
-          return "0.05";
-        }
-      }
-    );
+  // window.civicStore.lines.investment
+  //   .transition()
+  //   .duration(350)
+  //   .delay(0)
+  //   .style(
+  //     "opacity",
+  //     function(link) {
+  //       if (node === link.source || node === link.target) {
+  //         return "1";
+  //       } else {
+  //         return "0.05";
+  //       }
+  //     }
+  //   );
 
   window.civicStore.lines.collaboration
     .transition()
@@ -88,7 +88,7 @@ var sinclick = function (node) {
     )
     .on('mouseover', null);
 
-  var neighborFund = window.civicStore.edges.funding
+  var neighborFund = window.civicStore.edges.funding.concat(window.civicStore.edges.investment)
     .filter(
       function(link) {
         return link.source.index === node.index ||
@@ -103,20 +103,20 @@ var sinclick = function (node) {
       }
     );
 
-  var neighborInvest = window.civicStore.edges.investment
-    .filter(
-      function(link) {
-        return link.source.index === node.index ||
-          link.target.index === node.index;
-      }
-    )
-    .map(
-      function(link) {
-        return link.source.index === node.index ?
-        link.target.index :
-        link.source.index;
-      }
-    );
+  // var neighborInvest = window.civicStore.edges.investment
+  //   .filter(
+  //     function(link) {
+  //       return link.source.index === node.index ||
+  //         link.target.index === node.index;
+  //     }
+  //   )
+  //   .map(
+  //     function(link) {
+  //       return link.source.index === node.index ?
+  //       link.target.index :
+  //       link.source.index;
+  //     }
+  //   );
 
   var neighborPorucs = window.civicStore.edges.collaboration
     .filter(

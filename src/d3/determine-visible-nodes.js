@@ -5,7 +5,7 @@ var determineVisibleNodes = function() {
 
   for (var x = 0; x < window.nodeInit[0].length; x++) {
     if (window.nodeInit[0][x].style.visibility === "visible") {
-      visibleNodes[window.nodeInit[0][x].__data__.ID] = window.nodeInit[0][x];
+      visibleNodes[window.nodeInit[0][x].__data__.id] = window.nodeInit[0][x];
     }
   }
 

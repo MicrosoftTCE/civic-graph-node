@@ -35,11 +35,11 @@ var tick = function (event) {
       .attr("x2", function(d) { return d.target.x; })
       .attr("y2", function(d) { return d.target.y; });
 
-    window.civicStore.lines.investment
-      .attr("x1", function(d) { return d.source.x; })
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
+    // window.civicStore.lines.employment
+    //   .attr("x1", function(d) { return d.source.x; })
+    //   .attr("y1", function(d) { return d.source.y; })
+    //   .attr("x2", function(d) { return d.target.x; })
+    //   .attr("y2", function(d) { return d.target.y; });
 
     window.civicStore.lines.collaboration
       .attr("x1", function(d) { return d.source.x; })
@@ -90,35 +90,35 @@ var tick = function (event) {
         }
       );
 
-    window.civicStore.lines.investment
-      .attr(
-        "x1",
-        function(d) {
-          if (d.source === window.centeredNode) { d.source.x = window.centeredNode.x; }
-          return d.source.x;
-        }
-      )
-      .attr(
-        "y1",
-        function(d) {
-          if (d.source === window.centeredNode) { d.source.y = window.centeredNode.y; }
-          return d.source.y;
-        }
-      )
-      .attr(
-        "x2",
-        function(d) {
-          if (d.target === window.centeredNode) { d.target.x = window.centeredNode.x; }
-          return d.target.x;
-        }
-      )
-      .attr(
-        "y2",
-        function(d) {
-          if (d.target === window.centeredNode) { d.target.y = window.centeredNode.y; }
-          return d.target.y;
-        }
-      );
+    // window.civicStore.lines.investment
+    //   .attr(
+    //     "x1",
+    //     function(d) {
+    //       if (d.source === window.centeredNode) { d.source.x = window.centeredNode.x; }
+    //       return d.source.x;
+    //     }
+    //   )
+    //   .attr(
+    //     "y1",
+    //     function(d) {
+    //       if (d.source === window.centeredNode) { d.source.y = window.centeredNode.y; }
+    //       return d.source.y;
+    //     }
+    //   )
+    //   .attr(
+    //     "x2",
+    //     function(d) {
+    //       if (d.target === window.centeredNode) { d.target.x = window.centeredNode.x; }
+    //       return d.target.x;
+    //     }
+    //   )
+    //   .attr(
+    //     "y2",
+    //     function(d) {
+    //       if (d.target === window.centeredNode) { d.target.y = window.centeredNode.y; }
+    //       return d.target.y;
+    //     }
+    //   );
 
     window.civicStore.lines.collaboration
       .attr(

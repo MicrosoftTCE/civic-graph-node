@@ -1,7 +1,7 @@
 var $            = require("jquery");
 var _            = require("lodash");
 
-require('devbridge-autocomplete');
+var autocomplete = require('jquery-autocomplete');
 
 var u                     = require('../utilities');
 
@@ -82,7 +82,6 @@ var drawGraph = function () {
   var rawNodes = _.values(civicStore.vertices);
   // rawNodes.unshift({name: "OMG"});
 
-  console.log(rawNodes, "rawNodes");
 
   window.rawConnections =
     [].concat(civicStore.edges.funding)
@@ -90,7 +89,6 @@ var drawGraph = function () {
       .concat(civicStore.edges.collaboration)
       .concat(civicStore.edges.data);
 
-  console.log(rawConnections, "rawConnections");
 
   // window.rawConnections.forEach(function(connections) {
   //   if(!rawNodes[connections.source]) {
@@ -129,7 +127,7 @@ var drawGraph = function () {
   //  FUNDINGS
   window.civicStore.lines.funding = svg
     .selectAll(".fund")
-    .data(civicStore.edges.funding.filter(function(n) { return n.render === 1; }))
+    .data(civicStore.edges.funding.filter(function(n) { return n.render === 1; }).concat(civicStore.edges.investment.filter(function(n){ return n.render === 1})))
     .enter()
     .append("line")
     .attr("class", "fund")
@@ -138,17 +136,17 @@ var drawGraph = function () {
     .style("opacity", "0.2")
     .style("visibility", "visible");
 
-  //  INVESTMENTS
-  window.civicStore.lines.investment = svg
-    .selectAll(".invest")
-    .data(civicStore.edges.investment.filter(function(n) { return n.render === 1; }))
-    .enter()
-    .append("line")
-    .attr("class", "invest")
-    .style("stroke", u.colors.teal)
-    .style("stroke-width", "1")
-    .style("opacity", "0.2")
-    .style("visibility", "visible");
+  //  EMPLOYMENT
+  // window.civicStore.lines.empl = svg
+  //   .selectAll(".invest")
+  //   .data(civicStore.edges.investment.filter(function(n) { return n.render === 1; }))
+  //   .enter()
+  //   .append("line")
+  //   .attr("class", "invest")
+  //   .style("stroke", u.colors.purple)
+  //   .style("stroke-width", "1")
+  //   .style("opacity", "0.2")
+  //   .style("visibility", "visible");
 
   //  COLLABORATIONS
   window.civicStore.lines.collaboration = svg
@@ -379,20 +377,19 @@ var drawGraph = function () {
     }
   );
 
-  // try {
-  //   //filter the sortedSearchList on keyup
-  //   $('#search-text').autocomplete({
-  //     lookup: u.getSortedList(),
-  //     appendTo: $('.filter-name-location'),
-  //     onSelect: function (suggestion) {
-  //       handleQuery(suggestion.value);
-  //     }
-  //   }).on('keyup', function() {
-  //     handleQuery(this.value);
-  //   });
-  // } catch (err) {
-  //   console.log("autocomplete error: ", err);
-  // }
+  try {
+    //filter the sortedSearchList on keyup
+    $('#search-text').autocomplete({
+      lookup: u.getSortedList(),
+      appendTo: $('.filter-name-location'),
+      onSelect: function (suggestion) {
+      }
+    }).on('keyup', function() {
+      handleQuery(this.value);
+    });
+  } catch (err) {
+    console.log("autocomplete error: ", err);
+  }
 
   d3.selectAll('option').on('keydown',
     function(n, i) {

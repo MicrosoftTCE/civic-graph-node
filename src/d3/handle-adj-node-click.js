@@ -1,7 +1,7 @@
 var handleClickNodeHover = require('./handle-click-node-hover');
 
 var handleAdjNodeClick = function (node) {
-  window.civicStore.lines.funding.style("opacity", function(link) {
+  window.civicStore.lines.funding.concat(window.civicStore.lines.investment).style("opacity", function(link) {
     if (node === link.source || node === link.target) {
       return "1";
     } else {
@@ -9,13 +9,13 @@ var handleAdjNodeClick = function (node) {
     }
   });
 
-  window.civicStore.lines.investment.style("opacity", function(link) {
-    if (node === link.source || node === link.target) {
-      return "1";
-    } else {
-      return "0.05";
-    }
-  });
+  // window.civicStore.lines.investment.style("opacity", function(link) {
+  //   if (node === link.source || node === link.target) {
+  //     return "1";
+  //   } else {
+  //     return "0.05";
+  //   }
+  // });
 
   window.civicStore.lines.collaboration.style("opacity", function(link) {
     if (node === link.source || node === link.target) {
@@ -45,7 +45,7 @@ var handleAdjNodeClick = function (node) {
 
   neighboringNodesIndices[d.ID] = 1;
 
-  window.civicStore.edges.funding.forEach(function(link) {
+  window.civicStore.edges.funding.concat(window.civicStore.edges.investment).forEach(function(link) {
 
     if (isLinkSource(link, node)) {
       neighboringNodesIndices[link.target.index] = 1;
@@ -56,15 +56,15 @@ var handleAdjNodeClick = function (node) {
     }
   });
 
-  window.civicStore.edges.investment.forEach(function(link) {
-    if (isLinkSource(link, node)) {
-      neighboringNodesIndices[link.target.index] = 1;
-    }
+  // window.civicStore.edges.investment.forEach(function(link) {
+  //   if (isLinkSource(link, node)) {
+  //     neighboringNodesIndices[link.target.index] = 1;
+  //   }
 
-    if (isLinkTarget(link, node)) {
-      neighboringNodesIndices[link.source.index] = 1;
-    }
-  });
+  //   if (isLinkTarget(link, node)) {
+  //     neighboringNodesIndices[link.source.index] = 1;
+  //   }
+  // });
 
   window.civicStore.edges.collaboration.forEach(function(link) {
 
