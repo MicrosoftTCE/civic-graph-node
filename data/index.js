@@ -12,6 +12,7 @@ var pool    = mysql.createPool(config.db);
 var db      = wrap(pool);
 
 var processVertices = function(entities, bridges, operations, locations) {
+  console.log(entities);
   var out = {};
 
   _.each(entities, function(entity) {
@@ -254,7 +255,7 @@ var getVertices = function(callback) {
         return entity.id;
       });
 
-      qry = "SELECT id, name, nickname, followers, employees, entity_type, render " +
+      qry = "SELECT id, name, nickname, followers, employees, entity_type, categories, key_people, relations, twitter_handle, followers, website, render " +
           "FROM entities_view " +
           "WHERE id NOT IN (" + idsToAvoid.join(",") + ")";
 

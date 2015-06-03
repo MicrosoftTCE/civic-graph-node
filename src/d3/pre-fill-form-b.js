@@ -1,7 +1,16 @@
 var d3 = require('d3');
 var $  = require('jquery');
 
+var collaborationTmpl = require('../templates/collaboration.hbs');
+var revenueTmpl       = require('../templates/revenue.hbs');
+var expensesTmpl      = require('../templates/expenses.hbs');
+var addDataList       = require('./add-data-list');
+var addInputExp = require('./add-input-exp');
+
 var utils = require('../utilities');
+var preFillName = require('./pre-fill-name');
+var addInputCollab   = require('./add-input-collab');
+var addInputRev  =require('./add-input-rev');
 
 var preFillFormB = function (obj) {
   console.log(obj,'preFillFormBEntry');

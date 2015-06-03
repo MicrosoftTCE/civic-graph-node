@@ -123,26 +123,27 @@ var preFillFormA = function (obj) {
   );
 
   if (obj.key_people.length > 0) {
-    var keypeople = obj.key_people;
-    var len       = keypeople.length;
-
-    for (var i = 0; i < len; i++) {
+    // var keypeople = obj.key_people;
+    // var len       = keypeople.length;
+    for (var i = 0; i < obj.key_people.length; i++) {
       $("#key-people-" + i).after(keyPeopleTmpl({ idx: i }));
 
       d3.select('#key-people-' + i + ' input[name="kpeople"]').on('keyup', null);
 
       d3.select('#key-people-' + i + ' input[name="kpeople"]').text(
         function(e) {
-          this.value = keypeople[i].name;
+          console.log(obj.key_people.length, 'this');
+          this.value = obj.key_people[i];
+          // console.log(this.value, 'this.value');
         }
       );
     }
 
-    d3.select('#key-people-' + keypeople.length + ' input[name="kpeople"]')
+    d3.select('#key-people-' + obj.key_people.length + ' input[name="kpeople"]')
       .on(
         'keyup',
         function() {
-          addInputKp(keypeople.length);
+          addInputKp(obj.key_people.length);
         }
       );
   }
@@ -181,11 +182,11 @@ var preFillFormA = function (obj) {
       }
     );
 
-    d3.select("#funding-" + fundingreceived.length + " input[name='fund']")
+    d3.select("#funding-" + obj.funding_received.length + " input[name='fund']")
       .on(
         "keyup",
         function() {
-          addInputFund(fundingreceived.length);
+          addInputFund(obj.funding_received.length);
         }
       );
   }
@@ -216,11 +217,11 @@ var preFillFormA = function (obj) {
       }
     );
 
-    d3.select("#fundinggiven-" + fundinggiven.length + " input[name='fundgiven']")
+    d3.select("#fundinggiven-" + obj.funding_given.length + " input[name='fundgiven']")
       .on(
         "keyup",
         function() {
-          addInputFundGiven(fundinggiven.length);
+          addInputFundGiven(obj.funding_given.length);
         }
       );
   }
@@ -257,11 +258,11 @@ var preFillFormA = function (obj) {
       );
     });
 
-    d3.select("#investing-" + investmentreceived.length + " input[name='invest']")
+    d3.select("#investing-" + obj.investments_received.length + " input[name='invest']")
       .on(
         "keyup",
         function() {
-          addInputInvest(investmentreceived.length);
+          addInputInvest(obj.investments_received.length);
         }
       );
   }
@@ -358,11 +359,11 @@ var preFillFormA = function (obj) {
       );
     });
 
-    d3.select("#data-" + dataProviders.length + " input[name='data']")
+    d3.select("#data-" + obj.data.length + " input[name='data']")
       .on(
         "keyup",
         function() {
-          addInputData(dataProviders.length);
+          addInputData(obj.data.length);
         }
       );
   }

@@ -24,7 +24,7 @@ var file = path.join(__dirname, '..', 'data', 'data.json');
 router.get('/', function(req, res) {
   var entities, bridges;
 
-  var qry = select("id, name, nickname, followers, employees, entity_type")
+  var qry = select("id, name, nickname, followers, employees, entity_type, categories, key_people, relations, twitter_handle, followers, website")
   .from("entities_view").where({render: 1}).toString()
 
   db.query(qry)
