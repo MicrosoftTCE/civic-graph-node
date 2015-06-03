@@ -11,7 +11,7 @@ var router  = express.Router();
 
 var config  = require('../config');
 var data1  = require('../data');
-var pool    = mysql.createPool(config.db.localhost);
+var pool    = mysql.createPool(config.db.cleardb);
 var db      = wrap(pool);
 
 router.get('/athena', function(req, res) {

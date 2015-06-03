@@ -1,15 +1,9 @@
 {
-  "name": "civic",
+  "name": "civic-express",
   "version": "1.0.0",
   "description": "A refactor of the civic graph app",
-  "main": "index.js",
   "scripts": {
-    "start": "node ./index.js",
-    "build": "TARGET=build webpack",
-    "watch": "TARGET=dev webpack --devtool eval --progress --colors --watch --hot --content-base build",
-    "lint": "npm run lint-js && npm run lint-css",
-    "lint-js": "eslint . --ext .js --ext .jsx",
-    "lint-css": "csslint app/stylesheets --quiet"
+    "start": "node ./bin/www"
   },
   "repository": {
     "type": "git",
@@ -17,10 +11,6 @@
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/andela-koni/civic/issues"
-  },
-  "homepage": "https://github.com/andela-koni/civic",
   "dependencies": {
     "async": "^1.2.0",
     "body-parser": "^1.12.4",
@@ -40,9 +30,9 @@
     "jade-loader": "^0.7.1",
     "jquery": "^2.1.4",
     "jquery-autocomplete": "^1.2.1",
-    "lodash": "^3.9.1",
+    "lodash": "^3.9.3",
     "morgan": "^1.5.3",
-    "mysql": "^2.6.2",
+    "mysql": "^2.7.0",
     "mysql-wrap": "^0.4.0",
     "node-libs-browser": "^0.5.0",
     "queue-async": "^1.0.7",

@@ -4,9 +4,9 @@ exports.db = {
   'cleardb':{ 
   port: 3306,
   host: 'us-cdbr-azure-east-b.cloudapp.net',
-  user: 'bf43a42fa1bdc5',
-  password: '05873492',
-  database: 'cdb_3c66f3c15f'
+  user: 'b7441ee5de6609',
+  password: '24c5199a',
+  database: 'civic_dev'
   },
   'localhost' : {
       port: 8889,
