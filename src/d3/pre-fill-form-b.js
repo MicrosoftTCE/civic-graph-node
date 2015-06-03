@@ -45,9 +45,10 @@ var preFillFormB = function (obj) {
 
   if (obj.collaborations !== null) {
     var collaboration = obj.collaborations;
-
+    console.log(collaboration, "collaboration");
+    
     collaboration.forEach(function(d, i) {
-      $("#collaboration-" + i).after(collaborationTmpl({ idx: i }));
+      $("#collaboration-" + i).after(collaborationTmpl({ idx: i + 1}));
 
       addDataList('#collaboration-' + i + ' datalist', utils.getSortedNameOptions());
 
@@ -70,7 +71,7 @@ var preFillFormB = function (obj) {
     var expenseValues = obj.expenses;
 
     expenseValues.forEach(function(d, i) {
-      $("#expense-" + i).after(expensesTmpl({ idx: i }));
+      $("#expense-" + i).after(expensesTmpl({ idx: i + 1}));
       d3.select('#expense-' + i + ' input[name="expense_amt"]').on('keyup', null);
 
       d3.select('#expense-' + i + ' input[name="expense_amt"]').text(function(e) {
@@ -90,7 +91,7 @@ var preFillFormB = function (obj) {
     var revenueValues = obj.revenue;
 
     revenueValues.forEach(function(d, i) {
-      $("#revenue-" + i).after(revenueTmpl({ idx: i }));
+      $("#revenue-" + i).after(revenueTmpl({ idx: i + 1}));
       d3.select('#revenue-' + i + ' input[name="revenue_amt"]').on('keyup', null);
 
       d3.select('#revenue-' + i + ' input[name="revenue_amt"]').text(function(e) {

@@ -738,7 +738,7 @@ router.post('/', function(req, res) {
         (entity.employees !== null) ? employees = entity.employees: employees = null;
         (entity.influence !== null) ? influence = '"' + entity.influence + '"': influence = null;
         (entity.relations !== null) ? relations = '"' + entity.relations.join(", ") + '"': relations = null;
-        (entity.key_people !== null) ? key_people = '"' + entity.key_people.join(", ") + '"': key_people = null;
+        (entity.key_people !== null) ? key_people = '"' + entity.key_people.join("| ") + '"': key_people = null;
 
         //  Need to check if it exists prior to entering into the database.
         connection.query('SELECT * FROM Entities WHERE ((name="' + entity.name + '" OR nickname="' + entity.name + '") AND render=1) ORDER BY created_at DESC LIMIT 1', function(err, rows, field){

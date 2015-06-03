@@ -40,10 +40,10 @@ var preFillFormA = function (obj) {
   );
 
   if (obj.locations.length > 0) {
+    var locations  = obj.locations;
 
     d3.json("/cities", function(error, cities) {
       var cityNodes = cities.cities;
-      var locations  = obj.locations;
 
       for (var i = 0; i < locations.length; i++) {
         var cityObj = locations[i].city;
@@ -126,7 +126,7 @@ var preFillFormA = function (obj) {
     // var keypeople = obj.key_people;
     // var len       = keypeople.length;
     for (var i = 0; i < obj.key_people.length; i++) {
-      $("#key-people-" + i).after(keyPeopleTmpl({ idx: i }));
+      $("#key-people-" + i).after(keyPeopleTmpl({ idx: i + 1 }));
 
       d3.select('#key-people-' + i + ' input[name="kpeople"]').on('keyup', null);
 
@@ -152,7 +152,7 @@ var preFillFormA = function (obj) {
 
     obj.funding_received.forEach(
       function(d, i) {
-        $("#funding-" + i).after(fundingTmpl({ idx: i }));
+        $("#funding-" + i).after(fundingTmpl({ idx: i + 1 }));
 
         addDataList('#funding-' + i + ' datalist', utils.getSortedNameOptions());
 
@@ -195,7 +195,7 @@ var preFillFormA = function (obj) {
 
     obj.funding_given.forEach(
       function(d, i) {
-        $("#fundinggiven-" + i).after(fundingGivenTmpl({ idx: i }));
+        $("#fundinggiven-" + i).after(fundingGivenTmpl({ idx: i + 1 }));
 
         addDataList('#fundinggiven-' + i + ' datalist', utils.getSortedNameOptions());
 
@@ -229,7 +229,7 @@ var preFillFormA = function (obj) {
   if (obj.investments_received.length > 0) {
 
     obj.investments_received.forEach(function(d, i) {
-      $("#investing-" + i).after(investmentRecievedTmpl({ idx: i }));
+      $("#investing-" + i).after(investmentRecievedTmpl({ idx: i + 1}));
 
       addDataList('#investing-' + i + ' datalist', utils.getSortedNameOptions());
 
@@ -270,7 +270,7 @@ var preFillFormA = function (obj) {
   if (obj.investments_made.length > 0) {
 
     obj.investments_made.forEach(function(d, i) {
-      $("#investmentmade-" + i).after(investmentMadeTmpl({ idx: i }));
+      $("#investmentmade-" + i).after(investmentMadeTmpl({ idx: i + 1}));
 
       addDataList('#investmentmade-' + i + ' datalist', utils.getSortedNameOptions());
 
@@ -313,7 +313,7 @@ var preFillFormA = function (obj) {
   if (obj.employers.length > 0) {
 
     obj.employers.forEach(function(d, i) {
-      $("#employment-" + i).after(employmentTmpl({ idx: i }));
+      $("#employment-" + i).after(employmentTmpl({ idx: i + 1}));
 
       addDataList('#employment-' + i + ' datalist', utils.getSortedNameOptions());
 
@@ -342,7 +342,7 @@ var preFillFormA = function (obj) {
   if (obj.data.length > 0) {
 
     obj.data.forEach(function(d, i) {
-      $("#data-" + i).after(dataTmpl({ idx: i }));
+      $("#data-" + i).after(dataTmpl({ idx: i + 1 }));
 
       addDataList('#data-' + i + ' datalist', utils.getSortedNameOptions());
 
