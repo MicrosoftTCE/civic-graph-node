@@ -18,7 +18,7 @@
       <li>
         <div class="category-value">
           <a class="click-location" style="cursor: pointer">
-            {{city}}{{#if state}}, {{state}}{{/if}}{{#if country}}, {{country}}{{/if}}
+            {{#if city}}{{city.city_name}}, {{city.state_name}}, {{city.country_name}} {{/if}}
           </a>
         </div>
       </li>
@@ -44,7 +44,7 @@
 
 <div class="category-label">Twitter Followers:</div>
 <div class="category-value">
-  {{#if twitter_followers}}{{twitter_followers}}{{else}}N/A{{/if}}
+  {{#if followers}}{{followers}}{{else}}N/A{{/if}}
 </div>
 
 {{#if key_people}}

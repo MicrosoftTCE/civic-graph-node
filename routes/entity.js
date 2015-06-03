@@ -14,7 +14,7 @@ var router  = express.Router();
 var data  = require('../data');
 
 var config  = require('../config');
-var pool    = mysql.createPool(config.db);
+var pool    = mysql.createPool(config.db.localhost);
 var db      = wrap(pool);
 var async   = require('async');
 var fs      = require('fs');

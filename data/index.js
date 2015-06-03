@@ -8,7 +8,7 @@ var and    = sql.and;
 var $in    = sql.in;
 
 var config  = require('../config');
-var pool    = mysql.createPool(config.db);
+var pool    = mysql.createPool(config.db.localhost);
 var db      = wrap(pool);
 
 var processVertices = function(entities, bridges, operations, locations) {

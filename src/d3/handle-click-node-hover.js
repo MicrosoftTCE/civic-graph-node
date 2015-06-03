@@ -5,7 +5,7 @@ var prefillCurrent = require('./prefill-current');
 var textDisplay    = require('./text-display');
 
 var handleClickNodeHover = function(obj) {
-  console.log(obj);
+  console.log(obj, "clicked node");
   var display = textDisplay(obj);
 
   webform = editDisplay(obj);

@@ -11,7 +11,7 @@ var insert = sql.insert;
 var router  = express.Router();
 
 var config  = require('../config');
-var pool    = mysql.createPool(config.db);
+var pool    = mysql.createPool(config.db.localhost);
 var db      = wrap(pool);
 
 router.get('/', function(req, res) {

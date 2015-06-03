@@ -81,11 +81,11 @@ var preFillFormA = function (obj) {
       }
     });
 
-    d3.select('#location-' + obj.location.length + ' input[name="location"]')
+    d3.select('#location-' + obj.locations.length + ' input[name="location"]')
       .on(
         'keyup',
         function() {
-          addInputLocations(obj.location.length);
+          addInputLocations(obj.locations.length);
         }
       );
   }
