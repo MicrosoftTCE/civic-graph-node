@@ -1,10 +1,10 @@
 var _ = require('lodash');
 
 exports.db = {
-  port: 3306,
+  port: 8889,
   host: '127.0.0.1',
   user: 'root',
-  password: 'MicrosoftNY',
+  password: 'root',
   database: 'civic_dev'
 }
 
