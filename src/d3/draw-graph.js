@@ -1,7 +1,7 @@
 var $            = require("jquery");
 var _            = require("lodash");
 
-var autocomplete = require('jquery-autocomplete');
+// var autocomplete = require('jquery-autocomplete');
 
 var u                     = require('../utilities');
 

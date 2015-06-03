@@ -7,6 +7,7 @@ var addInputLoc           = require('./add-input-loc');
 var addInputCollab        = require('./add-input-collab');
 var addInputRev           = require('./add-input-rev');
 var addInputExp           = require('./add-input-exp');
+var processFormB          = require('./process-form-b')
 
 var utils = require('../utilities');
 
@@ -109,6 +110,8 @@ var displayFormB = function() {
     d3.selectAll('#submit-B').on(
       'click',
       function() {
+        var formObj = processFormB(formObject);
+
         console.log('clicked submit button');
         d3.xhr('/entities')
           .header("Content-Type", "application/json")

@@ -88,7 +88,8 @@ var sinclick = function (node) {
     )
     .on('mouseover', null);
 
-  var neighborFund = window.civicStore.edges.funding.concat(window.civicStore.edges.investment)
+  var neighborFund = window.civicStore.edges.funding
+  // .concat(window.civicStore.edges.investment)
     .filter(
       function(link) {
         return link.source.index === node.index ||
@@ -103,20 +104,20 @@ var sinclick = function (node) {
       }
     );
 
-  // var neighborInvest = window.civicStore.edges.investment
-  //   .filter(
-  //     function(link) {
-  //       return link.source.index === node.index ||
-  //         link.target.index === node.index;
-  //     }
-  //   )
-  //   .map(
-  //     function(link) {
-  //       return link.source.index === node.index ?
-  //       link.target.index :
-  //       link.source.index;
-  //     }
-  //   );
+  var neighborInvest = window.civicStore.edges.investment
+    .filter(
+      function(link) {
+        return link.source.index === node.index ||
+          link.target.index === node.index;
+      }
+    )
+    .map(
+      function(link) {
+        return link.source.index === node.index ?
+        link.target.index :
+        link.source.index;
+      }
+    );
 
   var neighborPorucs = window.civicStore.edges.collaboration
     .filter(

@@ -4,6 +4,7 @@ var $  = require('jquery');
 var utils = require('../utilities');
 
 var preFillFormB = function (obj) {
+  console.log(obj,'preFillFormBEntry');
   d3.selectAll('#nickname').text(function(d) {
     this.value = obj.nickname;
   });

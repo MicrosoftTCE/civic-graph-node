@@ -28,7 +28,9 @@ var addInputData        = require('./add-input-data');
 
 var preFillFormA = function (obj) {
 
-  obj = obj[0][0].__data__;
+  console.log(obj, 'obj');
+
+  // obj = obj[0][0].__data__;
 
   // Time to prefill the form...
   d3.selectAll('#name').text(
@@ -37,7 +39,7 @@ var preFillFormA = function (obj) {
     }
   );
 
-  if (obj.location.length > 0) {
+  if (obj.locations.length > 0) {
 
     d3.json("/cities", function(error, cities) {
       var cityNodes = cities.cities;
@@ -95,7 +97,7 @@ var preFillFormA = function (obj) {
     }
   );
 
-  if (obj.categories !== null) {
+  if (obj.categories.length > 0) {
     d3.selectAll('.webform-categories input').filter(
       function(d, i) {
 
@@ -120,7 +122,7 @@ var preFillFormA = function (obj) {
     }
   );
 
-  if (obj.key_people !== null) {
+  if (obj.key_people.length > 0) {
     var keypeople = obj.key_people;
     var len       = keypeople.length;
 

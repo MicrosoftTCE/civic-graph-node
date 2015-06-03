@@ -23,7 +23,7 @@ var addInputCollab = function (idx) {
     idx++; // counter -> 2
 
 
-    $("#collaboration-" + (idx - 1)).after(collaborationTmpl({ idx: CounterC }));
+    $("#collaboration-" + (idx - 1)).after(collaborationTmpl({ idx: idx }));
 
     addDataList('#collaboration-' + idx + ' datalist', utils.getSortedNameOptions());
 
