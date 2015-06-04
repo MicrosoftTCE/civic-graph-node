@@ -12,7 +12,6 @@ var pool    = mysql.createPool(config.db);
 var db      = wrap(pool);
 
 var processVertices = function(entities, bridges, operations, locations) {
-  console.log(entities);
   var out = {};
 
   _.each(entities, function(entity) {
@@ -110,7 +109,7 @@ var processVertices = function(entities, bridges, operations, locations) {
         });
       }
     } catch (err) {}
-  })
+  });
 
   _.each(locations, function(location) {
     try {
@@ -127,7 +126,7 @@ var processVertices = function(entities, bridges, operations, locations) {
         }
       );
     } catch (err) {}
-  })
+  });
 
   return out;
 };
@@ -270,19 +269,20 @@ var getVertices = function(callback) {
 
       qry = select().from("bridges_view").toString()
 
-      return db.query(qry)
+      return db.query(qry);
     })
     .then(function(results) {
       bridges = results;
       qry = select().from("operations_view").toString()
 
-      return db.query(qry)
+      return db.query(qry);
     })
     .then(function(results) {
       operations = results;
-      qry = select().from("locations_with_city").toString()
+      qry = select().from("locations_with_city").toString();
 
-      return db.query(qry)
+
+      return db.query(qry);
     })
     .then(function(results) {
       callback(null, {
