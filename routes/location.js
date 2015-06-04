@@ -5,7 +5,7 @@ var sql     = require('sql-bricks');
 var router  = express.Router();
 
 var config  = require('../config');
-var pool    = mysql.createPool(config.db);
+var pool    = mysql.createPool(config.db.localhost);
 
 router.get('/', function(req, res) {
   pool.getConnection(function(err, connection) {
