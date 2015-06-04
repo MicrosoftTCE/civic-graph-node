@@ -4,7 +4,7 @@
   "description": "A refactor of the civic graph app",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index.js",
+    "start": "node ./bin/www",
     "build": "TARGET=build webpack",
     "watch": "TARGET=dev webpack --devtool eval --progress --colors --watch --hot --content-base build",
     "lint": "npm run lint-js && npm run lint-css",
@@ -40,6 +40,7 @@
     "jade-loader": "^0.7.1",
     "jquery": "^2.1.4",
     "jquery-autocomplete": "^1.2.1",
+    "jquery-ui": "^1.10.5",
     "lodash": "^3.9.1",
     "morgan": "^1.5.3",
     "mysql": "^2.6.2",

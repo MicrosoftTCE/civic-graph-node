@@ -4,12 +4,14 @@ var handleClickNodeHover = require('./handle-click-node-hover');
 var utils = require('../utilities');
 
 var handleQuery = function (query) {
+  console.log(query);
   query = query.toLowerCase();
 
-  var entitiesHash = {};
+  var entitiesHash = utils.getNicknameHash();
+  console.log(entitiesHash, "hash");
 
   if (query in entitiesHash) {
-    sinclick(entitiesHash[query]);
+    sinclick(entitiesHash[query][0]);
   }
 
   if (query in utils.getLocationHash()) {
