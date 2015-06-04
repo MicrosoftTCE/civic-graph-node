@@ -4,6 +4,8 @@ var sql     = require('sql-bricks');
 var wrap    = require('mysql-wrap');
 var _       = require('lodash');
 var path    = require('path');
+var http    = require('http');
+var _       = require('lodash');
 
 var select = sql.select;
 var insert = sql.insert;
@@ -92,7 +94,7 @@ router.get('/:id', function(req, res) {
 router.post('/', function(req, res) {
   var entity = req.body;
 
-  console.log(req.body, 'backend request');
+  console.log(entity, 'backend request');
   // { entity: 'Individual',
   // categories: [ 'General Civic Tech', 'Jobs & Education' ],
   // name: 'Ashton Kutcher',
@@ -680,35 +682,216 @@ router.post('/', function(req, res) {
 
 
     var insertNode = function(pastID, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people, newIdValue) {
-      connection.query('INSERT INTO Entities (id, name, nickname, entity_type, categories, location, website, twitter_handle, followers, employees, influence, relations, key_people, created_at, Render, deleted_at) VALUES (' + newIdValue + ',"' + entity.name + '","' + entity.nickname + '","' + entity.entity_type + '",' + categories + ',"' + entity.location + '",' + url + ',' + twitter_handle + ',' + followers + ',' + employees + ',' + influence + ',' + relations + ',' + key_people + ',' + 'NOW(), 1, null);', function(err, result) {
-        if (err) throw err;
 
-        console.log("Current: " + result.insertId);
-        console.log("Past: " + pastID);
-        if(pastID !== -1)
-        {
+      asyncProcesses =[];
 
-        connection.query('UPDATE `Operations` SET `entity_id`=? WHERE (entity_id=?)', [result.insertId, pastID], function(err){
+      asyncProcesses.push(function(callback) {
+        connection.query('INSERT INTO Entities (id, name, nickname, entity_type, categories, location, website, twitter_handle, followers, employees, influence, relations, key_people, created_at, Render, deleted_at) VALUES (' + newIdValue + ',"' + entity.name + '","' + entity.nickname + '","' + entity.entity_type + '",' + categories + ',"' + entity.location + '",' + url + ',' + twitter_handle + ',' + followers + ',' + employees + ',' + influence + ',' + relations + ',' + key_people + ',' + 'NOW(), 1, null);', function(err, result) {
           if (err) throw err;
-          connection.query('UPDATE `Bridges` SET `entity_2_id`=' + result.insertId + ' WHERE (entity_2_id=' + pastID + ' AND render=1)', function(err){
-          if (err) throw err;
-          console.log("Inside");
-          // var end5 = new Date().getTime();
-          // console.log("Actual insertion: " + (end5 - start5));
-          // start2 = new Date().getTime();
-          developJSON(result, entity);
+
+          console.log("Current: " + result.insertId);
+          console.log("Past: " + pastID);
+          if(pastID !== -1)
+          {
+
+          connection.query('UPDATE `Operations` SET `entity_id`=? WHERE (entity_id=?)', [result.insertId, pastID], function(err){
+            if (err) throw err;
+            connection.query('UPDATE `Bridges` SET `entity_2_id`=' + result.insertId + ' WHERE (entity_2_id=' + pastID + ' AND render=1)', function(err){
+            if (err) throw err;
+            console.log("Inside");
+            // var end5 = new Date().getTime();
+            // console.log("Actual insertion: " + (end5 - start5));
+            // start2 = new Date().getTime();
+            // developJSON(result, entity);
+            callback(null, [result, entity]);
+            });
           });
+          }
+          else
+          {
+          var end5 = new Date().getTime();
+            // console.log("Actual insertion: " + (end5 - start5));
+            // start2 = new Date().getTime();
+            callback(null, [result,entity]);
+          }
         });
+      });
+
+      asyncProcesses.push(function(callback) {
+        var locations = entity.locations;
+        var CounterL = 0;
+
+        if(locations.length > 0){
+          _.each(locations, function(loc) {
+            var city = loc.city;
+            var cityAddress = loc.addresses;
+
+            if(pastID !== -1) {
+              var entityId = pastID;
+
+              connection.query('SELECT * FROM locations LEFT JOIN cities ON (locations.city_id = cities.id) WHERE entity_id =' + entityId, function(err, results, fields) {
+                console.log(results, 'returned query');
+                if(results !== undefined && results.length >= 1) {
+                  for(var i = 0; i < results.length; i++) {
+                    console.log(results[i], city.city, results[i].city_name);
+                    if (results[i].city_name === city.city) {
+                      connection.query('UPDATE locations SET entity_id =? WHERE (entity_id=?)', [newIdValue, pastID], function(err) {
+                        if (err) throw err;
+                        console.log('locations updated');
+                      });
+                    } else {
+                      var cityDetails = {
+                        city_name: city.city || null,
+                        state_code:  null,
+                        state_name: city.state || null,
+                        country_code: null,
+                        country_name: city.country || null,
+                        city_lat: null,
+                        city_long: null,
+                        deleted_at: null
+                      };
+
+                      var qry = insert("cities", cityDetails);
+                      db.query(qry.toString()).then(function(result){
+                        if(cityAddress) {
+
+                          var locationsObj= {
+                            entity_id: newIdValue,
+                            city_id: result.insertId,
+                            address: city.address,
+                            address_lat: null,
+                            address_long: null,
+                            deleted_at: null
+                          };
+
+                          console.log(locationsObj, 'obj');
+
+                          var qry = insert("locations", locationsObj);
+                          db.query(qry.toString()).then(function(result) {
+                            if (CounterL === locations.length-1){
+                              callback(null, 'success');
+                            } else {
+                              counterL++;
+                            }
+                          });
+                        } else {
+                          if(CounterL === locations.length-1) {
+                            callback(null, 'error');
+                          } else {
+                            CounterL++;
+                          }
+                        }
+                      });
+                    }
+                  }
+                } else {
+                  // console.log(city.city, city.state, '866');
+                  for(var i = 0; i < results.length; i++) {
+                      var cityDetails = {
+                        city_name: city.city || null,
+                        state_code:  null,
+                        state_name: city.state || null,
+                        country_code: null,
+                        country_name: city.country || null,
+                        city_lat: null,
+                        city_long: null,
+                        deleted_at: null
+                      };
+
+                      var qry = insert("cities", cityDetails);
+                      db.query(qry.toString()).then(function(result){
+                        if(cityAddress) {
+
+                          var locationsObj= {
+                            entity_id: newIdValue,
+                            city_id: result.insertId,
+                            address: city.address,
+                            address_lat: null,
+                            address_long: null,
+                            deleted_at: null
+                          };
+
+                          var qry = insert("locations", locationsObj);
+                          db.query(qry.toString()).then(function(result) {
+                            if (CounterL === locations.length-1){
+                              callback(null, 'success');
+                            } else {
+                              counterL++;
+                            }
+                          });
+                        } else {
+                          if(CounterL === locations.length-1) {
+                            callback(null, 'error');
+                          } else {
+                            CounterL++;
+                          }
+                        }
+                      });
+                  }
+                }
+              });
+            } else {
+              var cityDetails = {
+                city_name: city.city || null,
+                state_code:  null,
+                state_name: city.state || null,
+                country_code: null,
+                country_name: city.country || null,
+                city_lat: null,
+                city_long: null,
+                deleted_at: null
+              };
+
+              var qry = insert("cities", cityDetails);
+              db.query(qry.toString()).then(function(result){
+                if(cityAddress) {
+
+                  var locationsObj= {
+                    entity_id: newIdValue,
+                    city_id: result.insertId,
+                    address: city.address,
+                    address_lat: null,
+                    address_long: null,
+                    deleted_at: null
+                  };
+
+                  var qry = insert("locations", locationsObj);
+                  db.query(qry.toString()).then(function(result) {
+                    if (CounterL === locations.length-1){
+                      callback(null, 'success');
+                    } else {
+                      counterL++;
+                    }
+                  });
+                } else {
+                  if(CounterL === locations.length-1) {
+                    callback(null, 'error');
+                  } else {
+                    CounterL++;
+                  }
+                }
+              });
+            }
+          });
+        } else {
+          callback(null, 'No locations now');
         }
-        else
-        {
-        var end5 = new Date().getTime();
-          // console.log("Actual insertion: " + (end5 - start5));
-          // start2 = new Date().getTime();
-        developJSON(result, entity);
+      });
+
+      async.parallel(asyncProcesses, function(err, result) {
+        if (err) throw err;
+        for(var i =0; i < result.length, i++;) {
+          if(typeOf(result[i]) !== "string" ) {
+            developJSON(result[i][0], result[i][1]);
+            break;
+          }
         }
       });
     };
+
+
+
+
 
     connection.query("SELECT * FROM entities ORDER BY id DESC LIMIT 0, 1", function(err, entries, attr) {
       if (err) throw err;
@@ -775,107 +958,6 @@ router.post('/', function(req, res) {
       // });
     });
   });
-
-
-  // asyncTasks.push(function(callback) {
-  //   if(entity.locations.length > 0){
-  //     var locations = req.body.locations;
-  //     _.each(locations, function(location) {
-  //       var city = location.city;
-  //       if (city !== null) {
-  //         connection.query('SELECT * FROM cities WHERE city_name LIKE "' + MenloPark + '" AND state_name LIKE "' + California + '" AND country_name LIKE "' + UnitedStates + '";', function (city) {
-  //           return function(err, rows, fields) {
-  //             if (rows !== undefined && rows.length >= 1) {
-  //               connection.query('UPDATE cities WHERE city_name LIKE "' + MenloPark + '" AND state_name LIKE "' + California + '" AND country_name LIKE"' + UnitedStates + '";')
-  //             }
-  //           };
-  //         });
-
-
-  //         if(city.id === null) {
-  //           http.get('http://dev.virtualearth.net/REST/v1/Locations?query=' + encodeURI(city.cityName) + '&key=Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M', function(response) {
-  //           var data = '';
-  //           response.on('data', function(chunk) {
-  //             data += chunk;
-  //           }).on('end', function() {
-  //             var location = JSON.parse(data);
-  //             if(location){
-  //             if (location.resourceSets && location.resourceSets.length > 0 && location.resourceSets[0].resources && location.resourceSets[0].resources.length > 0) {
-  //               http.get('http://restcountries.eu/rest/v1/name/' + location.resourceSets[0].resources[0].address.countryRegion + '?fullText=true', function(res) {
-  //               var result = '';
-  //               res.on('data', function(chunk) {
-  //                 result += chunk;
-  //               }).on('end', function() {
-  //                 var countryDetail = JSON.parse(result);
-  //                 var cityDetails = {
-  //                 city_name: location.resourceSets[0].resources[0].address.locality || null,
-  //                 state_code: location.resourceSets[0].resources[0].address.adminDistrict || null,
-  //                 state_name: null,
-  //                 country_code: countryDetail[0].alpha3Code || null,
-  //                 country_name: location.resourceSets[0].resources[0].address.countryRegion || null,
-  //                 city_lat: location.resourceSets[0].resources[0].point.coordinates[0] || null,
-  //                 city_long: location.resourceSets[0].resources[0].point.coordinates[1] || null,
-  //                 deleted_at: null
-  //                 };
-
-  //                 var qry = insert("cities", cityDetails);
-  //                 db.query(qry.toString()).then(function(result){
-  //                 var CityAddresses = city.addresses;
-  //                 _.each(CityAddresses, function(CityAddress) {
-  //                   if(CityAddress.id === null) {
-  //                   http.get('http://dev.virtualearth.net/REST/v1/Locations?q=' + encodeURI(CityAddress.address) + '&key=Ah_CBBU6s6tupk_v45WVz46zMfevFT5Lkt9vpmwqV5LedzE221Kfridd7khQxD8M', function(resp) {
-  //                     var address = '';
-  //                     resp.on('data', function(chunk) {
-  //                     address += chunk;
-  //                     }).on('end', function() {
-  //                     if (address){
-
-  //                       address = JSON.parse(address);
-  //                       if (address.resourceSets && address.resourceSets.length > 0 && address.resourceSets[0].resources && address.resourceSets[0].resources.length > 0) {
-  //                       var locationsObj= {
-  //                         entity_id: req.body.id,
-  //                         city_id: result.insertId,
-  //                         address: CityAddress.address,
-  //                         address_lat: address.resourceSets[0].resources[0].geocodePoints[0].coordinates[0],
-  //                         address_long: address.resourceSets[0].resources[0].geocodePoints[0].coordinates[1],
-  //                         deleted_at: null
-  //                       };
-
-  //                       var qry = insert("locations", locationsObj);
-  //                       db.query(qry.toString()).then(function(result) {
-  //                         console.log(result, 'hhhdhhd');
-  //                         resp.json(result);
-  //                       });
-  //                       } else {
-  //                       console.log('address array returned empty');
-  //                       }
-  //                     } else {
-  //                       console.log('address not found');
-  //                     }
-  //                     });
-  //                   });
-  //                   }
-  //                 });
-  //                 });
-  //               });
-  //               });
-  //             } else {
-  //               console.log('Location array returned empty')
-  //             }
-  //             }
-  //             else {
-  //             console.log('location not found');
-  //             }
-  //           }).on('error', function(err) {
-  //           });
-  //           });
-  //         }
-  //       }
-  //     });
-  //   } else {
-  //     callback(null, 'Locations');
-  //   }
-  // });
 
 });
 
