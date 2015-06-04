@@ -1,7 +1,9 @@
 var $            = require("jquery");
+window.$ = $;
+window.jQuery = $;
 var _            = require("lodash");
 
-// var autocomplete = require('jquery-autocomplete');
+require('jquery-ui/autocomplete');
 
 var u                     = require('../utilities');
 
@@ -380,13 +382,18 @@ var drawGraph = function () {
   try {
     //filter the sortedSearchList on keyup
     $('#search-text').autocomplete({
-      lookup: u.getSortedList(),
-      appendTo: $('.filter-name-location'),
-      onSelect: function (suggestion) {
+      source: u.getSortedList(),
+      select: function(event, ui) {
+        console.log(ui);
+        handleQuery(ui.item.value);
       }
-    }).on('keyup', function() {
-      handleQuery(this.value);
+      // appendTo: $('.filter-name-location'),
+      // onSelect: function (suggestion) {
+      // }
     });
+    // .on('keyup', function() {
+    //   handleQuery(this.value);
+    // });
   } catch (err) {
     console.log("autocomplete error: ", err);
   }

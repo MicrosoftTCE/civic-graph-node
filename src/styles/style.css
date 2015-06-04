@@ -637,3 +637,7 @@ button#submit-B {
 .entities.Government {
   fill: #ebe826;
 }
+
+ul.ui-autocomplete { 
+  z-index: 9999;
+}
