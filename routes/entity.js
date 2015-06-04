@@ -758,7 +758,7 @@ router.post('/', function(req, res) {
                           var locationsObj= {
                             entity_id: newIdValue,
                             city_id: result.insertId,
-                            address: city.address,
+                            address: cityAddress || null,
                             address_lat: null,
                             address_long: null,
                             deleted_at: null
@@ -805,7 +805,7 @@ router.post('/', function(req, res) {
                           var locationsObj= {
                             entity_id: newIdValue,
                             city_id: result.insertId,
-                            address: city.address,
+                            address: cityAddress || null,
                             address_lat: null,
                             address_long: null,
                             deleted_at: null
@@ -849,7 +849,7 @@ router.post('/', function(req, res) {
                   var locationsObj= {
                     entity_id: newIdValue,
                     city_id: result.insertId,
-                    address: city.address,
+                    address: cityAddress || null,
                     address_lat: null,
                     address_long: null,
                     deleted_at: null
