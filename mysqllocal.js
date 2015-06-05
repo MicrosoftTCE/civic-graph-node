@@ -13,7 +13,6 @@
       if (err) throw err;
       connection.query('USE ' + db_config.cred.cleardb.database, function (err) {
           if (err) throw err;
-
           connection.query('CREATE TABLE IF NOT EXISTS Entities('
               + 'ID INT NOT NULL AUTO_INCREMENT UNIQUE,'
               + 'Name VARCHAR(100) NOT NULL,'                  // Entity Name
@@ -141,7 +140,7 @@
                   };
 
       var query = connection.query('INSERT INTO Entities SET ?', values, function(err, result){
-
+        if(err) throw err;
       });
 
       console.log(query.sql);
@@ -158,7 +157,7 @@
                   };
 
       var query = connection.query('INSERT INTO Bridges SET ?', values, function(err, result){
-        if (err) throw err;
+        if(err) throw err;
       });
 
       console.log(query.sql);
@@ -179,7 +178,7 @@
       ((data.funding_connections)[k].type === "Received") ? values['Connection'] = "Funding Received" : values['Connection'] = "Funding Given";
 
       var query = connection.query('INSERT INTO Bridges SET ?', values, function(err, result){
-        if (err) throw err;
+        if(err) throw err;
       });
 
       console.log(query.sql);
@@ -200,7 +199,7 @@
       ((data.investment_connections)[l].type === "Received") ? values['Connection'] = "Investment Received" : values['Connection'] = "Investment Made";
 
       var query = connection.query('INSERT INTO Bridges SET ?', values, function(err, result){
-        if (err) throw err;
+        if(err) throw err;
       });
 
       console.log(query.sql);
@@ -217,7 +216,7 @@
                   };
 
       var query = connection.query('INSERT INTO Bridges SET ?', values, function(err, result){
-        if (err) throw err;
+        if(err) throw err;
       });
 
       console.log(query.sql);
@@ -236,7 +235,7 @@
                       };
 
           var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
-            if (err) throw err;
+            if(err) throw err;
           });
 
           console.log(query.sql);
@@ -252,7 +251,7 @@
                       };
 
           var query = connection.query('INSERT INTO Operations SET?', values, function(err, result){
-            if (err) throw err;
+            if(err) throw err;
           });
 
           console.log(query.sql);
