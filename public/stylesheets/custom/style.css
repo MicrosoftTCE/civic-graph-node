@@ -407,6 +407,14 @@ button#submit-B {
 .metro h3 {
   color: rgba(0, 0, 0, 1);
 }
+/*For the GIF image...*/
+
+#loading {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: url('../../images/spinner.gif') no-repeat center center;
+}
 /*Macbook Pro 13"*/
 
 @media (max-width: 1271px) and (min-width: 986px) {
@@ -566,4 +574,51 @@ button#submit-B {
 .state-boundary {
   fill: none;
   stroke: #000;
+}
+.metro strong {
+  font-weight: normal;
+  font-family: 'Segoe UI_', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
+}
+.filter-name-location {
+  position: relative;
+}
+.d3-tip,
+div.tooltip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+/*.routes {
+  opacity: 1;
+}*/
+
+.pinpoint.hidden {
+  opacity: 0.1;
+}
+.routes.hidden {
+  opacity: 0.1;
+}
+.routes.funding_connections {
+  stroke: #6f5da8;
+}
+.routes.investment_connections {
+  stroke: #267272;
+}
+.routes.collaboration_connections {
+  stroke: #ebe826;
+}
+.routes.data_connections {
+  stroke: #bf4896;
+}
+.entities.For-Profit {
+  fill: #6f5da8;
+}
+.entities.Non-Profit {
+  fill: #267272;
+}
+.entities.Government {
+  fill: #ebe826;
 }

@@ -1,22 +1,17 @@
 var async = require('async');
 var fs = require('fs');
 var path = require("path");
-var file = path.join(__dirname, '..', 'routes', 'data.json');
-
 var mysql = require('mysql');
 
+var file = path.join(__dirname, '..', 'routes', 'data.json');
+var civicJSON = path.join(__dirname, '..', 'public', 'data', 'civic.json');
 var db_config = require('./../configuration/credentials.js');
 var pool = mysql.createPool(db_config.cred.cleardb);
-
-var start2;
 
 exports.save = function(request, response){
   console.log("Request!!!!" + request);
   var entity = request.body;
-
-
-  var start = new Date().getTime();
-
+   var start = new Date().getTime();
 
   //  Convert ALL empty strings to null...
     for (var property in entity) {
@@ -85,10 +80,6 @@ exports.save = function(request, response){
         }
     }
 
-    var end = new Date().getTime();
-
-    console.log("Process data: " + (end - start));
-
     console.log("This is the entity: " + entity);
 
     fs.readFile(file, 'utf8', function (err,data) {
@@ -104,12 +95,8 @@ exports.save = function(request, response){
         }
     });
 
-  var start1 = new Date().getTime();
   pool.getConnection(function (err, connection){
     console.log("Got a connection!");
-    var end1 = new Date().getTime();
-    console.log("Getting connection:" + (end1 - start1));
-    console.log("This is what it looks like: " + connection);
     //  Cleans up the sent stringified data.
     if(err) throw err;
     
@@ -507,8 +494,6 @@ exports.save = function(request, response){
           //  Time to export this data to a json file!
 
           fs.readFile(file, 'utf8', function (err,data) {
-            var end2 = new Date().getTime();
-          console.log("Connection Lines: " + (end2 - start2));
               if (err) {
                   console.log(err);
               } else {
@@ -518,8 +503,8 @@ exports.save = function(request, response){
                   
                   fs.writeFile(file, JSON.stringify(data), function (err) {
                     if (err) return console.log(err);
-                    connection.release();
-                    console.log('File saved.-----------------------------');
+                    console.log('data.json saved.-----------------------------');
+                    renderJSON(connection);
                   });
               }
           });
@@ -530,7 +515,6 @@ exports.save = function(request, response){
     };  
 
   var insertNode = function(pastID, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people) {
-    var start5 = new Date().getTime();
 
     connection.query('INSERT INTO Entities (Name, Nickname, Type, Categories, Location, Website, TwitterHandle, Followers, Employees, Influence, Relations, KeyPeople, CreatedAt, Render) VALUES ("' + entity.name + '","' + entity.nickname + '","' + entity.type + '",' + categories + ',"' + entity.location + '",' + url + ',' + twitter_handle + ',' + followers + ',' + employees + ',' + influence + ',' + relations + ',' + key_people + ',' + 'NOW(), 1);', function(err, result) {
           if (err) throw err;
@@ -540,30 +524,24 @@ exports.save = function(request, response){
           if(pastID !== -1)
           {
 
-            connection.query('UPDATE `Operations` SET `EntityID`=? WHERE (EntityID=?)', [result.insertId, pastID), function(err){
+            connection.query('UPDATE `Operations` SET `EntityID`=' + result.insertId + ' WHERE (EntityID=' + pastID + ')', function(err){
               if (err) throw err;
+              console.log('updated...');
               connection.query('UPDATE `Bridges` SET `Entity2ID`=' + result.insertId + ' WHERE Entity2ID=' + pastID + ' AND Render=1', function(err){
                 if (err) throw err;
                 console.log("Inside");
-                var end5 = new Date().getTime();
-                console.log("Actual insertion: " + (end5 - start5));
-                start2 = new Date().getTime();
                 developJSON(result, entity);
                 
               });
-            }
+            });
           }
           else
           {
-            var end5 = new Date().getTime();
-              console.log("Actual insertion: " + (end5 - start5));
-              start2 = new Date().getTime();
             developJSON(result, entity);
           }
       });
   };
 
-        var start4 = new Date().getTime();
 
         connection.query("SET @count = -1;", function(err) {
             if (err) throw err;
@@ -577,58 +555,355 @@ exports.save = function(request, response){
 
                     connection.query('SET @@auto_increment_increment=1;', function(err) {
                         if (err) throw err;
-                    });
 
-                    connection.query('SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";', function(err) {
-                        if (err) throw err;
-                    });
-
-                    console.log("Finally got here...");
-
-                    (entity.categories !== null) ? categories = '"' + entity.categories.join(", ") + '"': categories = null;
-                    (entity.url !== null) ? url = '"' + entity.url + '"': url = null;
-                    (entity.twitter_handle !== null) ? twitter_handle = '"' + entity.twitter_handle + '"': twitter_handle = null;
-                    (entity.followers !== null) ? followers = entity.followers: followers = null;
-                    (entity.employees !== null) ? employees = entity.employees: employees = null;
-                    (entity.influence !== null) ? influence = '"' + entity.influence + '"': influence = null;
-                    (entity.relations !== null) ? relations = '"' + entity.relations.join(", ") + '"': relations = null;
-                    (entity.key_people !== null) ? key_people = '"' + entity.key_people.join(", ") + '"': key_people = null;
-
-                    //  Need to check if it exists prior to entering into the database.
-                    connection.query('SELECT * FROM Entities WHERE ((Name="' + entity.name + '" OR Nickname="' + entity.name + '") AND Render=1) ORDER BY CreatedAt DESC LIMIT 1', function(err, rows, field){
-                      if (err) throw err;
-
-                      if(rows.length > 0)
-                      {
-                        connection.query('UPDATE `Entities` SET `Render`=0 WHERE ((Name="' + entity.name + '" OR Nickname="' + entity.name + '") AND Render=1)', function(err){
-                          if (err) throw err;
-
-                          connection.query('UPDATE `Bridges` SET `Render`=0 WHERE (Entity1ID=' + rows[0].ID + ' AND Render=1)', function(err){
+                        connection.query('SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";', function(err) {
                             if (err) throw err;
-                            
-                            if(typeof(rows[0].Followers) === "number"){
-                              var end4 = new Date().getTime();
-                            console.log("Before insertion: " + (end4 - start4));
-                              insertNode(rows[0].ID, entity, categories, url, twitter_handle, rows[0].Followers, employees, influence, relations, key_people);
-                            }
-                            else{
-                              var end4 = new Date().getTime();
-                            console.log("Before insertion: " + (end4 - start4));
-                              insertNode(rows[0].ID, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
-                            }
-                          });
+                        
+
+                            console.log("Finally got here...");
+
+                            (entity.categories !== null) ? categories = '"' + entity.categories.join(", ") + '"': categories = null;
+                            (entity.url !== null) ? url = '"' + entity.url + '"': url = null;
+                            (entity.twitter_handle !== null) ? twitter_handle = '"' + entity.twitter_handle + '"': twitter_handle = null;
+                            (entity.followers !== null) ? followers = entity.followers: followers = null;
+                            (entity.employees !== null) ? employees = entity.employees: employees = null;
+                            (entity.influence !== null) ? influence = '"' + entity.influence + '"': influence = null;
+                            (entity.relations !== null) ? relations = '"' + entity.relations.join(", ") + '"': relations = null;
+                            (entity.key_people !== null) ? key_people = '"' + entity.key_people.join(", ") + '"': key_people = null;
+
+                            //  Need to check if it exists prior to entering into the database.
+                            connection.query('SELECT * FROM Entities WHERE ((Name="' + entity.name + '" OR Nickname="' + entity.name + '") AND Render=1) ORDER BY CreatedAt DESC LIMIT 1', function(err, rows, field){
+                              if (err) throw err;
+
+                              if(rows.length > 0)
+                              {
+                                connection.query('UPDATE `Entities` SET `Render`=0 WHERE ((Name="' + entity.name + '" OR Nickname="' + entity.name + '") AND Render=1)', function(err){
+                                  if (err) throw err;
+
+                                  connection.query('UPDATE `Bridges` SET `Render`=0 WHERE (Entity1ID=' + rows[0].ID + ' AND Render=1)', function(err){
+                                    if (err) throw err;
+                                    
+                                    connection.query('UPDATE `Operations` SET `Render`=0 WHERE (EntityID=' + rows[0].ID + ' AND Render=1', function(err){
+
+                                      if(typeof(rows[0].Followers) === "number"){
+                                        insertNode(rows[0].ID, entity, categories, url, twitter_handle, rows[0].Followers, employees, influence, relations, key_people);
+                                      }
+                                      else{
+                                        insertNode(rows[0].ID, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
+                                      }
+
+                                    });
+                                  });
+                                });
+                               
+                              }
+                              else
+                              {
+                                insertNode(-1, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
+                              }
+                            });
                         });
-                       
-                      }
-                      else
-                      {
-                        var end4 = new Date().getTime();
-                            console.log("Before insertion: " + (end4 - start4));
-                        insertNode(-1, entity, categories, url, twitter_handle, followers, employees, influence, relations, key_people);
-                      }
                     });
+
                 // });
             });
         });
   });
+
+  function renderJSON(connection){
+  var done = function() {
+    fs.writeFile(civicJSON, JSON.stringify(content), function(err) {
+        if (err) {
+            console.log(err);
+        } else {
+            var end = new Date().getTime();
+            console.log("Overall Time: " + (end - start));
+            console.log("civic.json file was saved!");
+            connection.release();
+        }
+    });
+  };
+
+  var content= {
+        nodes: [], data_connections: [], funding_connections: [], investment_connections: [], collaboration_connections: []
+    }; 
+
+  var asyncProcesses = [];
+
+    //  Generating all of the node based data with revenue and expense data and ????????????node being rendered???????????...
+    //  Must construct a dictionary of {name:[list of financial data]}
+    asyncProcesses.push(function(callback){
+      connection.query('SELECT e.name, o.finance, o.amount, o.year FROM entities as e INNER JOIN operations as o on e.ID = o.entityid', function(err, result) {
+        if (err) throw err;
+
+        var createDictionary = function (d, doneCallback) {
+          if(!(d.name in operationsDict))
+            //  Must create a new name key within the dictionary            
+            operationsDict[d.name] = {revenue:[], expenses:[]};
+          switch(d.finance)
+          {
+            case "Revenue":
+              operationsDict[d.name]['revenue'].push({amount: d.amount, year: d.year});
+              break;
+            case "Expenses":
+              operationsDict[d.name]['expenses'].push({amount: d.amount, year: d.year});  
+              break;
+            default:
+              break;
+          }
+          return doneCallback(null, "Completed Iteration.");
+        };
+
+        var operationsDict = {};
+
+        //  Example data piece...
+        // {
+        //   "John D. Rockefeller Foundation": {revenue: [[20000, 2014]], expenses: []}
+        // }
+
+        async.map(result, createDictionary, function(err, result){
+          callback(null, operationsDict);
+        });
+      });
+    });
+
+    //  Generating all of the node based data...
+    //  Must construct a dictionary of {}
+    asyncProcesses.push(function(callback){
+      connection.query('SELECT * FROM entities', function(err, result){
+        if (err) throw err;
+
+        callback(null, result);
+      });
+    });
+
+    //  Generating all of the connection based data...
+    //  Must construct a dictionary of {source_name:[list of connections]}
+    asyncProcesses.push(function(callback){
+      connection.query('SELECT e1.name as name1, b.entity1id, e2.name as name2, b.entity2id, b.connection, b.connectionyear, b.amount, b.render FROM cdb_c7da98943c.bridges b LEFT JOIN cdb_c7da98943c.entities e1 on e1.ID = b.Entity1ID LEFT JOIN cdb_c7da98943c.entities e2 on e2.ID = b.Entity2ID;', function(err, result){
+        if (err) throw err;
+
+        var createDictionary = function (d, doneCallback) {
+          if(!(d.name1 in connectionsDict))
+            //  Must create a new name key within the dictionary            
+            connectionsDict[d.name1] = {funding_received:[], funding_given:[], investments_received:[], investments_made:[], data:[], collaborations:[]};
+          if(d.render == 1)
+            switch(d.connection)
+            {
+              case "Funding Received":
+                connectionsDict[d.name1]['funding_received'].push({entity:d.name2, amount: d.amount, year: d.connectionyear});
+                break;
+              case "Funding Given":
+                connectionsDict[d.name1]['funding_given'].push({entity:d.name2, amount: d.amount, year: d.connectionyear});
+                break;
+              case "Investment Received":
+                connectionsDict[d.name1]['investments_received'].push({entity:d.name2, amount: d.amount, year: d.connectionyear});
+                break;
+              case "Investment Given":
+                connectionsDict[d.name1]['investments_made'].push({entity:d.name2, amount: d.amount, year: d.connectionyear});
+                break;
+              case "Data":
+                connectionsDict[d.name1]['data'].push({entity: d.name2});
+                break;
+              case "Collaboration":
+                connectionsDict[d.name1]['collaborations'].push({entity: d.name2});  
+                break;
+              default:
+                break;
+            }
+          return doneCallback(null, "Completed Iteration.");
+        };
+
+        var connectionsDict = {};
+        var asyncConnectionsTasks = [];
+
+        //  Process for actual content
+        asyncConnectionsTasks.push(function(contentCallback){
+
+          async.filter(result, function(d, booleanCallback){
+              switch(d.connection)
+              {
+                case "Funding Received":
+                  (content.funding_connections).push({
+                    source: d.entity1id,
+                    target: d.entity2id,
+                    type: "Received",
+                    year: d.connectionyear,
+                    amount: d.amount,
+                    render: d.render
+                  });
+                  break;
+                case "Funding Given":
+                  (content.funding_connections).push({
+                    source: d.entity1id,
+                    target: d.entity2id,
+                    type: "Given",
+                    year: d.connectionyear,
+                    amount: d.amount,
+                    render: d.render
+                  });
+                  break;
+                case "Investment Received":
+                  (content.investment_connections).push({
+                    source: d.entity1id,
+                    target: d.entity2id,
+                    type: "Received",
+                    year: d.connectionyear,
+                    amount: d.amount,
+                    render: d.render
+                  });
+                  break;
+                case "Investment Given":
+                  (content.investment_connections).push({
+                    source: d.entity1id,
+                    target: d.entity2id,
+                    type: "Made",
+                    year: d.connectionyear,
+                    amount: d.amount,
+                    render: d.render
+                  });
+                  break;
+                case "Collaboration":
+                  (content.collaboration_connections).push({
+                    source: d.entity1id,
+                    target: d.entity2id,
+                    render: d.render
+                  });
+                  break;
+                case "Data":
+                  (content.data_connections).push({
+                    source: d.entity1id,
+                    target: d.entity2id,
+                    render: d.render
+                  });
+                default:
+                  break;
+              }
+              return booleanCallback(true);
+            }, function(filteredData){
+              console.log(filteredData.length);
+              contentCallback(null, "Finished processing content.");
+              // results now equals an array of the existing files
+            }
+          );
+        });
+
+        //  Process dictionary...
+        asyncConnectionsTasks.push(function(dictionaryCallback){
+          async.map(result, createDictionary, function(err, result){
+            dictionaryCallback(null, "Finished processing dictionary.");
+          });
+        });
+
+        async.parallel(asyncConnectionsTasks, function(err, result){
+          callback(null, connectionsDict);
+        });
+      });
+    });
+
+    async.parallel(asyncProcesses, function(err, results){
+      var operationsDict = results[0];
+      var entitiesDump = results[1];
+      var connectionsDict = results[2];
+
+      console.log(JSON.stringify(connectionsDict));
+
+      var generateNodeData = function(d, completeCallback){
+        var object = {ID: null, type: null, categories: null, name: null, nickname: null, location: null, url: null, employees: null, key_people: null, twitter_handle: null, followers: null, relations: null, influence: null, funding_received: [], funding_given: [], investments_received: [], investments_made: [], collaborations: [], data: [], revenue: [], expenses: []};
+
+        
+        object['ID'] = d.ID;
+        object['type'] = d.Type;
+        (d.Categories !== null) ? object['categories'] = (d.Categories).split(", "): object['categories'] = null;
+        object['name'] = d.Name;
+        object['nickname'] = d.Nickname;
+        object['location'] = d.Location;
+
+        (d.Website !== null) ? object['url'] = d.Website: object['url'] = null;
+        (d.Employees !== null) ? object['employees'] = d.Employees: object['employees'] = null;
+
+        if (d.KeyPeople !== null)
+        {
+          var people = d.KeyPeople.split(", ");
+          object['key_people'] = [];
+          for(var i = 0; i < people.length; i++)
+          {
+            object['key_people'].push({name: people[i]});
+          }
+          
+        } 
+        else
+        {
+          object['key_people'] = null;
+        }                  
+
+        (d.TwitterHandle !== null) ? object['twitter_handle'] = d.TwitterHandle: object['twitter_handle'] = null;
+        (d.Followers !== null) ? object['followers'] = d.Followers: object['followers'] = null;
+
+        if (d.Relations !== null)
+        {
+          var relations = d.Relations.split(", ");
+          object['relations'] = [];
+          for(var i = 0; i < relations.length; i++)
+          {
+            object['relations'].push({entity: relations[i]});
+          }
+        } 
+        else
+        {
+          object['relations'] = null;
+        }    
+
+        (d.Influence !== null) ? object['influence'] = d.Influence: object['influence'] = null;
+
+        if(d.Name in connectionsDict)
+        {
+          object['funding_received'] = connectionsDict[d.Name]['funding_received'];
+          object['funding_given'] = connectionsDict[d.Name]['funding_given'];
+          object['investments_received'] = connectionsDict[d.Name]['investments_received'];
+          object['investments_made'] = connectionsDict[d.Name]['investments_made'];
+          object['collaborations'] = connectionsDict[d.Name]['collaborations'];
+          object['data'] = connectionsDict[d.Name]['data'];
+        }
+
+        if(d.Name in operationsDict)
+        {
+          object['revenue'] = operationsDict[d.Name]['revenue'];
+          object['expenses'] = operationsDict[d.Name]['expenses'];
+        }
+
+        object['render'] = d.Render;
+
+        //  Time to clean up...
+        if(object['funding_received'].length === 0)
+          object['funding_received'] = null;
+        if(object['funding_given'].length === 0)
+          object['funding_given'] = null;
+        if(object['investments_received'].length === 0)
+          object['investments_received'] = null;
+        if(object['investments_made'].length === 0)
+          object['investments_made'] = null;
+        if(object['collaborations'].length === 0)
+          object['collaborations'] = null;
+        if(object['data'].length === 0)
+          object['data'] = null;
+        if(object['revenue'].length === 0)
+        {
+          object['revenue'] = null;
+        }
+        if(object['expenses'].length === 0)
+        {
+          object['expenses'] = null;
+        }
+
+        content.nodes.push(object);
+
+        return completeCallback(null, "Completed Iteration.");
+      };
+      async.map(entitiesDump, generateNodeData, function(err, result){
+        done();
+      });
+    });
+  }
+
 };
