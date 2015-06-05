@@ -38,14 +38,7 @@ app.get('/api', api.render);
 var community = require('./routes/community');
 app.get('/community', community.render);
 
-// 
-// COMMENT IN TO ADD JOIN ROUTE
-// var join = require('./routes/join');
-// app.get('/join', join.render);
-// 
-
 //	API Endpoints
-
 var athena = require('./routes/api/athena');
 app.get('/athena', athena.retrieve_all);
 
@@ -86,36 +79,35 @@ app.post('/database/save', parseUrlencoded, database.save);
 
 app.get('/', index.render);
 
-/// catch 404 and forward to error handler
+// Catch 404 and forward to error handler
 app.use(function(req, res, next) {
-var err = new Error('Not Found');
-err.status = 404;
-next(err);
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
-/// error handlers
+// Other middleware for managing error handlers
 
-// development error handler
-// will print stacktrace
+// Development error handler
+// Will print stacktrace
 if (app.get('env') === 'development') {
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: err
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
   });
-});
 }
 
-// production error handler
-// no stacktraces leaked to user
+// Production error handler
+// No stacktraces leaked to user
 app.use(function(err, req, res, next) {
-res.status(err.status || 500);
-res.render('error', {
-  message: err.message,
-  error: {}
-});
+  res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: {}
+  });
 });
 
-// connection.end();
 module.exports = app;
