@@ -3318,7 +3318,7 @@ function loadD3Layer() {
                     });
   
   var newTip = d3.helper.tooltip(function(d, i) {
-    return d.cityA + " - " + d.cityB + ", <br/>" + d.count + " connections, <br/>" +  parseFloat((d.count/d.totalCount) * 100).toFixed(2) + "% of total connections";
+    return d.cityA + " - " + d.cityB + ", <br/>" + d.count + (d.count > 1 ? " connections, " : " connection,") + "<br/>" +  parseFloat((d.count/d.totalCount) * 100).toFixed(2) + "% of total connections";
   });
   var locations = {};
 
