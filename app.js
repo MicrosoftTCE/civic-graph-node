@@ -44,6 +44,8 @@ app.get('/community', community.render);
 // app.get('/join', join.render);
 // 
 
+//	API Endpoints
+
 var athena = require('./routes/api/athena');
 app.get('/athena', athena.retrieve_all);
 
