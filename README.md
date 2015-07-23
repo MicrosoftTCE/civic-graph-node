@@ -6,5 +6,8 @@ It is an open source, crowdsourced knowledge base and data visualization project
 
 [Visit our application](http://civicgraph.io/)
 
+### Deployed Version 
+   * [Repository to new version's source code](https://github.com/rasmi/civic-graph)
+
 ### To Get Started with Development:
    * [Visit our wiki page](https://github.com/microsoftny/civic-graph/wiki)
