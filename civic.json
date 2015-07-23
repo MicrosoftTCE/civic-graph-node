@@ -1,0 +1,28 @@
+{
+    "status": "Beta",
+    "thumbnailUrl: "",
+    "contributors": [
+        "@rasmi",
+        "@davidlrnt",
+        "@hhassan1230",
+        "@danilaurenhill",
+        "@kenchan23",
+        "@sugaroverflow",
+        "@adysevy",
+        "@johnpaulfarmer",
+        "@tsiege",
+        "@microsoftny"
+    ],
+    "bornAt": "",
+    "politicalEntity": "",
+    "geography": "NYC",
+    "type": "Web & Mobile App",
+    "needs": [
+        {"need": "Your Input"}
+    ],
+    "categories": [
+        "Community",
+        "Collaboration",
+        "Civic Technology"
+    ]
+}
